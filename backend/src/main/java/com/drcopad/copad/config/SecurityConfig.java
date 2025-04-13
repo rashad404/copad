@@ -8,6 +8,8 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
@@ -20,8 +22,23 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
+    private final JwtFilter jwtFilter;
+    private final OAuth2Config oauth2Config;
+    private final List<String> allowedDomains = Arrays.asList(
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
+        "https://virtualhekim.az",
+        "https://copad.ai",
+        "https://logman.az"
+    );
+
+    public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
+        this.jwtFilter = jwtFilter;
+        this.oauth2Config = oauth2Config;
+    }
+
     @Bean
-    public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
+    public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
@@ -29,6 +46,14 @@ public class SecurityConfig {
                 .requestMatchers("/api/auth/**", "/api/guest/**").permitAll()
                 .anyRequest().authenticated()
             )
+            .oauth2Login(oauth2 -> oauth2
+                .defaultSuccessUrl("/api/auth/success")
+                .failureUrl("/api/auth/failure")
+                .authorizationEndpoint(authorization -> authorization
+                    .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                )
+            )
+            .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             );
@@ -39,13 +64,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList(
-            "http://localhost:5173",
-            "http://127.0.0.1:5173",
-            "https://virtualhekim.az",
-            "https://copad.ai",
-            "https://logman.az"
-        ));
+        configuration.setAllowedOrigins(allowedDomains);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
             "Authorization",
