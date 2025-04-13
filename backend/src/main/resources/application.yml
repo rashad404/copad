@@ -1,0 +1,12 @@
+spring:
+  profiles:
+    active: local  # change to 'local' when running locally
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            scope: openid,profile,email
+          facebook:
+            scope: public_profile,email
+

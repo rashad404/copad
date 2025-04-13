@@ -42,6 +42,6 @@ build/
 .DS_Store
 .env
 application-local.yml
-backend/src/main/resources/application.yml
 backend/src/main/resources/application-local.yml
+
 
