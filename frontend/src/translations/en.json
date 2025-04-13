@@ -1,0 +1,232 @@
+{
+  "common": {
+    "welcome": "Welcome",
+    "login": "Login",
+    "logout": "Logout",
+    "settings": "Settings",
+    "language": "Language",
+    "back_to_home": "Back to Home"
+  },
+  "navbar": {
+    "home": "Home",
+    "dashboard": "Dashboard",
+    "appointments": "Appointments",
+    "profile": "Profile",
+    "login": "Login",
+    "register": "Register",
+    "logout": "Logout"
+  },
+  "auth": {
+    "email": "Email",
+    "email_placeholder": "your@email.com",
+    "password": "Password",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Forgot password?",
+    "remember_me": "Remember me",
+    "sign_up": "Sign Up",
+    "login": {
+      "welcome": "Welcome back",
+      "subtitle": "Sign in to your account to continue",
+      "signing_in": "Signing in...",
+      "no_account": "Don't have an account?",
+      "create_account": "Create an account",
+      "secure_title": "Secure Medical Consultations",
+      "secure_description": "Your health data is encrypted and securely stored. Access medical expertise anytime with Dr. Copad.",
+      "access": "Access",
+      "secure": "Secure",
+      "powered": "Powered",
+      "sign_in": "Sign In"
+    },
+    "errors": {
+      "invalid_credentials": "Invalid email or password. Please try again."
+    }
+  },
+  "errors": {
+    "required": "This field is required",
+    "invalidEmail": "Please enter a valid email address"
+  },
+  "appointments": {
+    "title": "Your Appointments",
+    "subtitle": "Manage and track all your medical appointments",
+    "newAppointment": "New Appointment",
+    "filters": {
+      "all": "All Appointments",
+      "upcoming": "Upcoming",
+      "completed": "Completed"
+    },
+    "loading": "Loading your appointments...",
+    "empty": {
+      "title": "No appointments found",
+      "all": "You don't have any appointments scheduled yet.",
+      "filtered": "You don't have any {{filter}} appointments.",
+      "schedule": "Schedule an appointment"
+    },
+    "card": {
+      "specialty": "Specialty",
+      "primaryConcern": "Primary Concern",
+      "date": "Date",
+      "time": "Time"
+    }
+  },
+  "newAppointment": {
+    "title": "Start a New Appointment",
+    "subtitle": "Tell us what you need help with and we'll connect you with Dr. Copad",
+    "specialty": {
+      "label": "What type of care do you need?",
+      "options": {
+        "general": "General Consultation",
+        "pediatrics": "Pediatrics",
+        "dermatology": "Dermatology",
+        "cardiology": "Cardiology",
+        "mental health": "Mental Health",
+        "other": "Other Specialty"
+      }
+    },
+    "primaryConcern": {
+      "label": "What's your main concern today?",
+      "placeholder": "Briefly describe what's bothering you (e.g., headache, skin rash, anxiety)"
+    },
+    "duration": {
+      "label": "How long have you had this issue?",
+      "placeholder": "e.g., 3 days, 2 weeks"
+    },
+    "severity": {
+      "label": "How severe is it?",
+      "options": {
+        "mild": "Mild - It's noticeable but doesn't affect daily activities",
+        "moderate": "Moderate - It affects some daily activities",
+        "severe": "Severe - It significantly affects daily activities"
+      }
+    },
+    "symptoms": {
+      "label": "Any other symptoms? (Optional)",
+      "placeholder": "List any other symptoms you're experiencing"
+    },
+    "treatments": {
+      "label": "Have you tried any treatments? (Optional)",
+      "placeholder": "e.g., over-the-counter medications, home remedies"
+    },
+    "notes": {
+      "label": "Anything else Dr. Copad should know? (Optional)",
+      "placeholder": "e.g., allergies, existing conditions, current medications"
+    },
+    "continue": "Continue",
+    "back": "Back",
+    "submit": "Start Appointment",
+    "submitting": "Creating appointment..."
+  },
+  "dashboard": {
+    "title": "Welcome to your Dashboard",
+    "subtitle": "Access your health tools, appointments, and medical chat history anytime.",
+    "appointments": {
+      "title": "Appointments",
+      "description": "View or create medical chat sessions.",
+      "action": "Go to Appointments"
+    },
+    "profile": {
+      "title": "Your Profile",
+      "description": "Manage your health information, history, and preferences.",
+      "action": "View Profile"
+    },
+    "newAppointment": {
+      "title": "Start a New Appointment",
+      "description": "Create a new AI consultation appointment with Dr. Copad.",
+      "action": "Start Now",
+      "recommended": "Recommended"
+    },
+    "healthSummary": {
+      "title": "Your Health Summary",
+      "recentConsultations": "Recent Consultations",
+      "profileCompletion": "Profile Completion",
+      "nextAppointment": "Next Appointment"
+    },
+    "security": {
+      "title": "Your data is secure",
+      "description": "Encrypted, private, and protected",
+      "learnMore": "Learn more about our privacy policy →"
+    },
+    "footer": "Your health matters to us. This app is built for convenience."
+  },
+  "home": {
+    "hero": {
+      "title": "Get AI-Powered Medical Help",
+      "subtitle": "Anytime. Anywhere.",
+      "description": "Dr. Copad is your personal AI doctor. Chat instantly about symptoms, get medical guidance, and organize your health records securely.",
+      "getStarted": "Get Started Free",
+      "login": "Login",
+      "usersCount": "Join {{count}} users"
+    },
+    "features": {
+      "title": "Features",
+      "subtitle": "Everything you need for your health",
+      "description": "Accessible, reliable, and tailored to your needs AI-powered medical assistance.",
+      "chat": {
+        "title": "Chat with an AI Doctor",
+        "description": "Describe your symptoms and get AI-generated guidance instantly — 24/7. No waiting rooms, no appointments needed."
+      },
+      "upload": {
+        "title": "Upload Medical Files",
+        "description": "Analyze lab results, images, and medical history with AI assistance. Get explanations and insights in plain language."
+      },
+      "track": {
+        "title": "Track Appointments",
+        "description": "Organize your health journey with history, summaries, and AI notes. Access your previous consultations anytime."
+      }
+    },
+    "testimonials": {
+      "title": "Trusted by users worldwide",
+      "testimonial1": {
+        "quote": "Dr. Copad helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in simple terms.",
+        "author": "Sarah K.",
+        "role": "Patient"
+      },
+      "testimonial2": {
+        "quote": "As someone living in a rural area, having 24/7 medical guidance has changed my life. It's like having a doctor in your pocket.",
+        "author": "Michael T.",
+        "role": "Patient"
+      },
+      "testimonial3": {
+        "quote": "The symptom checker is surprisingly accurate. Helped me identify a condition my regular doctor had been missing for months.",
+        "author": "Jessica W.",
+        "role": "Healthcare Worker"
+      }
+    },
+    "cta": {
+      "title": "Ready to take control of",
+      "subtitle": "your health?",
+      "description": "Start with Dr. Copad today and experience the future of healthcare. No subscription required.",
+      "getStarted": "Get Started Free",
+      "login": "Login"
+    },
+    "footer": {
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "contact": "Contact",
+      "security": "HIPAA compliant. Private. Your data is yours."
+    }
+  },
+  "chat": {
+    "title": "Chat with Dr. Copad",
+    "subtitle": "Describe your symptoms and get AI-powered medical guidance",
+    "input": {
+      "placeholder": "Type your message...",
+      "send": "Send",
+      "attach": "Attach file"
+    },
+    "status": {
+      "online": "Online",
+      "typing": "Dr. Copad is typing...",
+      "offline": "Offline"
+    },
+    "security": {
+      "hipaa": "HIPAA-Private",
+      "save": "Save Conversation"
+    },
+    "empty": {
+      "title": "Start your conversation",
+      "description": "Describe your symptoms or ask any health-related questions to get started."
+    },
+    "loading": "Loading chat history...",
+    "error": "Sorry, I couldn't process your message. Please try again."
+  }
+} 

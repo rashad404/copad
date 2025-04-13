@@ -1,0 +1,232 @@
+{
+  "common": {
+    "welcome": "Xoş gəlmisiniz",
+    "login": "Daxil ol",
+    "logout": "Çıxış",
+    "settings": "Tənzimləmələr",
+    "language": "Dil",
+    "back_to_home": "Ana səhifəyə qayıt"
+  },
+  "navbar": {
+    "home": "Ana səhifə",
+    "dashboard": "İdarə paneli",
+    "appointments": "Qəbula yazılmalar",
+    "profile": "Profil",
+    "login": "Daxil ol",
+    "register": "Qeydiyyat",
+    "logout": "Çıxış"
+  },
+  "auth": {
+    "email": "E-poçt",
+    "email_placeholder": "sizin@email.com",
+    "password": "Şifrə",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Şifrəni unutmusunuz?",
+    "remember_me": "Məni xatırla",
+    "sign_up": "Qeydiyyat",
+    "login": {
+      "welcome": "Xoş gəlmisiniz",
+      "subtitle": "Hesabınıza daxil olmaq üçün davam edin",
+      "signing_in": "Daxil olunur...",
+      "no_account": "Hesabınız yoxdur?",
+      "create_account": "Hesab yaradın",
+      "secure_title": "Təhlükəsiz Tibbi Məsləhətlər",
+      "secure_description": "Sağlamlıq məlumatlarınız şifrələnib və təhlükəsiz şəkildə saxlanılır. Dr. Copad ilə istənilən vaxt tibbi məsləhət əldə edin.",
+      "access": "Giriş",
+      "secure": "Təhlükəsiz",
+      "powered": "AI ilə",
+      "sign_in": "Daxil ol"
+    },
+    "errors": {
+      "invalid_credentials": "Yanlış e-poçt və ya şifrə. Zəhmət olmasa yenidən cəhd edin."
+    }
+  },
+  "errors": {
+    "required": "Bu sahə mütləqdir",
+    "invalidEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin"
+  },
+  "appointments": {
+    "title": "Qəbula yazılmalarınız",
+    "subtitle": "Tibbi qəbula yazılmalarınızı idarə edin və izləyin",
+    "newAppointment": "Yeni qəbula yazılma",
+    "filters": {
+      "all": "Bütün qəbula yazılmalar",
+      "upcoming": "Gələcək",
+      "completed": "Tamamlanmış"
+    },
+    "loading": "Qəbula yazılmalarınız yüklənir...",
+    "empty": {
+      "title": "Qəbula yazılma tapılmadı",
+      "all": "Hələ heç bir qəbula yazılma təyin edilməyib.",
+      "filtered": "Sizin {{filter}} qəbula yazılmalarınız yoxdur.",
+      "schedule": "Qəbula yazılma təyin et"
+    },
+    "card": {
+      "specialty": "İxtisas",
+      "primaryConcern": "Əsas narahatlıq",
+      "date": "Tarix",
+      "time": "Vaxt"
+    }
+  },
+  "newAppointment": {
+    "title": "Yeni Qəbula Yazılma Başlat",
+    "subtitle": "Bizə köməyə ehtiyacınız olan şeyi deyin və sizi Dr. Copad ilə əlaqələndirək",
+    "specialty": {
+      "label": "Hansı növ tibbi yardıma ehtiyacınız var?",
+      "options": {
+        "general": "Ümumi Məsləhət",
+        "pediatrics": "Pediatriya",
+        "dermatology": "Dermatologiya",
+        "cardiology": "Kardiologiya",
+        "mental health": "Psixi Sağlamlıq",
+        "other": "Digər İxtisas"
+      }
+    },
+    "primaryConcern": {
+      "label": "Bu gün əsas narahatlığınız nədir?",
+      "placeholder": "Narahatlığınızı qısaca təsvir edin (məsələn, baş ağrısı, dəri səpkiləri, narahatlıq)"
+    },
+    "duration": {
+      "label": "Bu problem nə qədər vaxtdır ki, var?",
+      "placeholder": "məsələn, 3 gün, 2 həftə"
+    },
+    "severity": {
+      "label": "Nə qədər ciddidir?",
+      "options": {
+        "mild": "Yüngül - Görünür, lakin gündəlik fəaliyyətlərə təsir etmir",
+        "moderate": "Orta - Bəzi gündəlik fəaliyyətlərə təsir edir",
+        "severe": "Ağır - Gündəlik fəaliyyətlərə əhəmiyyətli dərəcədə təsir edir"
+      }
+    },
+    "symptoms": {
+      "label": "Başqa simptomlar var? (İstəyə bağlı)",
+      "placeholder": "Yaşadığınız digər simptomları sadalayın"
+    },
+    "treatments": {
+      "label": "Hər hansı müalicə sınağından keçmisiniz? (İstəyə bağlı)",
+      "placeholder": "məsələn, əczaçılıqda satılan dərmanlar, ev müalicələri"
+    },
+    "notes": {
+      "label": "Dr. Copad-ın bilməli olduğu başqa bir şey var? (İstəyə bağlı)",
+      "placeholder": "məsələn, allergiyalar, mövcud xəstəliklər, cari dərmanlar"
+    },
+    "continue": "Davam et",
+    "back": "Geri",
+    "submit": "Qəbula Yazılmanı Başlat",
+    "submitting": "Qəbula yazılma yaradılır..."
+  },
+  "dashboard": {
+    "title": "İdarə panelinizə xoş gəlmisiniz",
+    "subtitle": "Sağlamlıq alətlərinizə, qəbula yazılmalarınıza və tibbi söhbət tarixçənizə istənilən vaxt daxil olun.",
+    "appointments": {
+      "title": "Qəbula yazılmalar",
+      "description": "Tibbi söhbət sessiyalarınızı görüntüləyin və ya yaradın.",
+      "action": "Qəbula yazılmalara keç"
+    },
+    "profile": {
+      "title": "Profiliniz",
+      "description": "Sağlamlıq məlumatlarınızı, tarixçənizi və üstünlüklərinizi idarə edin.",
+      "action": "Profili görüntülə"
+    },
+    "newAppointment": {
+      "title": "Yeni qəbula yazılma başlat",
+      "description": "Dr. Copad ilə yeni AI məsləhət qəbula yazılması yaradın.",
+      "action": "İndi başla",
+      "recommended": "Tövsiyə olunur"
+    },
+    "healthSummary": {
+      "title": "Sağlamlıq xülasəniz",
+      "recentConsultations": "Son məsləhətlər",
+      "profileCompletion": "Profil tamamlanması",
+      "nextAppointment": "Növbəti qəbula yazılma"
+    },
+    "security": {
+      "title": "Məlumatlarınız təhlükəsizdir",
+      "description": "Şifrələnmiş, məxfi və qorunur",
+      "learnMore": "Məxfilik siyasətimiz haqqında ətraflı məlumat →"
+    },
+    "footer": "Sağlamlığınız bizim üçün vacibdir. Bu tətbiq rahatlıq üçün yaradılıb."
+  },
+  "home": {
+    "hero": {
+      "title": "AI ilə dəstəklənən tibbi kömək əldə edin",
+      "subtitle": "İstənilən vaxt. İstənilən yerdə.",
+      "description": "Dr. Copad sizin şəxsi AI həkiminizdir. Simptomlar haqqında dərhal söhbət edin, tibbi rəhbərlik əldə edin və sağlamlıq qeydlərinizi təhlükəsiz şəkildə təşkil edin.",
+      "getStarted": "Pulsuz başlayın",
+      "login": "Daxil ol",
+      "usersCount": "{{count}} istifadəçiyə qoşulun"
+    },
+    "features": {
+      "title": "Xüsusiyyətlər",
+      "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
+      "description": "Əlçatan, etibarlı və ehtiyaclarınız üçün hazırlanmış AI ilə dəstəklənən tibbi yardım.",
+      "chat": {
+        "title": "AI Həkim ilə söhbət edin",
+        "description": "Simptomlarınızı təsvir edin və AI tərəfindən yaradılan rəhbərliyi dərhal əldə edin — 24/7. Gözləmə otaqları yoxdur, qəbula yazılma lazım deyil."
+      },
+      "upload": {
+        "title": "Tibbi faylları yükləyin",
+        "description": "Laboratoriya nəticələrini, şəkilləri və tibbi tarixçəni AI köməyi ilə təhlil edin. Sadə dildə izahatlar və məlumatlar əldə edin."
+      },
+      "track": {
+        "title": "Qəbula yazılmaları izləyin",
+        "description": "Tarixçə, xülasələr və AI qeydləri ilə sağlamlıq səyahətinizi təşkil edin. Əvvəlki məsləhətlərinizə istənilən vaxt daxil olun."
+      }
+    },
+    "testimonials": {
+      "title": "Dünya üzrə istifadəçilər tərəfindən etibar edilir",
+      "testimonial1": {
+        "quote": "Dr. Copad mənə laboratoriya nəticələrimi başa düşməyə kömək etdi, həkimimlə qəbula yazıla bilmədiyim zaman. Hər şeyi sadə dildə izah etdi.",
+        "author": "Sarah K.",
+        "role": "Xəstə"
+      },
+      "testimonial2": {
+        "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi rəhbərliyə çıxışımın olması həyatımı dəyişdi. Bu, cibimdə həkim olması kimidir.",
+        "author": "Michael T.",
+        "role": "Xəstə"
+      },
+      "testimonial3": {
+        "quote": "Simptom yoxlayıcı təəccüblü dərəcədə dəqiqdir. Adi həkimimin aylardır qaçırdığı vəziyyəti müəyyən etməyə kömək etdi.",
+        "author": "Jessica W.",
+        "role": "Sağlamlıq işçisi"
+      }
+    },
+    "cta": {
+      "title": "Sağlamlığınızın",
+      "subtitle": "nəzarətini ələ almağa hazırsınız?",
+      "description": "Dr. Copad ilə bu gün başlayın və gələcək tibbi xidməti yaşayın. Abunə tələb olunmur.",
+      "getStarted": "Pulsuz başlayın",
+      "login": "Daxil ol"
+    },
+    "footer": {
+      "privacy": "Məxfilik Siyasəti",
+      "terms": "İstifadə Şərtləri",
+      "contact": "Əlaqə",
+      "security": "HIPAA uyğun. Məxfi. Məlumatlarınız sizindir."
+    }
+  },
+  "chat": {
+    "title": "Dr. Copad ilə söhbət",
+    "subtitle": "Simptomlarınızı təsvir edin və AI ilə dəstəklənən tibbi rəhbərlik əldə edin",
+    "input": {
+      "placeholder": "Mesajınızı yazın...",
+      "send": "Göndər",
+      "attach": "Fayl əlavə et"
+    },
+    "status": {
+      "online": "Onlayn",
+      "typing": "Dr. Copad yazır...",
+      "offline": "Oflayn"
+    },
+    "security": {
+      "hipaa": "HIPAA-Məxfi",
+      "save": "Söhbəti Saxla"
+    },
+    "empty": {
+      "title": "Söhbətinizi başladın",
+      "description": "Simptomlarınızı təsvir edin və ya sağlamlıqla əlaqəli suallarınızı verin."
+    },
+    "loading": "Söhbət tarixçəsi yüklənir...",
+    "error": "Bağışlayın, mesajınızı emal edə bilmədim. Zəhmət olmasa yenidən cəhd edin."
+  }
+} 
