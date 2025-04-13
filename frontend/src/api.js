@@ -1,7 +1,22 @@
 import axios from "axios";
 
+// Get the current domain
+const getBaseUrl = () => {
+  if (import.meta.env.DEV) {
+    return "http://localhost:8080/api";
+  }
+  
+  // In production, use the same domain as the frontend
+  const protocol = window.location.protocol;
+  const hostname = window.location.hostname;
+  return `${protocol}//${hostname}/api`;
+};
+
+const API_URL = import.meta.env.VITE_API_URL || getBaseUrl();
+console.log("Using API URL:", API_URL);
+
 const API = axios.create({
-  baseURL: import.meta.env.VITE_API_URL || "http://localhost:8080/api",
+  baseURL: API_URL,
 });
 
 API.interceptors.request.use((req) => {
