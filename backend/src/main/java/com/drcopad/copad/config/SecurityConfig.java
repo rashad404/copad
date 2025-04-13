@@ -55,7 +55,7 @@ public class SecurityConfig {
             )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.IF_REQUIRED)
                 .sessionFixation().migrateSession()
             )
             .requestCache().disable();
