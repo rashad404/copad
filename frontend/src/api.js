@@ -14,12 +14,16 @@ const getBaseUrl = () => {
 
 const API = axios.create({
   baseURL: getBaseUrl(),
+  headers: {
+    'Content-Type': 'application/json',
+    'Accept': 'application/json',
+    'X-Requested-With': 'XMLHttpRequest'
+  }
 });
 
 API.interceptors.request.use((req) => {
   const token = localStorage.getItem("token");
   if (token) req.headers.Authorization = `Bearer ${token}`;
-  req.headers['X-Requested-With'] = 'XMLHttpRequest';
   return req;
 });
 
