@@ -14,6 +14,8 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -33,15 +35,19 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail())
-            .orElseThrow(() -> new RuntimeException("User not found"));
+        try {
+            User user = userRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+                
+            if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
+                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
+            }
             
-        if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
-            return ResponseEntity.status(401).body("Invalid credentials");
+            String token = jwtService.generateToken(user.getEmail());
+            return ResponseEntity.ok(token);
+        } catch (ResponseStatusException e) {
+            return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
-        
-        String token = jwtService.generateToken(user.getEmail());
-        return ResponseEntity.ok(token);
     }
 
     @GetMapping("/success")
