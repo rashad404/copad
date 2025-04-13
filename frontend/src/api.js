@@ -12,11 +12,8 @@ const getBaseUrl = () => {
   return `${protocol}//${hostname}/api`;
 };
 
-const API_URL = import.meta.env.VITE_API_URL || getBaseUrl();
-console.log("Using API URL:", API_URL);
-
 const API = axios.create({
-  baseURL: API_URL,
+  baseURL: getBaseUrl(),
 });
 
 API.interceptors.request.use((req) => {
