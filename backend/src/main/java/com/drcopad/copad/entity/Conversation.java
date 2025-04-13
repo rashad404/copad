@@ -16,9 +16,13 @@ public class Conversation {
     private Appointment appointment;
 
     private String sender; // "USER" or "AI"
+    
     @Lob
     @Column(columnDefinition = "TEXT")
     private String message;
 
     private LocalDateTime timestamp;
+    
+    @ManyToOne
+    private GuestSession guestSession;
 }

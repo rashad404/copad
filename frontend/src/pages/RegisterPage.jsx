@@ -1,28 +1,28 @@
-import { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useState, useContext } from "react";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { register } from "../api";
 import Navbar from "../components/Navbar";
-import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useTranslation } from "react-i18next";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
-  const [form, setForm] = useState({ 
-    name: "", 
-    email: "", 
-    password: "", 
-    age: "", 
-    gender: "" 
+  const [form, setForm] = useState({
+    fullName: "",
+    email: "",
+    password: "",
+    age: "",
+    gender: "other"
   });
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
-    if (error) setError(null); // Clear error when user types
+    if (error) setError(null);
   };
 
   const handleSubmit = async e => {
@@ -31,10 +31,12 @@ export default function RegisterPage() {
     try {
       const res = await register(form);
       localStorage.setItem("token", res.data);
-      setIsAuthenticated(true); // 👈 sets auth state
-      navigate("/"); // 👈 goes to dashboard (or homepage based on auth)
+      setIsAuthenticated(true);
+      // Redirect to the saved path or home
+      const redirectPath = location.state?.redirect || "/";
+      navigate(redirectPath);
     } catch (err) {
-      setError(err?.response?.data?.message || t("register.error.registrationFailed"));
+      setError(err.response?.data?.message || t('auth.errors.registration_failed'));
     } finally {
       setLoading(false);
     }
@@ -99,17 +101,17 @@ export default function RegisterPage() {
               
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
                     {t("register.form.fullName")}
                   </label>
                   <input
-                    id="name"
-                    name="name"
+                    id="fullName"
+                    name="fullName"
                     type="text"
                     autoComplete="name"
                     required
                     placeholder={t("register.form.fullNamePlaceholder")}
-                    value={form.name}
+                    value={form.fullName}
                     onChange={handleChange}
                     className="w-full border border-gray-300 rounded-lg px-4 py-3 text-gray-800 placeholder-gray-400
                     focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent

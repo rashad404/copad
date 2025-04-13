@@ -39,7 +39,9 @@
     },
     "errors": {
       "invalid_credentials": "Invalid email or password. Please try again."
-    }
+    },
+    "saveChatTitle": "Save Your Consultation",
+    "saveChatDescription": "Please login or register to save your consultation as an appointment."
   },
   "errors": {
     "required": "This field is required",
@@ -206,28 +208,16 @@
     }
   },
   "chat": {
-    "title": "Chat with {{agentName}}",
-    "subtitle": "Describe your symptoms and get AI-powered medical guidance",
-    "input": {
-      "placeholder": "Type your message...",
-      "send": "Send",
-      "attach": "Attach file"
-    },
-    "status": {
-      "online": "Online",
-      "typing": "{{agentName}} is typing...",
-      "offline": "Offline"
-    },
-    "security": {
-      "hipaa": "HIPAA-Private",
-      "save": "Save Conversation"
-    },
-    "empty": {
-      "title": "Start your conversation",
-      "description": "Describe your symptoms or ask any health-related questions to get started."
-    },
-    "loading": "Loading chat history...",
-    "error": "Sorry, I couldn't process your message. Please try again."
+    "title": "AI Health Assistant",
+    "messagePlaceholder": "Type your message...",
+    "send": "Send",
+    "sending": "Sending...",
+    "saveChat": "Save chat as appointment",
+    "welcomeMessage": "Hello! I'm your AI health assistant. How can I help you today? Please describe your health concern or question, and I'll do my best to assist you.",
+    "error": {
+      "rateLimit": "Request limit exceeded. Please try again later.",
+      "network": "Network error. Please try again."
+    }
   },
   "profile": {
     "title": "Your Profile",

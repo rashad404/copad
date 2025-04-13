@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTranslation } from "react-i18next";
+import GuestChat from "../components/GuestChat";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -65,31 +66,11 @@ export default function HomePage() {
                       <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
                       <div className="h-3 w-3 bg-yellow-300 rounded-full mr-2"></div>
                       <div className="h-3 w-3 bg-green-400 rounded-full"></div>
-                      <div className="ml-auto text-white font-medium">Dr. Copad Chat</div>
+                      <div className="ml-auto text-white font-medium">{t("chat.title")}</div>
                     </div>
                   </div>
-                  <div className="px-6 py-8 bg-gray-50 h-80 flex flex-col">
-                    <div className="bg-white rounded-lg p-4 shadow-sm mb-4 ml-auto max-w-[80%]">
-                      <p className="text-sm text-gray-700">I've been having headaches and fatigue for the past week.</p>
-                      <p className="text-xs text-gray-400 mt-1 text-right">You • 10:23 AM</p>
-                    </div>
-                    <div className="bg-indigo-100 rounded-lg p-4 shadow-sm mb-4 mr-auto max-w-[80%]">
-                      <p className="text-sm text-gray-700">I understand you're experiencing headaches and fatigue. Let me ask a few questions to better understand your symptoms.</p>
-                      <p className="text-xs text-gray-400 mt-1">Dr. Copad AI • 10:24 AM</p>
-                    </div>
-                    <div className="bg-indigo-100 rounded-lg p-4 shadow-sm mb-4 mr-auto max-w-[80%]">
-                      <p className="text-sm text-gray-700">1. How would you describe the headache pain (dull, sharp, throbbing)?</p>
-                      <p className="text-sm text-gray-700 mt-2">2. Have you noticed any triggers for your symptoms?</p>
-                      <p className="text-xs text-gray-400 mt-1">Dr. Copad AI • 10:24 AM</p>
-                    </div>
-                    <div className="mt-auto flex gap-2">
-                      <input type="text" placeholder="Type your message..." className="flex-grow rounded-full border border-gray-300 px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent" />
-                      <button className="rounded-full bg-indigo-600 p-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 text-white" viewBox="0 0 20 20" fill="currentColor">
-                          <path d="M10.894 2.553a1 1 0 00-1.788 0l-7 14a1 1 0 001.169 1.409l5-1.429A1 1 0 009 15.571V11a1 1 0 112 0v4.571a1 1 0 00.725.962l5 1.428a1 1 0 001.17-1.408l-7-14z" />
-                        </svg>
-                      </button>
-                    </div>
+                  <div className="h-[500px]">
+                    <GuestChat />
                   </div>
                 </div>
               </div>

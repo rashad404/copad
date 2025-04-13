@@ -1,5 +1,5 @@
 import { useState, useContext } from "react";
-import { useNavigate, Link } from "react-router-dom";
+import { useNavigate, Link, useLocation } from "react-router-dom";
 import { login } from "../api";
 import Navbar from "../components/Navbar";
 import { AuthContext } from "../context/AuthContext.jsx";
@@ -11,6 +11,7 @@ export default function LoginPage() {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
   const { setIsAuthenticated } = useContext(AuthContext);
 
   const handleChange = e => {
@@ -25,7 +26,9 @@ export default function LoginPage() {
       const res = await login(form);
       localStorage.setItem("token", res.data);
       setIsAuthenticated(true);
-      navigate("/");
+      // Redirect to the saved path or home
+      const redirectPath = location.state?.redirect || "/";
+      navigate(redirectPath);
     } catch {
       setError(t('auth.errors.invalid_credentials'));
     } finally {

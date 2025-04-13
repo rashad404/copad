@@ -39,7 +39,11 @@
     },
     "errors": {
       "invalid_credentials": "Yanlış e-poçt və ya şifrə. Zəhmət olmasa yenidən cəhd edin."
-    }
+    },
+    "saveChatTitle": "Məsləhətinizi Saxlayın",
+    "saveChatDescription": "Məsləhətinizi randevu kimi saxlamaq üçün daxil olun və ya hesab yaradın.",
+    "login": "Daxil Ol",
+    "register": "Hesab Yarat"
   },
   "errors": {
     "required": "Bu sahə mütləqdir",
@@ -206,28 +210,16 @@
     }
   },
   "chat": {
-    "title": "{{agentName}} ilə Söhbət Edin",
-    "subtitle": "Simptomlarınızı təsvir edin və AI ilə gücləndirilmiş tibbi məsləhət alın",
-    "input": {
-      "placeholder": "Mesajınızı yazın...",
-      "send": "Göndər",
-      "attach": "Fayl əlavə et"
-    },
-    "status": {
-      "online": "Onlayn",
-      "typing": "{{agentName}} yazır...",
-      "offline": "Oflayn"
-    },
-    "security": {
-      "hipaa": "HIPAA-Şəxsi",
-      "save": "Söhbəti Saxla"
-    },
-    "empty": {
-      "title": "Söhbətinizi başladın",
-      "description": "Başlamaq üçün simptomlarınızı təsvir edin və ya sağlamlıqla əlaqəli suallar verin."
-    },
-    "loading": "Söhbət tarixçəsi yüklənir...",
-    "error": "Bağışlayın, mesajınızı emal edə bilmədim. Zəhmət olmasa yenidən cəhd edin."
+    "title": "AI Səhiyyə Köməkçisi",
+    "messagePlaceholder": "Mesajınızı yazın...",
+    "send": "Göndər",
+    "sending": "Göndərilir...",
+    "saveChat": "Söhbəti randevu kimi saxla",
+    "welcomeMessage": "Salam! Mən sizin AI səhiyyə köməkçinizəm. Bu gün sizə necə kömək edə bilərəm? Zəhmət olmasa, səhiyyə probleminizi və ya sualınızı təsvir edin, mən sizə kömək etmək üçün əlimdən gələni edəcəyəm.",
+    "error": {
+      "rateLimit": "Sorğu limiti aşıldı. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
+      "network": "Şəbəkə xətası. Zəhmət olmasa, yenidən cəhd edin."
+    }
   },
   "profile": {
     "title": "Profiliniz",
