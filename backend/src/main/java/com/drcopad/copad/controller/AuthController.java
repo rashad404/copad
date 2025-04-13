@@ -59,4 +59,9 @@ public class AuthController {
         AuthResponse response = authService.handleOAuthLogin(email, name);
         return ResponseEntity.ok(response);
     }
+
+    @GetMapping("/test")
+    public ResponseEntity<String> test() {
+        return ResponseEntity.ok("Auth endpoint is working");
+    }
 }
