@@ -31,7 +31,13 @@ export default function LoginPage() {
       navigate(redirectPath);
     } catch (err) {
       console.error('Login error:', err);
-      setError(t('auth.errors.invalid_credentials'));
+      if (err.response?.status === 401) {
+        setError(t('auth.errors.invalid_credentials'));
+      } else if (err.response?.status === 404) {
+        setError(t('auth.errors.user_not_found'));
+      } else {
+        setError(t('auth.errors.login_failed'));
+      }
     } finally {
       setLoading(false);
     }

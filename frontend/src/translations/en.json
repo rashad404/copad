@@ -49,8 +49,9 @@
       "sign_in": "Sign in"
     },
     "errors": {
-      "invalid_credentials": "Invalid email or password. Please try again.",
-      "registration_failed": "Registration failed. Please try again."
+      "invalid_credentials": "Invalid email or password",
+      "user_not_found": "User not found",
+      "login_failed": "Login failed. Please try again."
     },
     "saveChatTitle": "Save Your Consultation",
     "saveChatDescription": "Please login or register to save your consultation as an appointment."

@@ -33,10 +33,13 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
-        User user = userRepository.findByEmail(dto.getEmail()).orElseThrow();
+        User user = userRepository.findByEmail(dto.getEmail())
+            .orElseThrow(() -> new RuntimeException("User not found"));
+            
         if (!passwordEncoder.matches(dto.getPassword(), user.getPassword())) {
             return ResponseEntity.status(401).body("Invalid credentials");
         }
+        
         String token = jwtService.generateToken(user.getEmail());
         return ResponseEntity.ok(token);
     }
