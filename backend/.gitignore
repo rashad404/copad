@@ -41,5 +41,5 @@ build/
 *.db
 .DS_Store
 .env
-application.yml
+application-local.yml
 
