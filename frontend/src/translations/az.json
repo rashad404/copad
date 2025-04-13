@@ -17,33 +17,43 @@
     "logout": "Çıxış"
   },
   "auth": {
-    "email": "E-poçt",
+    "email": "Email",
     "email_placeholder": "sizin@email.com",
     "password": "Şifrə",
     "password_placeholder": "••••••••",
     "forgot_password": "Şifrəni unutmusunuz?",
     "remember_me": "Məni xatırla",
     "sign_up": "Qeydiyyat",
+    "or": "və ya davam et",
+    "login_with_google": "Google ilə davam et",
+    "login_with_facebook": "Facebook ilə davam et",
     "login": {
       "welcome": "Xoş gəlmisiniz",
-      "subtitle": "Davam etmək üçün hesabınıza daxil olun",
+      "subtitle": "Hesabınıza daxil olmaq üçün davam edin",
       "signing_in": "Daxil olunur...",
       "no_account": "Hesabınız yoxdur?",
       "create_account": "Hesab yaradın",
-      "secure_title": "Təhlükəsiz Tibbi Məsləhətlər",
-      "secure_description": "Sizin sağlamlıq məlumatlarınız şifrələnib və təhlükəsiz şəkildə saxlanılır. {{agentName}} ilə istənilən vaxt tibbi məsləhət alın.",
+      "secure_title": "Təhlükəsiz Tibbi Məsləhətləşmələr",
+      "secure_description": "Səhiyyə məlumatlarınız şifrələnib və təhlükəsiz saxlanılır. İstənilən vaxt {{agentName}} ilə tibbi məsləhətləşmə əldə edin.",
       "access": "Giriş",
       "secure": "Təhlükəsiz",
-      "powered": "Gücləndirilmiş",
+      "powered": "Powered",
+      "sign_in": "Daxil ol"
+    },
+    "register": {
+      "title": "Hesab Yarat",
+      "subtitle": "Tibbi məsləhətləşmələrinizə başlamaq üçün qeydiyyatdan keçin",
+      "creating_account": "Hesab yaradılır...",
+      "create_account": "Hesab Yarat",
+      "have_account": "Artıq hesabınız var?",
       "sign_in": "Daxil ol"
     },
     "errors": {
-      "invalid_credentials": "Yanlış e-poçt və ya şifrə. Zəhmət olmasa yenidən cəhd edin."
+      "invalid_credentials": "Email və ya şifrə yanlışdır. Zəhmət olmasa yenidən cəhd edin.",
+      "registration_failed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
     },
-    "saveChatTitle": "Məsləhətinizi Saxlayın",
-    "saveChatDescription": "Məsləhətinizi randevu kimi saxlamaq üçün daxil olun və ya hesab yaradın.",
-    "login": "Daxil Ol",
-    "register": "Hesab Yarat"
+    "saveChatTitle": "Məsləhətləşməni Saxla",
+    "saveChatDescription": "Zəhmət olmasa, məsləhətləşməni randevu kimi saxlamaq üçün daxil olun və ya qeydiyyatdan keçin."
   },
   "errors": {
     "required": "Bu sahə mütləqdir",

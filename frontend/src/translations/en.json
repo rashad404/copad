@@ -24,6 +24,9 @@
     "forgot_password": "Forgot password?",
     "remember_me": "Remember me",
     "sign_up": "Sign Up",
+    "or": "or continue with",
+    "login_with_google": "Continue with Google",
+    "login_with_facebook": "Continue with Facebook",
     "login": {
       "welcome": "Welcome back",
       "subtitle": "Sign in to your account to continue",
@@ -37,8 +40,17 @@
       "powered": "Powered",
       "sign_in": "Sign In"
     },
+    "register": {
+      "title": "Create an Account",
+      "subtitle": "Sign up to get started with your medical consultations",
+      "creating_account": "Creating account...",
+      "create_account": "Create Account",
+      "have_account": "Already have an account?",
+      "sign_in": "Sign in"
+    },
     "errors": {
-      "invalid_credentials": "Invalid email or password. Please try again."
+      "invalid_credentials": "Invalid email or password. Please try again.",
+      "registration_failed": "Registration failed. Please try again."
     },
     "saveChatTitle": "Save Your Consultation",
     "saveChatDescription": "Please login or register to save your consultation as an appointment."

@@ -243,7 +243,10 @@ export default function NewAppointmentPage() {
                   <button
                     type="submit"
                     disabled={isSubmitting}
-                    className="px-6 py-3 bg-indigo-600 text-white rounded-lg font-medium hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 disabled:opacity-70 disabled:cursor-not-allowed flex items-center"
+                    className={`w-full flex justify-center items-center py-3 px-4 border border-transparent rounded-lg
+                    shadow-sm text-base font-medium text-white bg-indigo-600 hover:bg-indigo-700
+                    focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500
+                    transition-colors ${isSubmitting ? 'opacity-70 cursor-not-allowed' : 'cursor-pointer'}`}
                   >
                     {isSubmitting ? (
                       <>

@@ -52,7 +52,7 @@ export default function Navbar() {
                 </div>
                 <button 
                   onClick={handleLogout}
-                  className="ml-4 px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+                  className="ml-4 px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors cursor-pointer"
                 >
                   {t("navbar.logout")}
                 </button>
@@ -61,13 +61,13 @@ export default function Navbar() {
               <>
                 <Link
                   to="/login"
-                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+                  className="px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors cursor-pointer"
                 >
                   {t("navbar.login")}
                 </Link>
                 <Link
                   to="/register"
-                  className="ml-4 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors"
+                  className="ml-4 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 transition-colors cursor-pointer"
                 >
                   {t("navbar.register")}
                 </Link>
@@ -80,7 +80,7 @@ export default function Navbar() {
 
           {/* Mobile Menu Toggle */}
           <button 
-            className="md:hidden p-2 text-gray-600 hover:text-indigo-600 transition-colors"
+            className="md:hidden p-2 text-gray-600 hover:text-indigo-600 transition-colors cursor-pointer"
             onClick={toggleMenu}
           >
             {menuOpen ? <XMarkIcon className="w-6 h-6" /> : <Bars3Icon className="w-6 h-6" />}
@@ -102,7 +102,7 @@ export default function Navbar() {
                 </div>
                 <button 
                   onClick={() => { handleLogout(); toggleMenu(); }} 
-                  className="px-4 py-2 text-left text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+                  className="px-4 py-2 text-left text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors cursor-pointer"
                 >
                   {t("navbar.logout")}
                 </button>
@@ -128,7 +128,7 @@ function NavLink({ to, label, icon }) {
   return (
     <Link
       to={to}
-      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors cursor-pointer"
     >
       {icon}
       <span className="ml-2">{label}</span>
@@ -142,7 +142,7 @@ function MobileNavLink({ to, label, icon, onClick }) {
     <Link
       to={to}
       onClick={onClick}
-      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+      className="flex items-center px-4 py-2 text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors cursor-pointer"
     >
       {icon}
       <span className="ml-2">{label}</span>
