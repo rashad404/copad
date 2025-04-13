@@ -10,7 +10,7 @@
   "navbar": {
     "home": "Ana səhifə",
     "dashboard": "İdarə paneli",
-    "appointments": "Qəbula yazılmalar",
+    "appointments": "Görüşlər",
     "profile": "Profil",
     "login": "Daxil ol",
     "register": "Qeydiyyat",
@@ -26,15 +26,15 @@
     "sign_up": "Qeydiyyat",
     "login": {
       "welcome": "Xoş gəlmisiniz",
-      "subtitle": "Hesabınıza daxil olmaq üçün davam edin",
+      "subtitle": "Davam etmək üçün hesabınıza daxil olun",
       "signing_in": "Daxil olunur...",
       "no_account": "Hesabınız yoxdur?",
       "create_account": "Hesab yaradın",
       "secure_title": "Təhlükəsiz Tibbi Məsləhətlər",
-      "secure_description": "Sağlamlıq məlumatlarınız şifrələnib və təhlükəsiz şəkildə saxlanılır. Dr. Copad ilə istənilən vaxt tibbi məsləhət əldə edin.",
+      "secure_description": "Sizin sağlamlıq məlumatlarınız şifrələnib və təhlükəsiz şəkildə saxlanılır. {{agentName}} ilə istənilən vaxt tibbi məsləhət alın.",
       "access": "Giriş",
       "secure": "Təhlükəsiz",
-      "powered": "AI ilə",
+      "powered": "Gücləndirilmiş",
       "sign_in": "Daxil ol"
     },
     "errors": {
@@ -46,31 +46,31 @@
     "invalidEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin"
   },
   "appointments": {
-    "title": "Qəbula yazılmalarınız",
-    "subtitle": "Tibbi qəbula yazılmalarınızı idarə edin və izləyin",
-    "newAppointment": "Yeni qəbula yazılma",
+    "title": "Görüşləriniz",
+    "subtitle": "Bütün tibbi görüşlərinizi idarə edin və izləyin",
+    "newAppointment": "Yeni Görüş",
     "filters": {
-      "all": "Bütün qəbula yazılmalar",
+      "all": "Bütün Görüşlər",
       "upcoming": "Gələcək",
       "completed": "Tamamlanmış"
     },
-    "loading": "Qəbula yazılmalarınız yüklənir...",
+    "loading": "Görüşləriniz yüklənir...",
     "empty": {
-      "title": "Qəbula yazılma tapılmadı",
-      "all": "Hələ heç bir qəbula yazılma təyin edilməyib.",
-      "filtered": "Sizin {{filter}} qəbula yazılmalarınız yoxdur.",
-      "schedule": "Qəbula yazılma təyin et"
+      "title": "Görüş tapılmadı",
+      "all": "Hələ heç bir görüş təyin edilməyib.",
+      "filtered": "Sizin heç bir {{filter}} görüşünüz yoxdur.",
+      "schedule": "Görüş təyin edin"
     },
     "card": {
       "specialty": "İxtisas",
-      "primaryConcern": "Əsas narahatlıq",
+      "primaryConcern": "Əsas Narahatlıq",
       "date": "Tarix",
       "time": "Vaxt"
     }
   },
   "newAppointment": {
-    "title": "Yeni Qəbula Yazılma Başlat",
-    "subtitle": "Bizə köməyə ehtiyacınız olan şeyi deyin və sizi Dr. Copad ilə əlaqələndirək",
+    "title": "Yeni Görüş Başladın",
+    "subtitle": "Nəyə ehtiyacınız olduğunu deyin və sizi {{agentName}} ilə əlaqələndirək",
     "specialty": {
       "label": "Hansı növ tibbi yardıma ehtiyacınız var?",
       "options": {
@@ -84,7 +84,7 @@
     },
     "primaryConcern": {
       "label": "Bu gün əsas narahatlığınız nədir?",
-      "placeholder": "Narahatlığınızı qısaca təsvir edin (məsələn, baş ağrısı, dəri səpkiləri, narahatlıq)"
+      "placeholder": "Qısa şəkildə narahat olduğunuz şeyi təsvir edin (məsələn, baş ağrısı, dəri səpkiləri, narahatlıq)"
     },
     "duration": {
       "label": "Bu problem nə qədər vaxtdır ki, var?",
@@ -93,121 +93,121 @@
     "severity": {
       "label": "Nə qədər ciddidir?",
       "options": {
-        "mild": "Yüngül - Görünür, lakin gündəlik fəaliyyətlərə təsir etmir",
-        "moderate": "Orta - Bəzi gündəlik fəaliyyətlərə təsir edir",
-        "severe": "Ağır - Gündəlik fəaliyyətlərə əhəmiyyətli dərəcədə təsir edir"
+        "mild": "Yüngül - Görünür, amma gündəlik fəaliyyətləri təsir etmir",
+        "moderate": "Orta - Bəzi gündəlik fəaliyyətləri təsir edir",
+        "severe": "Ciddi - Gündəlik fəaliyyətləri əhəmiyyətli dərəcədə təsir edir"
       }
     },
     "symptoms": {
-      "label": "Başqa simptomlar var? (İstəyə bağlı)",
+      "label": "Başqa simptomlar? (İstəyə bağlı)",
       "placeholder": "Yaşadığınız digər simptomları sadalayın"
     },
     "treatments": {
-      "label": "Hər hansı müalicə sınağından keçmisiniz? (İstəyə bağlı)",
-      "placeholder": "məsələn, əczaçılıqda satılan dərmanlar, ev müalicələri"
+      "label": "Hər hansı müalicə sınağınız olub? (İstəyə bağlı)",
+      "placeholder": "məsələn, əczaçılıq dərmanları, ev müalicələri"
     },
     "notes": {
-      "label": "Dr. Copad-ın bilməli olduğu başqa bir şey var? (İstəyə bağlı)",
+      "label": "{{agentName}} bilməli olduğu başqa bir şey varmı? (İstəyə bağlı)",
       "placeholder": "məsələn, allergiyalar, mövcud xəstəliklər, cari dərmanlar"
     },
     "continue": "Davam et",
     "back": "Geri",
-    "submit": "Qəbula Yazılmanı Başlat",
-    "submitting": "Qəbula yazılma yaradılır..."
+    "submit": "Görüşü Başlat",
+    "submitting": "Görüş yaradılır..."
   },
   "dashboard": {
     "title": "İdarə panelinizə xoş gəlmisiniz",
-    "subtitle": "Sağlamlıq alətlərinizə, qəbula yazılmalarınıza və tibbi söhbət tarixçənizə istənilən vaxt daxil olun.",
+    "subtitle": "Sağlamlıq alətlərinizə, görüşlərinizə və tibbi söhbət tarixçənizə istənilən vaxt daxil olun.",
     "appointments": {
-      "title": "Qəbula yazılmalar",
-      "description": "Tibbi söhbət sessiyalarınızı görüntüləyin və ya yaradın.",
-      "action": "Qəbula yazılmalara keç"
+      "title": "Görüşlər",
+      "description": "Tibbi söhbət sessiyalarını görüntüləyin və ya yaradın.",
+      "action": "Görüşlərə Get"
     },
     "profile": {
       "title": "Profiliniz",
-      "description": "Sağlamlıq məlumatlarınızı, tarixçənizi və üstünlüklərinizi idarə edin.",
-      "action": "Profili görüntülə"
+      "description": "Sağlamlıq məlumatlarınızı, tarixçənizi və seçimlərinizi idarə edin.",
+      "action": "Profili Görüntülə"
     },
     "newAppointment": {
-      "title": "Yeni qəbula yazılma başlat",
-      "description": "Dr. Copad ilə yeni AI məsləhət qəbula yazılması yaradın.",
-      "action": "İndi başla",
+      "title": "Yeni Görüş Başladın",
+      "description": "{{agentName}} ilə yeni AI məsləhət görüşü yaradın.",
+      "action": "İndi Başla",
       "recommended": "Tövsiyə olunur"
     },
     "healthSummary": {
-      "title": "Sağlamlıq xülasəniz",
-      "recentConsultations": "Son məsləhətlər",
-      "profileCompletion": "Profil tamamlanması",
-      "nextAppointment": "Növbəti qəbula yazılma"
+      "title": "Sağlamlıq Xülasəniz",
+      "recentConsultations": "Son Məsləhətlər",
+      "profileCompletion": "Profil Tamamlanması",
+      "nextAppointment": "Növbəti Görüş"
     },
     "security": {
       "title": "Məlumatlarınız təhlükəsizdir",
-      "description": "Şifrələnmiş, məxfi və qorunur",
-      "learnMore": "Məxfilik siyasətimiz haqqında ətraflı məlumat →"
+      "description": "Şifrələnmiş, şəxsi və qorunur",
+      "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin →"
     },
     "footer": "Sağlamlığınız bizim üçün vacibdir. Bu tətbiq rahatlıq üçün yaradılıb."
   },
   "home": {
     "hero": {
-      "title": "AI ilə dəstəklənən tibbi kömək əldə edin",
+      "title": "AI ilə Tibbi Yardım Alın",
       "subtitle": "İstənilən vaxt. İstənilən yerdə.",
-      "description": "Dr. Copad sizin şəxsi AI həkiminizdir. Simptomlar haqqında dərhal söhbət edin, tibbi rəhbərlik əldə edin və sağlamlıq qeydlərinizi təhlükəsiz şəkildə təşkil edin.",
-      "getStarted": "Pulsuz başlayın",
+      "description": "{{agentName}} sizin şəxsi AI həkiminizdir. Simptomlar haqqında dərhal söhbət edin, tibbi məsləhət alın və sağlamlıq qeydlərinizi təhlükəsiz şəkildə təşkil edin.",
+      "getStarted": "Pulsuz Başlayın",
       "login": "Daxil ol",
       "usersCount": "{{count}} istifadəçiyə qoşulun"
     },
     "features": {
       "title": "Xüsusiyyətlər",
       "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
-      "description": "Əlçatan, etibarlı və ehtiyaclarınız üçün hazırlanmış AI ilə dəstəklənən tibbi yardım.",
+      "description": "Əlçatan, etibarlı və ehtiyaclarınıza uyğunlaşdırılmış AI ilə gücləndirilmiş tibbi yardım.",
       "chat": {
-        "title": "AI Həkim ilə söhbət edin",
-        "description": "Simptomlarınızı təsvir edin və AI tərəfindən yaradılan rəhbərliyi dərhal əldə edin — 24/7. Gözləmə otaqları yoxdur, qəbula yazılma lazım deyil."
+        "title": "AI Həkimlə Söhbət Edin",
+        "description": "Simptomlarınızı təsvir edin və AI tərəfindən yaradılmış məsləhətləri dərhal alın — 24/7. Gözləmə otaqları yoxdur, görüşlərə ehtiyac yoxdur."
       },
       "upload": {
-        "title": "Tibbi faylları yükləyin",
-        "description": "Laboratoriya nəticələrini, şəkilləri və tibbi tarixçəni AI köməyi ilə təhlil edin. Sadə dildə izahatlar və məlumatlar əldə edin."
+        "title": "Tibbi Faylları Yükləyin",
+        "description": "Laboratoriya nəticələrini, şəkilləri və tibbi tarixçəni AI köməyi ilə təhlil edin. Sadə dildə izahlar və içgörülər əldə edin."
       },
       "track": {
-        "title": "Qəbula yazılmaları izləyin",
+        "title": "Görüşləri İzləyin",
         "description": "Tarixçə, xülasələr və AI qeydləri ilə sağlamlıq səyahətinizi təşkil edin. Əvvəlki məsləhətlərinizə istənilən vaxt daxil olun."
       }
     },
     "testimonials": {
       "title": "Dünya üzrə istifadəçilər tərəfindən etibar edilir",
       "testimonial1": {
-        "quote": "Dr. Copad mənə laboratoriya nəticələrimi başa düşməyə kömək etdi, həkimimlə qəbula yazıla bilmədiyim zaman. Hər şeyi sadə dildə izah etdi.",
+        "quote": "{{agentName}} mənə laboratoriya nəticələrimi başa düşməyə kömək etdi, həkimimlə görüş təyin edə bilmədiyim zaman. Hər şeyi sadə dildə izah etdi.",
         "author": "Sarah K.",
         "role": "Xəstə"
       },
       "testimonial2": {
-        "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi rəhbərliyə çıxışımın olması həyatımı dəyişdi. Bu, cibimdə həkim olması kimidir.",
+        "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi məsləhət almaq həyatımı dəyişdi. Bu, cibinizdə həkim saxlamaq kimidir.",
         "author": "Michael T.",
         "role": "Xəstə"
       },
       "testimonial3": {
-        "quote": "Simptom yoxlayıcı təəccüblü dərəcədə dəqiqdir. Adi həkimimin aylardır qaçırdığı vəziyyəti müəyyən etməyə kömək etdi.",
+        "quote": "Simptom yoxlayıcı təəccüblü dərəcədə dəqiqdir. Adi həkimimin aylardır qaçırdığı bir vəziyyəti müəyyən etməyə kömək etdi.",
         "author": "Jessica W.",
-        "role": "Sağlamlıq işçisi"
+        "role": "Sağlamlıq İşçisi"
       }
     },
     "cta": {
       "title": "Sağlamlığınızın",
       "subtitle": "nəzarətini ələ almağa hazırsınız?",
-      "description": "Dr. Copad ilə bu gün başlayın və gələcək tibbi xidməti yaşayın. Abunə tələb olunmur.",
-      "getStarted": "Pulsuz başlayın",
+      "description": "Bu gün {{agentName}} ilə başlayın və gələcək tibbi yardımı təcrübə edin. Abunə tələb olunmur.",
+      "getStarted": "Pulsuz Başlayın",
       "login": "Daxil ol"
     },
     "footer": {
       "privacy": "Məxfilik Siyasəti",
       "terms": "İstifadə Şərtləri",
       "contact": "Əlaqə",
-      "security": "HIPAA uyğun. Məxfi. Məlumatlarınız sizindir."
+      "security": "HIPAA uyğun. Şəxsi. Məlumatlarınız sizindir."
     }
   },
   "chat": {
-    "title": "Dr. Copad ilə söhbət",
-    "subtitle": "Simptomlarınızı təsvir edin və AI ilə dəstəklənən tibbi rəhbərlik əldə edin",
+    "title": "{{agentName}} ilə Söhbət Edin",
+    "subtitle": "Simptomlarınızı təsvir edin və AI ilə gücləndirilmiş tibbi məsləhət alın",
     "input": {
       "placeholder": "Mesajınızı yazın...",
       "send": "Göndər",
@@ -215,16 +215,16 @@
     },
     "status": {
       "online": "Onlayn",
-      "typing": "Dr. Copad yazır...",
+      "typing": "{{agentName}} yazır...",
       "offline": "Oflayn"
     },
     "security": {
-      "hipaa": "HIPAA-Məxfi",
+      "hipaa": "HIPAA-Şəxsi",
       "save": "Söhbəti Saxla"
     },
     "empty": {
       "title": "Söhbətinizi başladın",
-      "description": "Simptomlarınızı təsvir edin və ya sağlamlıqla əlaqəli suallarınızı verin."
+      "description": "Başlamaq üçün simptomlarınızı təsvir edin və ya sağlamlıqla əlaqəli suallar verin."
     },
     "loading": "Söhbət tarixçəsi yüklənir...",
     "error": "Bağışlayın, mesajınızı emal edə bilmədim. Zəhmət olmasa yenidən cəhd edin."
@@ -234,9 +234,9 @@
     "subtitle": "Şəxsi və tibbi məlumatlarınızı idarə edin",
     "saveChanges": "Dəyişiklikləri Saxla",
     "loading": "Profiliniz yüklənir...",
-    "saved": "Dəyişikliklər uğurla saxlandı",
+    "saved": "Dəyişikliklər uğurla saxlanıldı",
     "personalInfo": {
-      "title": "Şəxsi Məlumatlar",
+      "title": "Şəxsi Məlumat",
       "fullName": "Tam Ad",
       "fullNamePlaceholder": "Tam adınızı daxil edin",
       "email": "E-poçt Ünvanı",
@@ -244,56 +244,56 @@
       "age": "Yaş",
       "agePlaceholder": "Yaşınızı daxil edin",
       "gender": "Cins",
-      "genderPlaceholder": "Cinsinizi seçin",
+      "genderPlaceholder": "Cins Seçin",
       "genderOptions": {
         "male": "Kişi",
         "female": "Qadın"
       }
     },
     "medicalInfo": {
-      "title": "Tibbi Məlumatlar",
+      "title": "Tibbi Məlumat",
       "height": "Boy (sm)",
       "heightPlaceholder": "Boyunuzu daxil edin",
       "weight": "Çəki (kq)",
       "weightPlaceholder": "Çəkinizi daxil edin",
       "conditions": "Tibbi Vəziyyətlər",
-      "conditionsPlaceholder": "Hər hansı tibbi vəziyyətləri sadalayın",
+      "conditionsPlaceholder": "Tibbi vəziyyətlərinizi sadalayın",
       "allergies": "Allergiyalar",
-      "allergiesPlaceholder": "Hər hansı allergiyaları sadalayın",
+      "allergiesPlaceholder": "Allergiyalarınızı sadalayın",
       "medications": "Cari Dərmanlar",
-      "medicationsPlaceholder": "Cari dərmanları sadalayın",
+      "medicationsPlaceholder": "Cari dərmanlarınızı sadalayın",
       "lifestyle": "Həyat Tərzi",
       "lifestylePlaceholder": "Həyat tərzinizi təsvir edin (məsələn, idman, siqaret, spirtli içki)"
     }
   },
   "register": {
-    "title": "Hesab yaradın",
-    "subtitle": "Başlamaq üçün məlumatlarınızı daxil edin",
+    "title": "Hesabınızı yaradın",
+    "subtitle": "Başlamaq üçün məlumatlarınızı doldurun",
     "illustration": {
       "title": "Sağlamlıq İcmasımıza Qoşulun",
-      "description": "AI ilə dəstəklənən tibbi məsləhətlərə və sağlamlıq resurslarına çıxış əldə etmək üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
+      "description": "AI ilə gücləndirilmiş tibbi məsləhətlərə və sağlamlıq resurslarına daxil olmaq üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
       "features": {
         "private": {
-          "title": "Məxfi və Təhlükəsiz",
+          "title": "Şəxsi & Təhlükəsiz",
           "description": "Sağlamlıq məlumatlarınız sənaye standartları ilə şifrələnib və qorunur"
         },
         "access": {
-          "title": "24/7 Çıxış",
-          "description": "Ehtiyacınız olduqda tibbi məsləhət əldə edin"
+          "title": "24/7 Giriş",
+          "description": "Ehtiyac duyduğunuz zaman tibbi məsləhətlər alın"
         },
         "dashboard": {
           "title": "Şəxsi İdarə Paneli",
-          "description": "Fərdiləşdirilmiş məlumatlarla sağlamlıq səyahətinizi izləyin"
+          "description": "Fərdiləşdirilmiş içgörülərlə sağlamlıq səyahətinizi izləyin"
         },
         "ai": {
-          "title": "AI ilə Dəstəklənir",
-          "description": "Ən son tibbi AI texnologiyasını yaşayın"
+          "title": "AI ilə Gücləndirilmiş",
+          "description": "Ən son tibbi AI texnologiyasını təcrübə edin"
         }
       }
     },
     "form": {
       "fullName": "Tam Ad",
-      "fullNamePlaceholder": "Ad Soyad",
+      "fullNamePlaceholder": "John Doe",
       "email": "E-poçt ünvanı",
       "emailPlaceholder": "sizin@email.com",
       "password": "Şifrə",
@@ -307,7 +307,7 @@
         "male": "Kişi",
         "female": "Qadın"
       },
-      "terms": "Mən razıyam",
+      "terms": "Mən",
       "termsLink": "İstifadə Şərtləri",
       "and": "və",
       "privacyLink": "Məxfilik Siyasəti",

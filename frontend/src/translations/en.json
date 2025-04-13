@@ -31,7 +31,7 @@
       "no_account": "Don't have an account?",
       "create_account": "Create an account",
       "secure_title": "Secure Medical Consultations",
-      "secure_description": "Your health data is encrypted and securely stored. Access medical expertise anytime with Dr. Copad.",
+      "secure_description": "Your health data is encrypted and securely stored. Access medical expertise anytime with {{agentName}}.",
       "access": "Access",
       "secure": "Secure",
       "powered": "Powered",
@@ -70,7 +70,7 @@
   },
   "newAppointment": {
     "title": "Start a New Appointment",
-    "subtitle": "Tell us what you need help with and we'll connect you with Dr. Copad",
+    "subtitle": "Tell us what you need help with and we'll connect you with {{agentName}}",
     "specialty": {
       "label": "What type of care do you need?",
       "options": {
@@ -107,7 +107,7 @@
       "placeholder": "e.g., over-the-counter medications, home remedies"
     },
     "notes": {
-      "label": "Anything else Dr. Copad should know? (Optional)",
+      "label": "Anything else {{agentName}} should know? (Optional)",
       "placeholder": "e.g., allergies, existing conditions, current medications"
     },
     "continue": "Continue",
@@ -130,7 +130,7 @@
     },
     "newAppointment": {
       "title": "Start a New Appointment",
-      "description": "Create a new AI consultation appointment with Dr. Copad.",
+      "description": "Create a new AI consultation appointment with {{agentName}}.",
       "action": "Start Now",
       "recommended": "Recommended"
     },
@@ -151,7 +151,7 @@
     "hero": {
       "title": "Get AI-Powered Medical Help",
       "subtitle": "Anytime. Anywhere.",
-      "description": "Dr. Copad is your personal AI doctor. Chat instantly about symptoms, get medical guidance, and organize your health records securely.",
+      "description": "{{agentName}} is your personal AI doctor. Chat instantly about symptoms, get medical guidance, and organize your health records securely.",
       "getStarted": "Get Started Free",
       "login": "Login",
       "usersCount": "Join {{count}} users"
@@ -176,7 +176,7 @@
     "testimonials": {
       "title": "Trusted by users worldwide",
       "testimonial1": {
-        "quote": "Dr. Copad helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in simple terms.",
+        "quote": "{{agentName}} helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in simple terms.",
         "author": "Sarah K.",
         "role": "Patient"
       },
@@ -194,7 +194,7 @@
     "cta": {
       "title": "Ready to take control of",
       "subtitle": "your health?",
-      "description": "Start with Dr. Copad today and experience the future of healthcare. No subscription required.",
+      "description": "Start with {{agentName}} today and experience the future of healthcare. No subscription required.",
       "getStarted": "Get Started Free",
       "login": "Login"
     },
@@ -206,7 +206,7 @@
     }
   },
   "chat": {
-    "title": "Chat with Dr. Copad",
+    "title": "Chat with {{agentName}}",
     "subtitle": "Describe your symptoms and get AI-powered medical guidance",
     "input": {
       "placeholder": "Type your message...",
@@ -215,7 +215,7 @@
     },
     "status": {
       "online": "Online",
-      "typing": "Dr. Copad is typing...",
+      "typing": "{{agentName}} is typing...",
       "offline": "Offline"
     },
     "security": {
