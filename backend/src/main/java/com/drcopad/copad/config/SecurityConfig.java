@@ -27,15 +27,17 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/guest/**", "/", "/login", "/oauth2/**").permitAll()
+                .requestMatchers("/api/auth/**", "/api/guest/**", "/api/login", "/api/oauth2/**").permitAll()
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
-            .oauth2Login(oauth2 -> oauth2
-                .loginPage("/login")
+            .formLogin(form -> form
+                .loginPage("/api/login")
+                .loginProcessingUrl("/api/auth/login")
                 .successHandler(authenticationSuccessHandler())
+                .failureUrl("/api/login?error=true")
             );
 
         return http.build();
@@ -44,7 +46,8 @@ public class SecurityConfig {
     @Bean
     public AuthenticationSuccessHandler authenticationSuccessHandler() {
         SimpleUrlAuthenticationSuccessHandler handler = new SimpleUrlAuthenticationSuccessHandler();
-        handler.setDefaultTargetUrl("/");
+        handler.setDefaultTargetUrl("/api/");
+        handler.setAlwaysUseDefaultTargetUrl(true);
         return handler;
     }
 

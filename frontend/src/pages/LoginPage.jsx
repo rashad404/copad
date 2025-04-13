@@ -29,7 +29,8 @@ export default function LoginPage() {
       // Redirect to the saved path or home
       const redirectPath = location.state?.redirect || "/";
       navigate(redirectPath);
-    } catch {
+    } catch (err) {
+      console.error('Login error:', err);
       setError(t('auth.errors.invalid_credentials'));
     } finally {
       setLoading(false);
