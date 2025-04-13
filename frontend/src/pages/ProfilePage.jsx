@@ -3,8 +3,10 @@ import Navbar from "../components/Navbar";
 import Breadcrumb from "../components/Breadcrumb";
 import axios from "axios";
 import { Save, User, AlertCircle, Loader, CheckCircle } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 export default function ProfilePage() {
+  const { t } = useTranslation();
   const [profile, setProfile] = useState({
     name: "",
     email: "",
@@ -74,15 +76,15 @@ export default function ProfilePage() {
     <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <Breadcrumb items={[{ label: "Profile" }]} />
+        <Breadcrumb items={[{ label: t("navbar.profile") }]} />
         
         <div className="bg-white rounded-xl shadow-sm overflow-hidden mt-6">
           {/* Header section */}
           <div className="p-6 sm:p-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white">
             <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
               <div>
-                <h1 className="text-2xl sm:text-3xl font-bold">Your Profile</h1>
-                <p className="mt-1 text-indigo-100">Manage your personal and medical information</p>
+                <h1 className="text-2xl sm:text-3xl font-bold">{t("profile.title")}</h1>
+                <p className="mt-1 text-indigo-100">{t("profile.subtitle")}</p>
               </div>
               <button
                 type="submit"
@@ -90,7 +92,7 @@ export default function ProfilePage() {
                 className="flex items-center gap-2 bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-indigo-50 transition-colors"
               >
                 <Save size={18} />
-                Save Changes
+                {t("profile.saveChanges")}
               </button>
             </div>
           </div>
@@ -100,7 +102,7 @@ export default function ProfilePage() {
             {loading ? (
               <div className="flex justify-center items-center py-12">
                 <Loader className="w-8 h-8 text-indigo-600 animate-spin" />
-                <span className="ml-2 text-gray-600">Loading your profile...</span>
+                <span className="ml-2 text-gray-600">{t("profile.loading")}</span>
               </div>
             ) : (
               <form id="profile-form" onSubmit={handleSubmit} className="space-y-8">
@@ -108,55 +110,55 @@ export default function ProfilePage() {
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <User className="mr-2 text-indigo-600" size={20} />
-                    Personal Information
+                    {t("profile.personalInfo.title")}
                   </h2>
                   <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Full Name</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.personalInfo.fullName")}</label>
                         <input 
                           name="name" 
                           value={profile.name} 
                           onChange={handleChange} 
-                          placeholder="Enter your full name" 
+                          placeholder={t("profile.personalInfo.fullNamePlaceholder")}
                           required 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Email Address</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.personalInfo.email")}</label>
                         <input 
                           name="email" 
                           value={profile.email} 
                           onChange={handleChange} 
-                          placeholder="Enter your email" 
+                          placeholder={t("profile.personalInfo.emailPlaceholder")}
                           type="email" 
                           required 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Age</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.personalInfo.age")}</label>
                         <input 
                           name="age" 
                           value={profile.age} 
                           onChange={handleChange} 
-                          placeholder="Enter your age" 
+                          placeholder={t("profile.personalInfo.agePlaceholder")}
                           type="number" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Gender</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.personalInfo.gender")}</label>
                         <select 
                           name="gender" 
                           value={profile.gender} 
                           onChange={handleChange} 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white"
                         >
-                          <option value="">Select Gender</option>
-                          <option>Male</option>
-                          <option>Female</option>
+                          <option value="">{t("profile.personalInfo.genderPlaceholder")}</option>
+                          <option value="male">{t("profile.personalInfo.genderOptions.male")}</option>
+                          <option value="female">{t("profile.personalInfo.genderOptions.female")}</option>
                         </select>
                       </div>
                     </div>
@@ -167,28 +169,28 @@ export default function ProfilePage() {
                 <div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-4 flex items-center">
                     <AlertCircle className="mr-2 text-indigo-600" size={20} />
-                    Medical Information
+                    {t("profile.medicalInfo.title")}
                   </h2>
                   <div className="bg-gray-50 p-6 rounded-lg border border-gray-200">
                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Height (cm)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.height")}</label>
                         <input 
                           name="height" 
                           value={profile.medicalProfile.height} 
                           onChange={handleMedicalChange} 
-                          placeholder="Enter your height" 
+                          placeholder={t("profile.medicalInfo.heightPlaceholder")}
                           type="number" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Weight (kg)</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.weight")}</label>
                         <input 
                           name="weight" 
                           value={profile.medicalProfile.weight} 
                           onChange={handleMedicalChange} 
-                          placeholder="Enter your weight" 
+                          placeholder={t("profile.medicalInfo.weightPlaceholder")}
                           type="number" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
@@ -197,45 +199,45 @@ export default function ProfilePage() {
 
                     <div className="space-y-6">
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Medical Conditions</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.conditions")}</label>
                         <textarea 
                           name="conditions" 
                           value={profile.medicalProfile.conditions} 
                           onChange={handleMedicalChange} 
-                          placeholder="List any medical conditions" 
+                          placeholder={t("profile.medicalInfo.conditionsPlaceholder")}
                           rows="2" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Allergies</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.allergies")}</label>
                         <textarea 
                           name="allergies" 
                           value={profile.medicalProfile.allergies} 
                           onChange={handleMedicalChange} 
-                          placeholder="List any allergies" 
+                          placeholder={t("profile.medicalInfo.allergiesPlaceholder")}
                           rows="2" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Current Medications</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.medications")}</label>
                         <textarea 
                           name="medications" 
                           value={profile.medicalProfile.medications} 
                           onChange={handleMedicalChange} 
-                          placeholder="List any current medications" 
+                          placeholder={t("profile.medicalInfo.medicationsPlaceholder")}
                           rows="2" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
                       </div>
                       <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Lifestyle</label>
+                        <label className="block text-sm font-medium text-gray-700 mb-1">{t("profile.medicalInfo.lifestyle")}</label>
                         <textarea 
                           name="lifestyle" 
                           value={profile.medicalProfile.lifestyle} 
                           onChange={handleMedicalChange} 
-                          placeholder="Describe your lifestyle (e.g., exercise, smoking, alcohol)" 
+                          placeholder={t("profile.medicalInfo.lifestylePlaceholder")}
                           rows="2" 
                           className="w-full border border-gray-300 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none" 
                         />
@@ -248,25 +250,25 @@ export default function ProfilePage() {
                 <div className="sm:hidden">
                   <button 
                     type="submit" 
-                    className="w-full bg-indigo-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 flex items-center justify-center"
+                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-3 rounded-lg font-medium shadow-sm hover:bg-indigo-700 transition-colors"
                   >
-                    <Save size={18} className="mr-2" />
-                    Save Changes
+                    <Save size={18} />
+                    {t("profile.saveChanges")}
                   </button>
                 </div>
+
+                {/* Success message */}
+                {saved && (
+                  <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
+                    <CheckCircle size={18} />
+                    {t("profile.saved")}
+                  </div>
+                )}
               </form>
             )}
           </div>
         </div>
       </div>
-
-      {/* Success notification */}
-      {saved && (
-        <div className="fixed bottom-6 right-6 bg-green-600 text-white px-5 py-3 rounded-lg shadow-lg z-50 flex items-center">
-          <CheckCircle className="mr-2" size={18} />
-          Profile saved successfully!
-        </div>
-      )}
     </div>
   );
 }

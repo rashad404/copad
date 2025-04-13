@@ -228,5 +228,94 @@
     },
     "loading": "Loading chat history...",
     "error": "Sorry, I couldn't process your message. Please try again."
+  },
+  "profile": {
+    "title": "Your Profile",
+    "subtitle": "Manage your personal and medical information",
+    "saveChanges": "Save Changes",
+    "loading": "Loading your profile...",
+    "saved": "Changes saved successfully",
+    "personalInfo": {
+      "title": "Personal Information",
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "Enter your full name",
+      "email": "Email Address",
+      "emailPlaceholder": "Enter your email",
+      "age": "Age",
+      "agePlaceholder": "Enter your age",
+      "gender": "Gender",
+      "genderPlaceholder": "Select Gender",
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female"
+      }
+    },
+    "medicalInfo": {
+      "title": "Medical Information",
+      "height": "Height (cm)",
+      "heightPlaceholder": "Enter your height",
+      "weight": "Weight (kg)",
+      "weightPlaceholder": "Enter your weight",
+      "conditions": "Medical Conditions",
+      "conditionsPlaceholder": "List any medical conditions",
+      "allergies": "Allergies",
+      "allergiesPlaceholder": "List any allergies",
+      "medications": "Current Medications",
+      "medicationsPlaceholder": "List any current medications",
+      "lifestyle": "Lifestyle",
+      "lifestylePlaceholder": "Describe your lifestyle (e.g., exercise, smoking, alcohol)"
+    }
+  },
+  "register": {
+    "title": "Create your account",
+    "subtitle": "Fill in your details to get started",
+    "illustration": {
+      "title": "Join Our Healthcare Community",
+      "description": "Create your personal account to access AI-powered medical consultations and health resources, all in one secure platform.",
+      "features": {
+        "private": {
+          "title": "Private & Secure",
+          "description": "Your health data is encrypted and protected by industry standards"
+        },
+        "access": {
+          "title": "24/7 Access",
+          "description": "Get medical consultations whenever you need them"
+        },
+        "dashboard": {
+          "title": "Personal Dashboard",
+          "description": "Track your health journey with customized insights"
+        },
+        "ai": {
+          "title": "AI-Powered",
+          "description": "Experience the latest in medical AI technology"
+        }
+      }
+    },
+    "form": {
+      "fullName": "Full Name",
+      "fullNamePlaceholder": "John Doe",
+      "email": "Email address",
+      "emailPlaceholder": "your@email.com",
+      "password": "Password",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Password should be at least 8 characters long",
+      "age": "Age",
+      "agePlaceholder": "30",
+      "gender": "Gender",
+      "genderPlaceholder": "Select",
+      "genderOptions": {
+        "male": "Male",
+        "female": "Female"
+      },
+      "terms": "I agree to the",
+      "termsLink": "Terms of Service",
+      "and": "and",
+      "privacyLink": "Privacy Policy",
+      "submit": "Create account",
+      "submitting": "Creating account..."
+    },
+    "error": {
+      "registrationFailed": "Registration failed. Please try again."
+    }
   }
 } 

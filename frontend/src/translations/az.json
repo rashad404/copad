@@ -228,5 +228,94 @@
     },
     "loading": "Söhbət tarixçəsi yüklənir...",
     "error": "Bağışlayın, mesajınızı emal edə bilmədim. Zəhmət olmasa yenidən cəhd edin."
+  },
+  "profile": {
+    "title": "Profiliniz",
+    "subtitle": "Şəxsi və tibbi məlumatlarınızı idarə edin",
+    "saveChanges": "Dəyişiklikləri Saxla",
+    "loading": "Profiliniz yüklənir...",
+    "saved": "Dəyişikliklər uğurla saxlandı",
+    "personalInfo": {
+      "title": "Şəxsi Məlumatlar",
+      "fullName": "Tam Ad",
+      "fullNamePlaceholder": "Tam adınızı daxil edin",
+      "email": "E-poçt Ünvanı",
+      "emailPlaceholder": "E-poçtunuzu daxil edin",
+      "age": "Yaş",
+      "agePlaceholder": "Yaşınızı daxil edin",
+      "gender": "Cins",
+      "genderPlaceholder": "Cinsinizi seçin",
+      "genderOptions": {
+        "male": "Kişi",
+        "female": "Qadın"
+      }
+    },
+    "medicalInfo": {
+      "title": "Tibbi Məlumatlar",
+      "height": "Boy (sm)",
+      "heightPlaceholder": "Boyunuzu daxil edin",
+      "weight": "Çəki (kq)",
+      "weightPlaceholder": "Çəkinizi daxil edin",
+      "conditions": "Tibbi Vəziyyətlər",
+      "conditionsPlaceholder": "Hər hansı tibbi vəziyyətləri sadalayın",
+      "allergies": "Allergiyalar",
+      "allergiesPlaceholder": "Hər hansı allergiyaları sadalayın",
+      "medications": "Cari Dərmanlar",
+      "medicationsPlaceholder": "Cari dərmanları sadalayın",
+      "lifestyle": "Həyat Tərzi",
+      "lifestylePlaceholder": "Həyat tərzinizi təsvir edin (məsələn, idman, siqaret, spirtli içki)"
+    }
+  },
+  "register": {
+    "title": "Hesab yaradın",
+    "subtitle": "Başlamaq üçün məlumatlarınızı daxil edin",
+    "illustration": {
+      "title": "Sağlamlıq İcmasımıza Qoşulun",
+      "description": "AI ilə dəstəklənən tibbi məsləhətlərə və sağlamlıq resurslarına çıxış əldə etmək üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
+      "features": {
+        "private": {
+          "title": "Məxfi və Təhlükəsiz",
+          "description": "Sağlamlıq məlumatlarınız sənaye standartları ilə şifrələnib və qorunur"
+        },
+        "access": {
+          "title": "24/7 Çıxış",
+          "description": "Ehtiyacınız olduqda tibbi məsləhət əldə edin"
+        },
+        "dashboard": {
+          "title": "Şəxsi İdarə Paneli",
+          "description": "Fərdiləşdirilmiş məlumatlarla sağlamlıq səyahətinizi izləyin"
+        },
+        "ai": {
+          "title": "AI ilə Dəstəklənir",
+          "description": "Ən son tibbi AI texnologiyasını yaşayın"
+        }
+      }
+    },
+    "form": {
+      "fullName": "Tam Ad",
+      "fullNamePlaceholder": "Ad Soyad",
+      "email": "E-poçt ünvanı",
+      "emailPlaceholder": "sizin@email.com",
+      "password": "Şifrə",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Şifrə ən azı 8 simvol uzunluğunda olmalıdır",
+      "age": "Yaş",
+      "agePlaceholder": "30",
+      "gender": "Cins",
+      "genderPlaceholder": "Seçin",
+      "genderOptions": {
+        "male": "Kişi",
+        "female": "Qadın"
+      },
+      "terms": "Mən razıyam",
+      "termsLink": "İstifadə Şərtləri",
+      "and": "və",
+      "privacyLink": "Məxfilik Siyasəti",
+      "submit": "Hesab yaradın",
+      "submitting": "Hesab yaradılır..."
+    },
+    "error": {
+      "registrationFailed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
+    }
   }
 } 
