@@ -1,0 +1,18 @@
+# Backend configuration files
+backend/src/main/resources/application.yml
+backend/src/main/resources/application-local.yml
+
+# Frontend
+frontend/node_modules
+frontend/dist
+frontend/.env
+frontend/.env.production
+
+# IDE
+.idea
+.vscode
+*.iml
+
+# OS
+.DS_Store
+Thumbs.db
