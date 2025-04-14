@@ -17,11 +17,16 @@ export default function GuestChat() {
   const messagesEndRef = useRef(null);
 
   const scrollToBottom = () => {
-    messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+    if (messagesEndRef.current) {
+      messagesEndRef.current.scrollIntoView({ behavior: "smooth", block: "end" });
+    }
   };
 
   useEffect(() => {
-    scrollToBottom();
+    // Only scroll if the last message is from the user
+    if (messages.length > 0 && messages[messages.length - 1].isUser) {
+      scrollToBottom();
+    }
   }, [messages]);
 
   useEffect(() => {
@@ -171,7 +176,7 @@ export default function GuestChat() {
   return (
     <div className="flex flex-col h-full">
       {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4">
+      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(500px - 120px)' }}>
         {messages.map((message, index) => (
           <div
             key={index}
@@ -208,7 +213,7 @@ export default function GuestChat() {
       )}
 
       {/* Message input */}
-      <div className="p-4 border-t">
+      <div className="p-4 border-t bg-white">
         <div className="flex items-center gap-2">
           <button
             onClick={handleSaveChat}

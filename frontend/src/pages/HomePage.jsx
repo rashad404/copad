@@ -60,7 +60,7 @@ export default function HomePage() {
               </div>
               
               <div className="mt-16 sm:mt-24 lg:col-span-5 lg:mt-0">
-                <div className="bg-white rounded-2xl shadow-xl overflow-hidden">
+                <div className="bg-white rounded-2xl shadow-xl">
                   <div className="bg-indigo-700 px-6 py-4">
                     <div className="flex items-center">
                       <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
@@ -69,7 +69,7 @@ export default function HomePage() {
                       <div className="ml-auto text-white font-medium">{t("chat.title")}</div>
                     </div>
                   </div>
-                  <div className="h-[500px]">
+                  <div className="h-[500px] flex flex-col">
                     <GuestChat />
                   </div>
                 </div>
