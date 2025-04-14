@@ -36,16 +36,34 @@ public class GuestSessionService {
                 .build();
         
         session = guestSessionRepository.save(session);
-        log.info("Created new guest session with ID: {} - Created at: {}", session.getSessionId(), session.getCreatedAt());
+        log.info("Created new guest session with ID: {} - Created at: {} - IP: {}", 
+            session.getSessionId(), session.getCreatedAt(), session.getIpAddress());
+        
+        // Log all existing sessions for debugging
+        List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
+        log.info("Total sessions in database: {}", allSessions.size());
+        allSessions.forEach(s -> 
+            log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
+                s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
+        
         return mapToDTO(session);
     }
 
     @Transactional
     public GuestSessionDTO getSession(String sessionId) {
         log.info("Retrieving guest session: {}", sessionId);
+        
+        // Log all existing sessions before retrieval
+        List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
+        log.info("Total sessions in database before retrieval: {}", allSessions.size());
+        allSessions.forEach(s -> 
+            log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
+                s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
+        
         return guestSessionRepository.findBySessionId(sessionId)
                 .map(session -> {
-                    log.info("Found guest session: {} - Last active: {}", sessionId, session.getLastActive());
+                    log.info("Found guest session: {} - Last active: {} - IP: {}", 
+                        sessionId, session.getLastActive(), session.getIpAddress());
                     return mapToDTO(session);
                 })
                 .orElseThrow(() -> {
