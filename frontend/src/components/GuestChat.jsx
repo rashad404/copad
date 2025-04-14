@@ -8,7 +8,7 @@ export default function GuestChat() {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState(localStorage.getItem('guestSessionId'));
+  const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,42 +26,56 @@ export default function GuestChat() {
 
   useEffect(() => {
     const initSession = async () => {
-      if (!sessionId) {
-        try {
-          setLoading(true);
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Try to get existing session from localStorage
+        const storedSessionId = localStorage.getItem('guestSessionId');
+        console.log('Stored session ID from localStorage:', storedSessionId);
+        
+        if (storedSessionId) {
+          try {
+            console.log('Attempting to verify existing session:', storedSessionId);
+            // Verify if session still exists
+            const sessionResponse = await getGuestSession(storedSessionId);
+            console.log('Existing session verified:', sessionResponse);
+            setSessionId(storedSessionId);
+          } catch (err) {
+            console.log('Existing session not valid, creating new one. Error:', err);
+            // If session doesn't exist, create a new one
+            const response = await startGuestSession();
+            const newSessionId = response.data.sessionId;
+            console.log('Created new session:', newSessionId);
+            setSessionId(newSessionId);
+            localStorage.setItem('guestSessionId', newSessionId);
+          }
+        } else {
+          console.log('No stored session found, creating new one');
+          // Create new session if none exists
           const response = await startGuestSession();
           const newSessionId = response.data.sessionId;
+          console.log('Created new session:', newSessionId);
           setSessionId(newSessionId);
           localStorage.setItem('guestSessionId', newSessionId);
-          
-          // Add welcome message
-          setMessages([{
-            message: t('chat.welcomeMessage'),
-            isUser: false,
-            timestamp: new Date()
-          }]);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
         }
-      } else {
-        // If session exists, ensure welcome message is first
-        setMessages(prev => {
-          if (prev.length === 0 || prev[0].message !== t('chat.welcomeMessage')) {
-            return [{
-              message: t('chat.welcomeMessage'),
-              isUser: false,
-              timestamp: new Date()
-            }, ...prev];
-          }
-          return prev;
-        });
+        
+        // Add welcome message
+        setMessages([{
+          message: t('chat.welcomeMessage'),
+          isUser: false,
+          timestamp: new Date()
+        }]);
+      } catch (err) {
+        console.error('Error initializing session:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     initSession();
-  }, [sessionId, t]);
+  }, [t]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -71,17 +85,46 @@ export default function GuestChat() {
       setLoading(true);
       setError(null);
       
+      // Verify session is still valid before sending message
+      if (sessionId) {
+        try {
+          await getGuestSession(sessionId);
+        } catch (err) {
+          console.log('Session invalid, creating new one');
+          const response = await startGuestSession();
+          const newSessionId = response.data.sessionId;
+          console.log('Created new session for message:', newSessionId);
+          setSessionId(newSessionId);
+          localStorage.setItem('guestSessionId', newSessionId);
+        }
+      } else {
+        console.log('No session ID, creating new one');
+        const response = await startGuestSession();
+        const newSessionId = response.data.sessionId;
+        console.log('Created new session for message:', newSessionId);
+        setSessionId(newSessionId);
+        localStorage.setItem('guestSessionId', newSessionId);
+      }
+      
       // Add user message immediately
       setMessages(prev => [...prev, { message: newMessage, isUser: true }]);
       setNewMessage('');
 
-      // Send message to backend
+      // Send message to backend with current session ID
       const response = await sendGuestMessage(sessionId, newMessage);
       
       // Add AI response
       setMessages(prev => [...prev, { message: response.data, isUser: false }]);
     } catch (err) {
-      setError(err.message);
+      console.error('Error sending message:', err);
+      if (err.response?.status === 404) {
+        // Session not found, clear it and let the useEffect create a new one
+        localStorage.removeItem('guestSessionId');
+        setSessionId(null);
+        setError(t('chat.sessionExpired'));
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -99,6 +142,7 @@ export default function GuestChat() {
       await saveConversation(sessionId);
       navigate('/appointments');
     } catch (err) {
+      console.error('Error saving chat:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -191,9 +235,9 @@ export default function GuestChat() {
           />
           <button
             onClick={handleSendMessage}
-            disabled={loading || !newMessage.trim()}
+            disabled={loading || !newMessage.trim() || !sessionId}
             className={`flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg
-              ${loading || !newMessage.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 cursor-pointer'}`}
+              ${loading || !newMessage.trim() || !sessionId ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 cursor-pointer'}`}
           >
             {loading ? (
               <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">

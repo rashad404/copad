@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 public interface GuestSessionRepository extends JpaRepository<GuestSession, String> {
@@ -19,4 +20,7 @@ public interface GuestSessionRepository extends JpaRepository<GuestSession, Stri
     @Modifying
     @Query("UPDATE GuestSession g SET g.lastActive = CURRENT_TIMESTAMP WHERE g.sessionId = :sessionId")
     void updateLastActive(@Param("sessionId") String sessionId);
+
+    @Query("SELECT g FROM GuestSession g ORDER BY g.createdAt DESC")
+    List<GuestSession> findAllSessions();
 } 

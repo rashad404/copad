@@ -43,7 +43,8 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
             .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/auth/**", "/api/guest/**").permitAll()
+                .requestMatchers("/api/guest/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
@@ -56,7 +57,9 @@ public class SecurityConfig {
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }

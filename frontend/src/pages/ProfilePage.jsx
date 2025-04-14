@@ -4,6 +4,9 @@ import Breadcrumb from "../components/Breadcrumb";
 import axios from "axios";
 import { Save, User, AlertCircle, Loader, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
+import { getApiUrl } from "../config/domains";
+
+const API_URL = getApiUrl();
 
 export default function ProfilePage() {
   const { t } = useTranslation();
@@ -26,7 +29,7 @@ export default function ProfilePage() {
   const [saved, setSaved] = useState(false);
 
   useEffect(() => {
-    axios.get("http://localhost:8080/api/profile", {
+    axios.get(`${API_URL}/profile`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
       }).then(res => {
         const data = res.data;
@@ -65,7 +68,7 @@ export default function ProfilePage() {
 
   const handleSubmit = async e => {
     e.preventDefault();
-    await axios.put("http://localhost:8080/api/profile", profile, {
+    await axios.put(`${API_URL}/profile`, profile, {
       headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
     });
     setSaved(true);
