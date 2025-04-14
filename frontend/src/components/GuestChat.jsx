@@ -8,7 +8,7 @@ export default function GuestChat() {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState(localStorage.getItem('guestSessionId'));
+  const [sessionId, setSessionId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
@@ -26,46 +26,56 @@ export default function GuestChat() {
 
   useEffect(() => {
     const initSession = async () => {
-      if (!sessionId) {
-        try {
-          setLoading(true);
+      try {
+        setLoading(true);
+        setError(null);
+        
+        // Try to get existing session from localStorage
+        const storedSessionId = localStorage.getItem('guestSessionId');
+        
+        if (storedSessionId) {
+          try {
+            // Verify if session still exists
+            await getGuestSession(storedSessionId);
+            setSessionId(storedSessionId);
+            console.log('Using existing session:', storedSessionId);
+          } catch (err) {
+            console.log('Existing session not valid, creating new one');
+            // If session doesn't exist, create a new one
+            const response = await startGuestSession();
+            const newSessionId = response.data.sessionId;
+            setSessionId(newSessionId);
+            localStorage.setItem('guestSessionId', newSessionId);
+          }
+        } else {
+          // Create new session if none exists
           const response = await startGuestSession();
           const newSessionId = response.data.sessionId;
           setSessionId(newSessionId);
           localStorage.setItem('guestSessionId', newSessionId);
-          
-          // Add welcome message
-          setMessages([{
-            message: t('chat.welcomeMessage'),
-            isUser: false,
-            timestamp: new Date()
-          }]);
-        } catch (err) {
-          setError(err.message);
-        } finally {
-          setLoading(false);
+          console.log('Created new session:', newSessionId);
         }
-      } else {
-        // If session exists, ensure welcome message is first
-        setMessages(prev => {
-          if (prev.length === 0 || prev[0].message !== t('chat.welcomeMessage')) {
-            return [{
-              message: t('chat.welcomeMessage'),
-              isUser: false,
-              timestamp: new Date()
-            }, ...prev];
-          }
-          return prev;
-        });
+        
+        // Add welcome message
+        setMessages([{
+          message: t('chat.welcomeMessage'),
+          isUser: false,
+          timestamp: new Date()
+        }]);
+      } catch (err) {
+        console.error('Error initializing session:', err);
+        setError(err.message);
+      } finally {
+        setLoading(false);
       }
     };
 
     initSession();
-  }, [sessionId, t]);
+  }, [t]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || loading) return;
+    if (!newMessage.trim() || loading || !sessionId) return;
 
     try {
       setLoading(true);
@@ -81,7 +91,15 @@ export default function GuestChat() {
       // Add AI response
       setMessages(prev => [...prev, { message: response.data, isUser: false }]);
     } catch (err) {
-      setError(err.message);
+      console.error('Error sending message:', err);
+      if (err.response?.status === 404) {
+        // Session not found, clear it and let the useEffect create a new one
+        localStorage.removeItem('guestSessionId');
+        setSessionId(null);
+        setError(t('chat.sessionExpired'));
+      } else {
+        setError(err.message);
+      }
     } finally {
       setLoading(false);
     }
@@ -99,6 +117,7 @@ export default function GuestChat() {
       await saveConversation(sessionId);
       navigate('/appointments');
     } catch (err) {
+      console.error('Error saving chat:', err);
       setError(err.message);
     } finally {
       setLoading(false);
@@ -191,9 +210,9 @@ export default function GuestChat() {
           />
           <button
             onClick={handleSendMessage}
-            disabled={loading || !newMessage.trim()}
+            disabled={loading || !newMessage.trim() || !sessionId}
             className={`flex items-center justify-center px-4 py-2 bg-indigo-600 text-white rounded-lg
-              ${loading || !newMessage.trim() ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 cursor-pointer'}`}
+              ${loading || !newMessage.trim() || !sessionId ? 'opacity-50 cursor-not-allowed' : 'hover:bg-indigo-700 cursor-pointer'}`}
           >
             {loading ? (
               <svg className="animate-spin h-5 w-5" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
