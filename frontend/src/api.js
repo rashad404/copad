@@ -1,20 +1,10 @@
 import axios from "axios";
+import { getApiUrl } from "./config/domains";
 
-// Get the current domain
-const getBaseUrl = () => {
-  // Use the environment variable if it exists
-  if (import.meta.env.VITE_API_URL) {
-    return import.meta.env.VITE_API_URL;
-  }
-  
-  // Fallback to the current domain
-  const protocol = window.location.protocol;
-  const hostname = window.location.hostname;
-  return `${protocol}//${hostname}/api`;
-};
+const API_URL = getApiUrl();
 
 const API = axios.create({
-  baseURL: getBaseUrl(),
+  baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json',
     'Accept': 'application/json',
