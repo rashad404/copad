@@ -28,32 +28,47 @@ public class GuestController {
     }
 
     @GetMapping("/session/{sessionId}")
-    public ResponseEntity<GuestSessionDTO> getSession(@PathVariable String sessionId) {
+    public ResponseEntity<?> getSession(@PathVariable String sessionId) {
         if (!rateLimiterService.isAllowed(sessionId)) {
             throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
         }
-        return ResponseEntity.ok(guestSessionService.getSession(sessionId));
+        try {
+            return ResponseEntity.ok(guestSessionService.getSession(sessionId));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Session not found. Please start a new session.");
+        }
     }
 
     @PostMapping("/chat/{sessionId}")
-    public ResponseEntity<String> chat(
+    public ResponseEntity<?> chat(
             @PathVariable String sessionId,
             @RequestBody String message) {
         if (!rateLimiterService.isAllowed(sessionId)) {
             throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
         }
-        return ResponseEntity.ok(guestSessionService.processChat(sessionId, message));
+        try {
+            return ResponseEntity.ok(guestSessionService.processChat(sessionId, message));
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Session not found. Please start a new session.");
+        }
     }
 
     @PostMapping("/save-email/{sessionId}")
-    public ResponseEntity<Void> saveEmail(
+    public ResponseEntity<?> saveEmail(
             @PathVariable String sessionId,
             @RequestBody String email) {
         if (!rateLimiterService.isAllowed(sessionId)) {
             throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
         }
-        guestSessionService.saveEmail(sessionId, email);
-        return ResponseEntity.ok().build();
+        try {
+            guestSessionService.saveEmail(sessionId, email);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Session not found. Please start a new session.");
+        }
     }
 
     @ExceptionHandler(RateLimitExceededException.class)
