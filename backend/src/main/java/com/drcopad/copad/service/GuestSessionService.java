@@ -123,8 +123,8 @@ public class GuestSessionService {
             log.info("Session ID: {}, Created: {}, Last Active: {}", 
                 session.getSessionId(), session.getCreatedAt(), session.getLastActive()));
         
-        int deleted = guestSessionRepository.deleteExpiredSessions(cutoff);
-        log.info("Deleted {} expired guest sessions", deleted);
+        // Delete expired sessions
+        guestSessionRepository.deleteExpiredSessions(cutoff);
         
         // Log remaining sessions after cleanup
         List<GuestSession> remainingSessions = guestSessionRepository.findAll();
