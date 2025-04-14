@@ -56,9 +56,13 @@ public class SecurityConfig {
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                .sessionFixation().migrateSession()
             )
-            .requestCache().disable();
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.setStatus(401);
+                    response.getWriter().write("Unauthorized");
+                })
+            );
 
         return http.build();
     }
