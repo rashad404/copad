@@ -57,7 +57,9 @@ public class SecurityConfig {
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-            );
+            )
+            .formLogin(AbstractHttpConfigurer::disable)
+            .httpBasic(AbstractHttpConfigurer::disable);
 
         return http.build();
     }
