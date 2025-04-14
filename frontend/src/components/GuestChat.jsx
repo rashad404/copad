@@ -79,17 +79,38 @@ export default function GuestChat() {
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
-    if (!newMessage.trim() || loading || !sessionId) return;
+    if (!newMessage.trim() || loading) return;
 
     try {
       setLoading(true);
       setError(null);
       
+      // Verify session is still valid before sending message
+      if (sessionId) {
+        try {
+          await getGuestSession(sessionId);
+        } catch (err) {
+          console.log('Session invalid, creating new one');
+          const response = await startGuestSession();
+          const newSessionId = response.data.sessionId;
+          console.log('Created new session for message:', newSessionId);
+          setSessionId(newSessionId);
+          localStorage.setItem('guestSessionId', newSessionId);
+        }
+      } else {
+        console.log('No session ID, creating new one');
+        const response = await startGuestSession();
+        const newSessionId = response.data.sessionId;
+        console.log('Created new session for message:', newSessionId);
+        setSessionId(newSessionId);
+        localStorage.setItem('guestSessionId', newSessionId);
+      }
+      
       // Add user message immediately
       setMessages(prev => [...prev, { message: newMessage, isUser: true }]);
       setNewMessage('');
 
-      // Send message to backend
+      // Send message to backend with current session ID
       const response = await sendGuestMessage(sessionId, newMessage);
       
       // Add AI response
