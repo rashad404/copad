@@ -30,9 +30,15 @@ public class GuestController {
             throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
         }
         
-        GuestSessionDTO session = guestSessionService.createSession(request);
-        log.info("Created new guest session with ID: {}", session.getSessionId());
-        return ResponseEntity.ok(session);
+        try {
+            GuestSessionDTO session = guestSessionService.createSession(request);
+            log.info("Successfully created new guest session with ID: {} for IP: {}", 
+                session.getSessionId(), ipAddress);
+            return ResponseEntity.ok(session);
+        } catch (Exception e) {
+            log.error("Failed to create guest session for IP: {} - Error: {}", ipAddress, e.getMessage(), e);
+            throw e;
+        }
     }
 
     @GetMapping("/session/{sessionId}")

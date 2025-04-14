@@ -32,28 +32,32 @@ export default function GuestChat() {
         
         // Try to get existing session from localStorage
         const storedSessionId = localStorage.getItem('guestSessionId');
+        console.log('Stored session ID from localStorage:', storedSessionId);
         
         if (storedSessionId) {
           try {
+            console.log('Attempting to verify existing session:', storedSessionId);
             // Verify if session still exists
-            await getGuestSession(storedSessionId);
+            const sessionResponse = await getGuestSession(storedSessionId);
+            console.log('Existing session verified:', sessionResponse);
             setSessionId(storedSessionId);
-            console.log('Using existing session:', storedSessionId);
           } catch (err) {
-            console.log('Existing session not valid, creating new one');
+            console.log('Existing session not valid, creating new one. Error:', err);
             // If session doesn't exist, create a new one
             const response = await startGuestSession();
             const newSessionId = response.data.sessionId;
+            console.log('Created new session:', newSessionId);
             setSessionId(newSessionId);
             localStorage.setItem('guestSessionId', newSessionId);
           }
         } else {
+          console.log('No stored session found, creating new one');
           // Create new session if none exists
           const response = await startGuestSession();
           const newSessionId = response.data.sessionId;
+          console.log('Created new session:', newSessionId);
           setSessionId(newSessionId);
           localStorage.setItem('guestSessionId', newSessionId);
-          console.log('Created new session:', newSessionId);
         }
         
         // Add welcome message
