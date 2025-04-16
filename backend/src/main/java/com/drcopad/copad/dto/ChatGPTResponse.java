@@ -1,12 +1,24 @@
 package com.drcopad.copad.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
-public record ChatGPTResponse(List<Choice> choices) {
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class ChatGPTResponse {
+    private List<Choice> choices;
 
-    public static record Choice(Message message) {
-
-        public static record Message(String role, String content){}
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Choice {
+        private Message message;
     }
 }

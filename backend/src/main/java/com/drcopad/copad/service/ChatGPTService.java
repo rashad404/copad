@@ -1,51 +1,109 @@
 package com.drcopad.copad.service;
 
+import com.drcopad.copad.config.ChatGPTConfig;
 import com.drcopad.copad.dto.ChatGPTRequest;
 import com.drcopad.copad.dto.ChatGPTResponse;
+import com.drcopad.copad.dto.Message;
 import com.drcopad.copad.entity.Conversation;
-import org.springframework.beans.factory.annotation.Value;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.RestClient;
+import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
 
+@Slf4j
 @Service
+@RequiredArgsConstructor
 public class ChatGPTService {
 
-    private final RestClient restClient;
-
-    public ChatGPTService(RestClient restClient) {
-        this.restClient = restClient;
-    }
-
-    @Value("${openapi.api.key}")
-    private String apiKey;
-
-    @Value("${openapi.api.model}")
-    private String model;
+    private final WebClient webClient;
+    private final ChatGPTConfig chatGPTConfig;
+    private final ObjectMapper objectMapper;
 
     public String getChatResponse(String newUserMessage, List<Conversation> history) {
-        List<ChatGPTRequest.Message> messages = new ArrayList<>();
-
-        messages.add(new ChatGPTRequest.Message("system", "You are a helpful and experienced medical doctor."));
+        List<Message> messages = new ArrayList<>();
+        messages.add(new Message("system", "You are a helpful and experienced medical doctor."));
 
         for (Conversation c : history) {
             String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
-            messages.add(new ChatGPTRequest.Message(role, c.getMessage()));
+            messages.add(new Message(role, c.getMessage()));
         }
 
-        messages.add(new ChatGPTRequest.Message("user", newUserMessage));
+        messages.add(new Message("user", newUserMessage));
 
-        ChatGPTRequest request = new ChatGPTRequest(model, messages);
+        return getChatGPTResponse(messages).block();
+    }
 
-        ChatGPTResponse response = restClient.post()
-                .header("Authorization", "Bearer " + apiKey)
-                .header("Content-Type", "application/json")
-                .body(request)
+    private Mono<String> getChatGPTResponse(List<Message> messages) {
+        boolean useDummyData = chatGPTConfig.isUseDummyData();
+        log.info("Injected config values — useDummyData={}, model={}, url={}", 
+    chatGPTConfig.isUseDummyData(), 
+    chatGPTConfig.getOpenai().getModel(), 
+    chatGPTConfig.getOpenai().getUrl());
+
+        
+        if (useDummyData) {
+            log.info("Using dummy response mode");
+            return getDummyResponse(messages);
+        }
+
+        log.info("Using real ChatGPT API with config: model={}, url={}", 
+            chatGPTConfig.getOpenai().getModel(), chatGPTConfig.getOpenai().getUrl());
+
+        ChatGPTRequest request = ChatGPTRequest.builder()
+                .model(chatGPTConfig.getOpenai().getModel())
+                .messages(messages)
+                .build();
+
+        try {
+            log.info("Sending request to ChatGPT API: {}", objectMapper.writeValueAsString(request));
+        } catch (Exception e) {
+            log.error("Error serializing request", e);
+        }
+
+        return webClient.post()
+                .uri(chatGPTConfig.getOpenai().getUrl())
+                .header("Authorization", "Bearer " + chatGPTConfig.getOpenai().getKey())
+                .bodyValue(request)
                 .retrieve()
-                .body(ChatGPTResponse.class);
+                .bodyToMono(ChatGPTResponse.class)
+                .map(response -> {
+                    log.info("Received response from ChatGPT API: {}", response);
+                    return response.getChoices().get(0).getMessage().getContent();
+                })
+                .onErrorResume(e -> {
+                    log.error("Error calling ChatGPT API. Error details: {}", e.getMessage(), e);
+                    if (e.getMessage() != null) {
+                        log.error("Full error stack trace:", e);
+                    }
+                    return Mono.just("I apologize, but I'm having trouble processing your request at the moment. Please try again later.");
+                });
+    }
 
-        return response.choices().get(0).message().content();
+    private Mono<String> getDummyResponse(List<Message> messages) {
+        log.info("Using dummy response for messages: {}", messages);
+        
+        // Get the last user message
+        String lastUserMessage = messages.stream()
+                .filter(m -> "user".equals(m.getRole()))
+                .reduce((first, second) -> second)
+                .map(Message::getContent)
+                .orElse("");
+
+        // Simulate some processing time
+        try {
+            Thread.sleep(ThreadLocalRandom.current().nextInt(500, 1500));
+        } catch (InterruptedException e) {
+            Thread.currentThread().interrupt();
+        }
+
+        // Return a dummy response based on the user's message
+        String dummyResponse = "This is a dummy response for testing purposes. User message was: " + lastUserMessage;
+        return Mono.just(dummyResponse);
     }
 }
