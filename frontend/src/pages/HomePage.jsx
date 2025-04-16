@@ -5,6 +5,11 @@ import GuestChat from "../components/GuestChat";
 import { motion } from "framer-motion";
 import { CheckCircle, Shield } from "lucide-react";
 import Logo from "../components/Logo";
+import {
+  step1,
+  step2,
+  step3
+} from "../assets/illustrations";
 
 export default function HomePage() {
   const { t } = useTranslation();
@@ -138,7 +143,7 @@ export default function HomePage() {
                 </div>
                 <div className="mt-6 md:mt-0 md:pl-12">
                   <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <img src="/images/step1.svg" alt="Step 1" className="w-full h-48 object-contain" />
+                    <img src={step1} alt="Step 1" className="w-full h-48 object-contain" />
                   </div>
                 </div>
               </motion.div>
@@ -162,7 +167,7 @@ export default function HomePage() {
                 </div>
                 <div className="mt-6 md:mt-0 md:order-1 md:pr-12">
                   <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <img src="/images/step2.svg" alt="Step 2" className="w-full h-48 object-contain" />
+                    <img src={step2} alt="Step 2" className="w-full h-48 object-contain" />
                   </div>
                 </div>
               </motion.div>
@@ -186,7 +191,7 @@ export default function HomePage() {
                 </div>
                 <div className="mt-6 md:mt-0 md:pl-12">
                   <div className="bg-white rounded-xl shadow-md p-6 border border-gray-100">
-                    <img src="/images/step3.svg" alt="Step 3" className="w-full h-48 object-contain" />
+                    <img src={step3} alt="Step 3" className="w-full h-48 object-contain" />
                   </div>
                 </div>
               </motion.div>
@@ -391,6 +396,7 @@ export default function HomePage() {
             <div className="h-12 w-24 bg-gray-200 rounded"></div>
             <div className="h-12 w-24 bg-gray-200 rounded"></div>
             <div className="h-12 w-24 bg-gray-200 rounded"></div>
+
           </motion.div>
         </div>
       </section>
