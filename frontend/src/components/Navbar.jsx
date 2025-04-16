@@ -117,13 +117,13 @@ export default function Navbar() {
 
         {/* Mobile Menu */}
         <div 
-          className={`md:hidden transition-all duration-300 ease-in-out ${
+          className={`md:hidden fixed top-[72px] left-0 right-0 z-40 transition-all duration-300 ease-in-out ${
             menuOpen 
               ? 'opacity-100 translate-y-0' 
               : 'opacity-0 -translate-y-4 pointer-events-none'
           }`}
         >
-          <nav className="px-4 pt-2 pb-4 space-y-2 bg-white/80 backdrop-blur-md shadow-lg">
+          <nav className="px-4 pt-2 pb-4 space-y-2 bg-white/95 backdrop-blur-md shadow-lg">
             {isAuthenticated ? (
               <>
                 <MobileNavLink to="/" label={t("navbar.dashboard")} icon={<HomeIcon className="w-5 h-5" />} onClick={toggleMenu} active={location.pathname === '/'} />
