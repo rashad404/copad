@@ -5,6 +5,7 @@ import { AuthContext } from "../context/AuthContext.jsx";
 import LanguageSwitcher from "./LanguageSwitcher";
 import { useTranslation } from "react-i18next";
 import { WEBSITE_NAME } from "../config/constants";
+import Logo from "./Logo";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -51,15 +52,11 @@ export default function Navbar() {
             >
               <div className="relative">
                 <div className="absolute -inset-3 bg-indigo-100 rounded-full blur-lg opacity-0 group-hover:opacity-30 transition-opacity duration-300"></div>
-                <img 
-                  src="/logo.png" 
-                  alt={WEBSITE_NAME} 
-                  className="relative w-10 h-10 rounded-full object-cover ring-2 ring-indigo-100 transition-transform duration-300 group-hover:scale-105" 
-                />
+                <Logo className="w-10 h-10 relative transition-transform duration-300 group-hover:scale-105" />
               </div>
               <span className="font-bold text-xl">
-                <span className="text-gray-800">{WEBSITE_NAME.split('.')[0]}</span>
-                <span className="text-indigo-600">.{WEBSITE_NAME.split('.')[1]}</span>
+                <span className="text-gray-800">Copad</span>
+                <span className="text-indigo-600">.ai</span>
               </span>
             </Link>
 
