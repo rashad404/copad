@@ -19,12 +19,12 @@ export default function HomePage() {
       <Navbar />
       
       {/* Hero Section */}
-      <div className="relative overflow-hidden">
+      <div className="relative overflow-hidden pt-6 md:pt-8">
         {/* Background Pattern */}
         {/* <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div> */}
         
         {/* Hero Content */}
-        <div className="relative px-4 pt-6 sm:px-6 lg:px-8">
+        <div className="relative px-4 pt-12 sm:pt-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl">
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
@@ -38,9 +38,9 @@ export default function HomePage() {
         </div>
 
         {/* Chat Container - Positioned for better mobile view */}
-        <div className="relative mx-auto mt-4 max-w-3xl px-4 sm:px-6 lg:px-8">
+        <div className="relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-            <div className="h-[calc(100vh-280px)] sm:h-[500px] flex flex-col">
+            <div className="h-[calc(100vh-360px)] sm:h-[500px] flex flex-col">
               <GuestChat 
                 containerClassName="flex flex-col h-full"
                 messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
