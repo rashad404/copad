@@ -10,74 +10,90 @@ export default function HomePage() {
     <div className="min-h-screen bg-white">
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100">
-        <div className="absolute inset-0">
+      {/* Hero Section with Central AI Chat (Fixed Height, Mobile Friendly) */}
+      <div className="relative overflow-hidden bg-gradient-to-br from-indigo-50 to-indigo-100 pb-8">
+        <div className="absolute inset-0 pointer-events-none">
           <svg className="absolute right-0 top-0 h-full w-48 translate-x-1/2 transform text-white" fill="currentColor" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
             <polygon points="50,0 100,0 50,100 0,100" />
           </svg>
         </div>
-        
-        <div className="relative pt-16 pb-20 sm:pt-24 sm:pb-28 lg:pt-32 lg:pb-36">
-          <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
-            <div className="lg:grid lg:grid-cols-12 lg:gap-8">
-              <div className="lg:col-span-7">
-                <h1 className="text-4xl font-extrabold tracking-tight text-gray-900 sm:text-5xl md:text-6xl lg:leading-tight">
-                  {t("home.hero.title")}
-                  <span className="block text-indigo-600">{t("home.hero.subtitle")}</span>
-                </h1>
-                <p className="mt-6 text-xl text-gray-600 max-w-3xl">
-                  {t("home.hero.description")}
-                </p>
-                
-                <div className="mt-10 flex flex-col sm:flex-row gap-4">
-                  <Link
-                    to="/register"
-                    className="flex items-center justify-center rounded-md bg-indigo-600 px-8 py-3 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    {t("home.hero.getStarted")}
-                  </Link>
-                  <Link
-                    to="/login"
-                    className="flex items-center justify-center rounded-md border border-indigo-600 bg-white px-8 py-3 text-base font-medium text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-                  >
-                    {t("home.hero.login")}
-                  </Link>
-                </div>
-                
-                <div className="mt-8 flex items-center gap-3">
-                  <div className="flex -space-x-2">
-                    {[1, 2, 3, 4].map((i) => (
-                      <div key={i} className={`inline-block h-8 w-8 rounded-full ring-2 ring-white bg-indigo-${i*100 + 100}`}>
-                        <span className="sr-only">User avatar</span>
-                      </div>
-                    ))}
-                  </div>
-                  <div className="text-sm font-medium text-gray-500">
-                    {t("home.hero.usersCount", { count: "5,000" })}
-                  </div>
-                </div>
+        <div className="relative pt-8 pb-4 sm:pt-12 sm:pb-8 lg:pt-20 lg:pb-12">
+          <div className="mx-auto  text-center">
+            <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 mb-2">
+              Chat with Dr. Copad AI Doctor
+            </h1>
+            <p className="text-base sm:text-lg text-gray-600 mb-6">
+              Instant, private medical advice. Try it now—no sign up needed.
+            </p>
+            <div className="mx-auto w-full max-w-2xl">
+              {/* Fixed Height, Scrollable Chat Container */}
+              <div
+                className="rounded-2xl shadow-xl bg-white flex flex-col overflow-hidden"
+                style={{ height: '400px', maxHeight: '80vw', minHeight: '320px' }}
+              >
+                <GuestChat containerClassName="flex flex-col flex-1 min-h-0 h-full" messagesClassName="flex-1 overflow-y-auto px-4 py-2" inputClassName="sticky bottom-0 bg-white px-4 py-2 border-t border-gray-100" />
               </div>
-              
-              <div className="mt-16 sm:mt-24 lg:col-span-5 lg:mt-0">
-                <div className="bg-white rounded-2xl shadow-xl">
-                  <div className="bg-indigo-700 px-6 py-4">
-                    <div className="flex items-center">
-                      <div className="h-3 w-3 bg-red-500 rounded-full mr-2"></div>
-                      <div className="h-3 w-3 bg-yellow-300 rounded-full mr-2"></div>
-                      <div className="h-3 w-3 bg-green-400 rounded-full"></div>
-                      <div className="ml-auto text-white font-medium">{t("chat.title")}</div>
-                    </div>
-                  </div>
-                  <div className="h-[500px] flex flex-col">
-                    <GuestChat />
-                  </div>
-                </div>
-              </div>
+            </div>
+            <div className="mt-5 flex flex-col sm:flex-row justify-center gap-3">
+              <Link
+                to="/register"
+                className="flex items-center justify-center rounded-md bg-indigo-600 px-7 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Create Account
+              </Link>
+              <Link
+                to="/login"
+                className="flex items-center justify-center rounded-md border border-indigo-600 bg-white px-7 py-2 text-base font-medium text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+              >
+                Log In
+              </Link>
+            </div>
+          </div>
+        </div>
+        {/* Trust Bar */}
+        <div className="bg-white py-3 border-y border-indigo-100 mt-4">
+          <div className="mx-auto max-w-5xl flex flex-wrap justify-center gap-4 items-center text-sm">
+            <div className="flex items-center gap-1">
+              <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+              <span className="font-semibold text-gray-800">10,000+ users helped</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm6 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3z" /></svg>
+              <span className="font-semibold text-gray-800">Private & Secure</span>
+            </div>
+            <div className="flex items-center gap-1">
+              <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m4 0h-1v-4h-1" /></svg>
+              <span className="font-semibold text-gray-800">Powered by OpenAI GPT-4</span>
             </div>
           </div>
         </div>
       </div>
+
+
+      {/* How It Works Section */}
+      <div className="py-16 bg-indigo-50">
+        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
+          <h2 className="text-3xl font-extrabold text-gray-900 text-center">How It Works</h2>
+          <div className="mt-12 grid gap-10 md:grid-cols-3">
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3" /></svg></div>
+              <h3 className="text-lg font-semibold">1. Ask Dr. Copad</h3>
+              <p className="mt-2 text-gray-600">Type your health question or symptoms and chat instantly with our AI doctor.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2a4 4 0 014-4h4" /></svg></div>
+              <h3 className="text-lg font-semibold">2. Get Personalized Advice</h3>
+              <p className="mt-2 text-gray-600">Receive instant, confidential guidance tailored to you.</p>
+            </div>
+            <div className="flex flex-col items-center text-center">
+              <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /></svg></div>
+              <h3 className="text-lg font-semibold">3. Book & Track</h3>
+              <p className="mt-2 text-gray-600">Register to manage appointments and keep your health profile updated.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+
       
       {/* Features Section */}
       <div className="py-16 bg-white">
