@@ -3,6 +3,8 @@ import { useTranslation } from 'react-i18next';
 import { startGuestSession, getGuestSession, sendGuestMessage, saveConversation } from '../api';
 import { useAuth } from '../context/AuthContext';
 import { Link, useNavigate } from 'react-router-dom';
+import userAvatar from '../assets/user.png';
+import doctorAvatar from '../assets/doctor.png';
 
 export default function GuestChat() {
   const { t } = useTranslation();
@@ -112,14 +114,14 @@ export default function GuestChat() {
       }
       
       // Add user message immediately
-      setMessages(prev => [...prev, { message: newMessage, isUser: true }]);
+      setMessages(prev => [...prev, { message: newMessage, isUser: true, timestamp: new Date() }]);
       setNewMessage('');
 
       // Send message to backend with current session ID
       const response = await sendGuestMessage(sessionId, newMessage);
       
       // Add AI response
-      setMessages(prev => [...prev, { message: response.data, isUser: false }]);
+      setMessages(prev => [...prev, { message: response.data, isUser: false, timestamp: new Date() }]);
     } catch (err) {
       console.error('Error sending message:', err);
       if (err.response?.status === 404) {
@@ -180,19 +182,39 @@ export default function GuestChat() {
         {messages.map((message, index) => (
           <div
             key={index}
-            className={`flex ${message.isUser ? 'justify-end' : 'justify-start'}`}
+            className={`flex items-end ${message.isUser ? 'justify-end' : 'justify-start'}`}
           >
+            {/* Avatar */}
+            {!message.isUser && (
+              <img
+                src={doctorAvatar}
+                alt="Doctor avatar"
+                className="w-8 h-8 rounded-full mr-2 shadow border border-gray-200"
+              />
+            )}
             <div
-              className={`max-w-[80%] rounded-lg p-4 ${
+              className={`max-w-[80%] rounded-2xl px-4 py-3 text-sm shadow-sm ${
                 message.isUser
-                  ? 'bg-indigo-600 text-white'
-                  : 'bg-gray-100 text-gray-800'
+                  ? 'bg-indigo-600 text-white rounded-br-none'
+                  : 'bg-gray-100 text-gray-800 rounded-bl-none'
               }`}
             >
-              <div className="prose prose-sm max-w-none">
+              <div className="prose prose-sm max-w-none text-left">
                 {formatMessage(message.message)}
               </div>
+              <div className="text-xs text-gray-400 text-right mt-1">
+                {message.timestamp &&
+                  new Date(message.timestamp).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+              </div>
             </div>
+            {/* User Avatar */}
+            {message.isUser && (
+              <img
+                src={userAvatar}
+                alt="User avatar"
+                className="w-8 h-8 rounded-full ml-2 shadow border border-gray-200"
+              />
+            )}
           </div>
         ))}
         {loading && (

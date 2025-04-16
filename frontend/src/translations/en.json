@@ -164,12 +164,31 @@
   },
   "home": {
     "hero": {
-      "title": "Get AI-Powered Medical Help",
-      "subtitle": "Anytime. Anywhere.",
-      "description": "{{agentName}} is your personal AI doctor. Chat instantly about symptoms, get medical guidance, and organize your health records securely.",
-      "getStarted": "Get Started Free",
-      "login": "Login",
-      "usersCount": "Join {{count}} users"
+      "title": "Chat with Dr. Copad AI Doctor",
+      "subtitle": "Instant, private medical advice. Try it now—no sign up needed.",
+      "createAccount": "Create Account",
+      "login": "Log In",
+      "trustBar": {
+        "usersHelped": "10,000+ users helped",
+        "privateSecure": "Private & Secure",
+        "poweredBy": "Powered by OpenAI GPT-4"
+      }
+    },
+    "howItWorks": {
+      "title": "How It Works",
+      "subtitle": "Get instant medical advice in three simple steps",
+      "step1": {
+        "title": "1. Ask Dr. Copad",
+        "description": "Type your health question or symptoms and chat instantly with our AI doctor."
+      },
+      "step2": {
+        "title": "2. Get Personalized Advice",
+        "description": "Receive instant, confidential guidance tailored to you."
+      },
+      "step3": {
+        "title": "3. Book & Track",
+        "description": "Register to manage appointments and keep your health profile updated."
+      }
     },
     "features": {
       "title": "Features",
@@ -190,6 +209,7 @@
     },
     "testimonials": {
       "title": "Trusted by users worldwide",
+      "subtitle": "See what our users have to say about their experience",
       "testimonial1": {
         "quote": "{{agentName}} helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in simple terms.",
         "author": "Sarah K.",
@@ -211,13 +231,33 @@
       "subtitle": "your health?",
       "description": "Start with {{agentName}} today and experience the future of healthcare. No subscription required.",
       "getStarted": "Get Started Free",
-      "login": "Login"
+      "login": "Login",
+      "benefit1": "24/7 access to medical advice",
+      "benefit2": "Secure and private consultations",
+      "security": {
+        "title": "Your Health Data is Protected",
+        "description": "We use advanced encryption and follow strict privacy protocols to keep your information safe"
+      }
+    },
+    "trust": {
+      "title": "Trusted by healthcare professionals"
     },
     "footer": {
-      "privacy": "Privacy Policy",
-      "terms": "Terms of Service",
-      "contact": "Contact",
-      "security": "HIPAA compliant. Private. Your data is yours."
+      "description": "Your trusted AI healthcare companion. Get instant medical advice, track your health, and manage appointments all in one place.",
+      "product": "Product",
+      "company": "Company",
+      "legal": "Legal",
+      "links": {
+        "pricing": "Pricing",
+        "faq": "FAQ",
+        "about": "About Us",
+        "blog": "Blog",
+        "contact": "Contact Us",
+        "privacy": "Privacy Policy",
+        "terms": "Terms of Service",
+        "security": "Security"
+      },
+      "copyright": "© {{year}} Copad.ai. All rights reserved."
     }
   },
   "chat": {

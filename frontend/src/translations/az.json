@@ -163,12 +163,31 @@
   },
   "home": {
     "hero": {
-      "title": "AI ilə Tibbi Yardım Alın",
-      "subtitle": "İstənilən vaxt. İstənilən yerdə.",
-      "description": "{{agentName}} sizin şəxsi AI həkiminizdir. Simptomlar haqqında dərhal söhbət edin, tibbi məsləhət alın və sağlamlıq qeydlərinizi təhlükəsiz şəkildə təşkil edin.",
-      "getStarted": "Pulsuz Başlayın",
-      "login": "Daxil ol",
-      "usersCount": "{{count}} istifadəçiyə qoşulun"
+      "title": "Dr. Copad AI Həkimlə Söhbət Edin",
+      "subtitle": "Dərhal, şəxsi tibbi məsləhət. İndi sınayın — qeydiyyat tələb olunmur.",
+      "createAccount": "Hesab Yarat",
+      "login": "Daxil Ol",
+      "trustBar": {
+        "usersHelped": "10,000+ istifadəçiyə kömək edilib",
+        "privateSecure": "Şəxsi və Təhlükəsiz",
+        "poweredBy": "OpenAI GPT-4 tərəfindən gücləndirilib"
+      }
+    },
+    "howItWorks": {
+      "title": "Necə İşləyir",
+      "subtitle": "Üç sadə addımda dərhal tibbi məsləhət alın",
+      "step1": {
+        "title": "1. Dr. Copad-a Soruşun",
+        "description": "Sağlamlıq sualınızı və ya simptomlarınızı yazın və AI həkimimizlə dərhal söhbət edin."
+      },
+      "step2": {
+        "title": "2. Şəxsi Məsləhət Alın",
+        "description": "Sizə uyğunlaşdırılmış dərhal, məxfi məsləhət alın."
+      },
+      "step3": {
+        "title": "3. Randevu Alın və İzləyin",
+        "description": "Görüşləri idarə etmək və sağlamlıq profilinizə yeniliklər əlavə etmək üçün qeydiyyatdan keçin."
+      }
     },
     "features": {
       "title": "Xüsusiyyətlər",
@@ -189,6 +208,7 @@
     },
     "testimonials": {
       "title": "Dünya üzrə istifadəçilər tərəfindən etibar edilir",
+      "subtitle": "İstifadəçilərimizin təcrübələri haqqında nə dediklərini görün",
       "testimonial1": {
         "quote": "{{agentName}} mənə laboratoriya nəticələrimi başa düşməyə kömək etdi, həkimimlə görüş təyin edə bilmədiyim zaman. Hər şeyi sadə dildə izah etdi.",
         "author": "Sarah K.",
@@ -210,13 +230,33 @@
       "subtitle": "nəzarətini ələ almağa hazırsınız?",
       "description": "Bu gün {{agentName}} ilə başlayın və gələcək tibbi yardımı təcrübə edin. Abunə tələb olunmur.",
       "getStarted": "Pulsuz Başlayın",
-      "login": "Daxil ol"
+      "login": "Daxil ol",
+      "benefit1": "24/7 tibbi məsləhətə giriş",
+      "benefit2": "Təhlükəsiz və şəxsi məsləhətlər",
+      "security": {
+        "title": "Sağlamlıq Məlumatlarınız Qorunur",
+        "description": "Məlumatlarınızı təhlükəsiz saxlamaq üçün qabaqcıl şifrələmə və ciddi məxfilik protokollarından istifadə edirik"
+      }
+    },
+    "trust": {
+      "title": "Sağlamlıq mütəxəssisləri tərəfindən etibar edilir"
     },
     "footer": {
-      "privacy": "Məxfilik Siyasəti",
-      "terms": "İstifadə Şərtləri",
-      "contact": "Əlaqə",
-      "security": "HIPAA uyğun. Şəxsi. Məlumatlarınız sizindir."
+      "description": "Etibarlı AI səhiyyə yoldaşınız. Dərhal tibbi məsləhət alın, sağlamlığınızı izləyin və görüşləri bir yerdə idarə edin.",
+      "product": "Məhsul",
+      "company": "Şirkət",
+      "legal": "Hüquqi",
+      "links": {
+        "pricing": "Qiymətlər",
+        "faq": "Tez-tez verilən suallar",
+        "about": "Haqqımızda",
+        "blog": "Blog",
+        "contact": "Bizimlə Əlaqə",
+        "privacy": "Məxfilik Siyasəti",
+        "terms": "İstifadə Şərtləri",
+        "security": "Təhlükəsizlik"
+      },
+      "copyright": "© {{year}} Copad.ai. Bütün hüquqlar qorunur."
     }
   },
   "chat": {
