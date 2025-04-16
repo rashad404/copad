@@ -20,10 +20,10 @@ export default function HomePage() {
         <div className="relative pt-8 pb-4 sm:pt-12 sm:pb-8 lg:pt-20 lg:pb-12">
           <div className="mx-auto  text-center">
             <h1 className="text-3xl sm:text-4xl font-extrabold tracking-tight text-gray-900 mb-2">
-              Chat with Dr. Copad AI Doctor
+              {t("home.hero.title")}
             </h1>
             <p className="text-base sm:text-lg text-gray-600 mb-6">
-              Instant, private medical advice. Try it now—no sign up needed.
+              {t("home.hero.subtitle")}
             </p>
             <div className="mx-auto w-full max-w-2xl">
               {/* Fixed Height, Scrollable Chat Container */}
@@ -39,13 +39,13 @@ export default function HomePage() {
                 to="/register"
                 className="flex items-center justify-center rounded-md bg-indigo-600 px-7 py-2 text-base font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Create Account
+                {t("home.hero.createAccount")}
               </Link>
               <Link
                 to="/login"
                 className="flex items-center justify-center rounded-md border border-indigo-600 bg-white px-7 py-2 text-base font-medium text-indigo-600 hover:bg-indigo-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
               >
-                Log In
+                {t("home.hero.login")}
               </Link>
             </div>
           </div>
@@ -55,15 +55,15 @@ export default function HomePage() {
           <div className="mx-auto max-w-5xl flex flex-wrap justify-center gap-4 items-center text-sm">
             <div className="flex items-center gap-1">
               <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
-              <span className="font-semibold text-gray-800">10,000+ users helped</span>
+              <span className="font-semibold text-gray-800">{t("home.hero.trustBar.usersHelped")}</span>
             </div>
             <div className="flex items-center gap-1">
               <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 11c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3zm6 0c0-1.657-1.343-3-3-3s-3 1.343-3 3 1.343 3 3 3 3-1.343 3-3z" /></svg>
-              <span className="font-semibold text-gray-800">Private & Secure</span>
+              <span className="font-semibold text-gray-800">{t("home.hero.trustBar.privateSecure")}</span>
             </div>
             <div className="flex items-center gap-1">
               <svg className="w-5 h-5 text-indigo-500" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M13 16h-1v-4h-1m4 0h-1v-4h-1" /></svg>
-              <span className="font-semibold text-gray-800">Powered by OpenAI GPT-4</span>
+              <span className="font-semibold text-gray-800">{t("home.hero.trustBar.poweredBy")}</span>
             </div>
           </div>
         </div>
@@ -73,22 +73,22 @@ export default function HomePage() {
       {/* How It Works Section */}
       <div className="py-16 bg-indigo-50">
         <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-extrabold text-gray-900 text-center">How It Works</h2>
+          <h2 className="text-3xl font-extrabold text-gray-900 text-center">{t("home.howItWorks.title")}</h2>
           <div className="mt-12 grid gap-10 md:grid-cols-3">
             <div className="flex flex-col items-center text-center">
               <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 8v4l3 3" /></svg></div>
-              <h3 className="text-lg font-semibold">1. Ask Dr. Copad</h3>
-              <p className="mt-2 text-gray-600">Type your health question or symptoms and chat instantly with our AI doctor.</p>
+              <h3 className="text-lg font-semibold">{t("home.howItWorks.step1.title")}</h3>
+              <p className="mt-2 text-gray-600">{t("home.howItWorks.step1.description")}</p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M9 17v-2a4 4 0 014-4h4" /></svg></div>
-              <h3 className="text-lg font-semibold">2. Get Personalized Advice</h3>
-              <p className="mt-2 text-gray-600">Receive instant, confidential guidance tailored to you.</p>
+              <h3 className="text-lg font-semibold">{t("home.howItWorks.step2.title")}</h3>
+              <p className="mt-2 text-gray-600">{t("home.howItWorks.step2.description")}</p>
             </div>
             <div className="flex flex-col items-center text-center">
               <div className="bg-indigo-100 rounded-full p-4 mb-4"><svg className="w-10 h-10 text-indigo-600" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" d="M12 20h9" /></svg></div>
-              <h3 className="text-lg font-semibold">3. Book & Track</h3>
-              <p className="mt-2 text-gray-600">Register to manage appointments and keep your health profile updated.</p>
+              <h3 className="text-lg font-semibold">{t("home.howItWorks.step3.title")}</h3>
+              <p className="mt-2 text-gray-600">{t("home.howItWorks.step3.description")}</p>
             </div>
           </div>
         </div>

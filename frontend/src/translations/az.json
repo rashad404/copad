@@ -163,12 +163,30 @@
   },
   "home": {
     "hero": {
-      "title": "AI ilə Tibbi Yardım Alın",
-      "subtitle": "İstənilən vaxt. İstənilən yerdə.",
-      "description": "{{agentName}} sizin şəxsi AI həkiminizdir. Simptomlar haqqında dərhal söhbət edin, tibbi məsləhət alın və sağlamlıq qeydlərinizi təhlükəsiz şəkildə təşkil edin.",
-      "getStarted": "Pulsuz Başlayın",
-      "login": "Daxil ol",
-      "usersCount": "{{count}} istifadəçiyə qoşulun"
+      "title": "Dr. Copad AI Həkimlə Söhbət Edin",
+      "subtitle": "Dərhal, şəxsi tibbi məsləhət. İndi sınayın — qeydiyyat tələb olunmur.",
+      "createAccount": "Hesab Yarat",
+      "login": "Daxil Ol",
+      "trustBar": {
+        "usersHelped": "10,000+ istifadəçiyə kömək edilib",
+        "privateSecure": "Şəxsi və Təhlükəsiz",
+        "poweredBy": "OpenAI GPT-4 tərəfindən gücləndirilib"
+      }
+    },
+    "howItWorks": {
+      "title": "Necə İşləyir",
+      "step1": {
+        "title": "1. Dr. Copad-a Soruşun",
+        "description": "Sağlamlıq sualınızı və ya simptomlarınızı yazın və AI həkimimizlə dərhal söhbət edin."
+      },
+      "step2": {
+        "title": "2. Şəxsi Məsləhət Alın",
+        "description": "Sizə uyğunlaşdırılmış dərhal, məxfi məsləhət alın."
+      },
+      "step3": {
+        "title": "3. Randevu Alın və İzləyin",
+        "description": "Görüşləri idarə etmək və sağlamlıq profilinizə yeniliklər əlavə etmək üçün qeydiyyatdan keçin."
+      }
     },
     "features": {
       "title": "Xüsusiyyətlər",
