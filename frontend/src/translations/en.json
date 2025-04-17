@@ -10,7 +10,7 @@
   "navbar": {
     "home": "Home",
     "dashboard": "Dashboard",
-    "appointments": "Appointments",
+    "appointments": "Consultations",
     "profile": "Profile",
     "login": "Login",
     "register": "Register",
@@ -34,7 +34,7 @@
       "no_account": "Don't have an account?",
       "create_account": "Create an account",
       "secure_title": "Secure Medical Consultations",
-      "secure_description": "Your health data is encrypted and securely stored. Access medical expertise anytime with {{agentName}}.",
+      "secure_description": "Your health data is encrypted and securely stored. Access expert medical guidance anytime with {{agentName}}.",
       "access": "Access",
       "secure": "Secure",
       "powered": "Powered",
@@ -42,7 +42,7 @@
     },
     "register": {
       "title": "Create an Account",
-      "subtitle": "Sign up to get started with your medical consultations",
+      "subtitle": "Sign up to begin your medical consultations",
       "creating_account": "Creating account...",
       "create_account": "Create Account",
       "have_account": "Already have an account?",
@@ -54,27 +54,27 @@
       "login_failed": "Login failed. Please try again."
     },
     "saveChatTitle": "Save Your Consultation",
-    "saveChatDescription": "Please login or register to save your consultation as an appointment."
+    "saveChatDescription": "Please login or register to save this consultation to your records."
   },
   "errors": {
     "required": "This field is required",
     "invalidEmail": "Please enter a valid email address"
   },
   "appointments": {
-    "title": "Your Appointments",
-    "subtitle": "Manage and track all your medical appointments",
-    "newAppointment": "New Appointment",
+    "title": "Your Consultations",
+    "subtitle": "Manage and track all your medical consultations",
+    "newAppointment": "New Consultation",
     "filters": {
-      "all": "All Appointments",
+      "all": "All Consultations",
       "upcoming": "Upcoming",
       "completed": "Completed"
     },
-    "loading": "Loading your appointments...",
+    "loading": "Loading your consultations...",
     "empty": {
-      "title": "No appointments found",
-      "all": "You don't have any appointments scheduled yet.",
-      "filtered": "You don't have any {{filter}} appointments.",
-      "schedule": "Schedule an appointment"
+      "title": "No consultations found",
+      "all": "You don't have any consultations scheduled yet.",
+      "filtered": "You don't have any {{filter}} consultations.",
+      "schedule": "Schedule a consultation"
     },
     "card": {
       "specialty": "Specialty",
@@ -84,7 +84,7 @@
     }
   },
   "newAppointment": {
-    "title": "Start a New Appointment",
+    "title": "Start a New Consultation",
     "subtitle": "Tell us what you need help with and we'll connect you with {{agentName}}",
     "specialty": {
       "label": "What type of care do you need?",
@@ -127,16 +127,16 @@
     },
     "continue": "Continue",
     "back": "Back",
-    "submit": "Start Appointment",
-    "submitting": "Creating appointment..."
+    "submit": "Start Consultation",
+    "submitting": "Creating consultation..."
   },
   "dashboard": {
     "title": "Welcome to your Dashboard",
-    "subtitle": "Access your health tools, appointments, and medical chat history anytime.",
+    "subtitle": "Access your health tools, consultations, and medical history anytime.",
     "appointments": {
-      "title": "Appointments",
-      "description": "View or create medical chat sessions.",
-      "action": "Go to Appointments"
+      "title": "Consultations",
+      "description": "View or create medical consultation sessions.",
+      "action": "Go to Consultations"
     },
     "profile": {
       "title": "Your Profile",
@@ -144,8 +144,8 @@
       "action": "View Profile"
     },
     "newAppointment": {
-      "title": "Start a New Appointment",
-      "description": "Create a new AI consultation appointment with {{agentName}}.",
+      "title": "Start a New Consultation",
+      "description": "Create a new AI consultation with {{agentName}}.",
       "action": "Start Now",
       "recommended": "Recommended"
     },
@@ -153,97 +153,97 @@
       "title": "Your Health Summary",
       "recentConsultations": "Recent Consultations",
       "profileCompletion": "Profile Completion",
-      "nextAppointment": "Next Appointment"
+      "nextAppointment": "Next Consultation"
     },
     "security": {
       "title": "Your data is secure",
-      "description": "Encrypted, private, and protected",
+      "description": "Encrypted, confidential, and protected",
       "learnMore": "Learn more about our privacy policy →"
     },
-    "footer": "Your health matters to us. This app is built for convenience."
+    "footer": "Your health matters to us. This platform is designed for your convenience."
   },
   "home": {
     "hero": {
-      "title": "Chat with Dr. Copad AI Doctor",
-      "subtitle": "Instant, private medical advice. Try it now—no sign up needed.",
+      "title": "Your AI Doctor. Available 24/7.",
+      "subtitle": "Ask a health question and get instant advice from Copad AI Doctor — no registration needed.",
       "createAccount": "Create Account",
       "login": "Log In",
       "trustBar": {
         "usersHelped": "10,000+ users helped",
-        "privateSecure": "Private & Secure",
+        "privateSecure": "Confidential & Secure",
         "poweredBy": "Powered by OpenAI GPT-4"
       }
     },
     "howItWorks": {
       "title": "How It Works",
-      "subtitle": "Get instant medical advice in three simple steps",
+      "subtitle": "Get professional medical guidance in three easy steps",
       "step1": {
-        "title": "1. Ask Dr. Copad",
-        "description": "Type your health question or symptoms and chat instantly with our AI doctor."
+        "title": "1. Consult Dr. Copad",
+        "description": "Enter your health concerns or symptoms and receive instant feedback from our AI physician."
       },
       "step2": {
-        "title": "2. Get Personalized Advice",
-        "description": "Receive instant, confidential guidance tailored to you."
+        "title": "2. Get Personalized Guidance",
+        "description": "Receive immediate, confidential advice tailored to your situation."
       },
       "step3": {
-        "title": "3. Book & Track",
-        "description": "Register to manage appointments and keep your health profile updated."
+        "title": "3. Track & Manage",
+        "description": "Register to manage consultations and keep your health profile updated."
       }
     },
     "features": {
       "title": "Features",
       "subtitle": "Everything you need for your health",
-      "description": "Accessible, reliable, and tailored to your needs AI-powered medical assistance.",
+      "description": "Accessible, reliable, and tailored AI-powered medical assistance.",
       "chat": {
-        "title": "Chat with an AI Doctor",
-        "description": "Describe your symptoms and get AI-generated guidance instantly — 24/7. No waiting rooms, no appointments needed."
+        "title": "Consult with an AI Physician",
+        "description": "Describe your symptoms and get expert guidance instantly — 24/7. No waiting rooms, no appointments needed."
       },
       "upload": {
         "title": "Upload Medical Files",
         "description": "Analyze lab results, images, and medical history with AI assistance. Get explanations and insights in plain language."
       },
       "track": {
-        "title": "Track Appointments",
+        "title": "Track Consultations",
         "description": "Organize your health journey with history, summaries, and AI notes. Access your previous consultations anytime."
       }
     },
     "testimonials": {
       "title": "Trusted by users worldwide",
-      "subtitle": "See what our users have to say about their experience",
+      "subtitle": "See what our users say about their experience",
       "testimonial1": {
-        "quote": "{{agentName}} helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in simple terms.",
+        "quote": "{{agentName}} helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in clear, simple terms.",
         "author": "Sarah K.",
         "role": "Patient"
       },
       "testimonial2": {
-        "quote": "As someone living in a rural area, having 24/7 medical guidance has changed my life. It's like having a doctor in your pocket.",
+        "quote": "As someone living in a rural area, having 24/7 medical guidance has transformed my healthcare experience. It's like having a physician in your pocket.",
         "author": "Michael T.",
         "role": "Patient"
       },
       "testimonial3": {
-        "quote": "The symptom checker is surprisingly accurate. Helped me identify a condition my regular doctor had been missing for months.",
+        "quote": "The symptom assessment is remarkably accurate. Helped me identify a condition that had been overlooked by my primary physician for months.",
         "author": "Jessica W.",
         "role": "Healthcare Worker"
       }
     },
     "cta": {
-      "title": "Ready to take control of",
-      "subtitle": "your health?",
-      "description": "Start with {{agentName}} today and experience the future of healthcare. No subscription required.",
+      "title": "Ready to take charge of",
+      "subtitle": "your wellbeing?",
+      "description": "Begin your journey with {{agentName}} today and experience next-generation healthcare. No subscription necessary.",
       "getStarted": "Get Started Free",
       "login": "Login",
-      "benefit1": "24/7 access to medical advice",
-      "benefit2": "Secure and private consultations",
+      "benefit1": "24/7 access to medical guidance",
+      "benefit2": "Secure and confidential consultations",
       "security": {
         "title": "Your Health Data is Protected",
-        "description": "We use advanced encryption and follow strict privacy protocols to keep your information safe"
+        "description": "We use advanced encryption and follow strict privacy protocols to keep your information secure"
       }
     },
     "trust": {
       "title": "Trusted by healthcare professionals"
     },
     "footer": {
-      "description": "Your trusted AI healthcare companion. Get instant medical advice, track your health, and manage appointments all in one place.",
+      "description": "Your trusted AI healthcare companion. Get expert medical guidance, track your health, and manage consultations all in one place.",
       "product": "Product",
       "company": "Company",
       "legal": "Legal",
@@ -262,11 +262,11 @@
   },
   "chat": {
     "title": "AI Health Assistant",
-    "messagePlaceholder": "Type your message...",
+    "messagePlaceholder": "Type your message... e.g. I have an allergy, what should I do?",
     "send": "Send",
     "sending": "Sending...",
-    "saveChat": "Save chat as appointment",
-    "welcomeMessage": "Hello! I'm your AI health assistant. How can I help you today? Please describe your health concern or question, and I'll do my best to assist you.",
+    "saveChat": "Save as consultation",
+    "welcomeMessage": "Hey there! I'm Dr. Copad, your AI Doctor. How can I help with your health today?",
     "error": {
       "rateLimit": "Request limit exceeded. Please try again later.",
       "network": "Network error. Please try again."
@@ -317,7 +317,7 @@
       "description": "Create your personal account to access AI-powered medical consultations and health resources, all in one secure platform.",
       "features": {
         "private": {
-          "title": "Private & Secure",
+          "title": "Confidential & Secure",
           "description": "Your health data is encrypted and protected by industry standards"
         },
         "access": {
@@ -361,4 +361,4 @@
       "registrationFailed": "Registration failed. Please try again."
     }
   }
-} 
+}

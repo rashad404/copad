@@ -10,7 +10,7 @@
   "navbar": {
     "home": "Ana səhifə",
     "dashboard": "İdarə paneli",
-    "appointments": "Görüşlər",
+    "appointments": "Məsləhətləşmələr",
     "profile": "Profil",
     "login": "Daxil ol",
     "register": "Qeydiyyat",
@@ -34,10 +34,10 @@
       "no_account": "Hesabınız yoxdur?",
       "create_account": "Hesab yaradın",
       "secure_title": "Təhlükəsiz Tibbi Məsləhətləşmələr",
-      "secure_description": "Səhiyyə məlumatlarınız şifrələnib və təhlükəsiz saxlanılır. İstənilən vaxt {{agentName}} ilə tibbi məsləhətləşmə əldə edin.",
+      "secure_description": "Səhiyyə məlumatlarınız şifrələnib və təhlükəsiz saxlanılır. İstənilən vaxt {{agentName}} ilə peşəkar tibbi məsləhət əldə edin.",
       "access": "Giriş",
       "secure": "Təhlükəsiz",
-      "powered": "Powered",
+      "powered": "Gücləndirilib",
       "sign_in": "Daxil ol"
     },
     "register": {
@@ -53,27 +53,27 @@
       "registration_failed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
     },
     "saveChatTitle": "Məsləhətləşməni Saxla",
-    "saveChatDescription": "Zəhmət olmasa, məsləhətləşməni randevu kimi saxlamaq üçün daxil olun və ya qeydiyyatdan keçin."
+    "saveChatDescription": "Zəhmət olmasa, məsləhətləşməni qeydiyyatınızda saxlamaq üçün daxil olun və ya qeydiyyatdan keçin."
   },
   "errors": {
     "required": "Bu sahə mütləqdir",
     "invalidEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin"
   },
   "appointments": {
-    "title": "Görüşləriniz",
-    "subtitle": "Bütün tibbi görüşlərinizi idarə edin və izləyin",
-    "newAppointment": "Yeni Görüş",
+    "title": "Məsləhətləşmələriniz",
+    "subtitle": "Bütün tibbi məsləhətləşmələrinizi idarə edin və izləyin",
+    "newAppointment": "Yeni Məsləhətləşmə",
     "filters": {
-      "all": "Bütün Görüşlər",
+      "all": "Bütün Məsləhətləşmələr",
       "upcoming": "Gələcək",
       "completed": "Tamamlanmış"
     },
-    "loading": "Görüşləriniz yüklənir...",
+    "loading": "Məsləhətləşmələriniz yüklənir...",
     "empty": {
-      "title": "Görüş tapılmadı",
-      "all": "Hələ heç bir görüş təyin edilməyib.",
-      "filtered": "Sizin heç bir {{filter}} görüşünüz yoxdur.",
-      "schedule": "Görüş təyin edin"
+      "title": "Məsləhətləşmə tapılmadı",
+      "all": "Hələ heç bir məsləhətləşmə təyin edilməyib.",
+      "filtered": "Sizin heç bir {{filter}} məsləhətləşməniz yoxdur.",
+      "schedule": "Məsləhətləşmə təyin edin"
     },
     "card": {
       "specialty": "İxtisas",
@@ -83,7 +83,7 @@
     }
   },
   "newAppointment": {
-    "title": "Yeni Görüş Başladın",
+    "title": "Yeni Məsləhətləşmə Başladın",
     "subtitle": "Nəyə ehtiyacınız olduğunu deyin və sizi {{agentName}} ilə əlaqələndirək",
     "specialty": {
       "label": "Hansı növ tibbi yardıma ehtiyacınız var?",
@@ -101,15 +101,15 @@
       "placeholder": "Qısa şəkildə narahat olduğunuz şeyi təsvir edin (məsələn, baş ağrısı, dəri səpkiləri, narahatlıq)"
     },
     "duration": {
-      "label": "Bu problem nə qədər vaxtdır ki, var?",
+      "label": "Bu problem nə qədər vaxtdır ki, davam edir?",
       "placeholder": "məsələn, 3 gün, 2 həftə"
     },
     "severity": {
       "label": "Nə qədər ciddidir?",
       "options": {
-        "mild": "Yüngül - Görünür, amma gündəlik fəaliyyətləri təsir etmir",
-        "moderate": "Orta - Bəzi gündəlik fəaliyyətləri təsir edir",
-        "severe": "Ciddi - Gündəlik fəaliyyətləri əhəmiyyətli dərəcədə təsir edir"
+        "mild": "Yüngül - Görünür, amma gündəlik fəaliyyətlərə təsir etmir",
+        "moderate": "Orta - Bəzi gündəlik fəaliyyətlərə təsir edir",
+        "severe": "Ciddi - Gündəlik fəaliyyətlərə əhəmiyyətli dərəcədə təsir edir"
       }
     },
     "symptoms": {
@@ -117,8 +117,8 @@
       "placeholder": "Yaşadığınız digər simptomları sadalayın"
     },
     "treatments": {
-      "label": "Hər hansı müalicə sınağınız olub? (İstəyə bağlı)",
-      "placeholder": "məsələn, əczaçılıq dərmanları, ev müalicələri"
+      "label": "Hər hansı müalicə sınamısınız? (İstəyə bağlı)",
+      "placeholder": "məsələn, dərmanlar, ev müalicələri"
     },
     "notes": {
       "label": "{{agentName}} bilməli olduğu başqa bir şey varmı? (İstəyə bağlı)",
@@ -126,16 +126,16 @@
     },
     "continue": "Davam et",
     "back": "Geri",
-    "submit": "Görüşü Başlat",
-    "submitting": "Görüş yaradılır..."
+    "submit": "Məsləhətləşməni Başlat",
+    "submitting": "Məsləhətləşmə yaradılır..."
   },
   "dashboard": {
     "title": "İdarə panelinizə xoş gəlmisiniz",
-    "subtitle": "Sağlamlıq alətlərinizə, görüşlərinizə və tibbi söhbət tarixçənizə istənilən vaxt daxil olun.",
+    "subtitle": "Sağlamlıq alətlərinizə, məsləhətləşmələrinizə və tibbi tarixçənizə istənilən vaxt daxil olun.",
     "appointments": {
-      "title": "Görüşlər",
-      "description": "Tibbi söhbət sessiyalarını görüntüləyin və ya yaradın.",
-      "action": "Görüşlərə Get"
+      "title": "Məsləhətləşmələr",
+      "description": "Tibbi məsləhətləşmə sessiyalarını görüntüləyin və ya yaradın.",
+      "action": "Məsləhətləşmələrə Get"
     },
     "profile": {
       "title": "Profiliniz",
@@ -143,50 +143,50 @@
       "action": "Profili Görüntülə"
     },
     "newAppointment": {
-      "title": "Yeni Görüş Başladın",
-      "description": "{{agentName}} ilə yeni AI məsləhət görüşü yaradın.",
+      "title": "Yeni Məsləhətləşmə Başladın",
+      "description": "{{agentName}} ilə yeni AI məsləhətləşmə yaradın.",
       "action": "İndi Başla",
       "recommended": "Tövsiyə olunur"
     },
     "healthSummary": {
       "title": "Sağlamlıq Xülasəniz",
-      "recentConsultations": "Son Məsləhətlər",
+      "recentConsultations": "Son Məsləhətləşmələr",
       "profileCompletion": "Profil Tamamlanması",
-      "nextAppointment": "Növbəti Görüş"
+      "nextAppointment": "Növbəti Məsləhətləşmə"
     },
     "security": {
       "title": "Məlumatlarınız təhlükəsizdir",
-      "description": "Şifrələnmiş, şəxsi və qorunur",
+      "description": "Şifrələnmiş, məxfi və qorunur",
       "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin →"
     },
-    "footer": "Sağlamlığınız bizim üçün vacibdir. Bu tətbiq rahatlıq üçün yaradılıb."
+    "footer": "Sağlamlığınız bizim üçün vacibdir. Bu platforma sizin rahatlığınız üçün hazırlanıb."
   },
   "home": {
     "hero": {
-      "title": "Dr. Copad AI Həkimlə Söhbət Edin",
-      "subtitle": "Dərhal, şəxsi tibbi məsləhət. İndi sınayın — qeydiyyat tələb olunmur.",
+      "title": "Şəxsi AI Həkiminiz. 24/7 xidmətinizdə!",
+      "subtitle": "Sağlamlıqla bağlı sualınızı verin və dərhal professional məsləhət alın — qeydiyyatsız!",
       "createAccount": "Hesab Yarat",
       "login": "Daxil Ol",
       "trustBar": {
         "usersHelped": "10,000+ istifadəçiyə kömək edilib",
-        "privateSecure": "Şəxsi və Təhlükəsiz",
+        "privateSecure": "Məxfi və Təhlükəsiz",
         "poweredBy": "OpenAI GPT-4 tərəfindən gücləndirilib"
       }
     },
     "howItWorks": {
       "title": "Necə İşləyir",
-      "subtitle": "Üç sadə addımda dərhal tibbi məsləhət alın",
+      "subtitle": "Üç asan addımla peşəkar tibbi məsləhət əldə edin",
       "step1": {
-        "title": "1. Dr. Copad-a Soruşun",
-        "description": "Sağlamlıq sualınızı və ya simptomlarınızı yazın və AI həkimimizlə dərhal söhbət edin."
+        "title": "1. Dr. Copad ilə Məsləhətləşin",
+        "description": "Sağlamlıq narahatlıqlarınızı və ya simptomlarınızı daxil edin və AI həkimimizdən dərhal rəy alın."
       },
       "step2": {
-        "title": "2. Şəxsi Məsləhət Alın",
-        "description": "Sizə uyğunlaşdırılmış dərhal, məxfi məsləhət alın."
+        "title": "2. Fərdi Məsləhət Alın",
+        "description": "Vəziyyətinizə uyğunlaşdırılmış dərhal, məxfi tövsiyələr əldə edin."
       },
       "step3": {
-        "title": "3. Randevu Alın və İzləyin",
-        "description": "Görüşləri idarə etmək və sağlamlıq profilinizə yeniliklər əlavə etmək üçün qeydiyyatdan keçin."
+        "title": "3. İzləyin və İdarə Edin",
+        "description": "Məsləhətləşmələri idarə etmək və sağlamlıq profilinizi yeniləmək üçün qeydiyyatdan keçin."
       }
     },
     "features": {
@@ -194,55 +194,55 @@
       "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
       "description": "Əlçatan, etibarlı və ehtiyaclarınıza uyğunlaşdırılmış AI ilə gücləndirilmiş tibbi yardım.",
       "chat": {
-        "title": "AI Həkimlə Söhbət Edin",
-        "description": "Simptomlarınızı təsvir edin və AI tərəfindən yaradılmış məsləhətləri dərhal alın — 24/7. Gözləmə otaqları yoxdur, görüşlərə ehtiyac yoxdur."
+        "title": "AI Həkim ilə Məsləhətləşin",
+        "description": "Simptomlarınızı təsvir edin və peşəkar məsləhətləri dərhal alın — 24/7. Gözləmə otaqları yoxdur, randevu tələb olunmur."
       },
       "upload": {
         "title": "Tibbi Faylları Yükləyin",
-        "description": "Laboratoriya nəticələrini, şəkilləri və tibbi tarixçəni AI köməyi ilə təhlil edin. Sadə dildə izahlar və içgörülər əldə edin."
+        "description": "Laboratoriya nəticələrini, şəkilləri və tibbi tarixçəni AI köməyi ilə təhlil edin. Sadə dildə izahlar və dəyərli məlumatlar əldə edin."
       },
       "track": {
-        "title": "Görüşləri İzləyin",
-        "description": "Tarixçə, xülasələr və AI qeydləri ilə sağlamlıq səyahətinizi təşkil edin. Əvvəlki məsləhətlərinizə istənilən vaxt daxil olun."
+        "title": "Məsləhətləşmələri İzləyin",
+        "description": "Tarixçə, xülasələr və AI qeydləri ilə sağlamlıq səyahətinizi təşkil edin. Əvvəlki məsləhətləşmələrinizə istənilən vaxt daxil olun."
       }
     },
     "testimonials": {
       "title": "Dünya üzrə istifadəçilər tərəfindən etibar edilir",
-      "subtitle": "İstifadəçilərimizin təcrübələri haqqında nə dediklərini görün",
+      "subtitle": "İstifadəçilərimizin təcrübələri haqqında fikirləri",
       "testimonial1": {
-        "quote": "{{agentName}} mənə laboratoriya nəticələrimi başa düşməyə kömək etdi, həkimimlə görüş təyin edə bilmədiyim zaman. Hər şeyi sadə dildə izah etdi.",
+        "quote": "{{agentName}} həkimimlə görüş təyin edə bilmədiyim zaman laboratoriya nəticələrimi başa düşməyə kömək etdi. Hər şeyi aydın, sadə dildə izah etdi.",
         "author": "Sarah K.",
         "role": "Xəstə"
       },
       "testimonial2": {
-        "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi məsləhət almaq həyatımı dəyişdi. Bu, cibinizdə həkim saxlamaq kimidir.",
+        "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi məsləhət almaq səhiyyə təcrübəmi tamamilə dəyişdi. Bu, cibinizdə həkim daşımaq kimidir.",
         "author": "Michael T.",
         "role": "Xəstə"
       },
       "testimonial3": {
-        "quote": "Simptom yoxlayıcı təəccüblü dərəcədə dəqiqdir. Adi həkimimin aylardır qaçırdığı bir vəziyyəti müəyyən etməyə kömək etdi.",
+        "quote": "Simptom qiymətləndirmə sistemi olduqca dəqiqdir. Əsas həkimim tərəfindən aylardır diqqətdən kənar qalan bir vəziyyəti aşkar etməyə kömək etdi.",
         "author": "Jessica W.",
-        "role": "Sağlamlıq İşçisi"
+        "role": "Səhiyyə İşçisi"
       }
     },
     "cta": {
-      "title": "Sağlamlığınızın",
-      "subtitle": "nəzarətini ələ almağa hazırsınız?",
-      "description": "Bu gün {{agentName}} ilə başlayın və gələcək tibbi yardımı təcrübə edin. Abunə tələb olunmur.",
+      "title": "Sağlamlığınızın idarəsini",
+      "subtitle": "ələ almağa hazırsınız?",
+      "description": "Bu gün {{agentName}} ilə səyahətinizə başlayın və yeni nəsil səhiyyə xidmətini təcrübə edin. Abunəlik tələb olunmur.",
       "getStarted": "Pulsuz Başlayın",
       "login": "Daxil ol",
       "benefit1": "24/7 tibbi məsləhətə giriş",
-      "benefit2": "Təhlükəsiz və şəxsi məsləhətlər",
+      "benefit2": "Təhlükəsiz və məxfi məsləhətləşmələr",
       "security": {
         "title": "Sağlamlıq Məlumatlarınız Qorunur",
         "description": "Məlumatlarınızı təhlükəsiz saxlamaq üçün qabaqcıl şifrələmə və ciddi məxfilik protokollarından istifadə edirik"
       }
     },
     "trust": {
-      "title": "Sağlamlıq mütəxəssisləri tərəfindən etibar edilir"
+      "title": "Səhiyyə mütəxəssisləri tərəfindən etibar edilir"
     },
     "footer": {
-      "description": "Etibarlı AI səhiyyə yoldaşınız. Dərhal tibbi məsləhət alın, sağlamlığınızı izləyin və görüşləri bir yerdə idarə edin.",
+      "description": "Etibarlı AI səhiyyə yoldaşınız. Peşəkar tibbi məsləhət alın, sağlamlığınızı izləyin və məsləhətləşmələri bir platformada idarə edin.",
       "product": "Məhsul",
       "company": "Şirkət",
       "legal": "Hüquqi",
@@ -261,11 +261,11 @@
   },
   "chat": {
     "title": "AI Səhiyyə Köməkçisi",
-    "messagePlaceholder": "Mesajınızı yazın...",
+    "messagePlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?",
     "send": "Göndər",
     "sending": "Göndərilir...",
-    "saveChat": "Söhbəti randevu kimi saxla",
-    "welcomeMessage": "Salam! Mən sizin AI səhiyyə köməkçinizəm. Bu gün sizə necə kömək edə bilərəm? Zəhmət olmasa, səhiyyə probleminizi və ya sualınızı təsvir edin, mən sizə kömək etmək üçün əlimdən gələni edəcəyəm.",
+    "saveChat": "Məsləhətləşmə kimi saxla",
+    "welcomeMessage": "Salam! Mən Dr. Copad, sizin AI həkiminizəm. Bu gün sağlamlığınızla bağlı sizə necə kömək edə bilərəm?",
     "error": {
       "rateLimit": "Sorğu limiti aşıldı. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
       "network": "Şəbəkə xətası. Zəhmət olmasa, yenidən cəhd edin."
@@ -312,11 +312,11 @@
     "title": "Hesabınızı yaradın",
     "subtitle": "Başlamaq üçün məlumatlarınızı doldurun",
     "illustration": {
-      "title": "Sağlamlıq İcmasımıza Qoşulun",
+      "title": "Sağlamlıq İcmamıza Qoşulun",
       "description": "AI ilə gücləndirilmiş tibbi məsləhətlərə və sağlamlıq resurslarına daxil olmaq üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
       "features": {
         "private": {
-          "title": "Şəxsi & Təhlükəsiz",
+          "title": "Məxfi və Təhlükəsiz",
           "description": "Sağlamlıq məlumatlarınız sənaye standartları ilə şifrələnib və qorunur"
         },
         "access": {
@@ -325,7 +325,7 @@
         },
         "dashboard": {
           "title": "Şəxsi İdarə Paneli",
-          "description": "Fərdiləşdirilmiş içgörülərlə sağlamlıq səyahətinizi izləyin"
+          "description": "Fərdiləşdirilmiş dəyərli məlumatlarla sağlamlıq səyahətinizi izləyin"
         },
         "ai": {
           "title": "AI ilə Gücləndirilmiş",
@@ -360,4 +360,4 @@
       "registrationFailed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
     }
   }
-} 
+}
