@@ -68,11 +68,12 @@ export default function HomePage() {
         <div className={`relative mx-auto ${isKeyboardOpen ? 'mt-2' : 'mt-8 sm:mt-12'} max-w-3xl px-4 sm:px-6 lg:px-8 flex flex-col h-full`}>
           <div className={`rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100 ${isKeyboardOpen ? 'mb-0' : ''}`}>
             <div className={`${isKeyboardOpen ? 'h-[calc(100vh-160px)]' : 'h-[calc(100vh-360px)]'} sm:h-[500px] flex flex-col`}>
-              <GuestChat 
-                containerClassName="flex flex-col h-full"
-                messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
-                inputClassName={`sticky bottom-0 bg-white/80 backdrop-blur-sm px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3 ${isKeyboardOpen ? 'mt-auto' : ''}`}
-              />
+            <GuestChat 
+              containerClassName="flex flex-col h-full"
+              messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
+              inputClassName="fixed bottom-0 left-0 right-0 bg-white/80 backdrop-blur-sm px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
+            />
+
             </div>
           </div>
         </div>
