@@ -10,9 +10,36 @@ import {
   step2,
   step3
 } from "../assets/illustrations";
+import { useState, useEffect } from "react";
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
+
+  useEffect(() => {
+    const handleResize = () => {
+      // Check if the viewport height is significantly smaller than window height
+      // This indicates keyboard is open on mobile
+      const isMobile = window.innerWidth < 768; // 768px is Tailwind's md breakpoint
+      const keyboardThreshold = 300; // Threshold in pixels to detect keyboard
+      const isKeyboardVisible = isMobile && (window.visualViewport.height < window.innerHeight - keyboardThreshold);
+      
+      setIsKeyboardOpen(isKeyboardVisible);
+    };
+
+    // Add event listeners
+    window.visualViewport.addEventListener('resize', handleResize);
+    window.visualViewport.addEventListener('scroll', handleResize);
+
+    // Initial check
+    handleResize();
+
+    // Cleanup
+    return () => {
+      window.visualViewport.removeEventListener('resize', handleResize);
+      window.visualViewport.removeEventListener('scroll', handleResize);
+    };
+  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50">
@@ -50,8 +77,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* CTA Buttons - Moved below chat for better mobile UX */}
-        <div className="mt-4 px-4 sm:px-6 lg:px-8">
+        {/* CTA Buttons - Hidden when keyboard is open on mobile */}
+        <div className={`mt-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isKeyboardOpen ? 'hidden md:block' : ''}`}>
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-center sm:gap-3">
             <Link
               to="/register"
