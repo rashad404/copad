@@ -17,6 +17,7 @@ export default function GuestChat() {
   const [error, setError] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const messagesEndRef = useRef(null);
+  const inputRef = useRef(null);
 
   const scrollToBottom = () => {
     if (messagesEndRef.current) {
@@ -30,6 +31,13 @@ export default function GuestChat() {
       scrollToBottom();
     }
   }, [messages]);
+  
+  // Add a class to the input container for easier targeting
+  useEffect(() => {
+    if (inputRef.current) {
+      inputRef.current.classList.add('chat-input-container');
+    }
+  }, []);
 
   useEffect(() => {
     const initSession = async () => {
@@ -177,8 +185,8 @@ export default function GuestChat() {
 
   return (
     <div className="flex flex-col h-full">
-      {/* Chat messages */}
-      <div className="flex-1 overflow-y-auto p-4 space-y-4" style={{ maxHeight: 'calc(500px - 120px)' }}>
+      {/* Chat messages - Add the messages-container class */}
+      <div className="flex-1 overflow-y-auto p-4 space-y-4 messages-container" style={{ maxHeight: 'calc(100vh - 120px)' }}>
         {messages.map((message, index) => (
           <div
             key={index}
@@ -234,8 +242,8 @@ export default function GuestChat() {
         </div>
       )}
 
-      {/* Message input */}
-      <div className="p-4 border-t bg-white">
+      {/* Message input - Add ref to this div */}
+      <div className="p-4 border-t bg-white" ref={inputRef}>
         <div className="flex items-center gap-2">
           <button
             onClick={handleSaveChat}
@@ -259,6 +267,7 @@ export default function GuestChat() {
             }}
             placeholder={t('chat.messagePlaceholder')}
             className="flex-1 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            style={{ fontSize: '16px' }} /* Prevents iOS zoom */
           />
           <button
             onClick={handleSendMessage}
@@ -314,4 +323,4 @@ export default function GuestChat() {
       )}
     </div>
   );
-} 
+}
