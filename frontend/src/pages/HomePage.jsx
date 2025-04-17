@@ -10,76 +10,9 @@ import {
   step2,
   step3
 } from "../assets/illustrations";
-import { useState, useEffect } from "react";
-import '../styles/keyboard-fix.css';
 
 export default function HomePage() {
   const { t } = useTranslation();
-  const [isKeyboardOpen, setIsKeyboardOpen] = useState(false);
-
-  useEffect(() => {
-    const handleResize = () => {
-      // Check if the viewport height is significantly smaller than window height
-      // This indicates keyboard is open on mobile
-      const isMobile = window.innerWidth < 768; // 768px is Tailwind's md breakpoint
-      const keyboardThreshold = 200; // Lowered threshold for better sensitivity
-      const isKeyboardVisible = isMobile && (window.visualViewport.height < window.innerHeight - keyboardThreshold);
-      
-      setIsKeyboardOpen(isKeyboardVisible);
-      
-      // When keyboard is open, adjust the chat container directly
-      if (isKeyboardVisible) {
-        // Find the chat input container element
-        const inputContainer = document.querySelector('.chat-input-container');
-        if (inputContainer) {
-          inputContainer.style.position = 'fixed';
-          inputContainer.style.bottom = '0';
-          inputContainer.style.left = '0';
-          inputContainer.style.right = '0';
-          inputContainer.style.zIndex = '50';
-          inputContainer.style.backgroundColor = 'white';
-          inputContainer.style.borderTop = '1px solid #f0f0f0';
-        }
-        
-        // Adjust messages container to ensure visibility
-        const messagesContainer = document.querySelector('.messages-container');
-        if (messagesContainer) {
-          messagesContainer.style.marginBottom = '56px';
-        }
-      } else {
-        // Reset styles when keyboard is closed
-        const inputContainer = document.querySelector('.chat-input-container');
-        if (inputContainer) {
-          inputContainer.style.position = '';
-          inputContainer.style.bottom = '';
-          inputContainer.style.left = '';
-          inputContainer.style.right = '';
-          inputContainer.style.zIndex = '';
-          inputContainer.style.backgroundColor = '';
-          inputContainer.style.borderTop = '';
-        }
-        
-        // Reset messages container
-        const messagesContainer = document.querySelector('.messages-container');
-        if (messagesContainer) {
-          messagesContainer.style.marginBottom = '';
-        }
-      }
-    };
-
-    // Add event listeners
-    window.visualViewport.addEventListener('resize', handleResize);
-    window.visualViewport.addEventListener('scroll', handleResize);
-
-    // Initial check
-    handleResize();
-
-    // Cleanup
-    return () => {
-      window.visualViewport.removeEventListener('resize', handleResize);
-      window.visualViewport.removeEventListener('scroll', handleResize);
-    };
-  }, []);
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50">
@@ -105,18 +38,20 @@ export default function HomePage() {
         </div>
 
         {/* Chat Container - Positioned for better mobile view */}
-        <div className={`relative mx-auto ${isKeyboardOpen ? 'mt-2' : 'mt-8 sm:mt-12'} max-w-3xl px-4 sm:px-6 lg:px-8`}>
-          <div className={`rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100 ${isKeyboardOpen ? 'mb-0' : ''}`}>
-            <div className={`${isKeyboardOpen ? 'h-[calc(100vh-100px)]' : 'h-[calc(100vh-360px)]'} sm:h-[500px] flex flex-col`}>
-              <div className="flex-1 overflow-y-auto messages-container">
-                <GuestChat />
-              </div>
+        <div className="relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8">
+          <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
+            <div className="h-[calc(100vh-360px)] sm:h-[500px] flex flex-col">
+              <GuestChat 
+                containerClassName="flex flex-col h-full"
+                messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
+                inputClassName="sticky bottom-0 bg-white/80 backdrop-blur-sm px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
+              />
             </div>
           </div>
         </div>
 
-        {/* CTA Buttons - Hidden when keyboard is open on mobile */}
-        <div className={`mt-4 px-4 sm:px-6 lg:px-8 transition-all duration-300 ${isKeyboardOpen ? 'hidden md:block' : ''}`}>
+        {/* CTA Buttons - Moved below chat for better mobile UX */}
+        <div className="mt-4 px-4 sm:px-6 lg:px-8">
           <div className="flex flex-col gap-2 sm:flex-row sm:justify-center sm:gap-3">
             <Link
               to="/register"
@@ -133,8 +68,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Trust Bar - Hidden when keyboard is open on mobile */}
-        <div className={`mt-6 bg-white/80 backdrop-blur-sm border-y border-gray-100 transition-all duration-300 ${isKeyboardOpen ? 'hidden md:block' : ''}`}>
+        {/* Trust Bar */}
+        <div className="mt-6 bg-white/80 backdrop-blur-sm border-y border-gray-100">
           <div className="mx-auto max-w-7xl px-4 py-3 sm:py-4">
             <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-6">
               <div className="flex items-center justify-center gap-2">
