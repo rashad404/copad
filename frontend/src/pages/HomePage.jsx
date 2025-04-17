@@ -67,7 +67,7 @@ export default function HomePage() {
         {/* Chat Container - Positioned for better mobile view */}
         <div className="relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8">
           <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-            <div className="h-[calc(100vh-360px)] sm:h-[500px] flex flex-col">
+            <div className={`${isKeyboardOpen ? 'h-[calc(100vh-80px)]' : 'h-[calc(100vh-360px)]'} sm:h-[500px] flex flex-col`}>
               <GuestChat 
                 containerClassName="flex flex-col h-full"
                 messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
@@ -95,8 +95,8 @@ export default function HomePage() {
           </div>
         </div>
 
-        {/* Trust Bar */}
-        <div className="mt-6 bg-white/80 backdrop-blur-sm border-y border-gray-100">
+        {/* Trust Bar - Hidden when keyboard is open on mobile */}
+        <div className={`mt-6 bg-white/80 backdrop-blur-sm border-y border-gray-100 transition-all duration-300 ${isKeyboardOpen ? 'hidden md:block' : ''}`}>
           <div className="mx-auto max-w-7xl px-4 py-3 sm:py-4">
             <div className="grid grid-cols-1 gap-3 sm:flex sm:flex-wrap sm:justify-center sm:gap-6">
               <div className="flex items-center justify-center gap-2">
