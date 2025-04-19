@@ -48,9 +48,6 @@ export const sendGuestMessage = async (sessionId, message, specialty = 'general'
       language: i18n.language
     }
   );
-  console.log(123);
-  console.log(i18n.language);
-  console.log(456);
   return response.data;
 };
 export const saveGuestEmail = (sessionId, email) => API.post(`/guest/save-email/${sessionId}`, email);

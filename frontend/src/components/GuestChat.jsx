@@ -38,24 +38,57 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
         
         if (storedSessionId) {
           try {
-            await getGuestSession(storedSessionId);
+            const sessionResponse = await getGuestSession(storedSessionId);
             setSessionId(storedSessionId);
+            
+            console.log('Session response:', sessionResponse.data);
+            console.log('Conversations:', sessionResponse.data.conversations);
+            
+            // Convert existing conversations to our message format
+            const existingMessages = sessionResponse.data.conversations.map(conv => {
+              console.log('Converting conversation:', conv);
+              const role = conv.user ? 'user' : 'assistant';
+              console.log(`Message: "${conv.message}", user: ${conv.user}, role: ${role}`);
+              return {
+                role,
+                content: conv.message,
+                timestamp: conv.timestamp
+              };
+            });
+
+            console.log('Converted messages:', existingMessages);
+
+            // If there are existing messages, use them; otherwise show welcome message
+            if (existingMessages.length > 0) {
+              setMessages(existingMessages);
+            } else {
+              setMessages([{
+                role: 'assistant',
+                content: t('chat.welcomeMessage'),
+                timestamp: new Date()
+              }]);
+            }
           } catch (err) {
+            console.error('Failed to restore session:', err);
             const response = await startGuestSession();
             setSessionId(response.data.sessionId);
             localStorage.setItem('guestSessionId', response.data.sessionId);
+            setMessages([{
+              role: 'assistant',
+              content: t('chat.welcomeMessage'),
+              timestamp: new Date()
+            }]);
           }
         } else {
           const response = await startGuestSession();
           setSessionId(response.data.sessionId);
           localStorage.setItem('guestSessionId', response.data.sessionId);
+          setMessages([{
+            role: 'assistant',
+            content: t('chat.welcomeMessage'),
+            timestamp: new Date()
+          }]);
         }
-
-        setMessages([{
-          role: 'assistant',
-          content: t('chat.welcomeMessage'),
-          timestamp: new Date()
-        }]);
       } catch (err) {
         console.error('Error initializing session:', err);
         setError(t('chat.error.initialization'));
@@ -77,7 +110,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
     setLoading(true);
 
     try {
-      const response = await sendGuestMessage(sessionId, messageToSend, "General Practitioner");
+      const response = await sendGuestMessage(sessionId, messageToSend, "general");
       setMessages(prev => [...prev, { 
         role: 'assistant', 
         content: response, 
@@ -137,6 +170,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
           </div>
         ) : (
           messages.map((message, index) => (
+            console.log(message),
             <div
               key={index}
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}

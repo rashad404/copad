@@ -28,12 +28,12 @@ public class ChatGPTService {
     private final ObjectMapper objectMapper;
     private final MedicalSpecialtyRepository specialtyRepository;
 
-    public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyName, String language) {
+    public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyCode, String language) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
-        MedicalSpecialty specialty = specialtyRepository.findByName(specialtyName)
-            .orElseThrow(() -> new IllegalArgumentException("Invalid specialty: " + specialtyName));
+        MedicalSpecialty specialty = specialtyRepository.findByCode(specialtyCode)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid specialty code: " + specialtyCode));
             
         // Add specialty-specific system prompt with language instruction
         String systemPrompt = specialty.getSystemPrompt() + 

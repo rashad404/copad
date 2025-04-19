@@ -161,7 +161,7 @@ public class GuestSessionService {
                 .createdAt(session.getCreatedAt())
                 .lastActive(session.getLastActive())
                 .conversations(session.getConversations().stream()
-                        .map(conv -> new ConversationDTO(conv.getMessage(), conv.getSender()))
+                        .map(conv -> new ConversationDTO(conv.getMessage(), conv.getSender(), conv.getTimestamp()))
                         .toList())
                 .email(session.getEmail())
                 .build();

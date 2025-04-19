@@ -14,6 +14,9 @@ public class MedicalSpecialty {
     @Column(unique = true, nullable = false)
     private String name;
     
+    @Column(unique = true, nullable = false)
+    private String code;
+    
     @Column(columnDefinition = "TEXT", nullable = false)
     private String systemPrompt;
     

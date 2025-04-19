@@ -7,5 +7,6 @@ import java.util.Optional;
 
 public interface MedicalSpecialtyRepository extends JpaRepository<MedicalSpecialty, Long> {
     Optional<MedicalSpecialty> findByName(String name);
+    Optional<MedicalSpecialty> findByCode(String code);
     List<MedicalSpecialty> findByIsActiveTrue();
 } 

@@ -26,7 +26,13 @@ export default function ChatPage() {
       .then(res => {
         console.log("Chat history:", res.data);
         if (Array.isArray(res.data)) {
-          setMessages(res.data);
+          // Transform the messages if needed
+          const formattedMessages = res.data.map(msg => ({
+            sender: msg.sender,
+            message: msg.message,
+            timestamp: msg.timestamp
+          }));
+          setMessages(formattedMessages);
         } else {
           setMessages([]);
         }
@@ -60,17 +66,23 @@ export default function ChatPage() {
         message: userMessage.message,
         language: i18n.language
       });
-      setMessages(prev => {
-        const aiResponses = res.data.filter(msg => msg.sender === "AI");
-        return [...prev, ...aiResponses];
-      });
+      
+      // Handle the response object and extract the message
+      const aiResponse = typeof res.data === 'string' ? res.data : res.data.message;
+      
+      setMessages(prev => [...prev, {
+        sender: "AI",
+        message: aiResponse,
+        timestamp: new Date()
+      }]);
     } catch (error) {
       console.error("Failed to send message:", error);
       setMessages(prev => [
         ...prev, 
         { 
           sender: "AI", 
-          message: t('chat.error')
+          message: t('chat.error.message'),
+          timestamp: new Date()
         }
       ]);
     } finally {
@@ -277,7 +289,7 @@ export default function ChatPage() {
               <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 mr-1" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
               </svg>
-              {t('chat.security.hipaa')}
+              {t('chat.security.general')}
             </div>
             <button className="text-xs text-gray-400 hover:text-indigo-600 transition-colors cursor-pointer">
               {t('chat.security.save')}

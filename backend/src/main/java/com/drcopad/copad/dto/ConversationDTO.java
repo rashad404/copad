@@ -14,9 +14,13 @@ public class ConversationDTO {
     private boolean isUser;
     private LocalDateTime timestamp;
 
-    public ConversationDTO(String message, String sender) {
+    public ConversationDTO(String message, String sender, LocalDateTime timestamp) {
         this.message = message;
         this.isUser = "USER".equals(sender);
-        this.timestamp = LocalDateTime.now();
+        this.timestamp = timestamp;
+    }
+
+    public ConversationDTO(String message, String sender) {
+        this(message, sender, LocalDateTime.now());
     }
 }

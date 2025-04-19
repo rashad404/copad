@@ -262,6 +262,14 @@
   },
   "chat": {
     "title": "AI Health Assistant",
+    "subtitle": "Your personal AI medical assistant",
+    "status": {
+      "online": "Online",
+      "offline": "Offline"
+    },
+    "input": {
+      "placeholder": "Type your message here..."
+    },
     "messagePlaceholder": "Type your message... e.g. I have an allergy, what should I do?",
     "send": "Send",
     "sending": "Sending...",
@@ -274,6 +282,10 @@
     "error": {
       "message": "Sorry, I couldn't process your message. Please try again.",
       "session": "Connection lost. Please try sending your message again."
+    },
+    "security": {
+      "general": "Secure",
+      "save": "Save Chat"
     }
   },
   "profile": {

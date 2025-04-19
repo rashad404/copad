@@ -261,14 +261,32 @@
   },
   "chat": {
     "title": "AI Səhiyyə Köməkçisi",
+    "subtitle": "Şəxsi AI tibb köməkçiniz",
+    "status": {
+      "online": "Onlayn",
+      "offline": "Oflayn"
+    },
+    "input": {
+      "placeholder": "Mesajınızı buraya yazın..."
+    },
     "messagePlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?",
     "send": "Göndər",
     "sending": "Göndərilir...",
     "saveChat": "Məsləhətləşmə kimi saxla",
     "welcomeMessage": "Salam! Mən Dr. Copad, sizin AI həkiminizəm. Bu gün sağlamlığınızla bağlı sizə necə kömək edə bilərəm?",
+    "empty": {
+      "title": "Söhbətə Başlayın",
+      "description": "Sağlamlıqla bağlı istənilən sualınızı verin və peşəkar məsləhət alın."
+    },
     "error": {
+      "message": "Üzr istəyirəm, mesajınızı emal edə bilmədim. Zəhmət olmasa yenidən cəhd edin.",
+      "session": "Bağlantı kəsildi. Zəhmət olmasa mesajınızı yenidən göndərin.",
       "rateLimit": "Sorğu limiti aşıldı. Zəhmət olmasa, bir az sonra yenidən cəhd edin.",
       "network": "Şəbəkə xətası. Zəhmət olmasa, yenidən cəhd edin."
+    },
+    "security": {
+      "general": "Təhlükəsiz",
+      "save": "Söhbəti Saxla"
     }
   },
   "profile": {
