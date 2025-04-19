@@ -12,6 +12,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.util.UriComponentsBuilder;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
 import java.util.List;
@@ -21,6 +22,9 @@ import java.util.function.Consumer;
 public class OAuth2Config {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Config.class);
+
+    @Value("${spring.profiles.active:local}")
+    private String activeProfile;
 
     private final List<String> allowedDomains = Arrays.asList(
         "https://virtualhekim.az",
@@ -38,6 +42,7 @@ public class OAuth2Config {
             );
 
         logger.info("Creating OAuth2AuthorizationRequestResolver with base path: /oauth2/authorization");
+        logger.info("Active profile: {}", activeProfile);
         
         resolver.setAuthorizationRequestCustomizer(authorizationRequestCustomizer());
         return resolver;
@@ -50,39 +55,28 @@ public class OAuth2Config {
                 HttpServletRequest request = attributes.getRequest();
                 String origin = request.getHeader("Origin");
                 String referer = request.getHeader("Referer");
-                String userAgent = request.getHeader("User-Agent");
-                String redirectUri = request.getParameter("redirect_uri");
                 
                 logger.info("OAuth2 request details:");
                 logger.info("Origin: {}", origin);
                 logger.info("Referer: {}", referer);
-                logger.info("User-Agent: {}", userAgent);
                 logger.info("Request URI: {}", request.getRequestURI());
                 logger.info("Request URL: {}", request.getRequestURL());
                 logger.info("Query String: {}", request.getQueryString());
-                logger.info("Provided redirect_uri: {}", redirectUri);
                 
-                // If redirect_uri is provided in the request, use it
-                if (redirectUri != null) {
-                    String domain = UriComponentsBuilder.fromUriString(redirectUri).build().getHost();
-                    logger.info("Extracted domain from redirect_uri: {}", domain);
-                    
-                    // Check if the domain is allowed
-                    boolean isDomainAllowed = allowedDomains.stream()
-                        .anyMatch(allowed -> allowed.contains(domain));
-                    
-                    if (isDomainAllowed) {
-                        logger.info("Setting provided redirect URI: {}", redirectUri);
-                        builder.redirectUri(redirectUri);
-                    } else {
-                        logger.warn("Redirect URI domain not allowed: {}", domain);
-                        logger.info("Allowed domains: {}", allowedDomains);
-                    }
+                // Determine the base URL for redirect
+                String baseUrl;
+                if ("prod".equals(activeProfile)) {
+                    baseUrl = "https://virtualhekim.az/api";
+                    logger.info("Using production base URL: {}", baseUrl);
                 } else {
-                    logger.warn("No redirect_uri provided in request");
+                    baseUrl = "http://localhost:8080/api22";
+                    logger.info("Using local base URL: {}", baseUrl);
                 }
-            } else {
-                logger.error("No request attributes found in RequestContextHolder");
+                
+                // Construct the redirect URI
+                String redirectUri = baseUrl + "/login/oauth2/code/google";
+                logger.info("Setting redirect URI: {}", redirectUri);
+                builder.redirectUri(redirectUri);
             }
             
             // Log the final authorization request
