@@ -51,6 +51,7 @@ public class AuthController {
     }
 
     @GetMapping("/success")
+    @PostMapping("/success")
     public ResponseEntity<AuthResponse> handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User) {
         if (oauth2User == null) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
