@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # change to 'local' when running locally
+    active: prod  # change to 'local' when running locally
   security:
     oauth2:
       client:
