@@ -13,10 +13,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import jakarta.servlet.ServletException;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
+import java.io.IOException;
 import java.util.Arrays;
 import java.util.List;
 
@@ -37,6 +44,35 @@ public class SecurityConfig {
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
         this.jwtFilter = jwtFilter;
         this.oauth2Config = oauth2Config;
+    }
+
+    @Bean
+    public AuthenticationSuccessHandler oauth2AuthenticationSuccessHandler() {
+        return new AuthenticationSuccessHandler() {
+            @Override
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
+                    Authentication authentication) throws IOException, ServletException {
+                logger.info("OAuth2 Authentication Success Handler");
+                
+                OAuth2User oauth2User = (OAuth2User) authentication.getPrincipal();
+                String email = oauth2User.getAttribute("email");
+                String name = oauth2User.getAttribute("name");
+                
+                logger.info("Authenticated user email: {}", email);
+                logger.info("Authenticated user name: {}", name);
+                
+                // Get the referer domain for redirect
+                String referer = request.getHeader("Referer");
+                String redirectDomain = "https://virtualhekim.az"; // Default production domain
+                
+                if (referer != null && referer.contains("localhost")) {
+                    redirectDomain = "http://localhost:5173"; // Development domain
+                }
+                
+                logger.info("Redirecting to domain: {}", redirectDomain);
+                response.sendRedirect(redirectDomain + "/auth/oauth2/success");
+            }
+        };
     }
 
     @Bean
@@ -62,7 +98,7 @@ public class SecurityConfig {
             .oauth2Login(oauth2 -> {
                 logger.info("Configuring OAuth2 login");
                 oauth2
-                    .defaultSuccessUrl("/api/auth/success", true)
+                    .successHandler(oauth2AuthenticationSuccessHandler())
                     .failureUrl("/api/auth/failure")
                     .authorizationEndpoint(authorization -> {
                         logger.info("Setting up authorization endpoint with resolver");

@@ -33,8 +33,8 @@ public class AuthController {
         return ResponseEntity.ok(userService.register(dto));
     }
 
-    @PostMapping("/login3")
-    public ResponseEntity<String> login3(@RequestBody UserLoginDTO dto) {
+    @PostMapping("/login")
+    public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
         try {
             User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
