@@ -29,8 +29,6 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2Config oauth2Config;
     private final List<String> allowedDomains = Arrays.asList(
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
         "https://virtualhekim.az",
         "https://copad.ai",
         "https://logman.az"
