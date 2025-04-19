@@ -25,7 +25,7 @@ public class ChatGPTConfig {
 
     @PostConstruct
     public void validate() {
-        log.info("ChatGPT Configuration: useDummyData={}, openai={}", useDummyData, openai);
+        // log.info("ChatGPT Configuration: useDummyData={}, openai={}", useDummyData, openai);
         
         if (openai == null) {
             openai = new OpenAIConfig();

@@ -1,5 +1,6 @@
 import axios from "axios";
 import { getApiUrl } from "./config/domains";
+import i18n from "./i18n";
 
 const API_URL = getApiUrl();
 
@@ -42,8 +43,14 @@ export const getGuestSession = (sessionId) => API.get(`/guest/session/${sessionI
 export const sendGuestMessage = async (sessionId, message, specialty = 'general') => {
   const response = await API.post(
     `/guest/chat/${sessionId}?specialty=${specialty}`,
-    { message }
+    { 
+      message,
+      language: i18n.language
+    }
   );
+  console.log(123);
+  console.log(i18n.language);
+  console.log(456);
   return response.data;
 };
 export const saveGuestEmail = (sessionId, email) => API.post(`/guest/save-email/${sessionId}`, email);

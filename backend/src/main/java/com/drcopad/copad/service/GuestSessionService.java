@@ -43,30 +43,30 @@ public class GuestSessionService {
             session.getSessionId(), session.getCreatedAt(), session.getIpAddress());
         
         // Log all existing sessions for debugging
-        List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
-        log.info("Total sessions in database: {}", allSessions.size());
-        allSessions.forEach(s -> 
-            log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
-                s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
+        // List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
+        // log.info("Total sessions in database: {}", allSessions.size());
+        // allSessions.forEach(s -> 
+        //     log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
+        //         s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
         
         return mapToDTO(session);
     }
 
     @Transactional
     public GuestSessionDTO getSession(String sessionId) {
-        log.info("Retrieving guest session: {}", sessionId);
+        // log.info("Retrieving guest session: {}", sessionId);
         
         // Log all existing sessions before retrieval
         List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
-        log.info("Total sessions in database before retrieval: {}", allSessions.size());
-        allSessions.forEach(s -> 
-            log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
-                s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
+        // log.info("Total sessions in database before retrieval: {}", allSessions.size());
+        // allSessions.forEach(s -> 
+        //     log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
+        //         s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
         
         return guestSessionRepository.findBySessionId(sessionId)
                 .map(session -> {
-                    log.info("Found guest session: {} - Last active: {} - IP: {}", 
-                        sessionId, session.getLastActive(), session.getIpAddress());
+                    // log.info("Found guest session: {} - Last active: {} - IP: {}", 
+                    //     sessionId, session.getLastActive(), session.getIpAddress());
                     return mapToDTO(session);
                 })
                 .orElseThrow(() -> {
@@ -76,8 +76,9 @@ public class GuestSessionService {
     }
 
     @Transactional
-    public String processChat(String sessionId, String message, String specialty) {
-        log.info("Processing chat message for session: {} - Message: {}", sessionId, message);
+    public String processChat(String sessionId, String message, String specialty, String language) {
+        log.info("Processing chat message for session: {} - Message: {} - Specialty: {} - Language: {}", 
+                sessionId, message, specialty, language);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {
@@ -88,9 +89,8 @@ public class GuestSessionService {
         log.info("Found session for chat, updating last active timestamp");
         session.setLastActive(LocalDateTime.now());
 
-        // Get AI response with specialty
-        String response = chatGPTService.getChatResponse(message, session.getConversations(), specialty);
-        log.info("Received AI response for session: {}", sessionId);
+        // Get AI response with specialty and language
+        String response = chatGPTService.getChatResponse(message, session.getConversations(), specialty, language);
 
         // Create and save user message
         Conversation userMsg = new Conversation();
@@ -99,7 +99,7 @@ public class GuestSessionService {
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
         session.getConversations().add(userMsg);
-        log.info("Saved user message for session: {}", sessionId);
+        // log.info("Saved user message for session: {}", sessionId);
 
         // Create and save AI message
         Conversation aiMsg = new Conversation();
@@ -108,10 +108,10 @@ public class GuestSessionService {
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
         session.getConversations().add(aiMsg);
-        log.info("Saved AI message for session: {}", sessionId);
+        // log.info("Saved AI message for session: {}", sessionId);
 
         guestSessionRepository.save(session);
-        log.info("Successfully saved conversation for session: {}", sessionId);
+        // log.info("Successfully saved conversation for session: {}", sessionId);
         return response;
     }
 
@@ -138,11 +138,11 @@ public class GuestSessionService {
         log.info("Cleaning up expired guest sessions before: {}", cutoff);
         
         // Log all sessions before cleanup
-        List<GuestSession> allSessions = guestSessionRepository.findAll();
-        log.info("Total sessions before cleanup: {}", allSessions.size());
-        allSessions.forEach(session -> 
-            log.info("Session ID: {}, Created: {}, Last Active: {}", 
-                session.getSessionId(), session.getCreatedAt(), session.getLastActive()));
+        // List<GuestSession> allSessions = guestSessionRepository.findAll();
+        // log.info("Total sessions before cleanup: {}", allSessions.size());
+        // allSessions.forEach(session -> 
+        //     log.info("Session ID: {}, Created: {}, Last Active: {}", 
+        //         session.getSessionId(), session.getCreatedAt(), session.getLastActive()));
         
         // Delete expired sessions
         guestSessionRepository.deleteExpiredSessions(cutoff);
@@ -174,8 +174,8 @@ public class GuestSessionService {
         // Get conversation history
         List<Conversation> history = session.getConversations();
 
-        // Get AI response using the specified specialty
-        String aiResponse = chatGPTService.getChatResponse(message, history, specialty);
+        // Get AI response using the specified specialty and default language
+        String aiResponse = chatGPTService.getChatResponse(message, history, specialty, "en");
 
         // Save user message
         Conversation userMessage = new Conversation();

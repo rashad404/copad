@@ -9,4 +9,5 @@ import lombok.AllArgsConstructor;
 @AllArgsConstructor
 public class MessageRequest {
     private String message;
+    private String language;
 } 

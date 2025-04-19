@@ -10,7 +10,7 @@ import { PaperAirplaneIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 
 export default function ChatPage() {
   const { id } = useParams();
-  const { t } = useTranslation();
+  const { t, i18n } = useTranslation();
   const [messages, setMessages] = useState([]);
   const [input, setInput] = useState("");
   const [loading, setLoading] = useState(true);
@@ -56,7 +56,10 @@ export default function ChatPage() {
     setSending(true);
     
     try {
-      const res = await sendMessageToAI(id, { message: userMessage.message });
+      const res = await sendMessageToAI(id, { 
+        message: userMessage.message,
+        language: i18n.language
+      });
       setMessages(prev => {
         const aiResponses = res.data.filter(msg => msg.sender === "AI");
         return [...prev, ...aiResponses];

@@ -45,7 +45,7 @@ public class GuestController {
 
     @GetMapping("/session/{sessionId}")
     public ResponseEntity<?> getSession(@PathVariable String sessionId) {
-        log.info("Getting guest session: {}", sessionId);
+        // log.info("Getting guest session: {}", sessionId);
         
         if (!rateLimiterService.isAllowed(sessionId)) {
             log.warn("Rate limit exceeded for session: {}", sessionId);
@@ -54,7 +54,7 @@ public class GuestController {
         
         try {
             GuestSessionDTO session = guestSessionService.getSession(sessionId);
-            log.info("Found guest session: {}", sessionId);
+            // log.info("Found guest session: {}", sessionId);
             return ResponseEntity.ok(session);
         } catch (RuntimeException e) {
             log.warn("Guest session not found: {} - Error: {}", sessionId, e.getMessage());
@@ -68,10 +68,10 @@ public class GuestController {
             @PathVariable String sessionId,
             @RequestBody MessageRequest messageRequest,
             @RequestParam(defaultValue = "general") String specialty) {
-        log.info("Received chat request for session {} with message: {} and specialty: {}", 
-                 sessionId, messageRequest.getMessage(), specialty);
+        log.info("Received chat request for session {} with message: {}, specialty: {}, and language: {}", 
+                 sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
         try {
-            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty);
+            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error processing chat request", e);

@@ -1,6 +1,7 @@
 package com.drcopad.copad.controller;
 
 import com.drcopad.copad.dto.ConversationDTO;
+import com.drcopad.copad.dto.MessageRequest;
 import com.drcopad.copad.entity.Appointment;
 import com.drcopad.copad.entity.Conversation;
 import com.drcopad.copad.repository.AppointmentRepository;
@@ -28,21 +29,26 @@ public class ConversationController {
     @PostMapping("/{appointmentId}")
     public ResponseEntity<Conversation> sendMessage(
             @PathVariable Long appointmentId,
-            @RequestBody String message) {
+            @RequestBody MessageRequest messageRequest) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
                 .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
         // Get conversation history
         List<Conversation> history = conversationRepository.findByAppointmentOrderByTimestampAsc(appointment);
 
-        // Get AI response using the appointment's specialty
-        String aiResponse = chatGPTService.getChatResponse(message, history, appointment.getSpecialty());
+        // Get AI response using the appointment's specialty and language
+        String aiResponse = chatGPTService.getChatResponse(
+            messageRequest.getMessage(), 
+            history, 
+            appointment.getSpecialty(),
+            messageRequest.getLanguage()
+        );
 
         // Save user message
         Conversation userMessage = new Conversation();
         userMessage.setAppointment(appointment);
         userMessage.setSender("USER");
-        userMessage.setMessage(message);
+        userMessage.setMessage(messageRequest.getMessage());
         userMessage.setTimestamp(LocalDateTime.now());
         conversationRepository.save(userMessage);
 
