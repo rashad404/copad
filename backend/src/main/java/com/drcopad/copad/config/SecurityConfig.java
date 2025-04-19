@@ -51,8 +51,8 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/api/oauth2/authorization/google")
-                .defaultSuccessUrl("/api/auth/success", true)
-                .failureUrl("/api/auth/failure")
+                .defaultSuccessUrl("https://virtualhekim.az/api/auth/success", true)
+                .failureUrl("https://virtualhekim.az/api/auth/failure")
                 .authorizationEndpoint(authorization -> authorization
                     .baseUri("/api/oauth2/authorization")
                     .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
