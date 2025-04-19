@@ -83,10 +83,7 @@ public class SecurityConfig {
         // Configure server name and scheme for production
         if ("prod".equals(activeProfile)) {
             http.requiresChannel(channel -> channel
-                .requestMatchers("/**").requiresSecure())
-                .servletApi(servlet -> servlet
-                    .setServerName("virtualhekim.az")
-                );
+                .requestMatchers("/**").requiresSecure());
         }
         
         return http
