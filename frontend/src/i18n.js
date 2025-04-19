@@ -6,6 +6,9 @@ import { AGENT_NAME } from './config/constants';
 import enTranslations from './translations/en.json';
 import azTranslations from './translations/az.json';
 
+if (!localStorage.getItem('i18nextLng')) {
+  localStorage.setItem('i18nextLng', 'az');
+}
 i18n
   .use(LanguageDetector)
   .use(initReactI18next)
