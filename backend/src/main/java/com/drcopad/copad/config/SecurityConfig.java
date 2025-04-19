@@ -48,10 +48,15 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/api/auth/success")
+                .loginPage("/oauth2/authorization/google")
+                .defaultSuccessUrl("/api/auth/success", true)
                 .failureUrl("/api/auth/failure")
                 .authorizationEndpoint(authorization -> authorization
+                    .baseUri("/oauth2/authorization")
                     .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                )
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/api/login/oauth2/code/*")
                 )
             )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
