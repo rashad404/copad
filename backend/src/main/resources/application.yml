@@ -34,6 +34,13 @@ spring:
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+      internal-proxies: .*
+  use-forward-headers: true
 
 app:
   chatgpt:

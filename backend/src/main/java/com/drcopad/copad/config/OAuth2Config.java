@@ -59,12 +59,20 @@ public class OAuth2Config {
                 HttpServletRequest request = attributes.getRequest();
                 String origin = request.getHeader("Origin");
                 String referer = request.getHeader("Referer");
-                logger.info("OAuth2 request received - Origin: {}, Referer: {}, URL: {}", origin, referer, request.getRequestURL());
+                String forwardedProto = request.getHeader("X-Forwarded-Proto");
+                String forwardedHost = request.getHeader("X-Forwarded-Host");
+                
+                logger.info("OAuth2 request received - Origin: {}, Referer: {}, ForwardedProto: {}, ForwardedHost: {}, URL: {}", 
+                    origin, referer, forwardedProto, forwardedHost, request.getRequestURL());
                 
                 // Always set the redirect URI to the production domain
                 String registrationId = request.getParameter("registration_id");
                 if (registrationId != null) {
-                    String redirectUri = "https://virtualhekim.az/api/login/oauth2/code/" + registrationId;
+                    String baseUrl = "https://virtualhekim.az";
+                    if (forwardedProto != null && forwardedHost != null) {
+                        baseUrl = forwardedProto + "://" + forwardedHost;
+                    }
+                    String redirectUri = baseUrl + "/api/login/oauth2/code/" + registrationId;
                     logger.info("Setting redirect URI to: {}", redirectUri);
                     builder.redirectUri(redirectUri);
                 }
