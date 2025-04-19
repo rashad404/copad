@@ -69,7 +69,7 @@ public class OAuth2Config {
                     baseUrl = "https://virtualhekim.az";
                     logger.info("Using production base URL: {}", baseUrl);
                 } else {
-                    baseUrl = "http://localhost:8080";
+                    baseUrl = "https://virtualhekim.az";
                     logger.info("Using local base URL: {}", baseUrl);
                 }
                 
