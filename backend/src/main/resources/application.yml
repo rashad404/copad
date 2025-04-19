@@ -63,7 +63,7 @@ server:
   forward-headers-strategy: NATIVE
   server-header: virtualhekim.az
   use-forward-headers: true
-  address: virtualhekim.az
+  address: 0.0.0.0  # Changed from virtualhekim.az to listen on all interfaces
   tomcat:
     remote-ip-header: X-Forwarded-For
     protocol-header: X-Forwarded-Proto
