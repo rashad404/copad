@@ -51,11 +51,12 @@ export default function LoginPage() {
       console.log('Current Domain:', currentDomain);
       console.log('API Base URL:', apiBaseUrl);
 
-      // Remove /api from VITE_API_URL if it exists
-      const baseUrl = apiBaseUrl.endsWith('/api') 
-        ? apiBaseUrl.slice(0, -4) 
-        : apiBaseUrl;
-      console.log('Base URL after /api removal:', baseUrl);
+      // Determine if we're in production
+      const isProd = currentDomain.includes('virtualhekim.az');
+      
+      // In production, use the same domain for API
+      const baseUrl = isProd ? currentDomain : apiBaseUrl.replace('/api', '');
+      console.log('Base URL for OAuth:', baseUrl);
 
       // Construct the authorization URL
       const authUrl = `${baseUrl}/api/oauth2/authorization/${provider}`;
@@ -65,9 +66,13 @@ export default function LoginPage() {
       const state = Math.random().toString(36).substring(7);
       const finalUrl = new URL(authUrl);
       finalUrl.searchParams.append('state', state);
-      finalUrl.searchParams.append('redirect_uri', `${baseUrl}/api/login/oauth2/code/${provider}`);
+      
+      // In production, redirect URI should use the same domain
+      const redirectUri = `${baseUrl}/api/login/oauth2/code/${provider}`;
+      finalUrl.searchParams.append('redirect_uri', redirectUri);
       
       console.log('Final URL with parameters:', finalUrl.toString());
+      console.log('Redirect URI:', redirectUri);
       
       // Store state for verification
       sessionStorage.setItem('oauth2_state', state);
