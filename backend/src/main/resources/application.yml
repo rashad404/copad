@@ -17,14 +17,20 @@ spring:
             redirect-uri: http://localhost:8080/login/oauth2/code/facebook
 
   datasource:
-    url: ${DATABASE_URL}
+    url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
     username: ${DATABASE_USERNAME}
     password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: validate
-    show-sql: false
+      ddl-auto: update
+    show-sql: true
     database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        connection:
+          characterEncoding: UTF-8
+          useUnicode: true
+          charSet: UTF-8
 
 server:
   port: ${PORT:8080}

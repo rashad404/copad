@@ -266,10 +266,14 @@
     "send": "Send",
     "sending": "Sending...",
     "saveChat": "Save as consultation",
-    "welcomeMessage": "Hey there! I'm Dr. Copad, your AI Doctor. How can I help with your health today?",
+    "welcomeMessage": "Hello! I'm Dr. Copad, your AI medical assistant. How can I help you today?",
+    "empty": {
+      "title": "Start a Conversation",
+      "description": "Ask me any health-related question and I'll provide professional guidance."
+    },
     "error": {
-      "rateLimit": "Request limit exceeded. Please try again later.",
-      "network": "Network error. Please try again."
+      "message": "Sorry, I couldn't process your message. Please try again.",
+      "session": "Connection lost. Please try sending your message again."
     }
   },
   "profile": {

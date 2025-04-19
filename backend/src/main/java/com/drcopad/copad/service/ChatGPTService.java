@@ -5,6 +5,8 @@ import com.drcopad.copad.dto.ChatGPTRequest;
 import com.drcopad.copad.dto.ChatGPTResponse;
 import com.drcopad.copad.dto.Message;
 import com.drcopad.copad.entity.Conversation;
+import com.drcopad.copad.entity.MedicalSpecialty;
+import com.drcopad.copad.repository.MedicalSpecialtyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -24,11 +26,19 @@ public class ChatGPTService {
     private final WebClient webClient;
     private final ChatGPTConfig chatGPTConfig;
     private final ObjectMapper objectMapper;
+    private final MedicalSpecialtyRepository specialtyRepository;
 
-    public String getChatResponse(String newUserMessage, List<Conversation> history) {
+    public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyName) {
         List<Message> messages = new ArrayList<>();
-        messages.add(new Message("system", "You are a helpful and experienced medical doctor."));
+        
+        // Get specialty-specific prompt
+        MedicalSpecialty specialty = specialtyRepository.findByName(specialtyName)
+            .orElseThrow(() -> new IllegalArgumentException("Invalid specialty: " + specialtyName));
+            
+        // Add specialty-specific system prompt
+        messages.add(new Message("system", specialty.getSystemPrompt()));
 
+        // Add conversation history
         for (Conversation c : history) {
             String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
             messages.add(new Message(role, c.getMessage()));
@@ -42,10 +52,9 @@ public class ChatGPTService {
     private Mono<String> getChatGPTResponse(List<Message> messages) {
         boolean useDummyData = chatGPTConfig.isUseDummyData();
         log.info("Injected config values — useDummyData={}, model={}, url={}", 
-    chatGPTConfig.isUseDummyData(), 
-    chatGPTConfig.getOpenai().getModel(), 
-    chatGPTConfig.getOpenai().getUrl());
-
+            chatGPTConfig.isUseDummyData(), 
+            chatGPTConfig.getOpenai().getModel(), 
+            chatGPTConfig.getOpenai().getUrl());
         
         if (useDummyData) {
             log.info("Using dummy response mode");
@@ -69,12 +78,16 @@ public class ChatGPTService {
         return webClient.post()
                 .uri(chatGPTConfig.getOpenai().getUrl())
                 .header("Authorization", "Bearer " + chatGPTConfig.getOpenai().getKey())
+                .header("OpenAI-Beta", "assistants=v1") // Required for Responses API
                 .bodyValue(request)
                 .retrieve()
                 .bodyToMono(ChatGPTResponse.class)
                 .map(response -> {
                     log.info("Received response from ChatGPT API: {}", response);
-                    return response.getChoices().get(0).getMessage().getContent();
+                    if (response.getChoices() != null && !response.getChoices().isEmpty()) {
+                        return response.getChoices().get(0).getMessage().getContent();
+                    }
+                    return "I apologize, but I couldn't generate a response. Please try again.";
                 })
                 .onErrorResume(e -> {
                     log.error("Error calling ChatGPT API. Error details: {}", e.getMessage(), e);

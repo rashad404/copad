@@ -1,6 +1,8 @@
 package com.drcopad.copad.controller;
 
 import com.drcopad.copad.dto.GuestSessionDTO;
+import com.drcopad.copad.dto.MessageRequest;
+import com.drcopad.copad.dto.ChatGPTResponse;
 import com.drcopad.copad.exception.RateLimitExceededException;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.service.RateLimiterService;
@@ -62,24 +64,18 @@ public class GuestController {
     }
 
     @PostMapping("/chat/{sessionId}")
-    public ResponseEntity<?> chat(
+    public ResponseEntity<String> chat(
             @PathVariable String sessionId,
-            @RequestBody String message) {
-        log.info("Processing chat message for session: {} - Message: {}", sessionId, message);
-        
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
-        
+            @RequestBody MessageRequest messageRequest,
+            @RequestParam(defaultValue = "general") String specialty) {
+        log.info("Received chat request for session {} with message: {} and specialty: {}", 
+                 sessionId, messageRequest.getMessage(), specialty);
         try {
-            String response = guestSessionService.processChat(sessionId, message);
-            log.info("Successfully processed chat message for session: {}", sessionId);
+            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty);
             return ResponseEntity.ok(response);
-        } catch (RuntimeException e) {
-            log.warn("Failed to process chat message for session: {} - Error: {}", sessionId, e.getMessage());
-            return ResponseEntity.status(HttpStatus.NOT_FOUND)
-                    .body("Session not found. Please start a new session.");
+        } catch (Exception e) {
+            log.error("Error processing chat request", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
 

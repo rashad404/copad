@@ -1,7 +1,7 @@
 import { Link } from "react-router-dom";
 import Navbar from "../components/Navbar";
 import { useTranslation } from "react-i18next";
-import GuestChat from "../components/GuestChat";
+import GuestChat from '../components/GuestChat.jsx';
 import { motion } from "framer-motion";
 import { CheckCircle, Shield } from "lucide-react";
 import Logo from "../components/Logo";
@@ -24,7 +24,7 @@ export default function HomePage() {
         {/* <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div> */}
         
         {/* Hero Content */}
-        <div className="relative px-4 pt-12 sm:pt-16 sm:px-6 lg:px-8">
+        <div className="relative px-4 pt-0 sm:pt-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl">
             <div className="text-center">
               <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
@@ -38,13 +38,13 @@ export default function HomePage() {
         </div>
 
         {/* Chat Container */}
-        <div className='fixed bottom-0 md:relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8 w-full'>
+        <div className='fixed inset-x-0 bottom-0 md:relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8 w-full'>
           <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-            <div className="h-[calc(100vh-360px)] sm:h-[500px] flex flex-col">
+            <div className="h-[calc(100vh-250px)] sm:h-[500px] flex flex-col">
               <GuestChat 
                 containerClassName="flex flex-col h-full"
                 messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
-                inputClassName="sticky bottom-0 bg-white/80 backdrop-blur-sm px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
+                inputClassName="px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
               />
             </div>
           </div>

@@ -39,7 +39,13 @@ export const getAppointmentChat = (appointmentId) => API.get(`/conversations/${a
 // Guest session endpoints
 export const startGuestSession = () => API.post("/guest/start");
 export const getGuestSession = (sessionId) => API.get(`/guest/session/${sessionId}`);
-export const sendGuestMessage = (sessionId, message) => API.post(`/guest/chat/${sessionId}`, message);
+export const sendGuestMessage = async (sessionId, message, specialty = 'general') => {
+  const response = await API.post(
+    `/guest/chat/${sessionId}?specialty=${specialty}`,
+    { message }
+  );
+  return response.data;
+};
 export const saveGuestEmail = (sessionId, email) => API.post(`/guest/save-email/${sessionId}`, email);
 export const saveConversation = (sessionId) => API.post(`/guest/save-conversation/${sessionId}`);
   

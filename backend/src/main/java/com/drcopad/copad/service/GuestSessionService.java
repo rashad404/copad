@@ -5,6 +5,7 @@ import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.entity.Conversation;
 import com.drcopad.copad.entity.GuestSession;
 import com.drcopad.copad.repository.GuestSessionRepository;
+import com.drcopad.copad.repository.ConversationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -16,6 +17,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Slf4j
 @Service
@@ -23,6 +25,7 @@ import java.util.List;
 public class GuestSessionService {
 
     private final GuestSessionRepository guestSessionRepository;
+    private final ConversationRepository conversationRepository;
     private final ChatGPTService chatGPTService;
 
     @Transactional
@@ -73,7 +76,7 @@ public class GuestSessionService {
     }
 
     @Transactional
-    public String processChat(String sessionId, String message) {
+    public String processChat(String sessionId, String message, String specialty) {
         log.info("Processing chat message for session: {} - Message: {}", sessionId, message);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
@@ -85,8 +88,8 @@ public class GuestSessionService {
         log.info("Found session for chat, updating last active timestamp");
         session.setLastActive(LocalDateTime.now());
 
-        // Get AI response
-        String response = chatGPTService.getChatResponse(message, session.getConversations());
+        // Get AI response with specialty
+        String response = chatGPTService.getChatResponse(message, session.getConversations(), specialty);
         log.info("Received AI response for session: {}", sessionId);
 
         // Create and save user message
@@ -162,5 +165,48 @@ public class GuestSessionService {
                         .toList())
                 .email(session.getEmail())
                 .build();
+    }
+
+    public Conversation addMessage(String sessionId, String message, String specialty) {
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+        
+        // Get conversation history
+        List<Conversation> history = session.getConversations();
+
+        // Get AI response using the specified specialty
+        String aiResponse = chatGPTService.getChatResponse(message, history, specialty);
+
+        // Save user message
+        Conversation userMessage = new Conversation();
+        userMessage.setGuestSession(session);
+        userMessage.setSender("USER");
+        userMessage.setMessage(message);
+        userMessage.setTimestamp(LocalDateTime.now());
+        session.getConversations().add(userMessage);
+
+        // Save AI response
+        Conversation aiMessage = new Conversation();
+        aiMessage.setGuestSession(session);
+        aiMessage.setSender("AI");
+        aiMessage.setMessage(aiResponse);
+        aiMessage.setTimestamp(LocalDateTime.now());
+        session.getConversations().add(aiMessage);
+        
+        guestSessionRepository.save(session);
+        return aiMessage;
+    }
+
+    public List<Conversation> getConversationHistory(String sessionId) {
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+        return session.getConversations();
+    }
+
+    public void updateLastActive(String sessionId) {
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
+        session.setLastActive(LocalDateTime.now());
+        guestSessionRepository.save(session);
     }
 } 

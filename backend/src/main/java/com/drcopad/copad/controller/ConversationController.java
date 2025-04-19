@@ -26,58 +26,40 @@ public class ConversationController {
 
 
     @PostMapping("/{appointmentId}")
-    public ResponseEntity<List<Conversation>> sendMessage(
+    public ResponseEntity<Conversation> sendMessage(
             @PathVariable Long appointmentId,
-            @RequestBody ConversationDTO dto,
-            @AuthenticationPrincipal com.drcopad.copad.entity.User user) {
-
+            @RequestBody String message) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
 
-        if (!appointment.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-
-        List<Conversation> messages = new ArrayList<>();
-
-        Conversation userMsg = new Conversation();
-        userMsg.setAppointment(appointment);
-        userMsg.setSender("USER");
-        userMsg.setMessage(dto.getMessage());
-        userMsg.setTimestamp(LocalDateTime.now());
-        conversationRepository.save(userMsg);
-
+        // Get conversation history
         List<Conversation> history = conversationRepository.findByAppointmentOrderByTimestampAsc(appointment);
-        String aiReply = chatGPTService.getChatResponse(dto.getMessage(), history);
 
+        // Get AI response using the appointment's specialty
+        String aiResponse = chatGPTService.getChatResponse(message, history, appointment.getSpecialty());
 
-        Conversation aiMsg = new Conversation();
-        aiMsg.setAppointment(appointment);
-        aiMsg.setSender("AI");
-        aiMsg.setMessage(aiReply);
-        aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
-        conversationRepository.save(aiMsg);
+        // Save user message
+        Conversation userMessage = new Conversation();
+        userMessage.setAppointment(appointment);
+        userMessage.setSender("USER");
+        userMessage.setMessage(message);
+        userMessage.setTimestamp(LocalDateTime.now());
+        conversationRepository.save(userMessage);
 
-        messages.add(userMsg);
-        messages.add(aiMsg);
-
-        return ResponseEntity.ok(messages);
+        // Save AI response
+        Conversation aiMessage = new Conversation();
+        aiMessage.setAppointment(appointment);
+        aiMessage.setSender("AI");
+        aiMessage.setMessage(aiResponse);
+        aiMessage.setTimestamp(LocalDateTime.now());
+        return ResponseEntity.ok(conversationRepository.save(aiMessage));
     }
 
     @GetMapping("/{appointmentId}")
-    public ResponseEntity<List<Conversation>> getMessages(
-            @PathVariable Long appointmentId,
-            @AuthenticationPrincipal com.drcopad.copad.entity.User user) {
-
+    public ResponseEntity<List<Conversation>> getConversationHistory(@PathVariable Long appointmentId) {
         Appointment appointment = appointmentRepository.findById(appointmentId)
-                .orElseThrow(() -> new RuntimeException("Appointment not found"));
-
-        if (!appointment.getUser().getId().equals(user.getId())) {
-            return ResponseEntity.status(403).build();
-        }
-
-        List<Conversation> history = conversationRepository.findByAppointmentOrderByTimestampAsc(appointment);
-        return ResponseEntity.ok(history);
+                .orElseThrow(() -> new IllegalArgumentException("Appointment not found"));
+        return ResponseEntity.ok(conversationRepository.findByAppointmentOrderByTimestampAsc(appointment));
     }
 
 }
