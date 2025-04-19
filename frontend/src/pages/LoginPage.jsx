@@ -78,13 +78,13 @@ export default function LoginPage() {
                   <img src="/google-icon.svg" alt="Google" className="w-5 h-5" />
                   {t('auth.login_with_google')}
                 </button>
-                <button
+                {/* <button
                   onClick={() => handleSocialLogin('facebook')}
                   className="w-full flex items-center justify-center gap-2 px-4 py-2 border border-gray-300 rounded-lg hover:bg-gray-50 cursor-pointer"
                 >
                   <img src="/facebook-icon.svg" alt="Facebook" className="w-5 h-5" />
                   {t('auth.login_with_facebook')}
-                </button>
+                </button> */}
               </div>
 
               <div className="relative">
