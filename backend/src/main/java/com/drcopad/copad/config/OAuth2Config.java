@@ -20,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.net.URL;
 
 @Component
 public class OAuth2Config {
@@ -57,7 +58,18 @@ public class OAuth2Config {
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
                 String origin = request.getHeader("Origin");
-                logger.info("OAuth2 request received from origin: {}", origin);
+                String referer = request.getHeader("Referer");
+                logger.info("OAuth2 request received - Origin: {}, Referer: {}, URL: {}", origin, referer, request.getRequestURL());
+                
+                // If origin is null, try to get it from referer
+                if (origin == null && referer != null) {
+                    try {
+                        origin = new URL(referer).getProtocol() + "://" + new URL(referer).getHost();
+                        logger.info("Using referer as origin: {}", origin);
+                    } catch (Exception e) {
+                        logger.warn("Failed to parse referer URL: {}", referer);
+                    }
+                }
                 
                 if (origin != null && allowedDomains.contains(origin)) {
                     String registrationId = request.getParameter("registration_id");
@@ -70,6 +82,13 @@ public class OAuth2Config {
                     }
                 } else {
                     logger.warn("Origin not allowed or not present: {}", origin);
+                    // Allow the request to proceed even if origin is not in allowed domains
+                    String registrationId = request.getParameter("registration_id");
+                    if (registrationId != null) {
+                        String redirectUri = "https://virtualhekim.az/api/login/oauth2/code/" + registrationId;
+                        logger.info("Setting redirect URI to: {}", redirectUri);
+                        builder.redirectUri(redirectUri);
+                    }
                 }
             } else {
                 logger.error("No request attributes found in RequestContextHolder");
