@@ -52,8 +52,16 @@ public class AuthController {
 
     @GetMapping("/success")
     public ResponseEntity<AuthResponse> handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User) {
+        if (oauth2User == null) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        }
+        
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
+        
+        if (email == null || name == null) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).build();
+        }
         
         // Check if user exists, if not create new user
         AuthResponse response = authService.handleOAuthLogin(email, name);

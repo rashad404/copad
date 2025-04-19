@@ -51,8 +51,8 @@ public class SecurityConfig {
             )
             .oauth2Login(oauth2 -> oauth2
                 .loginPage("/api/oauth2/authorization/google")
-                .defaultSuccessUrl("https://virtualhekim.az/api/auth/success", true)
-                .failureUrl("https://virtualhekim.az/api/auth/failure")
+                .defaultSuccessUrl("/api/auth/success", true)
+                .failureUrl("/api/auth/failure")
                 .authorizationEndpoint(authorization -> authorization
                     .baseUri("/api/oauth2/authorization")
                     .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
@@ -60,16 +60,18 @@ public class SecurityConfig {
                 .redirectionEndpoint(redirection -> redirection
                     .baseUri("/api/login/oauth2/code/*")
                 )
-                .userInfoEndpoint(userInfo -> userInfo
-                    .userService(oauth2Config.oauth2UserService())
-                )
             )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
                 .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
             )
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    response.sendRedirect("/api/oauth2/authorization/google");
+                })
+            );
 
         return http.build();
     }
