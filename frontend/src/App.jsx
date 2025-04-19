@@ -12,6 +12,7 @@ import LoginPage from "./pages/LoginPage.jsx";
 import RegisterPage from "./pages/RegisterPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import NewAppointmentPage from "./pages/NewAppointmentPage.jsx";
+import OAuthCallbackPage from "./pages/OAuthCallbackPage.jsx";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -26,6 +27,7 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/appointments/new" element={<NewAppointmentPage />} />
+      <Route path="/login/callback" element={<OAuthCallbackPage />} />
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );

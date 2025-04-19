@@ -2,6 +2,7 @@ package com.drcopad.copad.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -45,21 +46,38 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers("/api/guest/**").permitAll()
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/api/oauth2/authorization/**").permitAll()
+                .requestMatchers("/api/login/oauth2/code/**").permitAll()
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                .defaultSuccessUrl("/api/auth/success")
+                .loginPage("/api/oauth2/authorization/google")
+                .defaultSuccessUrl("/api/auth/success", true)
                 .failureUrl("/api/auth/failure")
                 .authorizationEndpoint(authorization -> authorization
+                    .baseUri("/api/oauth2/authorization")
                     .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                )
+                .redirectionEndpoint(redirection -> redirection
+                    .baseUri("/api/login/oauth2/code/*")
                 )
             )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
             )
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .exceptionHandling(exception -> exception
+                .authenticationEntryPoint((request, response, authException) -> {
+                    String requestedUrl = request.getRequestURL().toString();
+                    if (requestedUrl.contains("/api/auth/success")) {
+                        response.sendRedirect("https://virtualhekim.az/api/oauth2/authorization/google");
+                    } else {
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+                    }
+                })
+            );
 
         return http.build();
     }

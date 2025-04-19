@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: local  # change to 'local' when running locally
+    active: prod  # change to 'local' when running locally
   security:
     oauth2:
       client:
@@ -9,12 +9,12 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: openid,profile,email
-            redirect-uri: http://localhost:8080/login/oauth2/code/google
+            redirect-uri: https://virtualhekim.az/api/login/oauth2/code/google
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
-            redirect-uri: http://localhost:8080/login/oauth2/code/facebook
+            redirect-uri: https://virtualhekim.az/api/login/oauth2/code/facebook
 
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
@@ -34,6 +34,13 @@ spring:
 
 server:
   port: ${PORT:8080}
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+      internal-proxies: .*
+  use-forward-headers: true
 
 app:
   chatgpt:

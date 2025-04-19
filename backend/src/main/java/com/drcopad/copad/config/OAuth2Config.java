@@ -3,8 +3,13 @@ package com.drcopad.copad.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -15,6 +20,7 @@ import org.slf4j.LoggerFactory;
 import java.util.Arrays;
 import java.util.List;
 import java.util.function.Consumer;
+import java.net.URL;
 
 @Component
 public class OAuth2Config {
@@ -29,13 +35,17 @@ public class OAuth2Config {
         "https://logman.az"
     );
 
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+        return new DefaultOAuth2UserService();
+    }
+
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
             ClientRegistrationRepository clientRegistrationRepository) {
         
         DefaultOAuth2AuthorizationRequestResolver resolver = 
             new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, 
-                "/oauth2/authorization"
+                "/api/oauth2/authorization"
             );
 
         resolver.setAuthorizationRequestCustomizer(authorizationRequestCustomizer());
@@ -48,19 +58,23 @@ public class OAuth2Config {
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
                 String origin = request.getHeader("Origin");
-                logger.info("OAuth2 request received from origin: {}", origin);
+                String referer = request.getHeader("Referer");
+                String forwardedProto = request.getHeader("X-Forwarded-Proto");
+                String forwardedHost = request.getHeader("X-Forwarded-Host");
                 
-                if (origin != null && allowedDomains.contains(origin)) {
-                    String registrationId = request.getParameter("registration_id");
-                    logger.info("Registration ID: {}", registrationId);
-                    
-                    if (registrationId != null) {
-                        String redirectUri = origin + "/login/oauth2/code/" + registrationId;
-                        logger.info("Setting redirect URI to: {}", redirectUri);
-                        builder.redirectUri(redirectUri);
+                logger.info("OAuth2 request received - Origin: {}, Referer: {}, ForwardedProto: {}, ForwardedHost: {}, URL: {}", 
+                    origin, referer, forwardedProto, forwardedHost, request.getRequestURL());
+                
+                // Always set the redirect URI to the production domain
+                String registrationId = request.getParameter("registration_id");
+                if (registrationId != null) {
+                    String baseUrl = "https://virtualhekim.az";
+                    if (forwardedProto != null && forwardedHost != null) {
+                        baseUrl = forwardedProto + "://" + forwardedHost;
                     }
-                } else {
-                    logger.warn("Origin not allowed or not present: {}", origin);
+                    String redirectUri = baseUrl + "/api/login/oauth2/code/" + registrationId;
+                    logger.info("Setting redirect URI to: {}", redirectUri);
+                    builder.redirectUri(redirectUri);
                 }
             } else {
                 logger.error("No request attributes found in RequestContextHolder");

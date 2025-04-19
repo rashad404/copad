@@ -8,6 +8,7 @@ import com.drcopad.copad.service.UserService;
 import com.drcopad.copad.service.JwtService;
 import com.drcopad.copad.dto.AuthResponse;
 import com.drcopad.copad.service.AuthService;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -16,6 +17,9 @@ import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.server.ResponseStatusException;
+import java.io.IOException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -50,14 +54,31 @@ public class AuthController {
         }
     }
 
-    @GetMapping("/success")
-    public ResponseEntity<AuthResponse> handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User) {
+    @RequestMapping(value = "/success", method = {RequestMethod.GET, RequestMethod.POST})
+    public void handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User, HttpServletResponse response) throws IOException {
+        if (oauth2User == null) {
+            response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+            return;
+        }
+        
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
         
+        if (email == null || name == null) {
+            response.sendError(HttpStatus.BAD_REQUEST.value(), "Missing user information");
+            return;
+        }
+        
         // Check if user exists, if not create new user
-        AuthResponse response = authService.handleOAuthLogin(email, name);
-        return ResponseEntity.ok(response);
+        AuthResponse authResponse = authService.handleOAuthLogin(email, name);
+        
+        // Redirect to frontend with token as query parameter
+        String redirectUrl = String.format("https://virtualhekim.az/login/callback?token=%s&name=%s&email=%s",
+            URLEncoder.encode(authResponse.getToken(), StandardCharsets.UTF_8),
+            URLEncoder.encode(authResponse.getFullName(), StandardCharsets.UTF_8),
+            URLEncoder.encode(authResponse.getEmail(), StandardCharsets.UTF_8));
+        
+        response.sendRedirect(redirectUrl);
     }
 
     @GetMapping("/test")
