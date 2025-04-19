@@ -15,9 +15,6 @@ spring:
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
             redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
-        provider:
-          google:
-            issuer-uri: https://accounts.google.com
 
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
@@ -39,8 +36,6 @@ server:
   port: ${PORT:8080}
   servlet:
     context-path: /api
-  forward-headers-strategy: NATIVE
-  base-url: ${BASE_URL:http://localhost:8080}  # In production, set BASE_URL=https://virtualhekim.az
 
 app:
   chatgpt:
@@ -49,24 +44,4 @@ app:
       key: ${OPENAI_API_KEY}
       model: gpt-3.5-turbo
       url: https://api.openai.com/v1/chat/completions
-
-# Production profile specific settings
----
-spring:
-  config:
-    activate:
-      on-profile: prod
-server:
-  port: ${PORT:8080}
-  servlet:
-    context-path: /api
-  forward-headers-strategy: NATIVE
-  server-header: virtualhekim.az
-  use-forward-headers: true
-  address: 0.0.0.0  # Changed from virtualhekim.az to listen on all interfaces
-  tomcat:
-    remote-ip-header: X-Forwarded-For
-    protocol-header: X-Forwarded-Proto
-    protocol-header-https-value: https
-  base-url: https://virtualhekim.az
 
