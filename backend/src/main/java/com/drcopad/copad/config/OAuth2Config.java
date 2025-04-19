@@ -55,7 +55,7 @@ public class OAuth2Config {
                     logger.info("Registration ID: {}", registrationId);
                     
                     if (registrationId != null) {
-                        String redirectUri = "https://virtualhekim.az/login/oauth2/code/" + registrationId;
+                        String redirectUri = "https://virtualhekim.az/tester1238/oauth2/code/" + registrationId;
                         logger.info("Setting redirect URI to: {}", redirectUri);
                         builder.redirectUri(redirectUri);
                     }
