@@ -45,6 +45,9 @@ public class SecurityConfig {
     @Value("${server.base-url}")
     private String baseUrl;
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
         this.jwtFilter = jwtFilter;
         this.oauth2Config = oauth2Config;
@@ -76,6 +79,15 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         logger.info("Configuring SecurityFilterChain");
+        
+        // Configure server name and scheme for production
+        if ("prod".equals(activeProfile)) {
+            http.requiresChannel(channel -> channel
+                .requestMatchers("/**").requiresSecure())
+                .servletApi(servlet -> servlet
+                    .setServerName("virtualhekim.az")
+                );
+        }
         
         return http
             .cors(cors -> {

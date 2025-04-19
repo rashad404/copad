@@ -57,5 +57,15 @@ spring:
     activate:
       on-profile: prod
 server:
+  port: ${PORT:8080}
+  servlet:
+    context-path: /api
+  forward-headers-strategy: NATIVE
+  server-header: virtualhekim.az
+  use-forward-headers: true
+  tomcat:
+    remote-ip-header: X-Forwarded-For
+    protocol-header: X-Forwarded-Proto
+    protocol-header-https-value: https
   base-url: https://virtualhekim.az
 
