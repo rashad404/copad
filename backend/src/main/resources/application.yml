@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod  # change to 'local' when running locally
+    active: local  # change to 'local' when running locally
   security:
     oauth2:
       client:
@@ -14,7 +14,7 @@ spring:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
-            redirect-uri: "{baseUrl}/login/oauth2/code/{registrationId}"
+            redirect-uri: "{baseUrl}/login3/oauth2/code/{registrationId}"
 
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
