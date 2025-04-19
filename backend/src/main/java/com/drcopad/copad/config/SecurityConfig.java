@@ -22,7 +22,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -39,14 +38,10 @@ public class SecurityConfig {
     private final List<String> allowedDomains = Arrays.asList(
             "https://virtualhekim.az",
             "https://copad.ai",
-            "https://logman.az"
+            "https://logman.az",
+            "http://localhost:5173",
+            "http://127.0.0.1:5173"
     );
-
-    @Value("${server.base-url}")
-    private String baseUrl;
-
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
 
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
         this.jwtFilter = jwtFilter;
@@ -68,8 +63,24 @@ public class SecurityConfig {
                 logger.info("Authenticated user email: {}", email);
                 logger.info("Authenticated user name: {}", name);
                 
-                // Use the configured base URL for the frontend
-                String redirectUrl = baseUrl.replace("/api", "") + "/auth/oauth2/success";
+                // Get the referer to determine the frontend URL
+                String referer = request.getHeader("Referer");
+                String redirectUrl;
+                
+                if (referer != null) {
+                    if (referer.contains("localhost") || referer.contains("127.0.0.1")) {
+                        redirectUrl = "http://localhost:5173/auth/oauth2/success";
+                    } else if (referer.contains("virtualhekim.az")) {
+                        redirectUrl = "https://virtualhekim.az/auth/oauth2/success";
+                    } else if (referer.contains("copad.ai")) {
+                        redirectUrl = "https://copad.ai/auth/oauth2/success";
+                    } else {
+                        redirectUrl = "https://virtualhekim.az/auth/oauth2/success"; // default
+                    }
+                } else {
+                    redirectUrl = "https://virtualhekim.az/auth/oauth2/success"; // default if no referer
+                }
+                
                 logger.info("Redirecting to: {}", redirectUrl);
                 response.sendRedirect(redirectUrl);
             }
@@ -79,18 +90,6 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         logger.info("Configuring SecurityFilterChain");
-        
-        // Configure server name and scheme for production
-        if ("prod".equals(activeProfile)) {
-            http.requiresChannel(channel -> channel
-                .requestMatchers("/**").requiresSecure())
-                .headers(headers -> headers
-                    .httpStrictTransportSecurity(hsts -> hsts
-                        .includeSubDomains(true)
-                        .maxAgeInSeconds(31536000)
-                    )
-                );
-        }
         
         return http
             .cors(cors -> {

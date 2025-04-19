@@ -36,6 +36,7 @@ server:
   port: ${PORT:8080}
   servlet:
     context-path: /api
+  address: 0.0.0.0  # Listen on all interfaces
 
 app:
   chatgpt:
