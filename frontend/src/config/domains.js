@@ -11,6 +11,8 @@ export const getCurrentDomain = () => {
 
 // Get the API URL based on the current domain
 export const getApiUrl = () => {
+  console.log('Current environment:', import.meta.env.MODE);
+  console.log('API URL:', import.meta.env.VITE_API_URL);
   const currentDomain = getCurrentDomain();
   
   // If we're in development, use the development API URL

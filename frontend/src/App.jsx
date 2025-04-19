@@ -33,8 +33,25 @@ const AppRoutes = () => {
 
 export default function App() {
   return (
-    <BrowserRouter>
-      <AppRoutes />
-    </BrowserRouter>
+    <>
+      {import.meta.env.MODE === 'production' && (
+        <div style={{
+          position: 'fixed',
+          bottom: 10,
+          right: 10,
+          background: '#4CAF50',
+          color: 'white',
+          padding: '5px 10px',
+          borderRadius: '5px',
+          fontSize: '12px',
+          zIndex: 9999
+        }}>
+          PROD MODE - {import.meta.env.VITE_API_URL}
+        </div>
+      )}
+      <BrowserRouter>
+        <AppRoutes />
+      </BrowserRouter>
+    </>
   );
 }
