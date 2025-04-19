@@ -9,12 +9,12 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: openid,profile,email
-            redirect-uri: https://virtualhekim.az/login/oauth2/code/google
+            redirect-uri: "{baseUrl}/login3/oauth2/code/{registrationId}"
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
-            redirect-uri: https://virtualhekim.az/login/oauth2/code/facebook
+            redirect-uri: "{baseUrl}/login3/oauth2/code/{registrationId}"
 
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
@@ -34,6 +34,8 @@ spring:
 
 server:
   port: ${PORT:8080}
+  servlet:
+    context-path: /api
 
 app:
   chatgpt:

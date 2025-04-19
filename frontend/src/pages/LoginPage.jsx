@@ -44,8 +44,40 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider) => {
-    const currentDomain = window.location.origin;
-    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}?redirect_uri=${currentDomain}`;
+    try {
+      const currentDomain = window.location.origin;
+      const apiBaseUrl = import.meta.env.VITE_API_URL;
+      console.log('OAuth2 Login Details:');
+      console.log('Current Domain:', currentDomain);
+      console.log('API Base URL:', apiBaseUrl);
+
+      // Remove /api from VITE_API_URL if it exists
+      const baseUrl = apiBaseUrl.endsWith('/api') 
+        ? apiBaseUrl.slice(0, -4) 
+        : apiBaseUrl;
+      console.log('Base URL after /api removal:', baseUrl);
+
+      // Construct the authorization URL
+      const authUrl = `${baseUrl}/api/oauth2/authorization/${provider}`;
+      console.log('Final Authorization URL:', authUrl);
+
+      // Add state parameter for security
+      const state = Math.random().toString(36).substring(7);
+      const finalUrl = new URL(authUrl);
+      finalUrl.searchParams.append('state', state);
+      finalUrl.searchParams.append('redirect_uri', `${baseUrl}/api/login/oauth2/code/${provider}`);
+      
+      console.log('Final URL with parameters:', finalUrl.toString());
+      
+      // Store state for verification
+      sessionStorage.setItem('oauth2_state', state);
+
+      // Perform the redirect
+      window.location.href = finalUrl.toString();
+    } catch (error) {
+      console.error('Error during OAuth redirect setup:', error);
+      setError(t('auth.errors.oauth_setup_failed'));
+    }
   };
 
   return (
