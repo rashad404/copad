@@ -48,11 +48,11 @@ public class SecurityConfig {
                 .anyRequest().authenticated()
             )
             .oauth2Login(oauth2 -> oauth2
-                .loginPage("/oauth2/authorization/google")
+                .loginPage("/api/oauth2/authorization/google")
                 .defaultSuccessUrl("/api/auth/success", true)
                 .failureUrl("/api/auth/failure")
                 .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/oauth2/authorization")
+                    .baseUri("/api/oauth2/authorization")
                     .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
                 )
                 .redirectionEndpoint(redirection -> redirection

@@ -35,7 +35,7 @@ public class OAuth2Config {
         DefaultOAuth2AuthorizationRequestResolver resolver = 
             new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, 
-                "/oauth2/authorization"
+                "/api/oauth2/authorization"
             );
 
         resolver.setAuthorizationRequestCustomizer(authorizationRequestCustomizer());
