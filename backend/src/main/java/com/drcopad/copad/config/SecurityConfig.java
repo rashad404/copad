@@ -29,7 +29,9 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2Config oauth2Config;
     private final List<String> allowedDomains = Arrays.asList(
-        "https://virtualhekim.az"
+            "https://virtualhekim.az",
+            "https://copad.ai",
+            "https://logman.az"
     );
 
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
@@ -41,7 +43,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         logger.info("Configuring SecurityFilterChain");
         
-        http
+        return http
             .cors(cors -> {
                 logger.info("Configuring CORS");
                 cors.configurationSource(corsConfigurationSource());
@@ -82,10 +84,8 @@ public class SecurityConfig {
                 session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
             })
             .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable);
-
-        logger.info("SecurityFilterChain configuration completed");
-        return http.build();
+            .httpBasic(AbstractHttpConfigurer::disable)
+            .build();
     }
 
     @Bean
