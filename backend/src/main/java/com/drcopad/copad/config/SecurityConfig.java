@@ -2,6 +2,7 @@ package com.drcopad.copad.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -69,7 +70,12 @@ public class SecurityConfig {
             .httpBasic(AbstractHttpConfigurer::disable)
             .exceptionHandling(exception -> exception
                 .authenticationEntryPoint((request, response, authException) -> {
-                    response.sendRedirect("/api/oauth2/authorization/google");
+                    String requestedUrl = request.getRequestURL().toString();
+                    if (requestedUrl.contains("/api/auth/success")) {
+                        response.sendRedirect("https://virtualhekim.az/api/oauth2/authorization/google");
+                    } else {
+                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+                    }
                 })
             );
 
