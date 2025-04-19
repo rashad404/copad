@@ -22,11 +22,7 @@ public class OAuth2Config {
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Config.class);
 
     private final List<String> allowedDomains = Arrays.asList(
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://virtualhekim.az",
-        "https://copad.ai",
-        "https://logman.az"
+        "https://virtualhekim.az"
     );
 
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
