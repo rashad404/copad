@@ -1,5 +1,5 @@
-export const WEBSITE_NAME = 'Copad.ai';
-export const AGENT_NAME = 'Dr. Copad';
+export const WEBSITE_NAME = 'VirtualHekim.az';
+export const AGENT_NAME = 'Virtual Həkim';
 
 // You can add more branding-related constants here
 // export const COMPANY_NAME = 'Copad Health';

@@ -55,8 +55,8 @@ export default function Navbar() {
                 <Logo className="w-10 h-10 relative transition-transform duration-300 group-hover:scale-105" />
               </div>
               <span className="font-bold text-xl">
-                <span className="text-gray-800">Copad</span>
-                <span className="text-indigo-600">.ai</span>
+                <span className="text-gray-800">VirtualHekim</span>
+                <span className="text-indigo-600">.az</span>
               </span>
             </Link>
 
