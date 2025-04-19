@@ -22,6 +22,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
+import org.springframework.beans.factory.annotation.Value;
 
 import java.io.IOException;
 import java.util.Arrays;
@@ -40,6 +41,9 @@ public class SecurityConfig {
             "https://copad.ai",
             "https://logman.az"
     );
+
+    @Value("${server.base-url}")
+    private String baseUrl;
 
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
         this.jwtFilter = jwtFilter;
@@ -61,51 +65,10 @@ public class SecurityConfig {
                 logger.info("Authenticated user email: {}", email);
                 logger.info("Authenticated user name: {}", name);
                 
-                // Get the referer domain for redirect
-                String referer = request.getHeader("Referer");
-                logger.info("Referer header: {}", referer);
-                
-                // Get the origin header as backup
-                String origin = request.getHeader("Origin");
-                logger.info("Origin header: {}", origin);
-                
-                // Default to production domain if no referer/origin
-                String redirectDomain = determineRedirectDomain(referer, origin);
-                logger.info("Determined redirect domain: {}", redirectDomain);
-                
-                String redirectUrl = redirectDomain + "/auth/oauth2/success";
-                logger.info("Final redirect URL: {}", redirectUrl);
-                
+                // Use the configured base URL for the frontend
+                String redirectUrl = baseUrl.replace("/api", "") + "/auth/oauth2/success";
+                logger.info("Redirecting to: {}", redirectUrl);
                 response.sendRedirect(redirectUrl);
-            }
-            
-            private String determineRedirectDomain(String referer, String origin) {
-                // First try to extract from referer
-                if (referer != null) {
-                    if (referer.contains("localhost")) {
-                        return "http://localhost:5173";
-                    }
-                    for (String domain : allowedDomains) {
-                        if (referer.contains(domain.replace("https://", ""))) {
-                            return domain;
-                        }
-                    }
-                }
-                
-                // Then try origin
-                if (origin != null) {
-                    if (origin.contains("localhost")) {
-                        return "http://localhost:5173";
-                    }
-                    for (String domain : allowedDomains) {
-                        if (origin.equals(domain)) {
-                            return domain;
-                        }
-                    }
-                }
-                
-                // Default to first allowed domain (production)
-                return allowedDomains.get(0);
             }
         };
     }
