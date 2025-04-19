@@ -83,7 +83,13 @@ public class SecurityConfig {
         // Configure server name and scheme for production
         if ("prod".equals(activeProfile)) {
             http.requiresChannel(channel -> channel
-                .requestMatchers("/**").requiresSecure());
+                .requestMatchers("/**").requiresSecure())
+                .headers(headers -> headers
+                    .httpStrictTransportSecurity(hsts -> hsts
+                        .includeSubDomains(true)
+                        .maxAgeInSeconds(31536000)
+                    )
+                );
         }
         
         return http
