@@ -11,6 +11,7 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.Arrays;
 import java.util.List;
@@ -22,7 +23,9 @@ public class OAuth2Config {
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Config.class);
 
     private final List<String> allowedDomains = Arrays.asList(
-        "https://virtualhekim.az"
+        "https://virtualhekim.az",
+        "https://copad.ai",
+        "https://logman.az"
     );
 
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
@@ -48,6 +51,7 @@ public class OAuth2Config {
                 String origin = request.getHeader("Origin");
                 String referer = request.getHeader("Referer");
                 String userAgent = request.getHeader("User-Agent");
+                String redirectUri = request.getParameter("redirect_uri");
                 
                 logger.info("OAuth2 request details:");
                 logger.info("Origin: {}", origin);
@@ -56,22 +60,26 @@ public class OAuth2Config {
                 logger.info("Request URI: {}", request.getRequestURI());
                 logger.info("Request URL: {}", request.getRequestURL());
                 logger.info("Query String: {}", request.getQueryString());
-                logger.info("Current builder redirect URI: {}", builder.build().getRedirectUri());
+                logger.info("Provided redirect_uri: {}", redirectUri);
                 
-                if (origin != null && allowedDomains.contains(origin)) {
-                    String registrationId = request.getParameter("registration_id");
-                    logger.info("Registration ID from parameter: {}", registrationId);
+                // If redirect_uri is provided in the request, use it
+                if (redirectUri != null) {
+                    String domain = UriComponentsBuilder.fromUriString(redirectUri).build().getHost();
+                    logger.info("Extracted domain from redirect_uri: {}", domain);
                     
-                    if (registrationId != null) {
-                        String redirectUri = origin + "/login3/oauth2/code/" + registrationId;
-                        logger.info("Setting custom redirect URI to: {}", redirectUri);
+                    // Check if the domain is allowed
+                    boolean isDomainAllowed = allowedDomains.stream()
+                        .anyMatch(allowed -> allowed.contains(domain));
+                    
+                    if (isDomainAllowed) {
+                        logger.info("Setting provided redirect URI: {}", redirectUri);
                         builder.redirectUri(redirectUri);
                     } else {
-                        logger.warn("No registration_id parameter found in request");
+                        logger.warn("Redirect URI domain not allowed: {}", domain);
+                        logger.info("Allowed domains: {}", allowedDomains);
                     }
                 } else {
-                    logger.warn("Origin not allowed or not present: {}", origin);
-                    logger.info("Allowed domains: {}", allowedDomains);
+                    logger.warn("No redirect_uri provided in request");
                 }
             } else {
                 logger.error("No request attributes found in RequestContextHolder");
