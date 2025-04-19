@@ -44,7 +44,8 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider) => {
-    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}`;
+    const currentDomain = window.location.origin;
+    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}?redirect_uri=${currentDomain}`;
   };
 
   return (
