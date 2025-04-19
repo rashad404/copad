@@ -44,45 +44,7 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider) => {
-    try {
-      const currentDomain = window.location.origin;
-      const apiBaseUrl = import.meta.env.VITE_API_URL;
-      console.log('OAuth2 Login Details:');
-      console.log('Current Domain:', currentDomain);
-      console.log('API Base URL:', apiBaseUrl);
-
-      // Determine if we're in production
-      const isProd = currentDomain.includes('virtualhekim.az');
-      
-      // In production, use the same domain for API
-      const baseUrl = isProd ? currentDomain : apiBaseUrl.replace('/api', '');
-      console.log('Base URL for OAuth:', baseUrl);
-
-      // Construct the authorization URL
-      const authUrl = `${baseUrl}/api/oauth2/authorization/${provider}`;
-      console.log('Final Authorization URL:', authUrl);
-
-      // Add state parameter for security
-      const state = Math.random().toString(36).substring(7);
-      const finalUrl = new URL(authUrl);
-      finalUrl.searchParams.append('state', state);
-      
-      // In production, redirect URI should use the same domain
-      const redirectUri = `${baseUrl}/api/login/oauth2/code/${provider}`;
-      finalUrl.searchParams.append('redirect_uri', redirectUri);
-      
-      console.log('Final URL with parameters:', finalUrl.toString());
-      console.log('Redirect URI:', redirectUri);
-      
-      // Store state for verification
-      sessionStorage.setItem('oauth2_state', state);
-
-      // Perform the redirect
-      window.location.href = finalUrl.toString();
-    } catch (error) {
-      console.error('Error during OAuth redirect setup:', error);
-      setError(t('auth.errors.oauth_setup_failed'));
-    }
+    window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}`;
   };
 
   return (

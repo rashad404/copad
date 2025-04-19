@@ -11,8 +11,6 @@ import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.web.util.UriComponentsBuilder;
-import org.springframework.beans.factory.annotation.Value;
 
 import java.util.Arrays;
 import java.util.List;
@@ -23,10 +21,9 @@ public class OAuth2Config {
 
     private static final Logger logger = LoggerFactory.getLogger(OAuth2Config.class);
 
-    @Value("${spring.profiles.active:local}")
-    private String activeProfile;
-
     private final List<String> allowedDomains = Arrays.asList(
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
         "https://virtualhekim.az",
         "https://copad.ai",
         "https://logman.az"
@@ -38,12 +35,9 @@ public class OAuth2Config {
         DefaultOAuth2AuthorizationRequestResolver resolver = 
             new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, 
-                "/api/oauth2/authorization"
+                "/oauth2/authorization"
             );
 
-        logger.info("Creating OAuth2AuthorizationRequestResolver with base path: /api/oauth2/authorization");
-        logger.info("Active profile: {}", activeProfile);
-        
         resolver.setAuthorizationRequestCustomizer(authorizationRequestCustomizer());
         return resolver;
     }
@@ -54,38 +48,23 @@ public class OAuth2Config {
             if (attributes != null) {
                 HttpServletRequest request = attributes.getRequest();
                 String origin = request.getHeader("Origin");
-                String referer = request.getHeader("Referer");
+                logger.info("OAuth2 request received from origin: {}", origin);
                 
-                logger.info("OAuth2 request details:");
-                logger.info("Origin: {}", origin);
-                logger.info("Referer: {}", referer);
-                logger.info("Request URI: {}", request.getRequestURI());
-                logger.info("Request URL: {}", request.getRequestURL());
-                logger.info("Query String: {}", request.getQueryString());
-                
-                // Determine the base URL for redirect
-                String baseUrl;
-                if ("prod".equals(activeProfile)) {
-                    baseUrl = "https://virtualhekim.az";
-                    logger.info("Using production base URL: {}", baseUrl);
+                if (origin != null && allowedDomains.contains(origin)) {
+                    String registrationId = request.getParameter("registration_id");
+                    logger.info("Registration ID: {}", registrationId);
+                    
+                    if (registrationId != null) {
+                        String redirectUri = origin + "/login/oauth2/code/" + registrationId;
+                        logger.info("Setting redirect URI to: {}", redirectUri);
+                        builder.redirectUri(redirectUri);
+                    }
                 } else {
-                    baseUrl = "https://virtualhekim.az";
-                    logger.info("Using local base URL: {}", baseUrl);
+                    logger.warn("Origin not allowed or not present: {}", origin);
                 }
-                
-                // Construct the redirect URI
-                String redirectUri = baseUrl + "/api/login/oauth2/code/google";
-                logger.info("Setting redirect URI: {}", redirectUri);
-                builder.redirectUri(redirectUri);
+            } else {
+                logger.error("No request attributes found in RequestContextHolder");
             }
-            
-            // Log the final authorization request
-            OAuth2AuthorizationRequest finalRequest = builder.build();
-            logger.info("Final OAuth2 Authorization Request:");
-            logger.info("Authorization URI: {}", finalRequest.getAuthorizationUri());
-            logger.info("Redirect URI: {}", finalRequest.getRedirectUri());
-            logger.info("Scope: {}", finalRequest.getScopes());
-            logger.info("State: {}", finalRequest.getState());
         };
     }
 } 

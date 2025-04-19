@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod  # change to 'local' when running locally
+    active: local  # change to 'local' when running locally
   security:
     oauth2:
       client:
@@ -9,12 +9,12 @@ spring:
             client-id: ${GOOGLE_CLIENT_ID}
             client-secret: ${GOOGLE_CLIENT_SECRET}
             scope: openid,profile,email
-            redirect-uri: "{baseUrl}/login3/oauth2/code/{registrationId}"
+            redirect-uri: http://localhost:8080/login/oauth2/code/google
           facebook:
             client-id: ${FACEBOOK_CLIENT_ID}
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
-            redirect-uri: "{baseUrl}/login3/oauth2/code/{registrationId}"
+            redirect-uri: http://localhost:8080/login/oauth2/code/facebook
 
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
@@ -34,8 +34,6 @@ spring:
 
 server:
   port: ${PORT:8080}
-  servlet:
-    context-path: /api
 
 app:
   chatgpt:

@@ -1,7 +1,5 @@
 package com.drcopad.copad.config;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -24,11 +22,11 @@ import java.util.List;
 @EnableWebSecurity
 public class SecurityConfig {
 
-    private static final Logger logger = LoggerFactory.getLogger(SecurityConfig.class);
-
     private final JwtFilter jwtFilter;
     private final OAuth2Config oauth2Config;
     private final List<String> allowedDomains = Arrays.asList(
+        "http://localhost:5173",
+        "http://127.0.0.1:5173",
         "https://virtualhekim.az",
         "https://copad.ai",
         "https://logman.az"
@@ -41,43 +39,28 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
-        logger.info("Configuring SecurityFilterChain");
-        
         http
-            .cors(cors -> {
-                logger.info("Configuring CORS");
-                cors.configurationSource(corsConfigurationSource());
-            })
+            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> {
-                logger.info("Configuring authorization rules");
-                auth
-                    .requestMatchers("/api/guest/**").permitAll()
-                    .requestMatchers("/api/auth/**").permitAll()
-                    .anyRequest().authenticated();
-            })
-            .oauth2Login(oauth2 -> {
-                logger.info("Configuring OAuth2 login");
-                oauth2
-                    .defaultSuccessUrl("/api/auth/success")
-                    .failureUrl("/api/auth/failure")
-                    .authorizationEndpoint(authorization -> {
-                        logger.info("Setting up authorization endpoint with resolver");
-                        authorization
-                            .authorizationRequestResolver(
-                                oauth2Config.authorizationRequestResolver(clientRegistrationRepository)
-                            );
-                    });
-            })
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers("/api/guest/**").permitAll()
+                .requestMatchers("/api/auth/**").permitAll()
+                .anyRequest().authenticated()
+            )
+            .oauth2Login(oauth2 -> oauth2
+                .defaultSuccessUrl("/api/auth/success")
+                .failureUrl("/api/auth/failure")
+                .authorizationEndpoint(authorization -> authorization
+                    .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                )
+            )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
-            .sessionManagement(session -> {
-                logger.info("Configuring session management as STATELESS");
-                session.sessionCreationPolicy(SessionCreationPolicy.STATELESS);
-            })
+            .sessionManagement(session -> session
+                .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+            )
             .formLogin(AbstractHttpConfigurer::disable)
             .httpBasic(AbstractHttpConfigurer::disable);
 
-        logger.info("SecurityFilterChain configuration completed");
         return http.build();
     }
 
@@ -98,13 +81,6 @@ public class SecurityConfig {
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
-
-        logger.info("CORS Configuration:");
-        logger.info("Allowed Origins: {}", allowedDomains);
-        logger.info("Allowed Methods: {}", configuration.getAllowedMethods());
-        logger.info("Allowed Headers: {}", configuration.getAllowedHeaders());
-        logger.info("Allow Credentials: {}", configuration.getAllowCredentials());
-
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
         source.registerCorsConfiguration("/**", configuration);
         return source;
