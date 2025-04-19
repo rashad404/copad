@@ -29,7 +29,7 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2Config oauth2Config;
     private final List<String> allowedDomains = Arrays.asList(
-        "https://virtualhekim.az",
+        "https://virtualhekim.az"
     );
 
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
