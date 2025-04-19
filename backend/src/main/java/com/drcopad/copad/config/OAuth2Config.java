@@ -38,10 +38,10 @@ public class OAuth2Config {
         DefaultOAuth2AuthorizationRequestResolver resolver = 
             new DefaultOAuth2AuthorizationRequestResolver(
                 clientRegistrationRepository, 
-                "/oauth2/authorization"
+                "/api/oauth2/authorization"
             );
 
-        logger.info("Creating OAuth2AuthorizationRequestResolver with base path: /oauth2/authorization");
+        logger.info("Creating OAuth2AuthorizationRequestResolver with base path: /api/oauth2/authorization");
         logger.info("Active profile: {}", activeProfile);
         
         resolver.setAuthorizationRequestCustomizer(authorizationRequestCustomizer());
@@ -66,15 +66,15 @@ public class OAuth2Config {
                 // Determine the base URL for redirect
                 String baseUrl;
                 if ("prod".equals(activeProfile)) {
-                    baseUrl = "https://virtualhekim.az/api";
+                    baseUrl = "https://virtualhekim.az";
                     logger.info("Using production base URL: {}", baseUrl);
                 } else {
-                    baseUrl = "http://localhost:8080/api22";
+                    baseUrl = "http://localhost:8080";
                     logger.info("Using local base URL: {}", baseUrl);
                 }
                 
                 // Construct the redirect URI
-                String redirectUri = baseUrl + "/login/oauth2/code/google";
+                String redirectUri = baseUrl + "/api/login/oauth2/code/google";
                 logger.info("Setting redirect URI: {}", redirectUri);
                 builder.redirectUri(redirectUri);
             }
