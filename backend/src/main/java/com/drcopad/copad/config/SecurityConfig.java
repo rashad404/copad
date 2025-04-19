@@ -63,14 +63,49 @@ public class SecurityConfig {
                 
                 // Get the referer domain for redirect
                 String referer = request.getHeader("Referer");
-                String redirectDomain = "https://virtualhekim.az"; // Default production domain
+                logger.info("Referer header: {}", referer);
                 
-                if (referer != null && referer.contains("localhost")) {
-                    redirectDomain = "http://localhost:5173"; // Development domain
+                // Get the origin header as backup
+                String origin = request.getHeader("Origin");
+                logger.info("Origin header: {}", origin);
+                
+                // Default to production domain if no referer/origin
+                String redirectDomain = determineRedirectDomain(referer, origin);
+                logger.info("Determined redirect domain: {}", redirectDomain);
+                
+                String redirectUrl = redirectDomain + "/auth/oauth2/success";
+                logger.info("Final redirect URL: {}", redirectUrl);
+                
+                response.sendRedirect(redirectUrl);
+            }
+            
+            private String determineRedirectDomain(String referer, String origin) {
+                // First try to extract from referer
+                if (referer != null) {
+                    if (referer.contains("localhost")) {
+                        return "http://localhost:5173";
+                    }
+                    for (String domain : allowedDomains) {
+                        if (referer.contains(domain.replace("https://", ""))) {
+                            return domain;
+                        }
+                    }
                 }
                 
-                logger.info("Redirecting to domain: {}", redirectDomain);
-                response.sendRedirect(redirectDomain + "/auth/oauth2/success");
+                // Then try origin
+                if (origin != null) {
+                    if (origin.contains("localhost")) {
+                        return "http://localhost:5173";
+                    }
+                    for (String domain : allowedDomains) {
+                        if (origin.equals(domain)) {
+                            return domain;
+                        }
+                    }
+                }
+                
+                // Default to first allowed domain (production)
+                return allowedDomains.get(0);
             }
         };
     }
