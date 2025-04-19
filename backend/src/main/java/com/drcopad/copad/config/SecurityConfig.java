@@ -60,6 +60,9 @@ public class SecurityConfig {
                 .redirectionEndpoint(redirection -> redirection
                     .baseUri("/api/login/oauth2/code/*")
                 )
+                .userInfoEndpoint(userInfo -> userInfo
+                    .userService(oauth2Config.oauth2UserService())
+                )
             )
             .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
             .sessionManagement(session -> session

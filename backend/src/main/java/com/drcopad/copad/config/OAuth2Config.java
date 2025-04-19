@@ -3,8 +3,13 @@ package com.drcopad.copad.config;
 import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
+import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
+import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -28,6 +33,10 @@ public class OAuth2Config {
         "https://copad.ai",
         "https://logman.az"
     );
+
+    public OAuth2UserService<OAuth2UserRequest, OAuth2User> oauth2UserService() {
+        return new DefaultOAuth2UserService();
+    }
 
     public OAuth2AuthorizationRequestResolver authorizationRequestResolver(
             ClientRegistrationRepository clientRegistrationRepository) {
