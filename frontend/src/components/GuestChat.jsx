@@ -156,20 +156,19 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
       >
         {isInitializing ? (
           <div className="flex justify-center items-center h-full">
-            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600"></div>
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 dark:border-indigo-400"></div>
           </div>
         ) : messages.length === 0 ? (
           <div className="flex flex-col items-center justify-center h-full text-center px-4">
-            <h1 className="text-2xl font-bold text-gray-900 mb-2">
+            <h1 className="text-2xl font-bold text-gray-900 dark:text-gray-100 mb-2">
               {t("home.hero.title")}
             </h1>
-            <p className="text-gray-600">
+            <p className="text-gray-600 dark:text-gray-300">
               {t("home.hero.subtitle")}
             </p>
           </div>
         ) : (
           messages.map((message, index) => (
-            console.log(message),
             <div
               key={index}
               className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
@@ -185,12 +184,12 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
                 className={`max-w-[80%] rounded-lg px-4 py-2 ${
                   message.role === 'user'
                     ? 'bg-indigo-600 text-white'
-                    : 'bg-gray-100 text-gray-800'
+                    : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
                 }`}
               >
                 {formatMessage(message.content)}
                 {message.timestamp && (
-                  <div className={`text-xs mt-1 ${message.role === 'user' ? 'text-indigo-200' : 'text-gray-500'}`}>
+                  <div className={`text-xs mt-1 ${message.role === 'user' ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'}`}>
                     {new Date(message.timestamp).toLocaleTimeString()}
                   </div>
                 )}
@@ -212,11 +211,11 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
               alt="AI"
               className="h-8 w-8 rounded-full mr-2"
             />
-            <div className="bg-gray-100 rounded-lg px-4 py-2">
+            <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
               <div className="flex space-x-2">
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                <div className="w-2 h-2 bg-gray-500 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
               </div>
             </div>
           </div>
@@ -224,14 +223,14 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
       </div>
 
       {/* Message input */}
-      <div className={`px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3 ${inputClassName}`}>
+      <div className={`px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
         <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
           <input
             type="text"
             value={newMessage}
             onChange={(e) => setNewMessage(e.target.value)}
             placeholder={t('chat.messagePlaceholder')}
-            className="flex-1 min-w-0 rounded-lg border border-gray-300 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500"
+            className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400"
             disabled={loading || isInitializing}
           />
           <button
@@ -239,8 +238,8 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
             disabled={loading || !newMessage.trim() || isInitializing}
             className={`shrink-0 px-4 py-2 rounded-lg ${
               loading || !newMessage.trim() || isInitializing
-                ? 'bg-gray-300 cursor-not-allowed'
-                : 'bg-indigo-600 hover:bg-indigo-700'
+                ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
             } text-white font-medium`}
           >
             {loading ? (
