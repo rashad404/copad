@@ -27,12 +27,7 @@ export default function HomePage() {
         <div className="relative px-4 pt-0 sm:pt-16 sm:px-6 lg:px-8">
           <div className="mx-auto max-w-2xl">
             <div className="text-center">
-              <h1 className="text-2xl font-bold tracking-tight text-gray-900 sm:text-4xl md:text-5xl">
-                {t("home.hero.title")}
-              </h1>
-              <p className="mt-3 text-sm text-gray-600 sm:text-base md:text-lg">
-                {t("home.hero.subtitle")}
-              </p>
+              {/* Remove hero text since it's now in the chat */}
             </div>
           </div>
         </div>
