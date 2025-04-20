@@ -15,38 +15,21 @@ export default function HomePage() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50">
+    <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50 flex flex-col">
       <Navbar />
       
-      {/* Hero Section */}
-      <div className="relative overflow-hidden pt-6 md:pt-8">
-        {/* Background Pattern */}
-        {/* <div className="absolute inset-0 bg-[url('/grid.svg')] bg-center [mask-image:linear-gradient(180deg,white,rgba(255,255,255,0))]"></div> */}
-        
-        {/* Hero Content */}
-        <div className="relative px-4 pt-0 sm:pt-16 sm:px-6 lg:px-8">
-          <div className="mx-auto max-w-2xl">
-            <div className="text-center">
-              {/* Remove hero text since it's now in the chat */}
-            </div>
-          </div>
-        </div>
-
+      <div className="flex-1 relative overflow-hidden">
         {/* Chat Container */}
-        <div className='fixed inset-x-0 bottom-0 md:relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-0 w-full'>
-          <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
-            <div className="h-[calc(100vh-250px)] sm:h-[500px] flex flex-col">
-              <GuestChat 
-                containerClassName="flex flex-col h-full"
-                messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
-                inputClassName="px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
-              />
-            </div>
+        <div className='fixed inset-0 top-[64px] md:static mx-auto my-4 max-w-3xl px-4 sm:px-6 lg:px-0 w-full md:h-[calc(100vh-180px)]'>
+          <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100 h-full flex flex-col">
+            <GuestChat 
+              containerClassName="flex flex-col h-full"
+              messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"
+              inputClassName="px-3 py-2 border-t border-gray-100 sm:px-4 sm:py-3"
+            />
           </div>
         </div>
-
       </div>
-
 
       {/*Rest of the page*/}
       <div className='md:block hidden'>
