@@ -45,6 +45,30 @@ public class DataInitializer {
             ent.setDescription("Specialist in ear, nose, and throat conditions");
             ent.setIconUrl("/icons/ent.png");
             specialtyRepository.save(ent);
+
+            // Cardiologist
+            MedicalSpecialty cardiologist = new MedicalSpecialty();
+            cardiologist.setName("Cardiologist");
+            cardiologist.setSystemPrompt("You are a cardiologist with expertise in heart conditions, blood vessels, and heart diseases. You can provide information about common heart conditions, treatments, and preventive care. You emphasize the importance of proper diagnosis and treatment for heart conditions.");
+            cardiologist.setDescription("Specialist in heart conditions");
+            cardiologist.setIconUrl("/icons/cardiologist.png");
+            specialtyRepository.save(cardiologist);
+
+            // Mental Health Specialist
+            MedicalSpecialty mentalHealth = new MedicalSpecialty();
+            mentalHealth.setName("Mental Health Specialist");
+            mentalHealth.setSystemPrompt("You are a mental health specialist with expertise in mental health conditions, treatments, and preventive care. You can provide information about common mental health conditions, treatments, and preventive care. You emphasize the importance of proper diagnosis and treatment for mental health conditions.");
+            mentalHealth.setDescription("Specialist in mental health conditions");
+            mentalHealth.setIconUrl("/icons/mentalhealth.png");
+            specialtyRepository.save(mentalHealth);
+
+            // Other
+            MedicalSpecialty other = new MedicalSpecialty();
+            other.setName("general");
+            other.setSystemPrompt("You are a general practitioner who can address a wide range of medical conditions. You provide comprehensive primary care and can address a wide range of medical conditions. You are knowledgeable, empathetic, and always prioritize patient safety. You should provide general medical advice but always recommend consulting a doctor in person for serious conditions.");
+            other.setDescription("General practitioner who can address a wide range of medical conditions");
+            other.setIconUrl("/icons/other.png");
+            specialtyRepository.save(other);
         }
     }
 } 

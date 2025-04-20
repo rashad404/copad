@@ -6,12 +6,12 @@ import Breadcrumb from "../components/Breadcrumb";
 import { useTranslation } from "react-i18next";
 
 const specialtyOptions = [
-  { value: "General", label: "General Consultation" },
-  { value: "Pediatrics", label: "Pediatrics" },
-  { value: "Dermatology", label: "Dermatology" },
-  { value: "Cardiology", label: "Cardiology" },
-  { value: "Mental Health", label: "Mental Health" },
-  { value: "Other", label: "Other Specialty" },
+  { value: "General", label: "general" },
+  { value: "pediatrics", label: "Pediatrics" },
+  { value: "dermatologist", label: "Dermatology" },
+  { value: "cardiologist", label: "Cardiology" },
+  { value: "mentalhealth", label: "Mental Health" },
+  { value: "other", label: "Other" },
 ];
 
 export default function NewAppointmentPage() {
