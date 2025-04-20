@@ -38,7 +38,7 @@ export default function HomePage() {
         </div>
 
         {/* Chat Container */}
-        <div className='fixed inset-x-0 bottom-0 md:relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-8 w-full'>
+        <div className='fixed inset-x-0 bottom-0 md:relative mx-auto mt-8 sm:mt-12 max-w-3xl px-4 sm:px-6 lg:px-0 w-full'>
           <div className="rounded-2xl shadow-xl bg-white/80 backdrop-blur-sm border border-gray-100">
             <div className="h-[calc(100vh-250px)] sm:h-[500px] flex flex-col">
               <GuestChat 
