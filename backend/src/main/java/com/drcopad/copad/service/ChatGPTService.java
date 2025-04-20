@@ -27,6 +27,7 @@ public class ChatGPTService {
     private final ChatGPTConfig chatGPTConfig;
     private final ObjectMapper objectMapper;
     private final MedicalSpecialtyRepository specialtyRepository;
+    private final LanguageMappingService languageMappingService;
 
     public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyCode, String language) {
         List<Message> messages = new ArrayList<>();
@@ -36,8 +37,9 @@ public class ChatGPTService {
             .orElseThrow(() -> new IllegalArgumentException("Invalid specialty code: " + specialtyCode));
             
         // Add specialty-specific system prompt with language instruction
+        String fullLanguageName = languageMappingService.getFullLanguageName(language);
         String systemPrompt = specialty.getSystemPrompt() + 
-            (language != null ? String.format("\nPlease respond in %s.", language) : "");
+            (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
         messages.add(new Message("system", systemPrompt));
 
         // Add conversation history
