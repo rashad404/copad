@@ -395,8 +395,8 @@ export default function HomePage() {
                     <Logo className="w-8 h-8 relative transition-transform duration-300 group-hover:scale-105" />
                   </div>
                   <span>
-                    <span className="text-gray-800 dark:text-gray-200">Copad</span>
-                    <span className="text-indigo-600 dark:text-indigo-400">.ai</span>
+                    <span className="text-gray-800 dark:text-gray-200">VirtualHekim</span>
+                    <span className="text-indigo-600 dark:text-indigo-400">.az</span>
                   </span>
                 </div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">

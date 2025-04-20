@@ -5,16 +5,58 @@ import { useTranslation } from 'react-i18next';
 
 const languages = [
   {
+    code: 'az',
+    name: 'AZ',
+    flag: '🇦🇿',
+    shortName: 'AZ'
+  },
+  {
     code: 'en',
     name: 'EN',
     flag: '🇬🇧',
     shortName: 'EN'
   },
   {
-    code: 'az',
-    name: 'AZ',
-    flag: '🇦🇿',
-    shortName: 'AZ'
+    code: 'ru',
+    name: 'RU',
+    flag: '🇷🇺',
+    shortName: 'RU'
+  },
+  {
+    code: 'tr',
+    name: 'TR',
+    flag: '🇹🇷',
+    shortName: 'TR'
+  },
+  {
+    code: 'es',
+    name: 'ES',
+    flag: '🇪🇸',
+    shortName: 'ES'
+  },
+  {
+    code: 'pt',
+    name: 'PT',
+    flag: '🇵🇹',
+    shortName: 'PT'
+  },
+  {
+    code: 'ar',
+    name: 'العربية',
+    flag: '🇸🇦',
+    shortName: 'العربية'
+  },
+  {
+    code: 'zh',
+    name: '中文',
+    flag: '🇨🇳',
+    shortName: '中文'
+  },
+  {
+    code: 'hi',
+    name: 'हिंदी',
+    flag: '🇮🇳',
+    shortName: 'हिंदी'
   }
 ];
 

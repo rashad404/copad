@@ -1,0 +1,380 @@
+{
+  "common": {
+    "welcome": "Bienvenido",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "settings": "Configuración",
+    "language": "Idioma",
+    "back_to_home": "Volver al inicio"
+  },
+  "navbar": {
+    "home": "Inicio",
+    "dashboard": "Panel de control",
+    "appointments": "Consultas",
+    "profile": "Perfil",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "email_placeholder": "tu@email.com",
+    "password": "Contraseña",
+    "password_placeholder": "••••••••",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "remember_me": "Recordarme",
+    "sign_up": "Registrarse",
+    "or": "o continuar con",
+    "login_with_google": "Continuar con Google",
+    "login_with_facebook": "Continuar con Facebook",
+    "login": {
+      "welcome": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta para continuar",
+      "signing_in": "Iniciando sesión...",
+      "no_account": "¿No tienes una cuenta?",
+      "create_account": "Crear una cuenta",
+      "secure_title": "Consultas médicas seguras",
+      "secure_description": "Tus datos de salud están encriptados y almacenados de forma segura. Accede a orientación médica experta en cualquier momento con {{agentName}}.",
+      "access": "Acceso",
+      "secure": "Seguro",
+      "powered": "Impulsado",
+      "sign_in": "Iniciar sesión"
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "subtitle": "Regístrate para comenzar tus consultas médicas",
+      "creating_account": "Creando cuenta...",
+      "create_account": "Crear cuenta",
+      "have_account": "¿Ya tienes una cuenta?",
+      "sign_in": "Iniciar sesión"
+    },
+    "errors": {
+      "invalid_credentials": "Correo electrónico o contraseña inválidos",
+      "user_not_found": "Usuario no encontrado",
+      "login_failed": "Error al iniciar sesión. Por favor, inténtalo de nuevo."
+    },
+    "saveChatTitle": "Guardar tu consulta",
+    "saveChatDescription": "Por favor, inicia sesión o regístrate para guardar esta consulta en tus registros."
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor, introduce una dirección de correo electrónico válida"
+  },
+  "appointments": {
+    "title": "Tus consultas",
+    "subtitle": "Gestiona y realiza un seguimiento de todas tus consultas médicas",
+    "newAppointment": "Nueva consulta",
+    "filters": {
+      "all": "Todas las consultas",
+      "upcoming": "Próximas",
+      "completed": "Completadas"
+    },
+    "loading": "Cargando tus consultas...",
+    "empty": {
+      "title": "No se encontraron consultas",
+      "all": "Aún no tienes ninguna consulta programada.",
+      "filtered": "No tienes ninguna consulta {{filter}}.",
+      "schedule": "Programar una consulta"
+    },
+    "card": {
+      "specialty": "Especialidad",
+      "primaryConcern": "Motivo principal",
+      "date": "Fecha",
+      "time": "Hora"
+    }
+  },
+  "newAppointment": {
+    "title": "Iniciar una nueva consulta",
+    "subtitle": "Cuéntanos qué necesitas y te conectaremos con {{agentName}}",
+    "specialty": {
+      "label": "¿Qué tipo de atención necesitas?",
+      "options": {
+        "general": "Consulta general",
+        "pediatrics": "Pediatría",
+        "dermatology": "Dermatología",
+        "cardiology": "Cardiología",
+        "mental health": "Salud mental",
+        "other": "Otra especialidad"
+      }
+    },
+    "primaryConcern": {
+      "label": "¿Cuál es tu principal preocupación hoy?",
+      "placeholder": "Describe brevemente qué te molesta (ej: dolor de cabeza, erupción cutánea, ansiedad)"
+    },
+    "duration": {
+      "label": "¿Cuánto tiempo llevas con este problema?",
+      "placeholder": "ej: 3 días, 2 semanas"
+    },
+    "severity": {
+      "label": "¿Qué tan grave es?",
+      "options": {
+        "mild": "Leve - Es notable pero no afecta las actividades diarias",
+        "moderate": "Moderado - Afecta algunas actividades diarias",
+        "severe": "Grave - Afecta significativamente las actividades diarias"
+      }
+    },
+    "symptoms": {
+      "label": "¿Otros síntomas? (Opcional)",
+      "placeholder": "Enumera cualquier otro síntoma que estés experimentando"
+    },
+    "treatments": {
+      "label": "¿Has probado algún tratamiento? (Opcional)",
+      "placeholder": "ej: medicamentos de venta libre, remedios caseros"
+    },
+    "notes": {
+      "label": "¿Hay algo más que {{agentName}} deba saber? (Opcional)",
+      "placeholder": "ej: alergias, condiciones existentes, medicamentos actuales"
+    },
+    "continue": "Continuar",
+    "back": "Atrás",
+    "submit": "Iniciar consulta",
+    "submitting": "Creando consulta..."
+  },
+  "dashboard": {
+    "title": "Bienvenido a tu panel de control",
+    "subtitle": "Accede a tus herramientas de salud, consultas e historial médico en cualquier momento.",
+    "appointments": {
+      "title": "Consultas",
+      "description": "Ver o crear sesiones de consulta médica.",
+      "action": "Ir a consultas"
+    },
+    "profile": {
+      "title": "Tu perfil",
+      "description": "Gestiona tu información de salud, historial y preferencias.",
+      "action": "Ver perfil"
+    },
+    "newAppointment": {
+      "title": "Iniciar una nueva consulta",
+      "description": "Crear una nueva consulta con IA con {{agentName}}.",
+      "action": "Comenzar ahora",
+      "recommended": "Recomendado"
+    },
+    "healthSummary": {
+      "title": "Tu resumen de salud",
+      "recentConsultations": "Consultas recientes",
+      "profileCompletion": "Completado del perfil",
+      "nextAppointment": "Próxima consulta"
+    },
+    "security": {
+      "title": "Tus datos están seguros",
+      "description": "Encriptados, confidenciales y protegidos",
+      "learnMore": "Más información sobre nuestra política de privacidad →"
+    },
+    "footer": "Tu salud nos importa. Esta plataforma está diseñada para tu conveniencia."
+  },
+  "home": {
+    "hero": {
+      "title": "Tu médico de IA. Disponible 24/7.",
+      "subtitle": "Haz una pregunta de salud y recibe consejos instantáneos del Dr. Copad — no se requiere registro.",
+      "createAccount": "Crear cuenta",
+      "login": "Iniciar sesión",
+      "trustBar": {
+        "usersHelped": "10,000+ usuarios ayudados",
+        "privateSecure": "Confidencial y seguro",
+        "poweredBy": "Impulsado por OpenAI GPT-4"
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "subtitle": "Obtén orientación médica profesional en tres sencillos pasos",
+      "step1": {
+        "title": "1. Consulta al Dr. Copad",
+        "description": "Ingresa tus preocupaciones o síntomas de salud y recibe retroalimentación instantánea de nuestro médico de IA."
+      },
+      "step2": {
+        "title": "2. Recibe orientación personalizada",
+        "description": "Recibe consejos inmediatos y confidenciales adaptados a tu situación."
+      },
+      "step3": {
+        "title": "3. Haz seguimiento y gestiona",
+        "description": "Regístrate para gestionar consultas y mantener actualizado tu perfil de salud."
+      }
+    },
+    "features": {
+      "title": "Características",
+      "subtitle": "Todo lo que necesitas para tu salud",
+      "description": "Asistencia médica con IA accesible, confiable y personalizada.",
+      "chat": {
+        "title": "Consulta con un médico de IA",
+        "description": "Describe tus síntomas y recibe orientación experta al instante — 24/7. Sin salas de espera, sin citas necesarias."
+      },
+      "upload": {
+        "title": "Sube archivos médicos",
+        "description": "Analiza resultados de laboratorio, imágenes e historial médico con asistencia de IA. Obtén explicaciones e información en lenguaje sencillo."
+      },
+      "track": {
+        "title": "Realiza seguimiento de consultas",
+        "description": "Organiza tu viaje de salud con historial, resúmenes y notas de IA. Accede a tus consultas anteriores en cualquier momento."
+      }
+    },
+    "testimonials": {
+      "title": "Confiado por usuarios en todo el mundo",
+      "subtitle": "Mira lo que dicen nuestros usuarios sobre su experiencia",
+      "testimonial1": {
+        "quote": "{{agentName}} me ayudó a entender mis resultados de laboratorio cuando no podía conseguir una cita con mi médico. Explicó todo en términos claros y simples.",
+        "author": "Sarah K.",
+        "role": "Paciente"
+      },
+      "testimonial2": {
+        "quote": "Como alguien que vive en una zona rural, tener orientación médica 24/7 ha transformado mi experiencia de atención médica. Es como tener un médico en tu bolsillo.",
+        "author": "Michael T.",
+        "role": "Paciente"
+      },
+      "testimonial3": {
+        "quote": "La evaluación de síntomas es notablemente precisa. Me ayudó a identificar una condición que mi médico de cabecera había pasado por alto durante meses.",
+        "author": "Jessica W.",
+        "role": "Trabajadora de la salud"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para tomar el control de",
+      "subtitle": "tu bienestar?",
+      "description": "Comienza tu viaje con {{agentName}} hoy y experimenta la atención médica de próxima generación. No se requiere suscripción.",
+      "getStarted": "Comenzar gratis",
+      "login": "Iniciar sesión",
+      "benefit1": "Acceso 24/7 a orientación médica",
+      "benefit2": "Consultas seguras y confidenciales",
+      "security": {
+        "title": "Tus datos de salud están protegidos",
+        "description": "Utilizamos encriptación avanzada y seguimos protocolos estrictos de privacidad para mantener tu información segura"
+      }
+    },
+    "trust": {
+      "title": "Confiado por profesionales de la salud"
+    },
+    "footer": {
+      "description": "Tu compañero de atención médica con IA de confianza. Obtén orientación médica experta, realiza seguimiento de tu salud y gestiona consultas todo en un solo lugar.",
+      "product": "Producto",
+      "company": "Empresa",
+      "legal": "Legal",
+      "links": {
+        "pricing": "Precios",
+        "faq": "Preguntas frecuentes",
+        "about": "Sobre nosotros",
+        "blog": "Blog",
+        "contact": "Contáctanos",
+        "privacy": "Política de privacidad",
+        "terms": "Términos de servicio",
+        "security": "Seguridad"
+      },
+      "copyright": "© {{year}} VirtualHekim.az. Todos los derechos reservados."
+    }
+  },
+  "chat": {
+    "title": "Asistente de salud con IA",
+    "subtitle": "Tu asistente médico personal con IA",
+    "status": {
+      "online": "En línea",
+      "offline": "Fuera de línea"
+    },
+    "input": {
+      "placeholder": "Escribe tu mensaje aquí..."
+    },
+    "messagePlaceholder": "Escribe tu mensaje... ej: Tengo una alergia, ¿qué debo hacer?",
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "saveChat": "Guardar como consulta",
+    "welcomeMessage": "¡Hola! Soy el Dr. Copad, tu asistente médico con IA. ¿Cómo puedo ayudarte hoy?",
+    "empty": {
+      "title": "Iniciar una conversación",
+      "description": "Hazme cualquier pregunta relacionada con la salud y te proporcionaré orientación profesional."
+    },
+    "error": {
+      "message": "Lo siento, no pude procesar tu mensaje. Por favor, inténtalo de nuevo.",
+      "session": "Conexión perdida. Por favor, intenta enviar tu mensaje de nuevo."
+    },
+    "security": {
+      "general": "Seguro",
+      "save": "Guardar chat"
+    }
+  },
+  "profile": {
+    "title": "Tu perfil",
+    "subtitle": "Gestiona tu información personal y médica",
+    "saveChanges": "Guardar cambios",
+    "loading": "Cargando tu perfil...",
+    "saved": "Cambios guardados exitosamente",
+    "personalInfo": {
+      "title": "Información personal",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Ingresa tu nombre completo",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "age": "Edad",
+      "agePlaceholder": "Ingresa tu edad",
+      "gender": "Género",
+      "genderPlaceholder": "Selecciona género",
+      "genderOptions": {
+        "male": "Masculino",
+        "female": "Femenino"
+      }
+    },
+    "medicalInfo": {
+      "title": "Información médica",
+      "height": "Altura (cm)",
+      "heightPlaceholder": "Ingresa tu altura",
+      "weight": "Peso (kg)",
+      "weightPlaceholder": "Ingresa tu peso",
+      "conditions": "Condiciones médicas",
+      "conditionsPlaceholder": "Enumera cualquier condición médica",
+      "allergies": "Alergias",
+      "allergiesPlaceholder": "Enumera cualquier alergia",
+      "medications": "Medicamentos actuales",
+      "medicationsPlaceholder": "Enumera cualquier medicamento actual",
+      "lifestyle": "Estilo de vida",
+      "lifestylePlaceholder": "Describe tu estilo de vida (ej: ejercicio, tabaquismo, alcohol)"
+    }
+  },
+  "register": {
+    "title": "Crea tu cuenta",
+    "subtitle": "Completa tus datos para comenzar",
+    "illustration": {
+      "title": "Únete a nuestra comunidad de salud",
+      "description": "Crea tu cuenta personal para acceder a consultas médicas con IA y recursos de salud, todo en una plataforma segura.",
+      "features": {
+        "private": {
+          "title": "Confidencial y seguro",
+          "description": "Tus datos de salud están encriptados y protegidos por estándares de la industria"
+        },
+        "access": {
+          "title": "Acceso 24/7",
+          "description": "Obtén consultas médicas cuando las necesites"
+        },
+        "dashboard": {
+          "title": "Panel de control personal",
+          "description": "Realiza seguimiento de tu viaje de salud con información personalizada"
+        },
+        "ai": {
+          "title": "Impulsado por IA",
+          "description": "Experimenta lo último en tecnología médica con IA"
+        }
+      }
+    },
+    "form": {
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Juan Pérez",
+      "email": "Correo electrónico",
+      "emailPlaceholder": "tu@email.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "La contraseña debe tener al menos 8 caracteres",
+      "age": "Edad",
+      "agePlaceholder": "30",
+      "gender": "Género",
+      "genderPlaceholder": "Seleccionar",
+      "genderOptions": {
+        "male": "Masculino",
+        "female": "Femenino"
+      },
+      "terms": "Acepto los",
+      "termsLink": "Términos de servicio",
+      "and": "y",
+      "privacyLink": "Política de privacidad",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta..."
+    },
+    "error": {
+      "registrationFailed": "Error en el registro. Por favor, inténtalo de nuevo."
+    }
+  }
+} 

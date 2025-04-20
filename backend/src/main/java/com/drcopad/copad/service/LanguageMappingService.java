@@ -15,6 +15,7 @@ public class LanguageMappingService {
         languageMap.put("en", "English");
         languageMap.put("ru", "Russian");
         languageMap.put("tr", "Turkish");
+        languageMap.put("es", "Spanish");
         // Add more language mappings as needed
     }
 

@@ -5,6 +5,13 @@ import { AGENT_NAME } from './config/constants';
 
 import enTranslations from './translations/en.json';
 import azTranslations from './translations/az.json';
+import esTranslations from './translations/es.json';
+import ruTranslations from './translations/ru.json';
+import trTranslations from './translations/tr.json';
+import zhTranslations from './translations/zh.json';
+import hiTranslations from './translations/hi.json';
+import arTranslations from './translations/ar.json';
+import ptTranslations from './translations/pt.json';
 
 if (!localStorage.getItem('i18nextLng')) {
   localStorage.setItem('i18nextLng', 'az');
@@ -19,6 +26,27 @@ i18n
       },
       az: {
         translation: azTranslations
+      },
+      es: {
+        translation: esTranslations
+      },
+      ru: {
+        translation: ruTranslations
+      },
+      tr: {
+        translation: trTranslations
+      },
+      zh: {
+        translation: zhTranslations
+      },
+      hi: {
+        translation: hiTranslations
+      },
+      ar: {
+        translation: arTranslations
+      },
+      pt: {
+        translation: ptTranslations
       }
     },
     fallbackLng: 'en',
