@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/guest")
@@ -45,8 +47,6 @@ public class GuestController {
 
     @GetMapping("/session/{sessionId}")
     public ResponseEntity<?> getSession(@PathVariable String sessionId) {
-        // log.info("Getting guest session: {}", sessionId);
-        
         if (!rateLimiterService.isAllowed(sessionId)) {
             log.warn("Rate limit exceeded for session: {}", sessionId);
             throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
@@ -54,7 +54,6 @@ public class GuestController {
         
         try {
             GuestSessionDTO session = guestSessionService.getSession(sessionId);
-            // log.info("Found guest session: {}", sessionId);
             return ResponseEntity.ok(session);
         } catch (RuntimeException e) {
             log.warn("Guest session not found: {} - Error: {}", sessionId, e.getMessage());
@@ -63,18 +62,32 @@ public class GuestController {
         }
     }
 
-    @PostMapping("/chat/{sessionId}")
+    @PostMapping("/chat/{sessionId}/{chatId}")
     public ResponseEntity<String> chat(
             @PathVariable String sessionId,
+            @PathVariable String chatId,
             @RequestBody MessageRequest messageRequest,
             @RequestParam(defaultValue = "general") String specialty) {
-        log.info("Received chat request for session {} with message: {}, specialty: {}, and language: {}", 
-                 sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
+        log.info("Received chat request for session {} and chat {} with message: {}, specialty: {}, and language: {}", 
+                 sessionId, chatId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
         try {
-            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
+            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage(), chatId);
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error processing chat request", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @GetMapping("/chat/{sessionId}/{chatId}/history")
+    public ResponseEntity<?> getChatHistory(
+            @PathVariable String sessionId,
+            @PathVariable String chatId) {
+        try {
+            var history = guestSessionService.getConversationHistory(sessionId, chatId);
+            return ResponseEntity.ok(history);
+        } catch (Exception e) {
+            log.error("Error retrieving chat history", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
@@ -96,6 +109,27 @@ public class GuestController {
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             log.warn("Failed to save email for session: {} - Error: {}", sessionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Session not found. Please start a new session.");
+        }
+    }
+
+    @PostMapping("/chats/{sessionId}")
+    public ResponseEntity<?> createChat(
+            @PathVariable String sessionId,
+            @RequestBody Map<String, String> request) {
+        log.info("Creating new chat for session: {} with title: {}", sessionId, request.get("title"));
+        
+        if (!rateLimiterService.isAllowed(sessionId)) {
+            log.warn("Rate limit exceeded for session: {}", sessionId);
+            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
+        }
+        
+        try {
+            guestSessionService.createChat(sessionId, request.get("title"));
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.warn("Failed to create chat for session: {} - Error: {}", sessionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Session not found. Please start a new session.");
         }

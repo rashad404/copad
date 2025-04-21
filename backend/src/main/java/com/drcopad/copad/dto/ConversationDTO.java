@@ -1,22 +1,25 @@
 package com.drcopad.copad.dto;
 
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.AllArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class ConversationDTO {
-    private String id;
     private String message;
-    private boolean isUser;
+    private String sender;
     private LocalDateTime timestamp;
+    private String chatId;
+    private String title;
 
     public ConversationDTO(String message, String sender, LocalDateTime timestamp) {
         this.message = message;
-        this.isUser = "USER".equals(sender);
+        this.sender = sender;
         this.timestamp = timestamp;
     }
 

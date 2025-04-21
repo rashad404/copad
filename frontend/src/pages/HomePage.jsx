@@ -20,8 +20,8 @@ export default function HomePage() {
       
       <div className="flex-1 relative overflow-hidden">
         {/* Chat Container */}
-        <div className='fixed inset-0 top-[64px] md:static mx-auto my-4 max-w-3xl px-4 sm:px-6 lg:px-0 w-full md:h-[calc(100vh-180px)]'>
-          <div className="rounded-2xl shadow-xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm border border-gray-100 dark:border-gray-700 h-full flex flex-col">
+        <div className='fixed inset-0 top-[64px] md:static mx-auto md:my-4 lg:px-0 w-full md:h-[calc(100vh-180px)]'>
+          <div className="rounded-2xl bg-white/80 dark:bg-gray-800/80 backdrop-blur-sm  h-full flex flex-col">
             <GuestChat 
               containerClassName="flex flex-col h-full"
               messagesClassName="flex-1 overflow-y-auto px-3 py-3 space-y-3 sm:px-4 sm:py-4 sm:space-y-4"

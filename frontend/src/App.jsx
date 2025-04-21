@@ -1,6 +1,7 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
+import { ChatProvider } from "./context/ChatContext.jsx";
 import useGoogleAnalytics from "./hooks/useGoogleAnalytics";
 
 import HomePage from "./pages/HomePage.jsx";
@@ -13,6 +14,8 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import NewAppointmentPage from "./pages/NewAppointmentPage.jsx";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage.jsx";
+import ChatLayout from "./layouts/ChatLayout.jsx";
+import MainLayout from "./layouts/MainLayout.jsx";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -20,23 +23,40 @@ const AppRoutes = () => {
 
   return (
     <Routes>
+      {/* Public routes */}
       <Route path="/" element={isAuthenticated ? <DashboardPage /> : <HomePage />} />
-      <Route path="/appointments" element={<AppointmentsPage />} />
-      <Route path="/appointments/:id/chat" element={<ChatPage />} />
-      <Route path="/profile" element={<ProfilePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
-      <Route path="/appointments/new" element={<NewAppointmentPage />} />
       <Route path="/login/callback" element={<OAuthCallbackPage />} />
+      
+      {/* Protected routes - wrapped in MainLayout */}
+      {isAuthenticated && (
+        <Route element={<MainLayout />}>
+          <Route path="/dashboard" element={<DashboardPage />} />
+          <Route path="/appointments" element={<AppointmentsPage />} />
+          <Route path="/appointments/new" element={<NewAppointmentPage />} />
+          <Route path="/profile" element={<ProfilePage />} />
+          
+          {/* Chat routes with ChatLayout */}
+          <Route element={<ChatLayout />}>
+            <Route path="/chat" element={<ChatPage />} />
+            <Route path="/chat/:id" element={<ChatPage />} />
+          </Route>
+        </Route>
+      )}
+      
       <Route path="*" element={<NotFoundPage />} />
     </Routes>
   );
 };
 
 export default function App() {
+  console.log('App component rendered');
   return (
     <BrowserRouter>
-      <AppRoutes />
+      <ChatProvider>
+        <AppRoutes />
+      </ChatProvider>
     </BrowserRouter>
   );
 }

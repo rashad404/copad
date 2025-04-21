@@ -25,4 +25,10 @@ public class Conversation {
     
     @ManyToOne
     private GuestSession guestSession;
+
+    @Column(nullable = false)
+    private String chatId; // Unique identifier for each chat within a session
+
+    @Column
+    private String title; // Title of the chat
 }
