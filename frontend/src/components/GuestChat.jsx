@@ -21,7 +21,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   const [error, setError] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
   const [isInitializing, setIsInitializing] = useState(true);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesContainerRef = useRef(null);
 
   const scrollToBottom = () => {
@@ -82,18 +82,33 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
                   id: chatId,
                   title: '',
                   messages: [],
-                  timestamp: new Date()
+                  timestamp: new Date(conv.timestamp),
+                  lastMessage: null
                 };
               }
-              acc[chatId].messages.push({
-                role: conv.user ? 'user' : 'assistant',
+              
+              // Add message to chat
+              const message = {
+                role: conv.sender === 'USER' ? 'user' : 'assistant',
                 content: conv.message,
-                timestamp: conv.timestamp
-              });
+                timestamp: new Date(conv.timestamp)
+              };
+              acc[chatId].messages.push(message);
+              
+              // Update last message
+              acc[chatId].lastMessage = conv.message;
+              
+              // Set title from first user message if not set
+              if (!acc[chatId].title && conv.sender === 'USER') {
+                acc[chatId].title = conv.message.split(' ').slice(0, 5).join(' ') + '...';
+              }
+              
               return acc;
             }, {});
 
-            const conversationsList = Object.values(existingConversations);
+            const conversationsList = Object.values(existingConversations)
+              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by most recent
+            
             setConversations(conversationsList);
             
             if (conversationsList.length > 0) {
