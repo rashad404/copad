@@ -117,7 +117,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
         onClose={() => setIsSidebarOpen(false)}
       />
       
-      <div className="flex-1 flex flex-col h-full md:w-3xl mx-auto">
+      <div className="flex-1 flex flex-col h-full w-full md:w-3xl mx-auto">
         {/* Chat header */}
         <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <button
