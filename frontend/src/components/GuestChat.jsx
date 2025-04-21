@@ -41,7 +41,8 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
       id: newChatId,
       title: t('chat.untitledChat'),
       messages: [],
-      timestamp: new Date()
+      timestamp: new Date(),
+      lastMessage: null
     };
     
     setConversations(prev => [newChat, ...prev]);
@@ -54,7 +55,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
       prev.map(chat => {
         if (chat.id === chatId) {
           // Create a title from the first few words of the message
-          const title = firstMessage.split(' ').slice(0, 3).join(' ') + '...';
+          const title = firstMessage.split(' ').slice(0, 5).join(' ') + '...';
           return { ...chat, title };
         }
         return chat;
@@ -145,7 +146,12 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
           if (chat.messages.length === 0) {
             updateChatTitle(chat.id, messageToSend);
           }
-          return { ...chat, messages: updatedMessages, lastMessage: messageToSend };
+          return { 
+            ...chat, 
+            messages: updatedMessages, 
+            lastMessage: messageToSend,
+            timestamp: new Date() // Update timestamp on new message
+          };
         }
         return chat;
       })
@@ -170,7 +176,8 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
             return {
               ...chat,
               messages: [...chat.messages, assistantMessage],
-              lastMessage: response
+              lastMessage: response,
+              timestamp: new Date() // Update timestamp on response
             };
           }
           return chat;
@@ -192,7 +199,8 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
             return {
               ...chat,
               messages: [...chat.messages, errorMessage],
-              lastMessage: t('chat.error.message')
+              lastMessage: t('chat.error.message'),
+              timestamp: new Date() // Update timestamp on error
             };
           }
           return chat;

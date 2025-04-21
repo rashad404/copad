@@ -42,10 +42,9 @@ export const startGuestSession = () => API.post("/guest/start");
 export const getGuestSession = (sessionId) => API.get(`/guest/session/${sessionId}`);
 export const sendGuestMessage = async (sessionId, message, chatId) => {
   const response = await API.post(
-    `/guest/chat/${sessionId}`,
+    `/guest/chat/${sessionId}/${chatId}`,
     { 
       message,
-      chatId,
       language: i18n.language
     }
   );

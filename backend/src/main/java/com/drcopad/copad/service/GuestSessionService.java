@@ -18,6 +18,7 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Slf4j
 @Service
@@ -42,31 +43,15 @@ public class GuestSessionService {
         log.info("Created new guest session with ID: {} - Created at: {} - IP: {}", 
             session.getSessionId(), session.getCreatedAt(), session.getIpAddress());
         
-        // Log all existing sessions for debugging
-        // List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
-        // log.info("Total sessions in database: {}", allSessions.size());
-        // allSessions.forEach(s -> 
-        //     log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
-        //         s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
-        
         return mapToDTO(session);
     }
 
     @Transactional
     public GuestSessionDTO getSession(String sessionId) {
-        // log.info("Retrieving guest session: {}", sessionId);
-        
-        // Log all existing sessions before retrieval
-        List<GuestSession> allSessions = guestSessionRepository.findAllSessions();
-        // log.info("Total sessions in database before retrieval: {}", allSessions.size());
-        // allSessions.forEach(s -> 
-        //     log.info("Existing Session - ID: {}, Created: {}, Last Active: {}, IP: {}", 
-        //         s.getSessionId(), s.getCreatedAt(), s.getLastActive(), s.getIpAddress()));
-        
         return guestSessionRepository.findBySessionId(sessionId)
                 .map(session -> {
-                    // log.info("Found guest session: {} - Last active: {} - IP: {}", 
-                    //     sessionId, session.getLastActive(), session.getIpAddress());
+                    log.info("Found guest session: {} - Last active: {} - IP: {}", 
+                        sessionId, session.getLastActive(), session.getIpAddress());
                     return mapToDTO(session);
                 })
                 .orElseThrow(() -> {
@@ -76,9 +61,9 @@ public class GuestSessionService {
     }
 
     @Transactional
-    public String processChat(String sessionId, String message, String specialty, String language) {
-        log.info("Processing chat message for session: {} - Message: {} - Specialty: {} - Language: {}", 
-                sessionId, message, specialty, language);
+    public String processChat(String sessionId, String message, String specialty, String language, String chatId) {
+        log.info("Processing chat message for session: {} - Chat: {} - Message: {} - Specialty: {} - Language: {}", 
+                sessionId, chatId, message, specialty, language);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {
@@ -89,8 +74,13 @@ public class GuestSessionService {
         log.info("Found session for chat, updating last active timestamp");
         session.setLastActive(LocalDateTime.now());
 
+        // Get conversation history for this specific chat
+        List<Conversation> chatHistory = session.getConversations().stream()
+                .filter(conv -> conv.getChatId().equals(chatId))
+                .collect(Collectors.toList());
+
         // Get AI response with specialty and language
-        String response = chatGPTService.getChatResponse(message, session.getConversations(), specialty, language);
+        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
 
         // Create and save user message
         Conversation userMsg = new Conversation();
@@ -98,8 +88,8 @@ public class GuestSessionService {
         userMsg.setSender("USER");
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
+        userMsg.setChatId(chatId);
         session.getConversations().add(userMsg);
-        // log.info("Saved user message for session: {}", sessionId);
 
         // Create and save AI message
         Conversation aiMsg = new Conversation();
@@ -107,11 +97,10 @@ public class GuestSessionService {
         aiMsg.setSender("AI");
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
+        aiMsg.setChatId(chatId);
         session.getConversations().add(aiMsg);
-        // log.info("Saved AI message for session: {}", sessionId);
 
         guestSessionRepository.save(session);
-        // log.info("Successfully saved conversation for session: {}", sessionId);
         return response;
     }
 
@@ -133,26 +122,13 @@ public class GuestSessionService {
     @Scheduled(fixedRate = 3600000) // Run every hour
     @Transactional
     public void cleanupExpiredSessions() {
-        // Increase session expiration time to 48 hours
         LocalDateTime cutoff = LocalDateTime.now().minus(48, ChronoUnit.HOURS);
         log.info("Cleaning up expired guest sessions before: {}", cutoff);
         
-        // Log all sessions before cleanup
-        // List<GuestSession> allSessions = guestSessionRepository.findAll();
-        // log.info("Total sessions before cleanup: {}", allSessions.size());
-        // allSessions.forEach(session -> 
-        //     log.info("Session ID: {}, Created: {}, Last Active: {}", 
-        //         session.getSessionId(), session.getCreatedAt(), session.getLastActive()));
-        
-        // Delete expired sessions
         guestSessionRepository.deleteExpiredSessions(cutoff);
         
-        // Log remaining sessions after cleanup
         List<GuestSession> remainingSessions = guestSessionRepository.findAll();
         log.info("Total sessions after cleanup: {}", remainingSessions.size());
-        remainingSessions.forEach(session -> 
-            log.info("Remaining Session ID: {}, Created: {}, Last Active: {}", 
-                session.getSessionId(), session.getCreatedAt(), session.getLastActive()));
     }
 
     private GuestSessionDTO mapToDTO(GuestSession session) {
@@ -161,46 +137,23 @@ public class GuestSessionService {
                 .createdAt(session.getCreatedAt())
                 .lastActive(session.getLastActive())
                 .conversations(session.getConversations().stream()
-                        .map(conv -> new ConversationDTO(conv.getMessage(), conv.getSender(), conv.getTimestamp()))
+                        .map(conv -> ConversationDTO.builder()
+                                .message(conv.getMessage())
+                                .sender(conv.getSender())
+                                .timestamp(conv.getTimestamp())
+                                .chatId(conv.getChatId())
+                                .build())
                         .toList())
                 .email(session.getEmail())
                 .build();
     }
 
-    public Conversation addMessage(String sessionId, String message, String specialty) {
+    public List<Conversation> getConversationHistory(String sessionId, String chatId) {
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found"));
-        
-        // Get conversation history
-        List<Conversation> history = session.getConversations();
-
-        // Get AI response using the specified specialty and default language
-        String aiResponse = chatGPTService.getChatResponse(message, history, specialty, "en");
-
-        // Save user message
-        Conversation userMessage = new Conversation();
-        userMessage.setGuestSession(session);
-        userMessage.setSender("USER");
-        userMessage.setMessage(message);
-        userMessage.setTimestamp(LocalDateTime.now());
-        session.getConversations().add(userMessage);
-
-        // Save AI response
-        Conversation aiMessage = new Conversation();
-        aiMessage.setGuestSession(session);
-        aiMessage.setSender("AI");
-        aiMessage.setMessage(aiResponse);
-        aiMessage.setTimestamp(LocalDateTime.now());
-        session.getConversations().add(aiMessage);
-        
-        guestSessionRepository.save(session);
-        return aiMessage;
-    }
-
-    public List<Conversation> getConversationHistory(String sessionId) {
-        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
-                .orElseThrow(() -> new IllegalArgumentException("Session not found"));
-        return session.getConversations();
+        return session.getConversations().stream()
+                .filter(conv -> conv.getChatId().equals(chatId))
+                .collect(Collectors.toList());
     }
 
     public void updateLastActive(String sessionId) {

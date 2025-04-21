@@ -1,7 +1,7 @@
 import React from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusIcon } from '@heroicons/react/24/outline';
-import { XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { formatDistanceToNow } from 'date-fns';
 
 const ChatSidebar = ({
   conversations = [],
@@ -12,6 +12,15 @@ const ChatSidebar = ({
   onClose,
 }) => {
   const { t } = useTranslation();
+
+  const formatTimestamp = (timestamp) => {
+    if (!timestamp) return '';
+    try {
+      return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
+    } catch (e) {
+      return '';
+    }
+  };
 
   return (
     <div
@@ -43,28 +52,37 @@ const ChatSidebar = ({
       </div>
 
       <div className="flex-1 overflow-y-auto">
-        {conversations.map((chat) => (
-          <button
-            key={chat.id}
-            onClick={() => onSelectChat(chat.id)}
-            className={`w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 ${
-              selectedChatId === chat.id
-                ? 'bg-gray-100 dark:bg-gray-800'
-                : ''
-            }`}
-          >
-            <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
-              {chat.title || t('chat.untitledChat')}
-            </div>
-            <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-              {chat.lastMessage || t('chat.noMessages')}
-            </div>
-          </button>
-        ))}
-
-        {conversations.length === 0 && (
+        {conversations.length === 0 ? (
           <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
             {t('chat.noConversations')}
+          </div>
+        ) : (
+          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+            {conversations.map((chat) => (
+              <button
+                key={chat.id}
+                onClick={() => onSelectChat(chat.id)}
+                className={`w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                  selectedChatId === chat.id
+                    ? 'bg-gray-100 dark:bg-gray-800'
+                    : ''
+                }`}
+              >
+                <div className="flex flex-col">
+                  <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
+                    {chat.title || t('chat.untitledChat')}
+                  </div>
+                  {chat.lastMessage && (
+                    <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                      {chat.lastMessage}
+                    </div>
+                  )}
+                  <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                    {formatTimestamp(chat.timestamp)}
+                  </div>
+                </div>
+              </button>
+            ))}
           </div>
         )}
       </div>
