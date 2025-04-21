@@ -13,6 +13,11 @@ const ChatSidebar = ({
 }) => {
   const { t } = useTranslation();
 
+  const handleNewChat = async () => {
+    await onNewChat();
+    onClose();
+  };
+
   const formatTimestamp = (timestamp) => {
     if (!timestamp) return '';
     try {
@@ -43,7 +48,7 @@ const ChatSidebar = ({
 
       <div className="p-4">
         <button
-          onClick={onNewChat}
+          onClick={handleNewChat}
           className="w-full flex items-center justify-center gap-2 px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900"
         >
           <PlusIcon className="w-5 h-5" />
