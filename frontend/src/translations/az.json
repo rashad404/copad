@@ -267,7 +267,7 @@
       "offline": "Oflayn"
     },
     "input": {
-      "placeholder": "Mesajınızı buraya yazın..."
+      "placeholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?"
     },
     "messagePlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?",
     "send": "Göndər",
@@ -299,7 +299,8 @@
     "error": {
       "initialization": "Söhbəti başlatmaq alınmadı",
       "message": "Mesaj göndərmək alınmadı"
-    }
+    },
+    "inputPlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?"
   },
   "profile": {
     "title": "Profiliniz",

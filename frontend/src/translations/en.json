@@ -268,7 +268,7 @@
       "offline": "Offline"
     },
     "input": {
-      "placeholder": "Type your message here..."
+      "placeholder": "Type your message... e.g. I have an allergy, what should I do?"
     },
     "messagePlaceholder": "Type your message... e.g. I have an allergy, what should I do?",
     "send": "Send",
@@ -298,7 +298,8 @@
     "error": {
       "initialization": "Failed to initialize chat",
       "message": "Failed to send message"
-    }
+    },
+    "inputPlaceholder": "Type your message... e.g. I have an allergy, what should I do?"
   },
   "profile": {
     "title": "Your Profile",
