@@ -31,6 +31,11 @@ export const ChatProvider = ({ children }) => {
 
   console.log('ChatProvider initiated');
   const createNewChat = async () => {
+    if (!sessionId) {
+      console.error('Cannot create chat: sessionId is null');
+      return null;
+    }
+
     const newChatId = Date.now().toString();
     const newChat = {
       id: newChatId,
@@ -43,7 +48,7 @@ export const ChatProvider = ({ children }) => {
     setSelectedChatId(newChatId);
     
     try {
-      console.log('createGuestChat');
+      console.log('createGuestChat with sessionId:', sessionId);
       await createGuestChat(sessionId, newChat.title);
     } catch (err) {
       console.error('Failed to create chat:', err);
@@ -127,11 +132,13 @@ export const ChatProvider = ({ children }) => {
       try {
         setIsInitializing(true);
         const storedSessionId = localStorage.getItem('guestSessionId');
+        let currentSessionId = null;
         
         if (storedSessionId) {
           try {
             const sessionResponse = await getGuestSession(storedSessionId);
-            setSessionId(storedSessionId);
+            currentSessionId = storedSessionId;
+            setSessionId(currentSessionId);
             
             // Convert existing conversations to our format
             const existingConversations = sessionResponse.data.conversations.reduce((acc, conv) => {
@@ -158,6 +165,15 @@ export const ChatProvider = ({ children }) => {
             if (conversationsList.length > 0) {
               setSelectedChatId(conversationsList[0].id);
             } else {
+              // Wait for sessionId to be set before creating new chat
+              await new Promise(resolve => {
+                const checkSessionId = setInterval(() => {
+                  if (sessionId) {
+                    clearInterval(checkSessionId);
+                    resolve();
+                  }
+                }, 100);
+              });
               await createNewChat();
             }
           } catch (err) {
@@ -165,9 +181,9 @@ export const ChatProvider = ({ children }) => {
             // Only start a new session if we don't have one
             if (!sessionId) {
               const response = await startGuestSession();
-              console.log('startGuestSession1');
-              setSessionId(response.data.sessionId);
-              localStorage.setItem('guestSessionId', response.data.sessionId);
+              currentSessionId = response.data.sessionId;
+              setSessionId(currentSessionId);
+              localStorage.setItem('guestSessionId', currentSessionId);
               await createNewChat();
             }
           }
@@ -175,9 +191,9 @@ export const ChatProvider = ({ children }) => {
           // Only start a new session if we don't have one
           if (!sessionId) {
             const response = await startGuestSession();
-            console.log('startGuestSession2');
-            setSessionId(response.data.sessionId);
-            localStorage.setItem('guestSessionId', response.data.sessionId);
+            currentSessionId = response.data.sessionId;
+            setSessionId(currentSessionId);
+            localStorage.setItem('guestSessionId', currentSessionId);
             await createNewChat();
           }
         }
