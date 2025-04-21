@@ -1,4 +1,4 @@
-import React, { createContext, useContext, useState, useEffect } from 'react';
+import React, { createContext, useContext, useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import {
   startGuestSession,
@@ -26,7 +26,10 @@ export const ChatProvider = ({ children }) => {
   const [selectedChatId, setSelectedChatId] = useState(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState(null);
+  const isInitialized = useRef(false);
+  const isInitializingRef = useRef(false);
 
+  console.log('ChatProvider initiated');
   const createNewChat = async () => {
     const newChatId = Date.now().toString();
     const newChat = {
@@ -40,6 +43,7 @@ export const ChatProvider = ({ children }) => {
     setSelectedChatId(newChatId);
     
     try {
+      console.log('createGuestChat');
       await createGuestChat(sessionId, newChat.title);
     } catch (err) {
       console.error('Failed to create chat:', err);
@@ -116,6 +120,10 @@ export const ChatProvider = ({ children }) => {
 
   useEffect(() => {
     const initSession = async () => {
+      // Prevent multiple simultaneous initializations
+      if (isInitializingRef.current) return;
+      isInitializingRef.current = true;
+
       try {
         setIsInitializing(true);
         const storedSessionId = localStorage.getItem('guestSessionId');
@@ -154,27 +162,36 @@ export const ChatProvider = ({ children }) => {
             }
           } catch (err) {
             console.error('Failed to restore session:', err);
+            // Only start a new session if we don't have one
+            if (!sessionId) {
+              const response = await startGuestSession();
+              console.log('startGuestSession1');
+              setSessionId(response.data.sessionId);
+              localStorage.setItem('guestSessionId', response.data.sessionId);
+              await createNewChat();
+            }
+          }
+        } else {
+          // Only start a new session if we don't have one
+          if (!sessionId) {
             const response = await startGuestSession();
+            console.log('startGuestSession2');
             setSessionId(response.data.sessionId);
             localStorage.setItem('guestSessionId', response.data.sessionId);
             await createNewChat();
           }
-        } else {
-          const response = await startGuestSession();
-          setSessionId(response.data.sessionId);
-          localStorage.setItem('guestSessionId', response.data.sessionId);
-          await createNewChat();
         }
       } catch (err) {
         console.error('Error initializing session:', err);
         setError(t('chat.error.initialization'));
       } finally {
         setIsInitializing(false);
+        isInitializingRef.current = false;
       }
     };
 
     initSession();
-  }, [t]);
+  }, [t, sessionId]); // Add sessionId to dependencies
 
   const value = {
     sessionId,

@@ -1,7 +1,8 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { startGuestSession, getGuestSession, sendGuestMessage, saveConversation } from '../api';
+import { sendGuestMessage } from '../api';
 import { useAuth } from '../context/AuthContext';
+import { useChat } from '../context/ChatContext';
 import { Link, useNavigate } from 'react-router-dom';
 import userAvatar from '../assets/user.png';
 import doctorAvatar from '../assets/doctor.png';
@@ -11,16 +12,23 @@ import { Bars3Icon } from '@heroicons/react/24/outline';
 const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) => {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
+  const { 
+    sessionId, 
+    conversations, 
+    selectedChatId, 
+    isInitializing, 
+    error,
+    createNewChat,
+    updateChatTitle,
+    deleteChat,
+    sendMessage,
+    setSelectedChatId
+  } = useChat();
   const navigate = useNavigate();
-  const [sessionId, setSessionId] = useState(null);
-  const [conversations, setConversations] = useState([]);
-  const [selectedChatId, setSelectedChatId] = useState(null);
   const [messages, setMessages] = useState([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState(null);
   const [showAuthModal, setShowAuthModal] = useState(false);
-  const [isInitializing, setIsInitializing] = useState(true);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const messagesContainerRef = useRef(null);
 
@@ -35,112 +43,14 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
     scrollToBottom();
   }, [messages]);
 
-  const createNewChat = async () => {
-    const newChatId = Date.now().toString();
-    const newChat = {
-      id: newChatId,
-      title: t('chat.untitledChat'),
-      messages: [],
-      timestamp: new Date(),
-      lastMessage: null
-    };
-    
-    setConversations(prev => [newChat, ...prev]);
-    setSelectedChatId(newChatId);
-    setMessages([]);
-  };
-
-  const updateChatTitle = (chatId, firstMessage) => {
-    setConversations(prev =>
-      prev.map(chat => {
-        if (chat.id === chatId) {
-          // Create a title from the first few words of the message
-          const title = firstMessage.split(' ').slice(0, 5).join(' ') + '...';
-          return { ...chat, title };
-        }
-        return chat;
-      })
-    );
-  };
-
   useEffect(() => {
-    const initSession = async () => {
-      try {
-        setIsInitializing(true);
-        const storedSessionId = localStorage.getItem('guestSessionId');
-        
-        if (storedSessionId) {
-          try {
-            const sessionResponse = await getGuestSession(storedSessionId);
-            setSessionId(storedSessionId);
-            
-            // Convert existing conversations to our format
-            const existingConversations = sessionResponse.data.conversations.reduce((acc, conv) => {
-              const chatId = conv.chatId || 'default';
-              if (!acc[chatId]) {
-                acc[chatId] = {
-                  id: chatId,
-                  title: '',
-                  messages: [],
-                  timestamp: new Date(conv.timestamp),
-                  lastMessage: null
-                };
-              }
-              
-              // Add message to chat
-              const message = {
-                role: conv.sender === 'USER' ? 'user' : 'assistant',
-                content: conv.message,
-                timestamp: new Date(conv.timestamp)
-              };
-              acc[chatId].messages.push(message);
-              
-              // Update last message
-              acc[chatId].lastMessage = conv.message;
-              
-              // Set title from first user message if not set
-              if (!acc[chatId].title && conv.sender === 'USER') {
-                acc[chatId].title = conv.message.split(' ').slice(0, 5).join(' ') + '...';
-              }
-              
-              return acc;
-            }, {});
-
-            const conversationsList = Object.values(existingConversations)
-              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp)); // Sort by most recent
-            
-            setConversations(conversationsList);
-            
-            if (conversationsList.length > 0) {
-              const latestChat = conversationsList[0];
-              setSelectedChatId(latestChat.id);
-              setMessages(latestChat.messages);
-            } else {
-              await createNewChat();
-            }
-          } catch (err) {
-            console.error('Failed to restore session:', err);
-            const response = await startGuestSession();
-            setSessionId(response.data.sessionId);
-            localStorage.setItem('guestSessionId', response.data.sessionId);
-            await createNewChat();
-          }
-        } else {
-          const response = await startGuestSession();
-          setSessionId(response.data.sessionId);
-          localStorage.setItem('guestSessionId', response.data.sessionId);
-          await createNewChat();
-        }
-      } catch (err) {
-        console.error('Error initializing session:', err);
-        setError(t('chat.error.initialization'));
-      } finally {
-        setIsInitializing(false);
+    if (selectedChatId) {
+      const selectedChat = conversations.find(chat => chat.id === selectedChatId);
+      if (selectedChat) {
+        setMessages(selectedChat.messages);
       }
-    };
-
-    initSession();
-  }, [t]);
+    }
+  }, [selectedChatId, conversations]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -152,30 +62,10 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
     const newMessageObj = { role: 'user', content: messageToSend, timestamp: new Date() };
     setMessages(prev => [...prev, newMessageObj]);
     
-    // Update conversations state
-    setConversations(prev =>
-      prev.map(chat => {
-        if (chat.id === selectedChatId) {
-          const updatedMessages = [...chat.messages, newMessageObj];
-          // Update title if this is the first message
-          if (chat.messages.length === 0) {
-            updateChatTitle(chat.id, messageToSend);
-          }
-          return { 
-            ...chat, 
-            messages: updatedMessages, 
-            lastMessage: messageToSend,
-            timestamp: new Date() // Update timestamp on new message
-          };
-        }
-        return chat;
-      })
-    );
-
     setLoading(true);
 
     try {
-      const response = await sendGuestMessage(sessionId, messageToSend, selectedChatId);
+      const response = await sendMessage(selectedChatId, messageToSend);
       const assistantMessage = { 
         role: 'assistant', 
         content: response, 
@@ -183,21 +73,6 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
       };
       
       setMessages(prev => [...prev, assistantMessage]);
-      
-      // Update conversations state with assistant's response
-      setConversations(prev =>
-        prev.map(chat => {
-          if (chat.id === selectedChatId) {
-            return {
-              ...chat,
-              messages: [...chat.messages, assistantMessage],
-              lastMessage: response,
-              timestamp: new Date() // Update timestamp on response
-            };
-          }
-          return chat;
-        })
-      );
     } catch (error) {
       console.error('Error sending message:', error);
       const errorMessage = { 
@@ -206,32 +81,13 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
         timestamp: new Date() 
       };
       setMessages(prev => [...prev, errorMessage]);
-      
-      // Update conversations state with error message
-      setConversations(prev =>
-        prev.map(chat => {
-          if (chat.id === selectedChatId) {
-            return {
-              ...chat,
-              messages: [...chat.messages, errorMessage],
-              lastMessage: t('chat.error.message'),
-              timestamp: new Date() // Update timestamp on error
-            };
-          }
-          return chat;
-        })
-      );
     } finally {
       setLoading(false);
     }
   };
 
   const handleSelectChat = (chatId) => {
-    const selectedChat = conversations.find(chat => chat.id === chatId);
-    if (selectedChat) {
-      setSelectedChatId(chatId);
-      setMessages(selectedChat.messages);
-    }
+    setSelectedChatId(chatId);
   };
 
   const formatMessage = (text) => {

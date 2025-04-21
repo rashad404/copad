@@ -51,6 +51,7 @@ const AppRoutes = () => {
 };
 
 export default function App() {
+  console.log('App component rendered');
   return (
     <BrowserRouter>
       <ChatProvider>
