@@ -107,7 +107,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   };
 
   return (
-    <div className="flex h-screen bg-white dark:bg-gray-900">
+    <div className={`flex flex-col h-full bg-white dark:bg-gray-900 ${containerClassName}`}>
       <ChatSidebar
         conversations={conversations}
         onNewChat={createNewChat}
@@ -117,7 +117,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
         onClose={() => setIsSidebarOpen(false)}
       />
       
-      <div className={`flex-1 flex flex-col h-full ${containerClassName}`}>
+      <div className="flex-1 flex flex-col h-full">
         {/* Chat header */}
         <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
           <button
@@ -136,6 +136,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
         <div 
           ref={messagesContainerRef}
           className={`flex-1 overflow-y-auto px-4 py-6 ${messagesClassName}`}
+          style={{ height: 'calc(100vh - 80px)' }}
         >
           {isInitializing ? (
             <div className="flex justify-center items-center h-full">
@@ -187,28 +188,50 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
               </div>
             ))
           )}
+          {loading && (
+            <div className="flex justify-start mb-4">
+              <img
+                src={doctorAvatar}
+                alt="AI"
+                className="h-8 w-8 rounded-full mr-2"
+              />
+              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
+                <div className="flex space-x-2">
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
 
-        {/* Chat input */}
-        <div className="border-t border-gray-200 dark:border-gray-700 px-4 py-4">
-          <form onSubmit={handleSendMessage} className="flex space-x-4">
+        {/* Message input */}
+        <div className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
+          <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
             <input
               type="text"
               value={newMessage}
               onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={t('chat.inputPlaceholder')}
-              className={`flex-1 rounded-lg border border-gray-300 dark:border-gray-600 bg-white dark:bg-gray-800 px-4 py-2 text-gray-900 dark:text-gray-100 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-400 ${inputClassName}`}
-              disabled={loading}
+              placeholder={t('chat.messagePlaceholder')}
+              className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400"
+              disabled={loading || isInitializing}
             />
             <button
               type="submit"
-              disabled={loading || !newMessage.trim()}
-              className="px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 dark:focus:ring-offset-gray-900 disabled:opacity-50 disabled:cursor-not-allowed"
+              disabled={loading || !newMessage.trim() || isInitializing}
+              className={`shrink-0 px-4 py-2 rounded-lg ${
+                loading || !newMessage.trim() || isInitializing
+                  ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                  : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
+              } text-white font-medium`}
             >
               {loading ? (
                 <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
               ) : (
-                t('chat.send')
+                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                </svg>
               )}
             </button>
           </form>
