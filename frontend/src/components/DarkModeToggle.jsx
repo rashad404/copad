@@ -2,14 +2,16 @@ import { useState, useEffect } from 'react';
 import { SunIcon, MoonIcon } from '@heroicons/react/24/outline';
 
 export default function DarkModeToggle() {
-  const [isDark, setIsDark] = useState(false);
+  const [isDark, setIsDark] = useState(true);
 
   useEffect(() => {
-    // Check if dark mode is enabled in localStorage
-    const darkMode = localStorage.getItem('darkMode') === 'true';
+    // Check if dark mode preference exists in localStorage, otherwise default to true
+    const darkMode = localStorage.getItem('darkMode') !== 'false'; // Default to true if not set
     setIsDark(darkMode);
     if (darkMode) {
       document.documentElement.classList.add('dark');
+    } else {
+      document.documentElement.classList.remove('dark');
     }
   }, []);
 
