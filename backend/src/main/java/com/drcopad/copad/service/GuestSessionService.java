@@ -162,4 +162,28 @@ public class GuestSessionService {
         session.setLastActive(LocalDateTime.now());
         guestSessionRepository.save(session);
     }
+
+    @Transactional
+    public void createChat(String sessionId, String title) {
+        log.info("Creating new chat for session: {} with title: {}", sessionId, title);
+        
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> {
+                    log.warn("Guest session not found for chat creation: {}", sessionId);
+                    return new RuntimeException("Session not found");
+                });
+
+        // Create a new chat with the given title
+        Conversation chat = new Conversation();
+        chat.setGuestSession(session);
+        chat.setChatId(UUID.randomUUID().toString());
+        chat.setSender("SYSTEM");
+        chat.setMessage("Chat created: " + title);
+        chat.setTimestamp(LocalDateTime.now());
+        
+        session.getConversations().add(chat);
+        guestSessionRepository.save(session);
+        
+        log.info("Successfully created new chat for session: {}", sessionId);
+    }
 } 

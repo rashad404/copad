@@ -13,6 +13,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Slf4j
 @RestController
 @RequestMapping("/api/guest")
@@ -107,6 +109,27 @@ public class GuestController {
             return ResponseEntity.ok().build();
         } catch (RuntimeException e) {
             log.warn("Failed to save email for session: {} - Error: {}", sessionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Session not found. Please start a new session.");
+        }
+    }
+
+    @PostMapping("/chats/{sessionId}")
+    public ResponseEntity<?> createChat(
+            @PathVariable String sessionId,
+            @RequestBody Map<String, String> request) {
+        log.info("Creating new chat for session: {} with title: {}", sessionId, request.get("title"));
+        
+        if (!rateLimiterService.isAllowed(sessionId)) {
+            log.warn("Rate limit exceeded for session: {}", sessionId);
+            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
+        }
+        
+        try {
+            guestSessionService.createChat(sessionId, request.get("title"));
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.warn("Failed to create chat for session: {} - Error: {}", sessionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Session not found. Please start a new session.");
         }
