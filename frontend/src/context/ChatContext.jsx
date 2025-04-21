@@ -140,45 +140,46 @@ export const ChatProvider = ({ children }) => {
             currentSessionId = storedSessionId;
             setSessionId(currentSessionId);
             
-            // Convert existing conversations to our format
-            const existingConversations = sessionResponse.data.conversations.reduce((acc, conv) => {
-              const chatId = conv.chatId || 'default';
+            // Group conversations by chatId
+            const chatGroups = sessionResponse.data.conversations.reduce((acc, conv) => {
+              const chatId = conv.chatId;
               if (!acc[chatId]) {
                 acc[chatId] = {
                   id: chatId,
-                  title: '',
+                  title: conv.title || t('chat.untitledChat'),
                   messages: [],
-                  timestamp: new Date()
+                  timestamp: conv.timestamp
                 };
               }
               acc[chatId].messages.push({
-                role: conv.user ? 'user' : 'assistant',
+                role: conv.sender === 'USER' ? 'user' : 'assistant',
                 content: conv.message,
                 timestamp: conv.timestamp
               });
+              // Update timestamp to the latest message
+              if (new Date(conv.timestamp) > new Date(acc[chatId].timestamp)) {
+                acc[chatId].timestamp = conv.timestamp;
+              }
+              // Set lastMessage for display in sidebar
+              if (conv.sender === 'AI') {
+                acc[chatId].lastMessage = conv.message;
+              }
               return acc;
             }, {});
 
-            const conversationsList = Object.values(existingConversations);
+            // Convert to array and sort by timestamp (newest first)
+            const conversationsList = Object.values(chatGroups)
+              .sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
             setConversations(conversationsList);
             
             if (conversationsList.length > 0) {
               setSelectedChatId(conversationsList[0].id);
             } else {
-              // Wait for sessionId to be set before creating new chat
-              await new Promise(resolve => {
-                const checkSessionId = setInterval(() => {
-                  if (sessionId) {
-                    clearInterval(checkSessionId);
-                    resolve();
-                  }
-                }, 100);
-              });
               await createNewChat();
             }
           } catch (err) {
             console.error('Failed to restore session:', err);
-            // Only start a new session if we don't have one
             if (!sessionId) {
               const response = await startGuestSession();
               currentSessionId = response.data.sessionId;
@@ -188,7 +189,6 @@ export const ChatProvider = ({ children }) => {
             }
           }
         } else {
-          // Only start a new session if we don't have one
           if (!sessionId) {
             const response = await startGuestSession();
             currentSessionId = response.data.sessionId;
@@ -207,7 +207,7 @@ export const ChatProvider = ({ children }) => {
     };
 
     initSession();
-  }, [t, sessionId]); // Add sessionId to dependencies
+  }, [t, sessionId]);
 
   const value = {
     sessionId,

@@ -89,6 +89,15 @@ public class GuestSessionService {
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
         userMsg.setChatId(chatId);
+
+        // If this is the first message in the chat, set it as the title
+        if (chatHistory.isEmpty()) {
+            String title = message.length() > 50 ? message.substring(0, 47) + "..." : message;
+            userMsg.setTitle(title);
+        } else {
+            userMsg.setTitle(chatHistory.get(0).getTitle());
+        }
+
         session.getConversations().add(userMsg);
 
         // Create and save AI message
@@ -98,6 +107,7 @@ public class GuestSessionService {
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
         aiMsg.setChatId(chatId);
+        aiMsg.setTitle(userMsg.getTitle()); // Use the same title as the user message
         session.getConversations().add(aiMsg);
 
         guestSessionRepository.save(session);
@@ -142,6 +152,7 @@ public class GuestSessionService {
                                 .sender(conv.getSender())
                                 .timestamp(conv.getTimestamp())
                                 .chatId(conv.getChatId())
+                                .title(conv.getTitle())
                                 .build())
                         .toList())
                 .email(session.getEmail())
@@ -180,6 +191,7 @@ public class GuestSessionService {
         chat.setSender("SYSTEM");
         chat.setMessage("Chat created: " + title);
         chat.setTimestamp(LocalDateTime.now());
+        chat.setTitle(title);
         
         session.getConversations().add(chat);
         guestSessionRepository.save(session);

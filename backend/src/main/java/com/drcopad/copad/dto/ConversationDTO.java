@@ -15,6 +15,7 @@ public class ConversationDTO {
     private String sender;
     private LocalDateTime timestamp;
     private String chatId;
+    private String title;
 
     public ConversationDTO(String message, String sender, LocalDateTime timestamp) {
         this.message = message;

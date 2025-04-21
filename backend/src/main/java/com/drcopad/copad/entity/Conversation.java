@@ -28,4 +28,7 @@ public class Conversation {
 
     @Column(nullable = false)
     private String chatId; // Unique identifier for each chat within a session
+
+    @Column
+    private String title; // Title of the chat
 }
