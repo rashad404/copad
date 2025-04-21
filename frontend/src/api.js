@@ -40,16 +40,22 @@ export const getAppointmentChat = (appointmentId) => API.get(`/conversations/${a
 // Guest session endpoints
 export const startGuestSession = () => API.post("/guest/start");
 export const getGuestSession = (sessionId) => API.get(`/guest/session/${sessionId}`);
-export const sendGuestMessage = async (sessionId, message, specialty = 'general') => {
+export const sendGuestMessage = async (sessionId, message, chatId) => {
   const response = await API.post(
-    `/guest/chat/${sessionId}?specialty=${specialty}`,
+    `/guest/chat/${sessionId}`,
     { 
       message,
+      chatId,
       language: i18n.language
     }
   );
   return response.data;
 };
 export const saveGuestEmail = (sessionId, email) => API.post(`/guest/save-email/${sessionId}`, email);
-export const saveConversation = (sessionId) => API.post(`/guest/save-conversation/${sessionId}`);
+export const saveConversation = (sessionId, chatId) => API.post(`/guest/save-conversation/${sessionId}`, { chatId });
+
+// Guest chat management
+export const createGuestChat = (sessionId, title) => API.post(`/guest/chats/${sessionId}`, { title });
+export const updateGuestChat = (sessionId, chatId, title) => API.put(`/guest/chats/${sessionId}/${chatId}`, { title });
+export const deleteGuestChat = (sessionId, chatId) => API.delete(`/guest/chats/${sessionId}/${chatId}`);
   

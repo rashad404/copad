@@ -287,6 +287,18 @@
     "security": {
       "general": "Təhlükəsiz",
       "save": "Söhbəti Saxla"
+    },
+    "conversations": "Söhbətlər",
+    "newChat": "Yeni Söhbət",
+    "untitledChat": "Başlıqsız Söhbət",
+    "noMessages": "Hələ mesaj yoxdur",
+    "noConversations": "Hələ söhbət yoxdur",
+    "closeSidebar": "Yan paneli bağla",
+    "openSidebar": "Yan paneli aç",
+    "welcomeMessage": "Salam! Sizə necə kömək edə bilərəm?",
+    "error": {
+      "initialization": "Söhbəti başlatmaq alınmadı",
+      "message": "Mesaj göndərmək alınmadı"
     }
   },
   "profile": {
