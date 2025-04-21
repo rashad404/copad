@@ -106,11 +106,20 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
     });
   };
 
+  const handleNewChat = async () => {
+    const currentChat = conversations.find(chat => chat.id === selectedChatId);
+    
+    // Only create a new chat if the current chat has messages
+    if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
+      await createNewChat();
+    }
+  };
+
   return (
     <div className={`flex flex-col h-full bg-white dark:bg-gray-900 ${containerClassName}`}>
       <ChatSidebar
         conversations={conversations}
-        onNewChat={createNewChat}
+        onNewChat={handleNewChat}
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChatId}
         isOpen={isSidebarOpen}
