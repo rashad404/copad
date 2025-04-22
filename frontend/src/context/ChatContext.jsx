@@ -48,7 +48,7 @@ export const ChatProvider = ({ children }) => {
         
         return {
           id: chat.id,
-          title: chat.title || "New Chat",
+          title: chat.title || t('chat.newChat'),
           messages: formattedMessages,
           timestamp: new Date(chat.timestamp),
           lastMessage: chat.lastMessage
@@ -76,7 +76,7 @@ export const ChatProvider = ({ children }) => {
     
     try {
       // Don't create a client-side ID anymore - we'll let the server create the UUID and return it
-      const title = "New Chat";
+      const title = null;
       
       // Call the API first to create the chat
       const response = await createGuestChat(activeSessionId, title);
@@ -111,7 +111,7 @@ export const ChatProvider = ({ children }) => {
     }
 
     try {
-      const title = "New Chat";
+      const title = null;
       
       // Call the API first to create the chat
       const response = await createGuestChat(currentSessionId, title);

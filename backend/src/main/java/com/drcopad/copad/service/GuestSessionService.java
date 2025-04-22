@@ -85,7 +85,6 @@ public class GuestSessionService {
                 .orElseGet(() -> {
                     Chat newChat = new Chat();
                     newChat.setChatId(chatId);
-                    newChat.setTitle("New Chat");
                     newChat.setGuestSession(session);
                     return chatRepository.save(newChat);
                 });
@@ -119,7 +118,9 @@ public class GuestSessionService {
         MessageRepository.save(aiMsg);
 
         // If this is the first message in the chat, set it as the title
-        if (chatHistory.isEmpty() && chat.getTitle().equals("New Chat")) {
+        log.info("!!! chat.getTitle()" + chat.getTitle() + "123");
+        if (chatHistory.isEmpty() && chat.getTitle() == null) {
+            log.info("!!! This is the first message in the chat, set it as the title");
             String title = message.length() > 50 ? message.substring(0, 47) + "..." : message;
             chat.setTitle(title);
             chatRepository.save(chat);
