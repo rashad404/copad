@@ -5,6 +5,8 @@ import GuestChat from '../components/GuestChat.jsx';
 import { motion } from "framer-motion";
 import { CheckCircle, Shield } from "lucide-react";
 import Logo from "../components/Logo";
+import { useSiteInfo } from '../context/SiteContext.jsx';
+
 import {
   step1,
   step2,
@@ -13,6 +15,8 @@ import {
 
 export default function HomePage() {
   const { t } = useTranslation();
+  const { WEBSITE_NAME, WEBSITE_TLD } = useSiteInfo();
+
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-indigo-50 dark:from-gray-900 dark:to-gray-800 flex flex-col">
@@ -395,8 +399,8 @@ export default function HomePage() {
                     <Logo className="w-8 h-8 relative transition-transform duration-300 group-hover:scale-105" />
                   </div>
                   <span>
-                    <span className="text-gray-800 dark:text-gray-200">VirtualHekim</span>
-                    <span className="text-indigo-600 dark:text-indigo-400">.az</span>
+                    <span className="text-gray-800 dark:text-gray-200">{WEBSITE_NAME}</span>
+                    <span className="text-indigo-600 dark:text-indigo-400">{WEBSITE_TLD}</span>
                   </span>
                 </div>
                 <p className="text-gray-500 dark:text-gray-400 text-sm mb-4">

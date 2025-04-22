@@ -5,8 +5,8 @@ import { AuthContext } from "../context/AuthContext.jsx";
 import LanguageSwitcher from "./LanguageSwitcher";
 import DarkModeToggle from "./DarkModeToggle";
 import { useTranslation } from "react-i18next";
-import { WEBSITE_NAME } from "../config/constants";
 import Logo from "./Logo";
+import { getSiteInfo } from "../context/SiteContext";
 
 export default function Navbar() {
   const [menuOpen, setMenuOpen] = useState(false);
@@ -15,6 +15,7 @@ export default function Navbar() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const location = useLocation();
+  const { WEBSITE_NAME, WEBSITE_TLD } = getSiteInfo();
 
   const toggleMenu = () => setMenuOpen(!menuOpen);
 
@@ -56,8 +57,8 @@ export default function Navbar() {
                 <Logo className="w-10 h-10 relative transition-transform duration-300 group-hover:scale-105" />
               </div>
               <span className="font-bold text-xl">
-                <span className="text-gray-800 dark:text-gray-200">VirtualHekim</span>
-                <span className="text-indigo-600 dark:text-indigo-400">.az</span>
+                <span className="text-gray-800 dark:text-gray-200">{WEBSITE_NAME}</span>
+                <span className="text-indigo-600 dark:text-indigo-400">{WEBSITE_TLD}</span>
               </span>
             </Link>
 
