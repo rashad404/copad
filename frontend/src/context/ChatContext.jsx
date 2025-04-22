@@ -48,7 +48,7 @@ export const ChatProvider = ({ children }) => {
         
         return {
           id: chat.id,
-          title: chat.title || t('chat.newChat'),
+          title: chat.title || t('chat.untitledChat'),
           messages: formattedMessages,
           timestamp: new Date(chat.timestamp),
           lastMessage: chat.lastMessage
