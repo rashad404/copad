@@ -4,7 +4,7 @@ import com.drcopad.copad.config.ChatGPTConfig;
 import com.drcopad.copad.dto.ChatGPTRequest;
 import com.drcopad.copad.dto.ChatGPTResponse;
 import com.drcopad.copad.dto.Message;
-import com.drcopad.copad.entity.Conversation;
+import com.drcopad.copad.entity.ChatMessage;
 import com.drcopad.copad.entity.MedicalSpecialty;
 import com.drcopad.copad.repository.MedicalSpecialtyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ public class ChatGPTService {
     private final MedicalSpecialtyRepository specialtyRepository;
     private final LanguageMappingService languageMappingService;
 
-    public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyCode, String language) {
+    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
@@ -42,8 +42,8 @@ public class ChatGPTService {
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
         messages.add(new Message("system", systemPrompt));
 
-        // Add conversation history
-        for (Conversation c : history) {
+        // Add message history
+        for (ChatMessage c : history) {
             String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
             messages.add(new Message(role, c.getMessage()));
         }

@@ -36,7 +36,7 @@ public class GuestSession {
 
     @OneToMany(mappedBy = "guestSession", cascade = CascadeType.ALL, orphanRemoval = true)
     @Builder.Default
-    private List<Conversation> conversations = new ArrayList<>();
+    private List<ChatMessage> messages = new ArrayList<>();
 
     @Column
     private String email; // Optional, for users who want to save their session

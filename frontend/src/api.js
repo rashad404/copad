@@ -34,8 +34,8 @@ export const register = (data) => API.post("/auth/register", data);
 export const login = (data) => API.post("/auth/login", data);
 export const createAppointment = (data) => API.post("/appointments", data);
 export const getAppointments = () => API.get("/appointments");
-export const sendMessageToAI = (appointmentId, data) => API.post(`/conversations/${appointmentId}`, data);
-export const getAppointmentChat = (appointmentId) => API.get(`/conversations/${appointmentId}`);
+export const sendMessageToAI = (appointmentId, data) => API.post(`/messages/${appointmentId}`, data);
+export const getAppointmentChat = (appointmentId) => API.get(`/messages/${appointmentId}`);
 
 // Guest session endpoints
 export const startGuestSession = () => API.post("/guest/start");

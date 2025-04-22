@@ -29,7 +29,7 @@ public class Chat {
     private GuestSession guestSession;
     
     @OneToMany(mappedBy = "chat", cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<Conversation> messages = new ArrayList<>();
+    private List<ChatMessage> messages = new ArrayList<>();
     
     @PrePersist
     protected void onCreate() {

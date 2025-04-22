@@ -15,7 +15,7 @@ import java.util.List;
 public class ChatDTO {
     private String id;
     private String title;
-    private List<ConversationDTO> messages;
+    private List<MessageDTO> messages;
     private LocalDateTime timestamp;
     private String lastMessage;
 }

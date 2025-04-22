@@ -84,7 +84,7 @@ public class GuestController {
             @PathVariable String sessionId,
             @PathVariable String chatId) {
         try {
-            var history = guestSessionService.getConversationHistory(sessionId, chatId);
+            var history = guestSessionService.getMessageHistory(sessionId, chatId);
             return ResponseEntity.ok(history);
         } catch (Exception e) {
             log.error("Error retrieving chat history", e);

@@ -4,7 +4,7 @@ import { PlusIcon, XMarkIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/
 import { formatDistanceToNow } from 'date-fns';
 
 const ChatSidebar = ({
-  conversations = [],
+  messages = [],
   onNewChat,
   onSelectChat,
   onUpdateChatTitle,
@@ -80,7 +80,7 @@ const ChatSidebar = ({
       >
         <div className="flex items-center justify-between p-4 border-b border-gray-200 dark:border-gray-700">
           <h2 className="text-lg font-semibold text-gray-800 dark:text-gray-200">
-            {t('chat.conversations')}
+            {t('chat.messages')}
           </h2>
           <button
             onClick={onClose}
@@ -102,13 +102,13 @@ const ChatSidebar = ({
         </div>
 
         <div className="flex-1 overflow-y-auto">
-          {conversations.length === 0 ? (
+          {messages.length === 0 ? (
             <div className="px-4 py-3 text-sm text-gray-500 dark:text-gray-400">
-              {t('chat.noConversations')}
+              {t('chat.noMessages')}
             </div>
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
-              {conversations.map((chat) => (
+              {messages.map((chat) => (
                 <div key={chat.id} className="relative">
                   {editingChatId === chat.id ? (
                     <form onSubmit={saveTitle} className="p-4">

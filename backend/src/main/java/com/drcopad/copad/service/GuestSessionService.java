@@ -1,13 +1,13 @@
 package com.drcopad.copad.service;
 
 import com.drcopad.copad.dto.ChatDTO;
-import com.drcopad.copad.dto.ConversationDTO;
+import com.drcopad.copad.dto.MessageDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.entity.Chat;
-import com.drcopad.copad.entity.Conversation;
+import com.drcopad.copad.entity.ChatMessage;
 import com.drcopad.copad.entity.GuestSession;
 import com.drcopad.copad.repository.ChatRepository;
-import com.drcopad.copad.repository.ConversationRepository;
+import com.drcopad.copad.repository.MessageRepository;
 import com.drcopad.copad.repository.GuestSessionRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
@@ -32,7 +32,7 @@ import java.util.Map;
 public class GuestSessionService {
 
     private final GuestSessionRepository guestSessionRepository;
-    private final ConversationRepository conversationRepository;
+    private final MessageRepository MessageRepository;
     private final ChatRepository chatRepository;
     private final ChatGPTService chatGPTService;
 
@@ -94,29 +94,29 @@ public class GuestSessionService {
         chat.setUpdatedAt(LocalDateTime.now());
         chatRepository.save(chat);
 
-        // Get conversation history for this specific chat
-        List<Conversation> chatHistory = conversationRepository.findByChatOrderByTimestampAsc(chat);
+        // Get message history for this specific chat
+        List<ChatMessage> chatHistory = MessageRepository.findByChatOrderByTimestampAsc(chat);
 
         // Get AI response with specialty and language
         String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
 
         // Create and save user message
-        Conversation userMsg = new Conversation();
+        ChatMessage userMsg = new ChatMessage();
         userMsg.setMessage(message);
         userMsg.setSender("USER");
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
         userMsg.setChat(chat);
-        conversationRepository.save(userMsg);
+        MessageRepository.save(userMsg);
 
         // Create and save AI message
-        Conversation aiMsg = new Conversation();
+        ChatMessage aiMsg = new ChatMessage();
         aiMsg.setMessage(response);
         aiMsg.setSender("AI");
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
         aiMsg.setChat(chat);
-        conversationRepository.save(aiMsg);
+        MessageRepository.save(aiMsg);
 
         // If this is the first message in the chat, set it as the title
         if (chatHistory.isEmpty() && chat.getTitle().equals("New Chat")) {
@@ -161,19 +161,19 @@ public class GuestSessionService {
         
         List<ChatDTO> chatDTOs = chats.stream()
                 .map(chat -> {
-                    List<Conversation> messages = conversationRepository.findByChatOrderByTimestampAsc(chat);
+                    List<ChatMessage> messages = MessageRepository.findByChatOrderByTimestampAsc(chat);
                     
                     // Get last message for display in sidebar
-                    String lastMessage = null;
+                    String lastMessageText = null;
                     if (!messages.isEmpty()) {
-                        Conversation lastConversation = messages.get(messages.size() - 1);
-                        if ("AI".equals(lastConversation.getSender())) {
-                            lastMessage = lastConversation.getMessage();
+                        ChatMessage lastMsg = messages.get(messages.size() - 1);
+                        if ("AI".equals(lastMsg.getSender())) {
+                            lastMessageText = lastMsg.getMessage();
                         }
                     }
                     
-                    List<ConversationDTO> messagesDTOs = messages.stream()
-                            .map(msg -> ConversationDTO.builder()
+                    List<MessageDTO> messagesDTOs = messages.stream()
+                            .map(msg -> MessageDTO.builder()
                                     .message(msg.getMessage())
                                     .sender(msg.getSender())
                                     .timestamp(msg.getTimestamp())
@@ -185,7 +185,7 @@ public class GuestSessionService {
                             .title(chat.getTitle())
                             .messages(messagesDTOs)
                             .timestamp(chat.getUpdatedAt())
-                            .lastMessage(lastMessage)
+                            .lastMessage(lastMessageText)
                             .build();
                 })
                 .collect(Collectors.toList());
@@ -199,7 +199,7 @@ public class GuestSessionService {
                 .build();
     }
 
-    public List<Conversation> getConversationHistory(String sessionId, String chatId) {
+    public List<ChatMessage> getMessageHistory(String sessionId, String chatId) {
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found"));
         
@@ -208,7 +208,7 @@ public class GuestSessionService {
             return new ArrayList<>();
         }
         
-        return conversationRepository.findByChatOrderByTimestampAsc(chat.get());
+        return MessageRepository.findByChatOrderByTimestampAsc(chat.get());
     }
 
     public void updateLastActive(String sessionId) {

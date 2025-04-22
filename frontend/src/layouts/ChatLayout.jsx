@@ -66,7 +66,7 @@ const ChatLayout = () => {
 
       {/* Sidebar */}
       <ChatSidebar
-        conversations={chats}
+        messages={chats}
         onNewChat={handleNewChat}
         onSelectChat={handleSelectChat}
         onUpdateChatTitle={handleUpdateChatTitle}

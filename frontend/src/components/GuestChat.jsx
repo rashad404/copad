@@ -118,7 +118,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   return (
     <div className={`flex flex-col h-full bg-white dark:bg-gray-900 ${containerClassName}`}>
       <ChatSidebar
-        conversations={chats}
+        messages={chats}
         onNewChat={handleNewChat}
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChatId}

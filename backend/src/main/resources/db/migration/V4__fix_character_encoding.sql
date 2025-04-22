@@ -2,6 +2,6 @@
 ALTER TABLE chats 
     MODIFY COLUMN title VARCHAR(255) CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
--- Make sure conversation.message field also supports UTF-8 properly
-ALTER TABLE conversation 
+-- Make sure message.message field also supports UTF-8 properly
+ALTER TABLE message 
     MODIFY COLUMN message TEXT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;

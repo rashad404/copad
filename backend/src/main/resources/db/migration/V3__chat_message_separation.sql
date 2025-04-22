@@ -12,17 +12,17 @@ CREATE TABLE chats (
 -- Add index on chat_id for faster lookups
 CREATE INDEX idx_chat_id ON chats(chat_id);
 
--- Add chat_id column to conversation table
-ALTER TABLE conversation ADD COLUMN chat_id BIGINT;
+-- Add chat_id column to message table
+ALTER TABLE message ADD COLUMN chat_id BIGINT;
 
 -- Convert existing chat_id string to foreign key
 -- This requires a data migration step that depends on your current data:
--- 1. For each unique chatId in conversation table, create a chat record
--- 2. Then update the chat_id column in conversation to point to the newly created chat
+-- 1. For each unique chatId in message table, create a chat record
+-- 2. Then update the chat_id column in message to point to the newly created chat
 
 -- Temporary procedure to migrate data
 DELIMITER //
-CREATE PROCEDURE migrate_conversations_to_chats()
+CREATE PROCEDURE migrate_messages_to_chats()
 BEGIN
     -- Variables
     DECLARE done INT DEFAULT FALSE;
@@ -31,13 +31,13 @@ BEGIN
     DECLARE v_new_chat_id BIGINT;
     DECLARE v_title VARCHAR(255);
     
-    -- Get distinct chatId values from conversation table
+    -- Get distinct chatId values from message table
     DECLARE chat_cursor CURSOR FOR 
         SELECT DISTINCT c.chat_id, c.guest_session_id, 
-               (SELECT message FROM conversation 
+               (SELECT message FROM message 
                 WHERE chat_id = c.chat_id AND guest_session_id = c.guest_session_id 
                 ORDER BY timestamp ASC LIMIT 1) as title
-        FROM conversation c
+        FROM message c
         WHERE c.chat_id IS NOT NULL;
     
     DECLARE CONTINUE HANDLER FOR NOT FOUND SET done = TRUE;
@@ -54,15 +54,15 @@ BEGIN
         INSERT INTO chats (chat_id, title, created_at, updated_at, guest_session_id)
         VALUES (v_old_chat_id, 
                 IFNULL(v_title, 'Untitled Chat'),
-                (SELECT MIN(timestamp) FROM conversation WHERE chat_id = v_old_chat_id),
-                (SELECT MAX(timestamp) FROM conversation WHERE chat_id = v_old_chat_id),
+                (SELECT MIN(timestamp) FROM message WHERE chat_id = v_old_chat_id),
+                (SELECT MAX(timestamp) FROM message WHERE chat_id = v_old_chat_id),
                 v_guest_session_id);
         
         -- Get the new chat ID
         SET v_new_chat_id = LAST_INSERT_ID();
         
-        -- Update conversation records to point to the new chat
-        UPDATE conversation 
+        -- Update message records to point to the new chat
+        UPDATE message 
         SET chat_id = v_new_chat_id 
         WHERE chat_id = v_old_chat_id AND guest_session_id = v_guest_session_id;
     END LOOP;
@@ -72,17 +72,17 @@ END //
 DELIMITER ;
 
 -- Run the migration procedure
-CALL migrate_conversations_to_chats();
+CALL migrate_messages_to_chats();
 
 -- Drop the temporary procedure
-DROP PROCEDURE migrate_conversations_to_chats;
+DROP PROCEDURE migrate_messages_to_chats;
 
 -- Change chat_id column type to BIGINT and add foreign key constraint
-ALTER TABLE conversation 
+ALTER TABLE message 
     MODIFY COLUMN chat_id BIGINT,
-    ADD CONSTRAINT fk_conversation_chat 
+    ADD CONSTRAINT fk_message_chat 
     FOREIGN KEY (chat_id) REFERENCES chats(id) ON DELETE CASCADE;
 
 -- Create indexes for better performance
-CREATE INDEX idx_conversation_chat ON conversation(chat_id);
+CREATE INDEX idx_message_chat ON message(chat_id);
 CREATE INDEX idx_chat_guest_session ON chats(guest_session_id);

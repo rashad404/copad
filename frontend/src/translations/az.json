@@ -288,11 +288,11 @@
       "general": "Təhlükəsiz",
       "save": "Söhbəti Saxla"
     },
-    "conversations": "Söhbətlər",
+    "messages": "Söhbətlər",
     "newChat": "Yeni Söhbət",
     "untitledChat": "Yeni Söhbət",
     "noMessages": "Hələ mesaj yoxdur",
-    "noConversations": "Hələ söhbət yoxdur",
+    "noMessages": "Hələ söhbət yoxdur",
     "closeSidebar": "Yan paneli bağla",
     "openSidebar": "Yan paneli aç",
     "welcomeMessage": "Salam! Sizə necə kömək edə bilərəm?",
