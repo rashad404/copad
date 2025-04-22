@@ -84,7 +84,7 @@ public class GuestController {
             @PathVariable String sessionId,
             @PathVariable String chatId) {
         try {
-            var history = guestSessionService.getConversationHistory(sessionId, chatId);
+            var history = guestSessionService.getMessageHistory(sessionId, chatId);
             return ResponseEntity.ok(history);
         } catch (Exception e) {
             log.error("Error retrieving chat history", e);
@@ -114,6 +114,7 @@ public class GuestController {
         }
     }
 
+    // Chat management endpoints
     @PostMapping("/chats/{sessionId}")
     public ResponseEntity<?> createChat(
             @PathVariable String sessionId,
@@ -126,12 +127,55 @@ public class GuestController {
         }
         
         try {
-            guestSessionService.createChat(sessionId, request.get("title"));
-            return ResponseEntity.ok().build();
+            Map<String, String> result = guestSessionService.createChat(sessionId, request.get("title"));
+            return ResponseEntity.ok(result);
         } catch (RuntimeException e) {
             log.warn("Failed to create chat for session: {} - Error: {}", sessionId, e.getMessage());
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Session not found. Please start a new session.");
+        }
+    }
+    
+    @PutMapping("/chats/{sessionId}/{chatId}")
+    public ResponseEntity<?> updateChat(
+            @PathVariable String sessionId,
+            @PathVariable String chatId,
+            @RequestBody Map<String, String> request) {
+        log.info("Updating chat {} for session: {} with title: {}", chatId, sessionId, request.get("title"));
+        
+        if (!rateLimiterService.isAllowed(sessionId)) {
+            log.warn("Rate limit exceeded for session: {}", sessionId);
+            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
+        }
+        
+        try {
+            guestSessionService.updateChatTitle(sessionId, chatId, request.get("title"));
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.warn("Failed to update chat for session: {} - Error: {}", sessionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Chat or session not found.");
+        }
+    }
+    
+    @DeleteMapping("/chats/{sessionId}/{chatId}")
+    public ResponseEntity<?> deleteChat(
+            @PathVariable String sessionId,
+            @PathVariable String chatId) {
+        log.info("Deleting chat {} for session: {}", chatId, sessionId);
+        
+        if (!rateLimiterService.isAllowed(sessionId)) {
+            log.warn("Rate limit exceeded for session: {}", sessionId);
+            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
+        }
+        
+        try {
+            guestSessionService.deleteChat(sessionId, chatId);
+            return ResponseEntity.ok().build();
+        } catch (RuntimeException e) {
+            log.warn("Failed to delete chat for session: {} - Error: {}", sessionId, e.getMessage());
+            return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                    .body("Chat or session not found.");
         }
     }
 
@@ -141,4 +185,4 @@ public class GuestController {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
                 .body(ex.getMessage());
     }
-} 
+}

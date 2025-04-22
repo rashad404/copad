@@ -1,11 +1,14 @@
 package com.drcopad.copad.service;
 
-import com.drcopad.copad.dto.ConversationDTO;
+import com.drcopad.copad.dto.ChatDTO;
+import com.drcopad.copad.dto.MessageDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
-import com.drcopad.copad.entity.Conversation;
+import com.drcopad.copad.entity.Chat;
+import com.drcopad.copad.entity.ChatMessage;
 import com.drcopad.copad.entity.GuestSession;
+import com.drcopad.copad.repository.ChatRepository;
+import com.drcopad.copad.repository.MessageRepository;
 import com.drcopad.copad.repository.GuestSessionRepository;
-import com.drcopad.copad.repository.ConversationRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -17,8 +20,11 @@ import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.HashMap;
+import java.util.Map;
 
 @Slf4j
 @Service
@@ -26,7 +32,8 @@ import java.util.stream.Collectors;
 public class GuestSessionService {
 
     private final GuestSessionRepository guestSessionRepository;
-    private final ConversationRepository conversationRepository;
+    private final MessageRepository MessageRepository;
+    private final ChatRepository chatRepository;
     private final ChatGPTService chatGPTService;
 
     @Transactional
@@ -36,7 +43,6 @@ public class GuestSessionService {
         
         GuestSession session = GuestSession.builder()
                 .ipAddress(ipAddress)
-                .conversations(new ArrayList<>())
                 .build();
         
         session = guestSessionRepository.save(session);
@@ -73,44 +79,53 @@ public class GuestSessionService {
 
         log.info("Found session for chat, updating last active timestamp");
         session.setLastActive(LocalDateTime.now());
+        
+        // Find the chat or create it if it doesn't exist
+        Chat chat = chatRepository.findByChatId(chatId)
+                .orElseGet(() -> {
+                    Chat newChat = new Chat();
+                    newChat.setChatId(chatId);
+                    newChat.setGuestSession(session);
+                    return chatRepository.save(newChat);
+                });
+        
+        // Update the chat's updatedAt timestamp
+        chat.setUpdatedAt(LocalDateTime.now());
+        chatRepository.save(chat);
 
-        // Get conversation history for this specific chat
-        List<Conversation> chatHistory = session.getConversations().stream()
-                .filter(conv -> conv.getChatId().equals(chatId))
-                .collect(Collectors.toList());
+        // Get message history for this specific chat
+        List<ChatMessage> chatHistory = MessageRepository.findByChatOrderByTimestampAsc(chat);
 
         // Get AI response with specialty and language
         String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
 
         // Create and save user message
-        Conversation userMsg = new Conversation();
+        ChatMessage userMsg = new ChatMessage();
         userMsg.setMessage(message);
         userMsg.setSender("USER");
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
-        userMsg.setChatId(chatId);
-
-        // If this is the first message in the chat, set it as the title
-        if (chatHistory.isEmpty()) {
-            String title = message.length() > 50 ? message.substring(0, 47) + "..." : message;
-            userMsg.setTitle(title);
-        } else {
-            userMsg.setTitle(chatHistory.get(0).getTitle());
-        }
-
-        session.getConversations().add(userMsg);
+        userMsg.setChat(chat);
+        MessageRepository.save(userMsg);
 
         // Create and save AI message
-        Conversation aiMsg = new Conversation();
+        ChatMessage aiMsg = new ChatMessage();
         aiMsg.setMessage(response);
         aiMsg.setSender("AI");
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
-        aiMsg.setChatId(chatId);
-        aiMsg.setTitle(userMsg.getTitle()); // Use the same title as the user message
-        session.getConversations().add(aiMsg);
+        aiMsg.setChat(chat);
+        MessageRepository.save(aiMsg);
 
-        guestSessionRepository.save(session);
+        // If this is the first message in the chat, set it as the title
+        log.info("!!! chat.getTitle()" + chat.getTitle() + "123");
+        if (chatHistory.isEmpty() && chat.getTitle() == null) {
+            log.info("!!! This is the first message in the chat, set it as the title");
+            String title = message.length() > 50 ? message.substring(0, 47) + "..." : message;
+            chat.setTitle(title);
+            chatRepository.save(chat);
+        }
+
         return response;
     }
 
@@ -142,29 +157,59 @@ public class GuestSessionService {
     }
 
     private GuestSessionDTO mapToDTO(GuestSession session) {
+        // Get all chats for this session
+        List<Chat> chats = chatRepository.findByGuestSessionOrderByUpdatedAtDesc(session);
+        
+        List<ChatDTO> chatDTOs = chats.stream()
+                .map(chat -> {
+                    List<ChatMessage> messages = MessageRepository.findByChatOrderByTimestampAsc(chat);
+                    
+                    // Get last message for display in sidebar
+                    String lastMessageText = null;
+                    if (!messages.isEmpty()) {
+                        ChatMessage lastMsg = messages.get(messages.size() - 1);
+                        if ("AI".equals(lastMsg.getSender())) {
+                            lastMessageText = lastMsg.getMessage();
+                        }
+                    }
+                    
+                    List<MessageDTO> messagesDTOs = messages.stream()
+                            .map(msg -> MessageDTO.builder()
+                                    .message(msg.getMessage())
+                                    .sender(msg.getSender())
+                                    .timestamp(msg.getTimestamp())
+                                    .build())
+                            .collect(Collectors.toList());
+                    
+                    return ChatDTO.builder()
+                            .id(chat.getChatId())
+                            .title(chat.getTitle())
+                            .messages(messagesDTOs)
+                            .timestamp(chat.getUpdatedAt())
+                            .lastMessage(lastMessageText)
+                            .build();
+                })
+                .collect(Collectors.toList());
+
         return GuestSessionDTO.builder()
                 .sessionId(session.getSessionId())
                 .createdAt(session.getCreatedAt())
                 .lastActive(session.getLastActive())
-                .conversations(session.getConversations().stream()
-                        .map(conv -> ConversationDTO.builder()
-                                .message(conv.getMessage())
-                                .sender(conv.getSender())
-                                .timestamp(conv.getTimestamp())
-                                .chatId(conv.getChatId())
-                                .title(conv.getTitle())
-                                .build())
-                        .toList())
+                .chats(chatDTOs)
                 .email(session.getEmail())
                 .build();
     }
 
-    public List<Conversation> getConversationHistory(String sessionId, String chatId) {
+    public List<ChatMessage> getMessageHistory(String sessionId, String chatId) {
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Session not found"));
-        return session.getConversations().stream()
-                .filter(conv -> conv.getChatId().equals(chatId))
-                .collect(Collectors.toList());
+        
+        Optional<Chat> chat = chatRepository.findByChatId(chatId);
+        if (chat.isEmpty()) {
+            return new ArrayList<>();
+        }
+        
+        return MessageRepository.findByChatOrderByTimestampAsc(chat.get());
     }
 
     public void updateLastActive(String sessionId) {
@@ -175,7 +220,7 @@ public class GuestSessionService {
     }
 
     @Transactional
-    public void createChat(String sessionId, String title) {
+    public Map<String, String> createChat(String sessionId, String title) {
         log.info("Creating new chat for session: {} with title: {}", sessionId, title);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
@@ -184,18 +229,49 @@ public class GuestSessionService {
                     return new RuntimeException("Session not found");
                 });
 
-        // Create a new chat with the given title
-        Conversation chat = new Conversation();
-        chat.setGuestSession(session);
+        // Create a new chat
+        Chat chat = new Chat();
         chat.setChatId(UUID.randomUUID().toString());
-        chat.setSender("SYSTEM");
-        chat.setMessage("Chat created: " + title);
-        chat.setTimestamp(LocalDateTime.now());
         chat.setTitle(title);
+        chat.setGuestSession(session);
         
-        session.getConversations().add(chat);
-        guestSessionRepository.save(session);
+        Chat savedChat = chatRepository.save(chat);
         
-        log.info("Successfully created new chat for session: {}", sessionId);
+        log.info("Successfully created new chat with ID: {} for session: {}", chat.getChatId(), sessionId);
+        
+        // Return the chat ID so the frontend can use it
+        Map<String, String> response = new HashMap<>();
+        response.put("chatId", chat.getChatId());
+        
+        return response;
     }
-} 
+    
+    @Transactional
+    public void updateChatTitle(String sessionId, String chatId, String title) {
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+                
+        Chat chat = chatRepository.findByChatId(chatId)
+                .orElseThrow(() -> new RuntimeException("Chat not found"));
+                
+        if (!chat.getGuestSession().getSessionId().equals(sessionId)) {
+            throw new RuntimeException("Chat does not belong to this session");
+        }
+        
+        chat.setTitle(title);
+        chatRepository.save(chat);
+    }
+    
+    @Transactional
+    public void deleteChat(String sessionId, String chatId) {
+        GuestSession session = guestSessionRepository.findBySessionId(sessionId)
+                .orElseThrow(() -> new RuntimeException("Session not found"));
+                
+        List<Chat> chats = chatRepository.findByGuestSessionAndChatId(session, chatId);
+        if (chats.isEmpty()) {
+            throw new RuntimeException("Chat not found");
+        }
+        
+        chatRepository.deleteAll(chats);
+    }
+}

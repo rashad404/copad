@@ -6,13 +6,15 @@ import { useTranslation } from 'react-i18next';
 import { useChat } from '../context/ChatContext';
 
 const ChatLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
   const {
-    conversations,
+    chats,
     selectedChatId,
     createNewChat,
+    updateChatTitle,
+    deleteChat,
     setSelectedChatId,
     isInitializing
   } = useChat();
@@ -27,6 +29,21 @@ const ChatLayout = () => {
     navigate(`/chat/${chatId}`);
   };
 
+  const handleUpdateChatTitle = async (chatId, title) => {
+    await updateChatTitle(chatId, title);
+  };
+
+  const handleDeleteChat = async (chatId) => {
+    await deleteChat(chatId);
+    // Redirect to another chat if available, or create a new one
+    const remainingChats = chats.filter(chat => chat.id !== chatId);
+    if (remainingChats.length > 0) {
+      navigate(`/chat/${remainingChats[0].id}`);
+    } else {
+      handleNewChat();
+    }
+  };
+
   if (isInitializing) {
     return (
       <div className="flex h-screen items-center justify-center bg-white dark:bg-gray-900">
@@ -37,35 +54,30 @@ const ChatLayout = () => {
 
   return (
     <div className="flex h-screen bg-white dark:bg-gray-900">
-      {/* Fixed sidebar */}
-      <div className={`fixed left-0 top-0 h-full z-30 transform transition-transform duration-300 ease-in-out ${isSidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <ChatSidebar
-          conversations={conversations}
-          onNewChat={handleNewChat}
-          onSelectChat={handleSelectChat}
-          selectedChatId={selectedChatId}
-          isOpen={isSidebarOpen}
-          onClose={() => setIsSidebarOpen(false)}
-        />
-      </div>
+      {/* Mobile sidebar toggle button */}
+      <button
+        onClick={() => setIsSidebarOpen(true)}
+        className={`fixed z-20 top-5 left-5 p-2 rounded-md bg-white dark:bg-gray-800 shadow-md text-gray-700 dark:text-gray-300 md:hidden ${
+          isSidebarOpen ? 'hidden' : 'block'
+        }`}
+      >
+        <Bars3Icon className="w-6 h-6" />
+      </button>
+
+      {/* Sidebar */}
+      <ChatSidebar
+        messages={chats}
+        onNewChat={handleNewChat}
+        onSelectChat={handleSelectChat}
+        onUpdateChatTitle={handleUpdateChatTitle}
+        onDeleteChat={handleDeleteChat}
+        selectedChatId={selectedChatId}
+        isOpen={isSidebarOpen}
+        onClose={() => setIsSidebarOpen(false)}
+      />
       
       {/* Main content */}
-      <div className={`flex-1 flex flex-col h-full transition-all duration-300 ${isSidebarOpen ? 'ml-[280px]' : 'ml-0'}`}>
-        {/* Header with sidebar toggle */}
-        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
-          <button
-            onClick={() => setIsSidebarOpen(true)}
-            className={`p-2 mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 ${isSidebarOpen ? 'hidden' : 'block'}`}
-            title={t('chat.openSidebar')}
-          >
-            <Bars3Icon className="w-6 h-6" />
-          </button>
-          <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {conversations.find(chat => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
-          </h1>
-        </div>
-
-        {/* Main content area */}
+      <div className="flex-1 flex flex-col h-full">
         <div className="flex-1 overflow-hidden">
           <Outlet />
         </div>
@@ -74,7 +86,7 @@ const ChatLayout = () => {
       {/* Overlay for mobile */}
       {isSidebarOpen && (
         <div 
-          className="fixed inset-0 bg-black bg-opacity-50 z-20 md:hidden"
+          className="fixed inset-0 bg-black bg-opacity-50 z-10 md:hidden"
           onClick={() => setIsSidebarOpen(false)}
         />
       )}
@@ -82,4 +94,4 @@ const ChatLayout = () => {
   );
 };
 
-export default ChatLayout; 
+export default ChatLayout;

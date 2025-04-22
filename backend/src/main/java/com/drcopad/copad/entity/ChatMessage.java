@@ -6,7 +6,8 @@ import java.time.LocalDateTime;
 
 @Entity
 @Data
-public class Conversation {
+@Table(name = "chat_messages")
+public class ChatMessage {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -14,7 +15,11 @@ public class Conversation {
     @ManyToOne
     @JoinColumn(name = "appointment_id")
     private Appointment appointment;
-
+    
+    @ManyToOne
+    @JoinColumn(name = "chat_id")
+    private Chat chat;
+    
     private String sender; // "USER" or "AI"
     
     @Lob
@@ -24,11 +29,13 @@ public class Conversation {
     private LocalDateTime timestamp;
     
     @ManyToOne
+    @JoinColumn(name = "guest_session_id")
     private GuestSession guestSession;
-
-    @Column(nullable = false)
-    private String chatId; // Unique identifier for each chat within a session
-
-    @Column
-    private String title; // Title of the chat
+    
+    @PrePersist
+    protected void onCreate() {
+        if (this.timestamp == null) {
+            this.timestamp = LocalDateTime.now();
+        }
+    }
 }

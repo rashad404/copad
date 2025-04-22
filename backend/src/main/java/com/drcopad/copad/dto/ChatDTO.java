@@ -12,10 +12,10 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class GuestSessionDTO {
-    private String sessionId;
-    private LocalDateTime createdAt;
-    private LocalDateTime lastActive;
-    private List<ChatDTO> chats;
-    private String email;
+public class ChatDTO {
+    private String id;
+    private String title;
+    private List<MessageDTO> messages;
+    private LocalDateTime timestamp;
+    private String lastMessage;
 }

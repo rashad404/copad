@@ -6,6 +6,7 @@ import lombok.*;
 
 @Entity
 @Data
+@Table(name = "medical_profiles")
 @NoArgsConstructor
 @AllArgsConstructor
 public class MedicalProfile {

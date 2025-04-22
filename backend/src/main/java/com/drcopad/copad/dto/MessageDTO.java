@@ -10,20 +10,20 @@ import java.time.LocalDateTime;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ConversationDTO {
+public class MessageDTO {
     private String message;
     private String sender;
     private LocalDateTime timestamp;
     private String chatId;
     private String title;
 
-    public ConversationDTO(String message, String sender, LocalDateTime timestamp) {
+    public MessageDTO(String message, String sender, LocalDateTime timestamp) {
         this.message = message;
         this.sender = sender;
         this.timestamp = timestamp;
     }
 
-    public ConversationDTO(String message, String sender) {
+    public MessageDTO(String message, String sender) {
         this(message, sender, LocalDateTime.now());
     }
 }

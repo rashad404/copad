@@ -4,7 +4,7 @@ import com.drcopad.copad.config.ChatGPTConfig;
 import com.drcopad.copad.dto.ChatGPTRequest;
 import com.drcopad.copad.dto.ChatGPTResponse;
 import com.drcopad.copad.dto.Message;
-import com.drcopad.copad.entity.Conversation;
+import com.drcopad.copad.entity.ChatMessage;
 import com.drcopad.copad.entity.MedicalSpecialty;
 import com.drcopad.copad.repository.MedicalSpecialtyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -29,7 +29,7 @@ public class ChatGPTService {
     private final MedicalSpecialtyRepository specialtyRepository;
     private final LanguageMappingService languageMappingService;
 
-    public String getChatResponse(String newUserMessage, List<Conversation> history, String specialtyCode, String language) {
+    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
@@ -38,12 +38,32 @@ public class ChatGPTService {
             
         // Add specialty-specific system prompt with language instruction
         String fullLanguageName = languageMappingService.getFullLanguageName(language);
-        String systemPrompt = specialty.getSystemPrompt() + 
+
+
+        String systemPrompt = specialty.getSystemPrompt() +
+            "\nYou are an AI doctor providing concise, practical medical information. Follow these guidelines:\n" +
+            "1. Give direct, actionable advice without unnecessary introductions.\n" +
+            "2. Use simple language and short sentences.\n" +
+            "3. Format your responses as brief bullet points when possible.\n" +
+            "4. Include this disclaimer with medical recommendations: \"These suggestions are not medical advice. Please consult your doctor.\"\n" +
+            "5. Admit knowledge gaps directly without speculation.\n" +
+            "6. Only share evidence-based information.\n" +
+            "7. List common medication side effects briefly when relevant.\n" +
+            "8. Never diagnose – describe potential conditions only.\n" +
+            "9. Clearly flag emergency symptoms requiring immediate care.\n" +
+            "10. Stay within your knowledge scope.\n" +
+            "11. Prioritize the most effective solutions first.\n" +
+            "12. Avoid pleasantries and get straight to helpful information.\n" +
+            "13. Politely refuse to answer any unrelated, inappropriate, offensive, or off-topic questions.\n" +
+            "14. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: \"I'm an AI doctor. Please ask health-related questions only.\"" +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
+
+
         messages.add(new Message("system", systemPrompt));
 
-        // Add conversation history
-        for (Conversation c : history) {
+
+        // Add message history
+        for (ChatMessage c : history) {
             String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
             messages.add(new Message(role, c.getMessage()));
         }

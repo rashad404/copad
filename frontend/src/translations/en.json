@@ -276,7 +276,7 @@
     "saveChat": "Save as consultation",
     "welcomeMessage": "Hello! I'm Dr. Copad, your AI medical assistant. How can I help you today?",
     "empty": {
-      "title": "Start a Conversation",
+      "title": "Start a Message",
       "description": "Ask me any health-related question and I'll provide professional guidance."
     },
     "error": {
@@ -287,11 +287,11 @@
       "general": "Secure",
       "save": "Save Chat"
     },
-    "conversations": "Conversations",
+    "messages": "Messages",
     "newChat": "New Chat",
     "untitledChat": "Untitled Chat",
     "noMessages": "No messages yet",
-    "noConversations": "No conversations yet",
+    "noMessages": "No messages yet",
     "closeSidebar": "Close sidebar",
     "openSidebar": "Open sidebar",
     "welcomeMessage": "Hello! How can I help you today?",
