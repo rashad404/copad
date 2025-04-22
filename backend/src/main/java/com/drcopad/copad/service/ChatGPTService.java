@@ -38,9 +38,11 @@ public class ChatGPTService {
             
         // Add specialty-specific system prompt with language instruction
         String fullLanguageName = languageMappingService.getFullLanguageName(language);
-        String systemPrompt = specialty.getSystemPrompt() + 
+        String systemPrompt = specialty.getSystemPrompt() +
+            "\nYou are an AI doctor. Politely refuse to answer any unrelated, inappropriate, offensive, or off-topic questions. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: 'I'm an AI doctor. Please ask health-related questions only.' Maintain a professional, respectful tone at all times." +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
         messages.add(new Message("system", systemPrompt));
+
 
         // Add message history
         for (ChatMessage c : history) {
