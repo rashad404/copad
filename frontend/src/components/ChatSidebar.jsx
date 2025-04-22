@@ -1,17 +1,21 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { PlusIcon, XMarkIcon } from '@heroicons/react/24/outline';
+import { PlusIcon, XMarkIcon, PencilIcon, TrashIcon } from '@heroicons/react/24/outline';
 import { formatDistanceToNow } from 'date-fns';
 
 const ChatSidebar = ({
   conversations = [],
   onNewChat,
   onSelectChat,
+  onUpdateChatTitle,
+  onDeleteChat,
   selectedChatId,
   isOpen,
   onClose,
 }) => {
   const { t } = useTranslation();
+  const [editingChatId, setEditingChatId] = useState(null);
+  const [editTitle, setEditTitle] = useState('');
 
   const handleNewChat = async () => {
     await onNewChat();
@@ -21,6 +25,31 @@ const ChatSidebar = ({
   const handleSelectChat = (chatId) => {
     onSelectChat(chatId);
     onClose();
+  };
+
+  const startEditingTitle = (chat, e) => {
+    e.stopPropagation(); // Prevent selection of chat
+    setEditingChatId(chat.id);
+    setEditTitle(chat.title || t('chat.untitledChat'));
+  };
+
+  const saveTitle = async (e) => {
+    e.preventDefault();
+    if (editingChatId && editTitle.trim()) {
+      if (onUpdateChatTitle) {
+        await onUpdateChatTitle(editingChatId, editTitle.trim());
+      }
+      setEditingChatId(null);
+    }
+  };
+
+  const handleDeleteChat = (chatId, e) => {
+    e.stopPropagation(); // Prevent selection of chat
+    if (window.confirm(t('chat.confirmDelete'))) {
+      if (onDeleteChat) {
+        onDeleteChat(chatId);
+      }
+    }
   };
 
   const formatTimestamp = (timestamp) => {
@@ -80,29 +109,65 @@ const ChatSidebar = ({
           ) : (
             <div className="divide-y divide-gray-200 dark:divide-gray-700">
               {conversations.map((chat) => (
-                <button
-                  key={chat.id}
-                  onClick={() => handleSelectChat(chat.id)}
-                  className={`w-full text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 ${
-                    selectedChatId === chat.id
-                      ? 'bg-gray-100 dark:bg-gray-800'
-                      : ''
-                  }`}
-                >
-                  <div className="flex flex-col">
-                    <div className="font-medium text-gray-900 dark:text-gray-100 truncate">
-                      {chat.title || t('chat.untitledChat')}
-                    </div>
-                    {chat.lastMessage && (
-                      <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
-                        {chat.lastMessage}
+                <div key={chat.id} className="relative">
+                  {editingChatId === chat.id ? (
+                    <form onSubmit={saveTitle} className="p-4">
+                      <input
+                        type="text"
+                        value={editTitle}
+                        onChange={(e) => setEditTitle(e.target.value)}
+                        className="w-full px-3 py-2 border border-gray-300 dark:border-gray-600 rounded text-sm dark:bg-gray-800 dark:text-white"
+                        autoFocus
+                        onBlur={saveTitle}
+                      />
+                    </form>
+                  ) : (
+                    <button
+                      onClick={() => handleSelectChat(chat.id)}
+                      className={`w-full group text-left px-4 py-3 hover:bg-gray-100 dark:hover:bg-gray-800 ${
+                        selectedChatId === chat.id
+                          ? 'bg-gray-100 dark:bg-gray-800'
+                          : ''
+                      }`}
+                    >
+                      <div className="flex flex-col">
+                        <div className="flex justify-between items-center">
+                          <div className="font-medium text-gray-900 dark:text-gray-100 truncate max-w-[170px]">
+                            {chat.title || t('chat.untitledChat')}
+                          </div>
+                          <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
+                            {onUpdateChatTitle && (
+                              <button
+                                onClick={(e) => startEditingTitle(chat, e)}
+                                className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                              >
+                                <PencilIcon className="w-4 h-4" />
+                              </button>
+                            )}
+                            {onDeleteChat && (
+                              <button
+                                onClick={(e) => handleDeleteChat(chat.id, e)}
+                                className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                              >
+                                <TrashIcon className="w-4 h-4" />
+                              </button>
+                            )}
+                          </div>
+                        </div>
+                        {chat.lastMessage && (
+                          <div className="text-sm text-gray-500 dark:text-gray-400 truncate">
+                            {typeof chat.lastMessage === 'string' && chat.lastMessage.length > 60 
+                              ? chat.lastMessage.substring(0, 60) + '...' 
+                              : chat.lastMessage}
+                          </div>
+                        )}
+                        <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                          {formatTimestamp(chat.timestamp)}
+                        </div>
                       </div>
-                    )}
-                    <div className="text-xs text-gray-400 dark:text-gray-500 mt-1">
-                      {formatTimestamp(chat.timestamp)}
-                    </div>
-                  </div>
-                </button>
+                    </button>
+                  )}
+                </div>
               ))}
             </div>
           )}
@@ -112,4 +177,4 @@ const ChatSidebar = ({
   );
 };
 
-export default ChatSidebar; 
+export default ChatSidebar;

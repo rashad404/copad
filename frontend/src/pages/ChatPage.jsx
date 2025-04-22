@@ -15,14 +15,14 @@ export default function ChatPage() {
   const chatContainerRef = useRef(null);
 
   const {
-    conversations,
+    chats,
     selectedChatId,
     setSelectedChatId,
     sendMessage,
     isInitializing
   } = useChat();
 
-  const currentChat = conversations.find(chat => chat.id === (id || selectedChatId));
+  const currentChat = chats.find(chat => chat.id === (id || selectedChatId));
   const messages = currentChat?.messages || [];
 
   useEffect(() => {

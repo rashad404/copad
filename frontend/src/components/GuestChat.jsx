@@ -14,7 +14,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   const { isAuthenticated } = useAuth();
   const { 
     sessionId, 
-    conversations, 
+    chats, 
     selectedChatId, 
     isInitializing, 
     error,
@@ -45,12 +45,12 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
 
   useEffect(() => {
     if (selectedChatId) {
-      const selectedChat = conversations.find(chat => chat.id === selectedChatId);
+      const selectedChat = chats.find(chat => chat.id === selectedChatId);
       if (selectedChat) {
-        setMessages(selectedChat.messages);
+        setMessages(selectedChat.messages || []);
       }
     }
-  }, [selectedChatId, conversations]);
+  }, [selectedChatId, chats]);
 
   const handleSendMessage = async (e) => {
     e.preventDefault();
@@ -107,7 +107,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   };
 
   const handleNewChat = async () => {
-    const currentChat = conversations.find(chat => chat.id === selectedChatId);
+    const currentChat = chats.find(chat => chat.id === selectedChatId);
     
     // Only create a new chat if the current chat has messages
     if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
@@ -118,7 +118,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   return (
     <div className={`flex flex-col h-full bg-white dark:bg-gray-900 ${containerClassName}`}>
       <ChatSidebar
-        conversations={conversations}
+        conversations={chats}
         onNewChat={handleNewChat}
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChatId}
@@ -137,7 +137,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
             <Bars3Icon className="w-6 h-6" />
           </button>
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {conversations.find(chat => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
+            {chats.find(chat => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
           </h1>
         </div>
 
@@ -250,4 +250,4 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
   );
 };
 
-export default GuestChat; 
+export default GuestChat;
