@@ -4,8 +4,8 @@ const SiteContext = createContext();
 
 // Define configs ONCE
 const siteConfigs = {
-    "virtualhekim.az": { WEBSITE_NAME: "Virtual Həkim", logo: "/logos/virtualhekim.png", WEBSITE_TLD: ".az" },
-    "azdoc.ai": { WEBSITE_NAME: "AzDoc AI", logo: "/logos/azdoc.png", WEBSITE_TLD: ".ai" },
+    "virtualhekim.az": { WEBSITE_NAME: "VirtualHekim", logo: "/logos/virtualhekim.png", WEBSITE_TLD: ".az" },
+    "azdoc.ai": { WEBSITE_NAME: "AzDoc", logo: "/logos/azdoc.png", WEBSITE_TLD: ".ai" },
     "localhost": { WEBSITE_NAME: "Localhost", logo: "/logos/default.png", WEBSITE_TLD: ".dev" },
   };
   
