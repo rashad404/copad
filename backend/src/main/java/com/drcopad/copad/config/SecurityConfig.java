@@ -29,7 +29,7 @@ public class SecurityConfig {
         "http://localhost:5173",
         "http://127.0.0.1:5173",
         "https://virtualhekim.az",
-        "https://copad.ai",
+        "https://azdoc.ai",
         "https://logman.az"
     );
 
