@@ -56,7 +56,9 @@ i18n
     interpolation: {
       escapeValue: false,
       defaultVariables: {
-        agentName: siteInfo.title
+        agentName: siteInfo.AGENT_NAME,
+        websiteName: siteInfo.WEBSITE_NAME,
+        websiteTld: siteInfo.WEBSITE_TLD
       }
     }
   });
