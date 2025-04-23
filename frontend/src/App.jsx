@@ -14,8 +14,14 @@ import RegisterPage from "./pages/RegisterPage.jsx";
 import NotFoundPage from "./pages/NotFoundPage.jsx";
 import NewAppointmentPage from "./pages/NewAppointmentPage.jsx";
 import OAuthCallbackPage from "./pages/OAuthCallbackPage.jsx";
+import AboutPage from "./pages/AboutPage.jsx";
+import FAQPage from "./pages/FAQPage.jsx";
 import ChatLayout from "./layouts/ChatLayout.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
+import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
+import TermsOfServicePage from "./pages/TermsOfServicePage";
+import SecurityPage from './pages/SecurityPage';
+import ContactPage from "./pages/ContactPage";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -28,6 +34,12 @@ const AppRoutes = () => {
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login/callback" element={<OAuthCallbackPage />} />
+      <Route path="/about" element={<AboutPage />} />
+      <Route path="/faq" element={<FAQPage />} />
+      <Route path="/privacy" element={<PrivacyPolicyPage />} />
+      <Route path="/terms" element={<TermsOfServicePage />} />
+      <Route path="/security" element={<SecurityPage />} />
+      <Route path="/contact" element={<ContactPage />} />
       
       {/* Protected routes - wrapped in MainLayout */}
       {isAuthenticated && (

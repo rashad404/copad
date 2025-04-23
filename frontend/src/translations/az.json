@@ -177,7 +177,7 @@
       "title": "Necə İşləyir",
       "subtitle": "Üç asan addımla peşəkar tibbi məsləhət əldə edin",
       "step1": {
-        "title": "1. Dr. Copad ilə Məsləhətləşin",
+        "title": "1. Dr. {{agentName}} ilə Məsləhətləşin",
         "description": "Sağlamlıq narahatlıqlarınızı və ya simptomlarınızı daxil edin və AI həkimimizdən dərhal rəy alın."
       },
       "step2": {
@@ -273,7 +273,7 @@
     "send": "Göndər",
     "sending": "Göndərilir...",
     "saveChat": "Məsləhətləşmə kimi saxla",
-    "welcomeMessage": "Salam! Mən Dr. Copad, sizin AI həkiminizəm. Bu gün sağlamlığınızla bağlı sizə necə kömək edə bilərəm?",
+    "welcomeMessage": "Salam! Mən Dr. {{agentName}}, sizin AI həkiminizəm. Bu gün sağlamlığınızla bağlı sizə necə kömək edə bilərəm?",
     "empty": {
       "title": "Söhbətə Başlayın",
       "description": "Sağlamlıqla bağlı istənilən sualınızı verin və peşəkar məsləhət alın."
@@ -389,6 +389,183 @@
     },
     "error": {
       "registrationFailed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa yenidən cəhd edin."
+    }
+  },
+  "about": {
+    "title": "Haqqımızda",
+    "introduction": "Süni intellekt vasitəsilə səhiyyə xidmətini inqilab edirik, tibbi məsləhəti daha əlçatan və fərdiləşdirilmiş edirik.",
+    "mission": {
+      "title": "Missiyamız",
+      "description": "Süni intellekt gücü ilə səhiyyə xidmətini daha əlçatan, səmərəli və fərdiləşdirilmiş etməyə çalışırıq. Platformamız xəstələri AI ilə gücləndirilmiş tibbi məsləhətlərlə birləşdirir, dərhal, etibarlı və məxfi səhiyyə dəstəyi təqdim edir."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "description": "Peşəkar tibbi məsləhəti hər kəsə, hər yerdə və istənilən vaxt əlçatan etməklə səhiyyə xidmətini inqilab etmək. Keyfiyyətli səhiyyə xidmətinin yalnız bir klik uzaqlığında olduğu bir dünya təsəvvür edirik."
+    },
+    "values": {
+      "title": "Dəyərlərimiz",
+      "items": {
+        "innovation": "Səhiyyə sahəsində AI-nın imkanlarını daim genişləndirmək",
+        "quality": "Dəqiq və etibarlı tibbi məlumat təqdim etmək",
+        "accessibility": "Səhiyyə xidmətini hər kəs üçün əlçatan etmək",
+        "privacy": "Bütün tibbi məlumatların məxfiliyini təmin etmək"
+      }
+    },
+    "team": {
+      "title": "Komandamız",
+      "description": "Səhiyyə mütəxəssisləri, AI ekspertləri və texnologiya innovatorlarından ibarət müxtəlif qrup, səhiyyə xidmətinə çıxışı və təqdimatını yaxşılaşdırmaq üçün birlikdə çalışır."
+    },
+    "technology": {
+      "title": "Texnologiyamız",
+      "description": "Qabaqcıl AI alqoritmləri və maşın öyrənməsi ilə gücləndirilən platformamız, ən yüksək məlumat təhlükəsizliyi və məxfilik standartlarını qoruyaraq, ağıllı, kontekstə həssas tibbi məsləhət təqdim edir."
+    }
+  },
+  "faq": {
+    "title": "Tez-tez verilən suallar",
+    "subtitle": "Xidmətimiz haqqında ümumi sualların cavablarını tapın",
+    "questions": {
+      "0": {
+        "question": "{{agentName}} nədir?",
+        "answer": "{{agentName}} dərhal, məxfi səhiyyə məsləhəti təqdim edən AI ilə gücləndirilmiş tibb köməkçisidir. Platformamız qabaqcıl süni intellektdən istifadə edərək 24/7 fərdiləşdirilmiş tibbi məsləhət təqdim edir."
+      },
+      "1": {
+        "question": "{{agentName}} necə işləyir?",
+        "answer": "Sadəcə simptomlarınızı və ya səhiyyə narahatlıqlarınızı təsvir edin və AI həkimimiz dərhal peşəkar tibbi məsləhət verəcək. Sistem sizin daxil etdiyiniz məlumatları təhlil edir və tibbi bilik və ən yaxşı təcrübələrə əsaslanaraq cavablar yaradır."
+      },
+      "2": {
+        "question": "{{agentName}} real həkimlərin əvəzidirmi?",
+        "answer": "Xeyr, {{agentName}} peşəkar tibbi yardımın əvəzi deyil. O, ilkin məsləhət və məlumat vermək üçün nəzərdə tutulub. Ciddi tibbi vəziyyətlər və ya təcili hallar üçün həmişə səhiyyə mütəxəssisi ilə məsləhətləşin."
+      },
+      "3": {
+        "question": "Məlumatlarım təhlükəsizdirmi?",
+        "answer": "Bəli, məxfiliyinizi ciddi qəbul edirik. Bütün söhbətlər şifrələnib və məxfidir. Səhiyyə məlumatlarınızın təhlükəsiz qalmasını təmin etmək üçün ciddi məlumat qorunması protokollarından istifadə edirik."
+      },
+      "4": {
+        "question": "Hesab yaratmaq lazımdırmı?",
+        "answer": "Xeyr, hesab yaratmadan {{agentName}}-dən istifadə edə bilərsiniz. Lakin hesab yaratmaq məsləhətləşmələrinizi saxlamağa və səhiyyə tarixçənizi izləməyə imkan verir."
+      },
+      "5": {
+        "question": "Hansı növ tibbi məsləhət ala bilərəm?",
+        "answer": "Simptomlar, ümumi səhiyyə narahatlıqları, dərman məlumatları və həyat tərzi məsləhətləri haqqında sual verə bilərsiniz. Lakin {{agentName}} ciddi vəziyyətləri diaqnoz edə və ya dərman təyin edə bilməz."
+      },
+      "6": {
+        "question": "Xidmət 24/7 əlçatandırmı?",
+        "answer": "Bəli, {{agentName}} gecə-gündüz əlçatandır. Ofis saatlarını gözləmədən, ehtiyac duyduğunuz zaman tibbi məsləhət ala bilərsiniz."
+      },
+      "7": {
+        "question": "Tibbi məsləhət nə qədər dəqiqdir?",
+        "answer": "{{agentName}} tibbi bilik və ən yaxşı təcrübələrə əsaslanaraq məlumat verir, lakin bunun peşəkar tibbi məsləhətin əvəzi olmadığını xatırlamaq vacibdir. Ciddi narahatlıqlar üçün həmişə səhiyyə xidməti provayderi ilə məsləhətləşin."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Məxfilik Siyasəti",
+    "lastUpdated": "Son yenilənmə: {{date}}",
+    "introduction": "{{agentName}}-da məxfiliyinizə ciddi yanaşırıq. Bu Məxfilik Siyasəti, AI ilə idarə olunan tibbi məsləhət xidmətimizdən istifadə edərkən məlumatlarınızı necə topladığımızı, istifadə etdiyimizi, açıqladığımızı və qoruduğumuzu izah edir.",
+    "information": {
+      "title": "Topladığımız Məlumatlar",
+      "description": "Hesab yaratdığınızda və ya xidmətimizdən istifadə etdiyinizdə ad, e-poçt, tibbi tarixçə və istifadə məlumatları kimi şəxsi məlumatları toplayırıq. Bütün məlumatlar təhlükəsiz şəkildə saxlanılır və qorunur."
+    },
+    "usage": {
+      "title": "Məlumatların İstifadəsi",
+      "description": "Məlumatlarınızı xidmətimizi təmin etmək, təcrübənizi yaxşılaşdırmaq, sizinlə ünsiyyət qurmaq və təhlükəsizliyi təmin etmək üçün istifadə edirik."
+    },
+    "security": {
+      "title": "Məlumat Təhlükəsizliyi",
+      "description": "Şəxsi məlumatlarınızı qorumaq üçün qabaqcıl şifrələmə və təhlükəsizlik protokollarından istifadə edirik. Məlumatlarınızın təhlükəsizliyi bizim üçün ən yüksək prioritetdir."
+    },
+    "rights": {
+      "title": "Sizin Hüquqlarınız",
+      "description": "Məlumatlarınıza giriş, düzəliş etmək, silmək və ya ixrac etmək hüququnuz var. Məxfilik hüquqlarınızla bağlı hər hansı sualınız varsa, bizimlə əlaqə saxlayın."
+    },
+    "contact": {
+      "title": "Əlaqə",
+      "description": "Məxfilik siyasətimizlə bağlı suallarınız üçün privacy@{{domain}} ünvanına yazın."
+    }
+  },
+  "terms": {
+    "title": "İstifadə Şərtləri",
+    "lastUpdated": "Son yenilənmə: {{date}}",
+    "introduction": "{{agentName}}-a xoş gəlmisiniz. Xidmətlərimizdən istifadə etməklə siz bu İstifadə Şərtləri ilə razılaşırsınız. Platformamızdan istifadə etməzdən əvvəl bu şərtləri diqqətlə oxuyun.",
+    "acceptance": {
+      "title": "Şərtlərin Qəbulu",
+      "description": "{{agentName}}-dan istifadə etməklə siz bu İstifadə Şərtlərini oxuduğunuzu, başa düşdüyünüzü və onlarla razılaşdığınızı təsdiq edirsiniz."
+    },
+    "services": {
+      "title": "Xidmətlərin Təsviri",
+      "description": "{{agentName}} AI əsaslı tibbi məsləhət platformasıdır. Biz ümumi sağlamlıq məlumatları təqdim edirik, lakin peşəkar tibbi məsləhətin əvəzi deyilik."
+    },
+    "userResponsibilities": {
+      "title": "İstifadəçi Məsuliyyətləri",
+      "description": "Siz dəqiq məlumat təqdim etməyi və hesabınızın təhlükəsizliyini qorumağı öhdənizə götürürsünüz."
+    },
+    "limitations": {
+      "title": "Xidmət Məhdudiyyətləri",
+      "description": "Bizim xidmətimiz peşəkar tibbi məsləhətin əvəzedicisi deyil. Ciddi tibbi vəziyyətlər üçün həmişə həkiminizlə məsləhətləşin."
+    },
+    "intellectualProperty": {
+      "title": "İntellektual Mülkiyyət",
+      "description": "Bütün platforma məzmunu və funksionallığı {{agentName}}-ın mülkiyyətidir və müvafiq qanunlarla qorunur."
+    },
+    "liability": {
+      "title": "Məsuliyyətin Məhdudlaşdırılması",
+      "description": "{{agentName}} xidmətlərimizdən istifadə nəticəsində yaranan zərərlərə görə məsuliyyət daşımır."
+    },
+    "changes": {
+      "title": "Şərtlərdə Dəyişikliklər",
+      "description": "Biz bu şərtləri istənilən vaxt dəyişdirmək hüququnu özümüzdə saxlayırıq və istifadəçiləri məlumatlandıracağıq."
+    },
+    "contact": {
+      "title": "Əlaqə",
+      "description": "İstifadə şərtləri ilə bağlı suallarınız üçün terms@{{domain}} ünvanına yazın."
+    }
+  },
+  "security": {
+    "title": "Təhlükəsizlik",
+    "lastUpdated": "Son yenilənmə: {{date}}",
+    "introduction": "{{agentName}}-da tibbi məlumatlarınızın təhlükəsizliyi bizim əsas prioritetimizdir. Bu səhifə məlumatlarınızı qorumaq üçün tətbiq etdiyimiz hərtərəfli təhlükəsizlik tədbirlərini təsvir edir.",
+    "dataProtection": {
+      "title": "Məlumatların Qorunması",
+      "description": "Tibbi məlumatlarınızı qorumaq üçün sənaye liderləri səviyyəsində şifrələmə standartlarından istifadə edirik. Bütün məlumatlar həm ötürülmə, həm də saxlanma zamanı qabaqcıl şifrələmə protokolları ilə qorunur."
+    },
+    "encryption": {
+      "title": "Şifrələmə Standartları",
+      "description": "Məlumatların saxlanması üçün AES-256 və ötürülməsi üçün TLS 1.3 şifrələməsindən istifadə edirik. Həssas tibbi məlumatlarınız aparıcı səhiyyə qurumlarının istifadə etdiyi təhlükəsizlik standartları ilə qorunur."
+    },
+    "access": {
+      "title": "Giriş Nəzarəti",
+      "description": "Yalnız səlahiyyətli istifadəçilərin öz məlumatlarına daxil ola bilməsini təmin etmək üçün ciddi giriş nəzarəti və autentifikasiya tədbirləri tətbiq edirik. Təhlükəsizliyin artırılması üçün çox faktorlu autentifikasiya mövcuddur."
+    },
+    "compliance": {
+      "title": "Uyğunluq",
+      "description": "Platformamız məlumatların qorunması və məxfilik uyğunluğunun ən yüksək səviyyəsini təmin etmək üçün beynəlxalq təhlükəsizlik standartlarına və səhiyyə qaydalarına uyğundur."
+    },
+    "monitoring": {
+      "title": "24/7 Monitorinq",
+      "description": "Təhlükəsizlik sistemlərimiz icazəsiz giriş cəhdlərini aşkar etmək və qarşısını almaq, məlumatlarınızın davamlı qorunmasını təmin etmək üçün 24/7 izlənilir."
+    },
+    "contact": {
+      "title": "Təhlükəsizlik Əlaqəsi",
+      "description": "Təhlükəsizliklə bağlı sorğular və ya təhlükəsizlik problemləri haqqında məlumat vermək üçün təhlükəsizlik komandamızla security@{{domain}} ünvanı vasitəsilə əlaqə saxlayın."
+    }
+  },
+  "contact": {
+    "title": "Əlaqə",
+    "subtitle": "Texniki Dəstək və Biznes Sorğuları",
+    "introduction": "Bu əlaqə səhifəsi yalnız texniki dəstək, biznes sorğuları və reklam imkanları üçündür. Tibbi məsləhət və ya sağlamlıqla bağlı suallar üçün ana səhifəmizdəki söhbət xidmətindən istifadə edin.",
+    "email": {
+      "title": "E-poçt",
+      "description": "Texniki dəstək, biznes əməkdaşlığı və ya reklam sorğuları üçün bizə yazın:",
+      "address": "info@azdoc.ai"
+    },
+    "support": {
+      "title": "Texniki Dəstək Saatları",
+      "description": "Bütün texniki və biznes sorğularına 24 saat ərzində cavab verməyə çalışırıq."
+    },
+    "note": "Tibbi suallar və ya sağlamlıq məsləhəti üçün ana səhifəyə qayıdın və AI söhbət xidmətimizdən istifadə edin. Təcili tibbi yardım üçün yerli təcili yardım xidmətləri ilə əlaqə saxlayın.",
+    "medicalNote": {
+      "title": "Tibbi Məsləhət Axtarırsınız?",
+      "description": "Sağlamlıqla bağlı suallarınız üçün ana səhifəmizdəki AI söhbət xidmətindən istifadə edin. AI həkimimiz tibbi sorğularınıza 24/7 kömək etmək üçün hazırdır."
     }
   }
 }

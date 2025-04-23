@@ -1,7 +1,6 @@
 import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
-import { AGENT_NAME } from './config/constants';
 
 import enTranslations from './translations/en.json';
 import azTranslations from './translations/az.json';
@@ -12,6 +11,9 @@ import zhTranslations from './translations/zh.json';
 import hiTranslations from './translations/hi.json';
 import arTranslations from './translations/ar.json';
 import ptTranslations from './translations/pt.json';
+import { getSiteInfo } from './context/SiteContext';
+
+const siteInfo = getSiteInfo(); 
 
 if (!localStorage.getItem('i18nextLng')) {
   localStorage.setItem('i18nextLng', 'az');
@@ -54,7 +56,9 @@ i18n
     interpolation: {
       escapeValue: false,
       defaultVariables: {
-        agentName: AGENT_NAME
+        agentName: siteInfo.AGENT_NAME,
+        websiteName: siteInfo.WEBSITE_NAME,
+        websiteTld: siteInfo.WEBSITE_TLD
       }
     }
   });

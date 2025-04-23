@@ -1,6 +1,6 @@
 export const DOMAINS = {
-  COPAD: 'copad.ai',
   VIRTUALHEKIM: 'virtualhekim.az',
+  AZDOC: 'azdoc.ai',
   LOGMAN: 'logman.az'
 };
 
@@ -20,8 +20,8 @@ export const getApiUrl = () => {
 
   // Map domains to their respective API URLs
   const domainToApiUrl = {
-    [DOMAINS.COPAD]: `https://${DOMAINS.COPAD}/api`,
     [DOMAINS.VIRTUALHEKIM]: `https://${DOMAINS.VIRTUALHEKIM}/api`,
+    [DOMAINS.AZDOC]: `https://${DOMAINS.AZDOC}/api`,
     [DOMAINS.LOGMAN]: `https://${DOMAINS.LOGMAN}/api`
   };
 
