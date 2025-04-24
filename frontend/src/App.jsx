@@ -22,6 +22,11 @@ import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import SecurityPage from './pages/SecurityPage';
 import ContactPage from "./pages/ContactPage";
+import BlogPage from "./pages/BlogPage.jsx";
+import BlogPostPage from "./pages/BlogPostPage.jsx";
+import BlogSearchPage from "./pages/BlogSearchPage.jsx";
+import BlogTagPage from "./pages/BlogTagPage.jsx";
+import BlogFormPage from "./pages/BlogFormPage.jsx";
 
 const AppRoutes = () => {
   const { isAuthenticated } = useContext(AuthContext);
@@ -41,6 +46,12 @@ const AppRoutes = () => {
       <Route path="/security" element={<SecurityPage />} />
       <Route path="/contact" element={<ContactPage />} />
       
+      {/* Blog routes */}
+      <Route path="/blog" element={<BlogPage />} />
+      <Route path="/blog/tag/:tagSlug" element={<BlogTagPage />} />
+      <Route path="/blog/search" element={<BlogSearchPage />} />
+      <Route path="/blog/:slug" element={<BlogPostPage />} />
+      
       {/* Protected routes - wrapped in MainLayout */}
       {isAuthenticated && (
         <Route element={<MainLayout />}>
@@ -54,6 +65,11 @@ const AppRoutes = () => {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/chat/:id" element={<ChatPage />} />
           </Route>
+          
+          {/* Protected blog admin routes */}
+          <Route path="/blog/new" element={<BlogFormPage />} />
+          <Route path="/blog/edit/:id" element={<BlogFormPage />} />
+          <Route path="/blog/manage-tags" element={<BlogPage />} />
         </Route>
       )}
       

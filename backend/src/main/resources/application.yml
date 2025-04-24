@@ -1,6 +1,6 @@
 spring:
   profiles:
-    active: prod  # change to 'local' when running locally
+    active: local  # change to 'prod' when deploying to production
   security:
     oauth2:
       client:
@@ -44,7 +44,7 @@ server:
 
 app:
   chatgpt:
-    use-dummy-data: true
+    use-dummy-data: false
     openai:
       key: ${OPENAI_API_KEY}
       # model: gpt-3.5-turbo

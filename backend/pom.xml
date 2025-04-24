@@ -136,6 +136,12 @@
 			<artifactId>jakarta.annotation-api</artifactId>
 		</dependency>
 
+		<!-- Jakarta Validation API -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-validation</artifactId>
+		</dependency>
+
 	</dependencies>
 	<build>
 		<plugins>

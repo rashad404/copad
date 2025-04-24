@@ -5,12 +5,20 @@
     "logout": "Logout",
     "settings": "Settings",
     "language": "Language",
-    "back_to_home": "Back to Home"
+    "back_to_home": "Back to Home",
+    "loading": "Loading...",
+    "loadMore": "Load More",
+    "retry": "Retry",
+    "scrollToTop": "Scroll to top",
+    "errors": {
+      "generic": "An error occurred. Please try again later."
+    }
   },
   "navbar": {
     "home": "Home",
     "dashboard": "Dashboard",
     "appointments": "Consultations",
+    "blog": "Blog",
     "profile": "Profile",
     "login": "Login",
     "register": "Register",
@@ -565,6 +573,66 @@
     "medicalNote": {
       "title": "Looking for Medical Advice?",
       "description": "Please use our AI chat service on the homepage for any health-related questions. Our AI doctor is available 24/7 to assist you with medical inquiries."
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Latest Articles & Health Insights",
+    "readMore": "Read More",
+    "backToList": "Back to Blog",
+    "publishedOn": "Published on",
+    "author": "Author",
+    "readingTime": "{{minutes}} min read",
+    "tags": "Tags",
+    "relatedPosts": "Related Articles",
+    "search": {
+      "title": "Search Blog",
+      "placeholder": "Search for articles...",
+      "button": "Search",
+      "noResults": "No articles found for your search.",
+      "results": "Search Results"
+    },
+    "filter": {
+      "byTag": "Filter by Tag",
+      "allPosts": "All Articles",
+      "popular": "Popular",
+      "latest": "Latest"
+    },
+    "admin": {
+      "createPost": "Create New Post",
+      "editPost": "Edit Post",
+      "deletePost": "Delete Post",
+      "manageTags": "Manage Tags",
+      "confirmDelete": "Are you sure you want to delete this post?",
+      "form": {
+        "title": "Title",
+        "titlePlaceholder": "Enter post title",
+        "summary": "Summary",
+        "summaryPlaceholder": "Brief summary of your article",
+        "content": "Content",
+        "contentPlaceholder": "Write your article here...",
+        "featuredImage": "Featured Image URL",
+        "featuredImagePlaceholder": "https://example.com/image.jpg",
+        "tags": "Tags",
+        "tagsPlaceholder": "Add tags",
+        "newTag": "Add New Tag",
+        "published": "Published",
+        "draft": "Draft",
+        "saveAsDraft": "Save as Draft",
+        "publish": "Publish",
+        "update": "Update",
+        "cancel": "Cancel"
+      },
+      "messages": {
+        "createSuccess": "Post created successfully",
+        "updateSuccess": "Post updated successfully",
+        "deleteSuccess": "Post deleted successfully",
+        "error": "An error occurred. Please try again."
+      }
+    },
+    "empty": {
+      "title": "No articles yet",
+      "description": "We're working on adding new content. Please check back later!"
     }
   }
 }

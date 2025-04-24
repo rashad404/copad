@@ -8,6 +8,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Set;
 
 @Entity
 @Data
@@ -29,6 +30,13 @@ public class User implements UserDetails {
     @OneToOne(cascade = CascadeType.ALL)
     @JsonManagedReference
     private MedicalProfile medicalProfile;
+    
+    @OneToMany(mappedBy = "author")
+    private Set<BlogPost> blogPosts;
+    
+    public String getFullName() {
+        return this.name;
+    }
 
 
     // UserDetails implementation

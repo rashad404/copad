@@ -66,3 +66,29 @@ export const deleteGuestChat = (sessionId, chatId) => {
 
 // Get chat history
 export const getChatHistory = (sessionId, chatId) => API.get(`/guest/chat/${sessionId}/${chatId}/history`);
+
+// Blog endpoints
+export const getBlogPosts = (page = 0, size = 9) => API.get(`/blog/posts?page=${page}&size=${size}`);
+export const getTopTags = (limit = 10) => API.get(`/blog/tags/top?limit=${limit}`);
+
+// Blog post management
+export const deleteBlogPost = (postId) => API.delete(`/blog/posts/${postId}`);
+export const getBlogPostBySlug = (slug) => API.get(`/blog/posts/slug/${slug}`);
+
+// Blog search functionality
+export const searchBlogPosts = (query, page = 0, size = 9) => 
+  API.get(`/blog/posts/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+
+// Blog posts by tag
+export const getBlogPostsByTag = (tagSlug, page = 0, size = 9) => 
+  API.get(`/blog/posts/tag/${tagSlug}?page=${page}&size=${size}`);
+
+export const getTagBySlug = (slug) => API.get(`/blog/tags/slug/${slug}`);
+
+export const createBlogPost = (data) => API.post('/blog/posts', data);
+
+export const createTag = (data) => API.post('/blog/tags', data);
+
+export const getAllTags = () => API.get('/blog/tags');
+
+export const updateBlogPost = (postId, data) => API.put(`/blog/posts/${postId}`, data);

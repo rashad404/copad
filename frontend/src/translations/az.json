@@ -5,12 +5,20 @@
     "logout": "Çıxış",
     "settings": "Tənzimləmələr",
     "language": "Dil",
-    "back_to_home": "Ana səhifəyə qayıt"
+    "back_to_home": "Ana səhifəyə qayıt",
+    "loading": "Yüklənir...",
+    "loadMore": "Daha Çox",
+    "retry": "Yenidən Cəhd Et",
+    "scrollToTop": "Yuxarı Sürüşdür",
+    "errors": {
+      "generic": "Xəta baş verdi. Zəhmət olmasa sonra yenidən cəhd edin."
+    }
   },
   "navbar": {
     "home": "Ana səhifə",
     "dashboard": "İdarə paneli",
     "appointments": "Məsləhətləşmələr",
+    "blog": "Bloq",
     "profile": "Profil",
     "login": "Daxil ol",
     "register": "Qeydiyyat",
@@ -396,7 +404,7 @@
     "introduction": "Süni intellekt vasitəsilə səhiyyə xidmətini inqilab edirik, tibbi məsləhəti daha əlçatan və fərdiləşdirilmiş edirik.",
     "mission": {
       "title": "Missiyamız",
-      "description": "Süni intellekt gücü ilə səhiyyə xidmətini daha əlçatan, səmərəli və fərdiləşdirilmiş etməyə çalışırıq. Platformamız xəstələri AI ilə gücləndirilmiş tibbi məsləhətlərlə birləşdirir, dərhal, etibarlı və məxfi səhiyyə dəstəyi təqdim edir."
+      "description": "Süni intellekt gücü ilə səhiyyə xidmətini daha əlçatan, səmərəli və fərdiləşdirilmiş etmək üçün platformamız xəstələri AI ilə gücləndirilmiş tibbi məsləhətlərlə birləşdirir, dərhal, etibarlı və məxfi səhiyyə dəstəyi təqdim edir."
     },
     "vision": {
       "title": "Vizyonumuz",
@@ -566,6 +574,66 @@
     "medicalNote": {
       "title": "Tibbi Məsləhət Axtarırsınız?",
       "description": "Sağlamlıqla bağlı suallarınız üçün ana səhifəmizdəki AI söhbət xidmətindən istifadə edin. AI həkimimiz tibbi sorğularınıza 24/7 kömək etmək üçün hazırdır."
+    }
+  },
+  "blog": {
+    "title": "Bloq",
+    "subtitle": "Ən Son Məqalələr və Sağlamlıq Məlumatları",
+    "readMore": "Daha Ətraflı",
+    "backToList": "Bloqa Qayıt",
+    "publishedOn": "Dərc edilib",
+    "author": "Müəllif",
+    "readingTime": "{{minutes}} dəq oxuma",
+    "tags": "Etiketlər",
+    "relatedPosts": "Əlaqəli Məqalələr",
+    "search": {
+      "title": "Bloqda Axtar",
+      "placeholder": "Məqalələr üçün axtarış...",
+      "button": "Axtar",
+      "noResults": "Axtarışınız üçün heç bir məqalə tapılmadı.",
+      "results": "Axtarış Nəticələri"
+    },
+    "filter": {
+      "byTag": "Etiket üzrə Filtrlə",
+      "allPosts": "Bütün Məqalələr",
+      "popular": "Populyar",
+      "latest": "Ən Son"
+    },
+    "admin": {
+      "createPost": "Yeni Məqalə Yarat",
+      "editPost": "Məqaləni Redaktə Et",
+      "deletePost": "Məqaləni Sil",
+      "manageTags": "Etiketləri İdarə Et",
+      "confirmDelete": "Bu məqaləni silmək istədiyinizə əminsiniz?",
+      "form": {
+        "title": "Başlıq",
+        "titlePlaceholder": "Məqalənin başlığını daxil edin",
+        "summary": "Xülasə",
+        "summaryPlaceholder": "Məqalənizin qısa xülasəsi",
+        "content": "Məzmun",
+        "contentPlaceholder": "Məqalənizi burada yazın...",
+        "featuredImage": "Əsas Şəkil URL",
+        "featuredImagePlaceholder": "https://example.com/image.jpg",
+        "tags": "Etiketlər",
+        "tagsPlaceholder": "Etiketlər əlavə edin",
+        "newTag": "Yeni Etiket Əlavə Et",
+        "published": "Dərc edilib",
+        "draft": "Qaralama",
+        "saveAsDraft": "Qaralama olaraq Saxla",
+        "publish": "Dərc Et",
+        "update": "Yenilə",
+        "cancel": "Ləğv Et"
+      },
+      "messages": {
+        "createSuccess": "Məqalə uğurla yaradıldı",
+        "updateSuccess": "Məqalə uğurla yeniləndi",
+        "deleteSuccess": "Məqalə uğurla silindi",
+        "error": "Xəta baş verdi. Zəhmət olmasa yenidən cəhd edin."
+      }
+    },
+    "empty": {
+      "title": "Hələ məqalə yoxdur",
+      "description": "Yeni məzmun əlavə etmək üzərində işləyirik. Zəhmət olmasa sonra yenidən yoxlayın!"
     }
   }
 }
