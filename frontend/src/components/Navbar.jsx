@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useState, useEffect, useContext } from "react";
-import { Bars3Icon, XMarkIcon, HomeIcon, CalendarIcon, UserIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, XMarkIcon, HomeIcon, CalendarIcon, UserIcon, DocumentTextIcon } from "@heroicons/react/24/outline";
 import { AuthContext } from "../context/AuthContext.jsx";
 import LanguageSwitcher from "./LanguageSwitcher";
 import DarkModeToggle from "./DarkModeToggle";
@@ -69,6 +69,7 @@ export default function Navbar() {
                   <div className="flex items-center bg-white/50 dark:bg-gray-800/50 backdrop-blur-sm rounded-full p-1 shadow-sm">
                     <NavLink to="/" label={t("navbar.dashboard")} icon={<HomeIcon className="w-4 h-4" />} active={location.pathname === '/'} />
                     <NavLink to="/appointments" label={t("navbar.appointments")} icon={<CalendarIcon className="w-4 h-4" />} active={location.pathname === '/appointments'} />
+                    <NavLink to="/blog" label={t("navbar.blog")} icon={<DocumentTextIcon className="w-4 h-4" />} active={location.pathname.startsWith('/blog')} />
                     <NavLink to="/profile" label={t("navbar.profile")} icon={<UserIcon className="w-4 h-4" />} active={location.pathname === '/profile'} />
                   </div>
                   <div className="flex items-center space-x-4 ml-4">
@@ -132,6 +133,7 @@ export default function Navbar() {
               <>
                 <MobileNavLink to="/" label={t("navbar.dashboard")} icon={<HomeIcon className="w-5 h-5" />} onClick={toggleMenu} active={location.pathname === '/'} />
                 <MobileNavLink to="/appointments" label={t("navbar.appointments")} icon={<CalendarIcon className="w-5 h-5" />} onClick={toggleMenu} active={location.pathname === '/appointments'} />
+                <MobileNavLink to="/blog" label={t("navbar.blog")} icon={<DocumentTextIcon className="w-5 h-5" />} onClick={toggleMenu} active={location.pathname.startsWith('/blog')} />
                 <MobileNavLink to="/profile" label={t("navbar.profile")} icon={<UserIcon className="w-5 h-5" />} onClick={toggleMenu} active={location.pathname === '/profile'} />
                 <div className="px-4 py-3 flex items-center justify-between border-t border-gray-100 dark:border-gray-700">
                   <LanguageSwitcher />

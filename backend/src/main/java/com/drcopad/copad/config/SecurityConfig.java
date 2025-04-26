@@ -26,11 +26,11 @@ public class SecurityConfig {
     private final JwtFilter jwtFilter;
     private final OAuth2Config oauth2Config;
     private final List<String> allowedDomains = Arrays.asList(
-        "http://localhost:5173",
-        "http://127.0.0.1:5173",
-        "https://virtualhekim.az",
-        "https://azdoc.ai",
-        "https://logman.az"
+            "http://localhost:5173",
+            "http://127.0.0.1:5173",
+            "https://virtualhekim.az",
+            "https://azdoc.ai",
+            "https://logman.az"
     );
 
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
@@ -41,43 +41,40 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
         http
-            .cors(cors -> cors.configurationSource(corsConfigurationSource()))
-            .csrf(AbstractHttpConfigurer::disable)
-            .authorizeHttpRequests(auth -> auth
-                .requestMatchers("/api/guest/**").permitAll()
-                .requestMatchers("/api/auth/**").permitAll()
-                .requestMatchers("/api/oauth2/authorization/**").permitAll()
-                .requestMatchers("/api/login/oauth2/code/**").permitAll()
-                .anyRequest().authenticated()
-            )
-            .oauth2Login(oauth2 -> oauth2
-                .loginPage("/api/oauth2/authorization/google")
-                .defaultSuccessUrl("/api/auth/success", true)
-                .failureUrl("/api/auth/failure")
-                .authorizationEndpoint(authorization -> authorization
-                    .baseUri("/api/oauth2/authorization")
-                    .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                .cors(cors -> cors.configurationSource(corsConfigurationSource()))
+                .csrf(AbstractHttpConfigurer::disable)
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(PublicEndpoints.PUBLIC_URLS.toArray(new String[0])).permitAll()
+                        .anyRequest().authenticated()
                 )
-                .redirectionEndpoint(redirection -> redirection
-                    .baseUri("/api/login/oauth2/code/*")
+                .oauth2Login(oauth2 -> oauth2
+                        .loginPage("/api/oauth2/authorization/google")
+                        .defaultSuccessUrl("/api/auth/success", true)
+                        .failureUrl("/api/auth/failure")
+                        .authorizationEndpoint(authorization -> authorization
+                                .baseUri("/api/oauth2/authorization")
+                                .authorizationRequestResolver(oauth2Config.authorizationRequestResolver(clientRegistrationRepository))
+                        )
+                        .redirectionEndpoint(redirection -> redirection
+                                .baseUri("/api/login/oauth2/code/*")
+                        )
                 )
-            )
-            .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
-            .sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
-            )
-            .formLogin(AbstractHttpConfigurer::disable)
-            .httpBasic(AbstractHttpConfigurer::disable)
-            .exceptionHandling(exception -> exception
-                .authenticationEntryPoint((request, response, authException) -> {
-                    String requestedUrl = request.getRequestURL().toString();
-                    if (requestedUrl.contains("/api/auth/success")) {
-                        response.sendRedirect("https://virtualhekim.az/api/oauth2/authorization/google");
-                    } else {
-                        response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
-                    }
-                })
-            );
+                .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
+                )
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint((request, response, authException) -> {
+                            String requestedUrl = request.getRequestURL().toString();
+                            if (requestedUrl.contains("/api/auth/success")) {
+                                response.sendRedirect("https://virtualhekim.az/api/oauth2/authorization/google");
+                            } else {
+                                response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
+                            }
+                        })
+                );
 
         return http.build();
     }
@@ -88,13 +85,13 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(allowedDomains);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList(
-            "Authorization",
-            "Content-Type",
-            "X-Requested-With",
-            "Accept",
-            "Origin",
-            "Access-Control-Request-Method",
-            "Access-Control-Request-Headers"
+                "Authorization",
+                "Content-Type",
+                "X-Requested-With",
+                "Accept",
+                "Origin",
+                "Access-Control-Request-Method",
+                "Access-Control-Request-Headers"
         ));
         configuration.setExposedHeaders(List.of("Authorization"));
         configuration.setAllowCredentials(true);

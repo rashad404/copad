@@ -7,11 +7,11 @@ import { SiteProvider } from './context/SiteContext.jsx'; // 👈 import here
 import './i18n'; // i18n config
 
 ReactDOM.createRoot(document.getElementById('root')).render(
-  <React.StrictMode>
+  // <React.StrictMode>
     <AuthProvider>
       <SiteProvider>
         <App />
       </SiteProvider>
     </AuthProvider>
-  </React.StrictMode>
+  // </React.StrictMode>
 );
