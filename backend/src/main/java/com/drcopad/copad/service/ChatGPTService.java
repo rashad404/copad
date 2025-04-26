@@ -1,5 +1,12 @@
 package com.drcopad.copad.service;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.ThreadLocalRandom;
+
+import org.springframework.stereotype.Service;
+import org.springframework.web.reactive.function.client.WebClient;
+
 import com.drcopad.copad.config.ChatGPTConfig;
 import com.drcopad.copad.dto.ChatGPTRequest;
 import com.drcopad.copad.dto.ChatGPTResponse;
@@ -8,15 +15,10 @@ import com.drcopad.copad.entity.ChatMessage;
 import com.drcopad.copad.entity.MedicalSpecialty;
 import com.drcopad.copad.repository.MedicalSpecialtyRepository;
 import com.fasterxml.jackson.databind.ObjectMapper;
+
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.stereotype.Service;
-import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.ThreadLocalRandom;
 
 @Slf4j
 @Service
@@ -54,10 +56,9 @@ public class ChatGPTService {
             "10. Stay within your knowledge scope.\n" +
             "11. Prioritize the most effective solutions first.\n" +
             "12. Avoid pleasantries and get straight to helpful information.\n" +
-            "13. Politely refuse to answer any unrelated, inappropriate, offensive, or off-topic questions.\n" +
+            "13. Respond politely to greetings and expressions of thanks. For all other unrelated, inappropriate, or off-topic questions, politely refuse by saying: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
             "14. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: \"I'm an AI doctor. Please ask health-related questions only.\"" +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
-
 
         messages.add(new Message("system", systemPrompt));
 
