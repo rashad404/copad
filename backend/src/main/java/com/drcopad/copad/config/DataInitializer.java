@@ -1,5 +1,11 @@
 package com.drcopad.copad.config;
 
+import java.time.LocalDateTime;
+import java.util.Set;
+
+import org.springframework.context.annotation.Configuration;
+import org.springframework.security.crypto.password.PasswordEncoder;
+
 import com.drcopad.copad.entity.BlogPost;
 import com.drcopad.copad.entity.MedicalSpecialty;
 import com.drcopad.copad.entity.Tag;
@@ -8,13 +14,9 @@ import com.drcopad.copad.repository.BlogPostRepository;
 import com.drcopad.copad.repository.MedicalSpecialtyRepository;
 import com.drcopad.copad.repository.TagRepository;
 import com.drcopad.copad.repository.UserRepository;
+
 import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Configuration;
-import org.springframework.security.crypto.password.PasswordEncoder;
-
-import java.time.LocalDateTime;
-import java.util.Set;
 
 @Configuration
 @RequiredArgsConstructor
@@ -44,18 +46,18 @@ public class DataInitializer {
             Tag ai = tagRepository.save(new Tag("Artificial Intelligence", "artificial-intelligence"));
 
             // Create sample blog posts
-            createBlogPost("Getting Started with Spring Boot", "getting-started-with-spring-boot", "A comprehensive guide to building your first Spring Boot application", "Spring Boot is a powerful framework for building Java applications...", admin, Set.of(technology), "https://example.com/spring-boot.jpg");
+            createBlogPost("Getting Started with Spring Boot", "getting-started-with-spring-boot", "A comprehensive guide to building your first Spring Boot application", "Spring Boot is a powerful framework for building Java applications...", admin, Set.of(technology), "https://example.com/spring-boot.jpg", "en");
 
-            createBlogPost("The Future of Healthcare with AI", "future-of-healthcare-with-ai", "How artificial intelligence is transforming the healthcare industry", "Artificial Intelligence is revolutionizing healthcare in numerous ways...", admin, Set.of(health, ai), "https://example.com/ai-healthcare.jpg");
+            createBlogPost("The Future of Healthcare with AI", "future-of-healthcare-with-ai", "How artificial intelligence is transforming the healthcare industry", "Artificial Intelligence is revolutionizing healthcare in numerous ways...", admin, Set.of(health, ai), "https://example.com/ai-healthcare.jpg", "az");
 
-            createBlogPost("Best Practices for Web Development", "best-practices-for-web-development", "Essential tips and tricks for modern web development", "Web development has evolved significantly over the years...", admin, Set.of(technology), "https://example.com/web-dev.jpg");
+            createBlogPost("Best Practices for Web Development", "best-practices-for-web-development", "Essential tips and tricks for modern web development", "Web development has evolved significantly over the years...", admin, Set.of(technology), "https://example.com/web-dev.jpg", "tr");
 
             // Create medical specialties
             initMedicalSpecialties();
         }
     }
 
-    private void createBlogPost(String title, String slug, String summary, String content, User author, Set<Tag> tags, String featuredImage) {
+    private void createBlogPost(String title, String slug, String summary, String content, User author, Set<Tag> tags, String featuredImage, String language) {
         BlogPost post = new BlogPost();
         post.setTitle(title);
         post.setSlug(slug);
@@ -66,6 +68,7 @@ public class DataInitializer {
         post.setPublished(true);
         post.setPublishedAt(LocalDateTime.now());
         post.setFeaturedImage(featuredImage);
+        post.setLanguage(language);
         blogPostRepository.save(post);
     }
 

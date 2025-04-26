@@ -622,7 +622,13 @@
         "saveAsDraft": "Qaralama olaraq Saxla",
         "publish": "Dərc Et",
         "update": "Yenilə",
-        "cancel": "Ləğv Et"
+        "cancel": "Ləğv Et",
+        "language": "Post dili",
+        "languageOptions": {
+          "az": "Azərbaycan dili",
+          "en": "İngilis dili",
+          "tr": "Türk dili"
+        }
       },
       "messages": {
         "createSuccess": "Məqalə uğurla yaradıldı",

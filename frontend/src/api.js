@@ -68,8 +68,8 @@ export const deleteGuestChat = (sessionId, chatId) => {
 export const getChatHistory = (sessionId, chatId) => API.get(`/guest/chat/${sessionId}/${chatId}/history`);
 
 // Blog endpoints
-export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc") => 
-  API.get(`/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`);
+export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc", language = i18n.language) => 
+  API.get(`/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}&language=${language}`);
 
 export const getTopTags = (limit = 10) => API.get(`/tags/top?limit=${limit}`);
 
@@ -78,19 +78,25 @@ export const deleteBlogPost = (postId) => API.delete(`/blog/${postId}`);
 export const getBlogPostBySlug = (slug) => API.get(`/blog/${slug}`);
 
 // Blog search functionality
-export const searchBlogPosts = (keyword, page = 0, size = 9) => 
-  API.get(`/blog/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`);
+export const searchBlogPosts = (keyword, page = 0, size = 9, language = i18n.language) => 
+  API.get(`/blog/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}&language=${language}`);
 
 // Blog posts by tag
-export const getBlogPostsByTag = (tagSlug, page = 0, size = 9) => 
-  API.get(`/blog/tag/${tagSlug}?page=${page}&size=${size}`);
+export const getBlogPostsByTag = (tagSlug, page = 0, size = 9, language = i18n.language) => 
+  API.get(`/blog/tag/${tagSlug}?page=${page}&size=${size}&language=${language}`);
 
 export const getTagBySlug = (slug) => API.get(`/tags/${slug}`);
 
-export const createBlogPost = (data) => API.post('/blog', data);
+export const createBlogPost = (data) => {
+  if (!data.language) data.language = i18n.language;
+  return API.post('/blog', data);
+};
 
 export const createTag = (name) => API.post('/tags', null, { params: { name } });
 
 export const getAllTags = () => API.get('/tags');
 
-export const updateBlogPost = (id, data) => API.put(`/blog/${id}`, data);
+export const updateBlogPost = (id, data) => {
+  if (!data.language) data.language = i18n.language;
+  return API.put(`/blog/${id}`, data);
+};

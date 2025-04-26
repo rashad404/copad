@@ -1,11 +1,10 @@
 package com.drcopad.copad.dto;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 public class BlogPostCreateDTO {
@@ -26,4 +25,8 @@ public class BlogPostCreateDTO {
     
     @NotBlank(message = "Featured image URL is required")
     private String featuredImage;
+
+    @NotBlank(message = "Language is required")
+    @Size(max = 5, message = "Language code must be at most 5 characters")
+    private String language;
 }

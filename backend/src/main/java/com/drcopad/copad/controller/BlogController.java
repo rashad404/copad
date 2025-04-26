@@ -38,12 +38,12 @@ public class BlogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "11") int size,
             @RequestParam(defaultValue = "publishedAt") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction
+            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "en") String language
     ) {
-
         Sort.Direction dir = direction.equalsIgnoreCase("desc") ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(dir, sortBy));
-        return ResponseEntity.ok(blogService.getAllPublishedPosts(pageRequest));
+        return ResponseEntity.ok(blogService.getAllPublishedPosts(pageRequest, language));
     }
 
     @GetMapping("/{slug}")
@@ -55,20 +55,22 @@ public class BlogController {
     public ResponseEntity<Page<BlogPostListDTO>> getPostsByTag(
             @PathVariable String tagSlug,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "en") String language
     ) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedAt"));
-        return ResponseEntity.ok(blogService.getPostsByTag(tagSlug, pageRequest));
+        return ResponseEntity.ok(blogService.getPostsByTag(tagSlug, pageRequest, language));
     }
     
     @GetMapping("/search")
     public ResponseEntity<Page<BlogPostListDTO>> searchPosts(
             @RequestParam String keyword,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size
+            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "en") String language
     ) {
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(Sort.Direction.DESC, "publishedAt"));
-        return ResponseEntity.ok(blogService.searchPosts(keyword, pageRequest));
+        return ResponseEntity.ok(blogService.searchPosts(keyword, pageRequest, language));
     }
     
     @PostMapping

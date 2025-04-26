@@ -1,9 +1,9 @@
 package com.drcopad.copad.dto;
 
+import java.util.Set;
+
 import jakarta.validation.constraints.Size;
 import lombok.Data;
-
-import java.util.Set;
 
 @Data
 public class BlogPostUpdateDTO {
@@ -20,4 +20,7 @@ public class BlogPostUpdateDTO {
     private Boolean published;
     
     private String featuredImage;
+
+    @Size(max = 5, message = "Language code must be at most 5 characters")
+    private String language;
 }

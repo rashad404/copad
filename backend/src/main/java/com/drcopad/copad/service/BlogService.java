@@ -1,23 +1,29 @@
 package com.drcopad.copad.service;
 
-import com.drcopad.copad.dto.*;
+import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+
+import com.drcopad.copad.dto.BlogPostCreateDTO;
+import com.drcopad.copad.dto.BlogPostDTO;
+import com.drcopad.copad.dto.BlogPostListDTO;
+import com.drcopad.copad.dto.BlogPostUpdateDTO;
+import com.drcopad.copad.dto.TagDTO;
+import com.drcopad.copad.dto.UserProfileDTO;
 import com.drcopad.copad.entity.BlogPost;
 import com.drcopad.copad.entity.Tag;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.repository.BlogPostRepository;
 import com.drcopad.copad.repository.TagRepository;
 import com.drcopad.copad.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
-import java.time.LocalDateTime;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -28,8 +34,8 @@ public class BlogService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     
-    public Page<BlogPostListDTO> getAllPublishedPosts(Pageable pageable) {
-        return blogPostRepository.findAllByPublishedTrue(pageable)
+    public Page<BlogPostListDTO> getAllPublishedPosts(Pageable pageable, String language) {
+        return blogPostRepository.findAllByPublishedTrueAndLanguage(language, pageable)
                 .map(this::convertToListDTO);
     }
     
@@ -39,10 +45,10 @@ public class BlogService {
         return convertToDTO(blogPost);
     }
 
-    public Page<BlogPostListDTO> getPostsByTag(String tagSlug, Pageable pageable) {
+    public Page<BlogPostListDTO> getPostsByTag(String tagSlug, Pageable pageable, String language) {
         Tag tag = tagRepository.findBySlug(tagSlug)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));
-        return blogPostRepository.findByTagAndPublishedTrue(tag, pageable)
+        return blogPostRepository.findByTagAndPublishedTrueAndLanguage(tag, language, pageable)
                 .map(this::convertToListDTO);
     }
     
@@ -60,6 +66,7 @@ public class BlogService {
         blogPost.setPublished(createDTO.isPublished());
         blogPost.setFeaturedImage(createDTO.getFeaturedImage());
         blogPost.setReadingTimeMinutes(calculateReadingTime(createDTO.getContent()));
+        blogPost.setLanguage(createDTO.getLanguage() != null ? createDTO.getLanguage() : "en");
         
         if (createDTO.isPublished()) {
             blogPost.setPublishedAt(LocalDateTime.now());
@@ -130,6 +137,10 @@ public class BlogService {
             blogPost.setTags(tags);
         }
         
+        if (updateDTO.getLanguage() != null) {
+            blogPost.setLanguage(updateDTO.getLanguage());
+        }
+        
         BlogPost updatedPost = blogPostRepository.save(blogPost);
         return convertToDTO(updatedPost);
     }
@@ -146,8 +157,8 @@ public class BlogService {
         blogPostRepository.delete(blogPost);
     }
     
-    public Page<BlogPostListDTO> searchPosts(String keyword, Pageable pageable) {
-        return blogPostRepository.searchByKeyword(keyword, pageable)
+    public Page<BlogPostListDTO> searchPosts(String keyword, Pageable pageable, String language) {
+        return blogPostRepository.searchByKeywordAndLanguage(keyword, language, pageable)
                 .map(this::convertToListDTO);
     }
     
@@ -212,6 +223,7 @@ public class BlogService {
         dto.setPublishedAt(blogPost.getPublishedAt());
         dto.setFeaturedImage(blogPost.getFeaturedImage());
         dto.setReadingTimeMinutes(blogPost.getReadingTimeMinutes());
+        dto.setLanguage(blogPost.getLanguage());
         
         return dto;
     }
@@ -243,6 +255,7 @@ public class BlogService {
         dto.setPublishedAt(blogPost.getPublishedAt());
         dto.setFeaturedImage(blogPost.getFeaturedImage());
         dto.setReadingTimeMinutes(blogPost.getReadingTimeMinutes());
+        dto.setLanguage(blogPost.getLanguage());
         
         return dto;
     }

@@ -8,6 +8,7 @@ import BlogPostCard from '../components/BlogPostCard';
 import BlogSearch from '../components/BlogSearch';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import i18n from '../i18n';
 
 const BlogSearchPage = () => {
   const [searchParams] = useSearchParams();
@@ -29,7 +30,7 @@ const BlogSearchPage = () => {
         setPage(0);
         setPosts([]);
         
-        const response = await searchBlogPosts(query, 0, 9);
+        const response = await searchBlogPosts(query, 0, 9, i18n.language);
         if (response.data && response.data.content) {
           setPosts(response.data.content);
           setTotalElements(response.data.totalElements || response.data.content.length);
@@ -52,7 +53,7 @@ const BlogSearchPage = () => {
     };
     
     fetchSearchResults();
-  }, [query]);
+  }, [query, i18n.language]);
   
   const loadMorePosts = async () => {
     if (!hasMore) return;
@@ -60,7 +61,7 @@ const BlogSearchPage = () => {
     try {
       setLoading(true);
       const nextPage = page + 1;
-      const response = await searchBlogPosts(query, nextPage, 9);
+      const response = await searchBlogPosts(query, nextPage, 9, i18n.language);
       
       if (response.data && response.data.content && response.data.content.length > 0) {
         setPosts(prev => [...prev, ...response.data.content]);

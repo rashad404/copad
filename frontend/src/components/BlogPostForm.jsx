@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { XMarkIcon, PlusIcon } from '@heroicons/react/24/outline';
 import { createBlogPost, updateBlogPost, getAllTags, createTag } from '../api';
+import i18n from 'i18next';
 
 const BlogPostForm = ({ postData, isEdit = false }) => {
   const [formData, setFormData] = useState({
@@ -11,7 +12,8 @@ const BlogPostForm = ({ postData, isEdit = false }) => {
     content: '',
     tagNames: [],
     published: false,
-    featuredImage: ''
+    featuredImage: '',
+    language: i18n.language || 'en',
   });
   
   const [availableTags, setAvailableTags] = useState([]);
@@ -22,6 +24,12 @@ const BlogPostForm = ({ postData, isEdit = false }) => {
   
   const navigate = useNavigate();
   const { t } = useTranslation();
+  
+  const languageOptions = [
+    { code: 'az', label: t('blog.admin.form.languageOptions.az') },
+    { code: 'en', label: t('blog.admin.form.languageOptions.en') },
+    { code: 'tr', label: t('blog.admin.form.languageOptions.tr') },
+  ];
   
   useEffect(() => {
     // Load available tags
@@ -44,7 +52,8 @@ const BlogPostForm = ({ postData, isEdit = false }) => {
         content: postData.content || '',
         tagNames: postData.tags ? postData.tags.map(tag => tag.name) : [],
         published: postData.published || false,
-        featuredImage: postData.featuredImage || ''
+        featuredImage: postData.featuredImage || '',
+        language: postData.language || i18n.language || 'en',
       });
     }
   }, [isEdit, postData]);
@@ -299,6 +308,27 @@ const BlogPostForm = ({ postData, isEdit = false }) => {
             />
           </div>
         )}
+      </div>
+      
+      {/* Language Dropdown */}
+      <div>
+        <label
+          htmlFor="language"
+          className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1"
+        >
+          {t('blog.admin.form.language')}
+        </label>
+        <select
+          id="language"
+          name="language"
+          value={formData.language}
+          onChange={handleChange}
+          className="w-full px-4 py-2 border border-gray-300 dark:border-gray-700 rounded-lg focus:ring-2 focus:ring-indigo-500 dark:focus:ring-indigo-600 focus:border-transparent bg-white dark:bg-gray-800"
+        >
+          {languageOptions.map(opt => (
+            <option key={opt.code} value={opt.code}>{opt.label}</option>
+          ))}
+        </select>
       </div>
       
       {/* Tags */}

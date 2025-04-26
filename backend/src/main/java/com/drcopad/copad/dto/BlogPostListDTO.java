@@ -1,9 +1,9 @@
 package com.drcopad.copad.dto;
 
-import lombok.Data;
-
 import java.time.LocalDateTime;
 import java.util.Set;
+
+import lombok.Data;
 
 @Data
 public class BlogPostListDTO {
@@ -16,4 +16,5 @@ public class BlogPostListDTO {
     private LocalDateTime publishedAt;
     private String featuredImage;
     private int readingTimeMinutes;
+    private String language;
 }

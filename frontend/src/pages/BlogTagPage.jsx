@@ -7,6 +7,7 @@ import Breadcrumb from '../components/Breadcrumb';
 import BlogPostCard from '../components/BlogPostCard';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import i18n from '../i18n';
 
 const BlogTagPage = () => {
   const { tagSlug } = useParams();
@@ -26,7 +27,7 @@ const BlogTagPage = () => {
         // Fetch tag and posts in parallel
         const [tagResponse, postsResponse] = await Promise.all([
           getTagBySlug(tagSlug),
-          getBlogPostsByTag(tagSlug, 0, 9)
+          getBlogPostsByTag(tagSlug, 0, 9, i18n.language)
         ]);
         
         setTag(tagResponse.data);
@@ -50,7 +51,7 @@ const BlogTagPage = () => {
     };
     
     fetchData();
-  }, [tagSlug]);
+  }, [tagSlug, i18n.language]);
   
   const loadMorePosts = async () => {
     if (!hasMore) return;
@@ -58,7 +59,7 @@ const BlogTagPage = () => {
     try {
       setLoading(true);
       const nextPage = page + 1;
-      const response = await getBlogPostsByTag(tagSlug, nextPage, 9);
+      const response = await getBlogPostsByTag(tagSlug, nextPage, 9, i18n.language);
       
       if (response.data && response.data.content && response.data.content.length > 0) {
         setPosts(prev => [...prev, ...response.data.content]);

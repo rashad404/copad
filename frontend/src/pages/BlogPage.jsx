@@ -12,6 +12,7 @@ import { AuthContext } from '../context/AuthContext';
 import ErrorBoundary from '../components/ErrorBoundary';
 import Navbar from "../components/Navbar";
 import Footer from "../components/Footer";
+import i18n from '../i18n';
 
 const BlogPage = () => {
   const [posts, setPosts] = useState([]);
@@ -35,7 +36,7 @@ const BlogPage = () => {
         console.log("THIS IS CALLED");
         // Fetch posts and tags in parallel
         const [postsResponse, tagsResponse] = await Promise.all([
-          getBlogPosts(0, 9),
+          getBlogPosts(0, 9, 'publishedAt', 'desc', i18n.language),
           getTopTags(10)
         ]);
         
@@ -78,7 +79,7 @@ const BlogPage = () => {
     
     window.addEventListener('scroll', handleScroll);
     return () => window.removeEventListener('scroll', handleScroll);
-  }, [t]);
+  }, [t, i18n.language]);
   
   const loadMorePosts = async () => {
     if (!hasMore) return;
@@ -86,7 +87,7 @@ const BlogPage = () => {
     try {
       setPostsLoading(true);
       const nextPage = page + 1;
-      const response = await getBlogPosts(nextPage, 9);
+      const response = await getBlogPosts(nextPage, 9, 'publishedAt', 'desc', i18n.language);
       
       if (response.data && response.data.content && response.data.content.length > 0) {
         setPosts(prev => [...prev, ...response.data.content]);

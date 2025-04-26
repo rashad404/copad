@@ -621,7 +621,13 @@
         "saveAsDraft": "Save as Draft",
         "publish": "Publish",
         "update": "Update",
-        "cancel": "Cancel"
+        "cancel": "Cancel",
+        "language": "Post Language",
+        "languageOptions": {
+          "az": "Azerbaijani",
+          "en": "English",
+          "tr": "Turkish"
+        }
       },
       "messages": {
         "createSuccess": "Post created successfully",

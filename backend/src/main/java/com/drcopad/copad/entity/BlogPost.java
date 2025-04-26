@@ -78,6 +78,9 @@ public class BlogPost {
     @Column(nullable = false)
     private int readingTimeMinutes;
     
+    @Column(nullable = false, length = 5)
+    private String language = "en";
+    
     @PrePersist
     public void initializePost() {
         // Generate slug if not set
