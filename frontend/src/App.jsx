@@ -18,6 +18,7 @@ import AboutPage from "./pages/AboutPage.jsx";
 import FAQPage from "./pages/FAQPage.jsx";
 import ChatLayout from "./layouts/ChatLayout.jsx";
 import MainLayout from "./layouts/MainLayout.jsx";
+import AdminLayout from "./layouts/AdminLayout.jsx";
 import PrivacyPolicyPage from "./pages/PrivacyPolicyPage";
 import TermsOfServicePage from "./pages/TermsOfServicePage";
 import SecurityPage from './pages/SecurityPage';
@@ -28,9 +29,18 @@ import BlogSearchPage from "./pages/BlogSearchPage.jsx";
 import BlogTagPage from "./pages/BlogTagPage.jsx";
 import BlogFormPage from "./pages/BlogFormPage.jsx";
 
+// Admin Pages
+import AdminDashboard from "./pages/admin/AdminDashboard.jsx";
+import AdminPostList from "./pages/admin/AdminPostList.jsx";
+import AdminPostForm from "./pages/admin/AdminPostForm.jsx";
+import AdminTagManagement from "./pages/admin/AdminTagManagement.jsx";
+
 const AppRoutes = () => {
-  const { isAuthenticated } = useContext(AuthContext);
+  const { isAuthenticated, user } = useContext(AuthContext);
   useGoogleAnalytics();
+  
+  // Check if user has admin role
+  const isAdmin = isAuthenticated && user?.roles?.includes('ADMIN');
 
   return (
     <Routes>
@@ -65,11 +75,17 @@ const AppRoutes = () => {
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/chat/:id" element={<ChatPage />} />
           </Route>
-          
-          {/* Protected blog admin routes */}
-          <Route path="/blog/new" element={<BlogFormPage />} />
-          <Route path="/blog/edit/:id" element={<BlogFormPage />} />
-          <Route path="/blog/manage-tags" element={<BlogPage />} />
+        </Route>
+      )}
+      
+      {/* Admin Routes - protected and wrapped in AdminLayout */}
+      {isAdmin && (
+        <Route path="/admin" element={<AdminLayout />}>
+          <Route index element={<AdminDashboard />} />
+          <Route path="posts" element={<AdminPostList />} />
+          <Route path="posts/create" element={<AdminPostForm />} />
+          <Route path="posts/edit/:id" element={<AdminPostForm />} />
+          <Route path="tags" element={<AdminTagManagement />} />
         </Route>
       )}
       
@@ -79,7 +95,6 @@ const AppRoutes = () => {
 };
 
 export default function App() {
-  console.log('App component rendered');
   return (
     <BrowserRouter>
       <ChatProvider>

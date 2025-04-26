@@ -3,6 +3,7 @@ package com.drcopad.copad.config;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -21,6 +22,7 @@ import java.util.List;
 
 @Configuration
 @EnableWebSecurity
+@EnableMethodSecurity // Enable @PreAuthorize annotations
 public class SecurityConfig {
 
     private final JwtFilter jwtFilter;
@@ -45,6 +47,7 @@ public class SecurityConfig {
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(PublicEndpoints.PUBLIC_URLS.toArray(new String[0])).permitAll()
+                        .requestMatchers("/api/admin/**").hasRole("ADMIN") // Require ADMIN role for admin endpoints
                         .anyRequest().authenticated()
                 )
                 .oauth2Login(oauth2 -> oauth2
@@ -73,6 +76,10 @@ public class SecurityConfig {
                             } else {
                                 response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
                             }
+                        })
+                        .accessDeniedHandler((request, response, accessDeniedException) -> {
+                            // Handle forbidden access (e.g., trying to access admin endpoints without admin role)
+                            response.sendError(HttpStatus.FORBIDDEN.value(), "Access Denied: You don't have permission to access this resource");
                         })
                 );
 
