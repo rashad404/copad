@@ -2,7 +2,7 @@ import { Link } from "react-router-dom";
 
 export default function Breadcrumb({ items }) {
   return (
-    <nav className="text-sm text-gray-500 px-4 py-2" aria-label="Breadcrumb">
+    <nav className="text-sm text-gray-500 dark:text-gray-400 px-4 py-2" aria-label="Breadcrumb">
       {items.map((item, i) => (
         <span key={i}>
           {i > 0 && " / "}
