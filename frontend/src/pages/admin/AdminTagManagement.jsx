@@ -9,7 +9,7 @@ import {
   MagnifyingGlassIcon,
   ExclamationCircleIcon,
 } from '@heroicons/react/24/outline';
-import { getAllTags, createTag } from '../api';
+import { getAllTags, createTag } from '../../api';
 
 const AdminTagManagement = () => {
   const { t } = useTranslation();

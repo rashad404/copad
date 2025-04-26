@@ -92,7 +92,8 @@ export const getSettings = () => API.get('/settings');
 
 export const updateSettings = (data) => API.put('/settings', data);
 
-// Admin User Management
+
+// User Management
 export const getAllUsers = (page = 0, size = 10) => 
   API.get(`/users?page=${page}&size=${size}`);
 

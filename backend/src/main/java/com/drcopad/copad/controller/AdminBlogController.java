@@ -2,6 +2,9 @@ package com.drcopad.copad.controller;
 
 import com.drcopad.copad.dto.*;
 import com.drcopad.copad.entity.User;
+import com.drcopad.copad.repository.BlogPostRepository;
+import com.drcopad.copad.repository.TagRepository;
+import com.drcopad.copad.repository.UserRepository;
 import com.drcopad.copad.service.BlogService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Page;
@@ -13,7 +16,9 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
-import javax.validation.Valid;
+import jakarta.validation.Valid;
+
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -24,6 +29,9 @@ import java.util.Map;
 public class AdminBlogController {
 
     private final BlogService blogService;
+    private final BlogPostRepository blogPostRepository;
+    private final TagRepository tagRepository;
+    private final UserRepository userRepository;
 
     // Post Management
     @GetMapping("/posts")
@@ -140,15 +148,32 @@ public class AdminBlogController {
     }
 
     // Dashboard Statistics
-    @GetMapping("/dashboard/stats")
-    public ResponseEntity<Map<String, Object>> getDashboardStats() {
-        return ResponseEntity.ok(blogService.getDashboardStats());
-    }
 
     @GetMapping("/dashboard/recent-posts")
     public ResponseEntity<List<BlogPostListDTO>> getRecentPosts(
             @RequestParam(defaultValue = "5") int limit
     ) {
         return ResponseEntity.ok(blogService.getRecentPosts(limit));
+    }
+
+    @GetMapping("/dashboard/stats")
+    public ResponseEntity<Map<String, Object>> getDashboardStats() {
+        Map<String, Object> stats = new HashMap<>();
+        
+        long totalPosts = blogPostRepository.count();
+        long publishedPosts = blogPostRepository.countByPublishedTrue();
+        long draftPosts = totalPosts - publishedPosts;
+        long totalTags = tagRepository.count();
+        long totalUsers = userRepository.count();
+        
+        stats.put("totalPosts", totalPosts);
+        stats.put("publishedPosts", publishedPosts);
+        stats.put("draftPosts", draftPosts);
+        stats.put("totalTags", totalTags);
+        stats.put("totalUsers", totalUsers);
+        
+        // You could add more statistics here
+        
+        return ResponseEntity.ok(stats);
     }
 }

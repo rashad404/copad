@@ -640,5 +640,124 @@
       "title": "No articles yet",
       "description": "We're working on adding new content. Please check back later!"
     }
+  },
+  "admin": {
+    "title": "Admin Dashboard",
+    "dashboard": "Dashboard",
+    "posts": {
+      "title": "Blog Posts",
+      "description": "Manage and publish your blog content",
+      "create": "Create New Post",
+      "selected": "{{count}} posts selected",
+      "confirmDelete": "Delete Post?",
+      "confirmBulkDelete": "Delete {{count}} posts?",
+      "deleteWarning": "This action cannot be undone. The post will be permanently deleted.",
+      "published": "Published",
+      "draft": "Draft",
+      "noTags": "No tags",
+      "empty": "No posts found. Create your first post to get started.",
+      "table": {
+        "title": "Title",
+        "status": "Status",
+        "tags": "Tags",
+        "created": "Created",
+        "actions": "Actions"
+      },
+      "view": "View",
+      "edit": "Edit",
+      "delete": "Delete",
+      "form": {
+        "createTitle": "Create New Post",
+        "editTitle": "Edit Post",
+        "createDescription": "Add a new post to your blog",
+        "editDescription": "Update your existing post",
+        "title": "Title",
+        "slug": "Slug",
+        "generateSlug": "Generate from title",
+        "slugPlaceholder": "your-post-url",
+        "slugHelp": "URL-friendly identifier for your post. Use only lowercase letters, numbers, and hyphens.",
+        "summary": "Summary",
+        "summaryHelp": "A brief description of your post (max 500 characters)",
+        "content": "Content",
+        "featuredImage": "Featured Image URL",
+        "tags": "Tags",
+        "addTag": "Add a tag",
+        "addTagButton": "Add",
+        "availableTags": "Available tags",
+        "language": "Language",
+        "published": "Published",
+        "publishedHelp": "When checked, the post will be publicly visible on your blog",
+        "cancel": "Cancel",
+        "saveDraft": "Save as Draft",
+        "publish": "Publish",
+        "saving": "Saving...",
+        "preview": "Preview",
+        "editMode": "Edit Mode",
+        "unsavedChanges": "Unsaved Changes",
+        "unsavedChangesWarning": "You have unsaved changes that will be lost if you leave. Are you sure you want to continue?",
+        "leaveAnyway": "Leave Anyway",
+        "stayAndEdit": "Stay and Edit",
+        "createSuccess": "Post created successfully",
+        "updateSuccess": "Post updated successfully",
+        "saveError": "Failed to save post",
+        "errors": {
+          "titleRequired": "Title is required",
+          "summaryRequired": "Summary is required",
+          "summaryTooLong": "Summary must be less than 500 characters",
+          "contentRequired": "Content is required",
+          "imageRequired": "Featured image URL is required",
+          "invalidUrl": "Please enter a valid URL"
+        }
+      }
+    },
+    "tags": {
+      "title": "Tags",
+      "description": "Manage categories and tags for your blog posts",
+      "create": "Add New Tag",
+      "namePlaceholder": "Enter tag name",
+      "add": "Add Tag",
+      "confirmDelete": "Delete Tag?",
+      "deleteWarning": "This action cannot be undone. The tag will be permanently removed from all posts.",
+      "postsCount": "{{count}} posts",
+      "noTags": "No tags found. Create your first tag to get started.",
+      "noSearchResults": "No tags match your search",
+      "search": "Search tags",
+      "createSuccess": "Tag created successfully",
+      "updateSuccess": "Tag updated successfully",
+      "deleteSuccess": "Tag deleted successfully"
+    },
+    "users": {
+      "title": "Users",
+      "admins": "Administrators",
+      "authors": "Authors",
+      "readers": "Readers"
+    },
+    "settings": {
+      "title": "Settings",
+      "general": "General Settings",
+      "theme": "Theme Settings"
+    },
+    "stats": {
+      "totalPosts": "Total Posts",
+      "publishedPosts": "Published",
+      "draftPosts": "Drafts",
+      "tags": "Tags",
+      "users": "Users",
+      "views": "Views"
+    },
+    "recentPosts": "Recent Posts",
+    "noPosts": "No posts found",
+    "unknownAuthor": "Unknown Author",
+    "filters": {
+      "all": "All",
+      "published": "Published",
+      "draft": "Drafts"
+    },
+    "search": "Search",
+    "pagination": {
+      "previous": "Previous",
+      "next": "Next",
+      "showing": "Showing {{from}} to {{to}} of {{total}} results"
+    }
   }
 }

@@ -10,7 +10,7 @@ import {
   ExclamationCircleIcon,
   EyeIcon,
 } from '@heroicons/react/24/outline';
-import { getBlogPostBySlug, createBlogPost, updateBlogPost, getAllTags, createTag } from '../api';
+import { getBlogPostBySlug, createBlogPost, updateBlogPost, getAllTags, createTag } from '../../api';
 
 // Import a rich text editor - for a production app, you might want to use a more robust solution
 // Such as TinyMCE, CKEditor, or Quill. This is a simplified version for the example.
@@ -760,3 +760,5 @@ const AdminPostForm = () => {
     </div>
   );
 };
+
+export default AdminPostForm;

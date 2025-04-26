@@ -9,7 +9,7 @@ import {
   EyeIcon,
   PencilSquareIcon 
 } from '@heroicons/react/24/outline';
-import { getBlogPosts, getTopTags } from '../api';
+import { getBlogPosts, getTopTags } from '../../api';
 
 const AdminDashboard = () => {
   const { t } = useTranslation();

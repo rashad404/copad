@@ -16,6 +16,10 @@ import com.drcopad.copad.entity.User;
 @Repository
 public interface BlogPostRepository extends JpaRepository<BlogPost, Long> {
     
+    long countByPublishedTrue();
+
+    List<BlogPost> findTop10ByOrderByCreatedAtDesc();
+
     Page<BlogPost> findAllByPublishedTrue(Pageable pageable);
     
     Optional<BlogPost> findBySlug(String slug);

@@ -14,7 +14,7 @@ import {
   FunnelIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { getBlogPosts, deleteBlogPost } from '../api';
+import { getBlogPosts, deleteBlogPost } from '../../api';
 import { format } from 'date-fns';
 
 const AdminPostList = () => {
