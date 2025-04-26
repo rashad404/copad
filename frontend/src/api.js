@@ -68,27 +68,29 @@ export const deleteGuestChat = (sessionId, chatId) => {
 export const getChatHistory = (sessionId, chatId) => API.get(`/guest/chat/${sessionId}/${chatId}/history`);
 
 // Blog endpoints
-export const getBlogPosts = (page = 0, size = 9) => API.get(`/blog/posts?page=${page}&size=${size}`);
-export const getTopTags = (limit = 10) => API.get(`/blog/tags/top?limit=${limit}`);
+export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc") => 
+  API.get(`/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`);
+
+export const getTopTags = (limit = 10) => API.get(`/tags/top?limit=${limit}`);
 
 // Blog post management
-export const deleteBlogPost = (postId) => API.delete(`/blog/posts/${postId}`);
-export const getBlogPostBySlug = (slug) => API.get(`/blog/posts/slug/${slug}`);
+export const deleteBlogPost = (postId) => API.delete(`/blog/${postId}`);
+export const getBlogPostBySlug = (slug) => API.get(`/blog/${slug}`);
 
 // Blog search functionality
-export const searchBlogPosts = (query, page = 0, size = 9) => 
-  API.get(`/blog/posts/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`);
+export const searchBlogPosts = (keyword, page = 0, size = 9) => 
+  API.get(`/blog/search?keyword=${encodeURIComponent(keyword)}&page=${page}&size=${size}`);
 
 // Blog posts by tag
 export const getBlogPostsByTag = (tagSlug, page = 0, size = 9) => 
-  API.get(`/blog/posts/tag/${tagSlug}?page=${page}&size=${size}`);
+  API.get(`/blog/tag/${tagSlug}?page=${page}&size=${size}`);
 
-export const getTagBySlug = (slug) => API.get(`/blog/tags/slug/${slug}`);
+export const getTagBySlug = (slug) => API.get(`/tags/${slug}`);
 
-export const createBlogPost = (data) => API.post('/blog/posts', data);
+export const createBlogPost = (data) => API.post('/blog', data);
 
-export const createTag = (data) => API.post('/blog/tags', data);
+export const createTag = (name) => API.post('/tags', null, { params: { name } });
 
-export const getAllTags = () => API.get('/blog/tags');
+export const getAllTags = () => API.get('/tags');
 
-export const updateBlogPost = (postId, data) => API.put(`/blog/posts/${postId}`, data);
+export const updateBlogPost = (id, data) => API.put(`/blog/${id}`, data);

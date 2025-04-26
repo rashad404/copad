@@ -38,7 +38,7 @@ public class BlogService {
                 .orElseThrow(() -> new RuntimeException("Blog post not found"));
         return convertToDTO(blogPost);
     }
-    
+
     public Page<BlogPostListDTO> getPostsByTag(String tagSlug, Pageable pageable) {
         Tag tag = tagRepository.findBySlug(tagSlug)
                 .orElseThrow(() -> new RuntimeException("Tag not found"));

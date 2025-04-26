@@ -1,4 +1,16 @@
 spring:
+  mvc:
+    throw-exception-if-no-handler-found: true  # Needed to catch 404s manually
+    web:
+      resources:
+        add-mappings: false # Needed if you want custom handling for static resources too
+  devtools:
+    restart:
+      enabled: true
+      quiet-period: 2000
+      poll-interval: 3000
+    livereload:
+      enabled: true
   profiles:
     active: local  # change to 'prod' when deploying to production
   security:
@@ -41,6 +53,10 @@ server:
       remote-ip-header: X-Forwarded-For
       internal-proxies: .*
   use-forward-headers: true
+  error:
+    path: /custom-error   # Default is /error
+    whitelabel:
+      enabled: true # If true, uses default Spring Boot error page
 
 app:
   chatgpt:
@@ -51,3 +67,6 @@ app:
       model: gpt-4o-mini
       url: https://api.openai.com/v1/chat/completions
 
+logging:
+  level:
+    org.springframework.security: DEBUG

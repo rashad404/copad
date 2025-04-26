@@ -24,7 +24,17 @@ public class TagService {
     }
     
     public List<TagDTO> getTopTags(int limit) {
-        return tagRepository.findTopTags(PageRequest.of(0, limit)).stream()
+        TagDTO one = new TagDTO();
+        one.setId(1L);
+        one.setName("java");
+        one.setSlug("java");
+        one.setPostCount(2);
+        TagDTO two = new TagDTO();
+        two.setId(1L);
+        two.setName("java");
+        two.setSlug("java");
+        two.setPostCount(2);
+       return tagRepository.findTopTags(PageRequest.of(0, limit)).stream()
                 .map(this::convertToDTO)
                 .collect(Collectors.toList());
     }

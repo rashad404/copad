@@ -11,6 +11,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.filter.OncePerRequestFilter;
 
 import java.io.IOException;
@@ -21,15 +22,13 @@ public class JwtFilter extends OncePerRequestFilter {
 
     private final JwtService jwtService;
     private final UserRepository userRepository;
+    private final AntPathMatcher pathMatcher = new AntPathMatcher(); // for wildcard path matching
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getRequestURI();
-        return path.startsWith("/api/guest/") || 
-               path.startsWith("/api/auth/") || 
-               path.startsWith("/api/blog/") ||  // Corrected path pattern
-               path.startsWith("/api/oauth2/authorization/") ||
-               path.startsWith("/api/login/oauth2/code/");
+        return PublicEndpoints.PUBLIC_URLS.stream()
+                .anyMatch(publicUrl -> pathMatcher.match(publicUrl, path));
     }
 
     @Override

@@ -30,6 +30,7 @@ const BlogPage = () => {
         setPostsLoading(true);
         setTagsLoading(true);
         
+        console.log("THIS IS CALLED");
         // Fetch posts and tags in parallel
         const [postsResponse, tagsResponse] = await Promise.all([
           getBlogPosts(0, 9),
