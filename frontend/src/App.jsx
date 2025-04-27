@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { useContext } from "react";
 import { AuthContext } from "./context/AuthContext.jsx";
 import { ChatProvider } from "./context/ChatContext.jsx";
@@ -36,16 +36,13 @@ import AdminPostForm from "./pages/admin/AdminPostForm.jsx";
 import AdminTagManagement from "./pages/admin/AdminTagManagement.jsx";
 
 const AppRoutes = () => {
-  const { isAuthenticated, user } = useContext(AuthContext);
+  const { isAuthenticated } = useContext(AuthContext);
   useGoogleAnalytics();
   
-  // Check if user has admin role
-  const isAdmin = isAuthenticated && user?.roles?.includes('ADMIN');
-
   return (
     <Routes>
       {/* Public routes */}
-      <Route path="/" element={isAuthenticated ? <DashboardPage /> : <HomePage />} />
+      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />} />
       <Route path="/login" element={<LoginPage />} />
       <Route path="/register" element={<RegisterPage />} />
       <Route path="/login/callback" element={<OAuthCallbackPage />} />
@@ -62,32 +59,38 @@ const AppRoutes = () => {
       <Route path="/blog/search" element={<BlogSearchPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
       
-      {/* Protected routes - wrapped in MainLayout */}
-      {isAuthenticated && (
-        <Route element={<MainLayout />}>
-          <Route path="/dashboard" element={<DashboardPage />} />
-          <Route path="/appointments" element={<AppointmentsPage />} />
-          <Route path="/appointments/new" element={<NewAppointmentPage />} />
-          <Route path="/profile" element={<ProfilePage />} />
-          
-          {/* Chat routes with ChatLayout */}
-          <Route element={<ChatLayout />}>
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/chat/:id" element={<ChatPage />} />
-          </Route>
-        </Route>
-      )}
+      {/* Protected routes */}
+      <Route path="/dashboard" element={
+        isAuthenticated ? <MainLayout><DashboardPage /></MainLayout> : <Navigate to="/login" />
+      } />
+      <Route path="/appointments" element={
+        isAuthenticated ? <MainLayout><AppointmentsPage /></MainLayout> : <Navigate to="/login" />
+      } />
+      <Route path="/appointments/new" element={
+        isAuthenticated ? <MainLayout><NewAppointmentPage /></MainLayout> : <Navigate to="/login" />
+      } />
+      <Route path="/profile" element={
+        isAuthenticated ? <MainLayout><ProfilePage /></MainLayout> : <Navigate to="/login" />
+      } />
       
-      {/* Admin Routes - protected and wrapped in AdminLayout */}
-      {isAdmin && (
-        <Route path="/admin" element={<AdminLayout />}>
-          <Route index element={<AdminDashboard />} />
-          <Route path="posts" element={<AdminPostList />} />
-          <Route path="posts/create" element={<AdminPostForm />} />
-          <Route path="posts/edit/:id" element={<AdminPostForm />} />
-          <Route path="tags" element={<AdminTagManagement />} />
-        </Route>
-      )}
+      {/* Chat routes */}
+      <Route path="/chat" element={
+        isAuthenticated ? <MainLayout><ChatLayout><ChatPage /></ChatLayout></MainLayout> : <Navigate to="/login" />
+      } />
+      <Route path="/chat/:id" element={
+        isAuthenticated ? <MainLayout><ChatLayout><ChatPage /></ChatLayout></MainLayout> : <Navigate to="/login" />
+      } />
+      
+      {/* Admin Routes */}
+      <Route path="/admin" element={
+        isAuthenticated ? <AdminLayout /> : <Navigate to="/login" />
+      }>
+        <Route index element={<AdminDashboard />} />
+        <Route path="posts" element={<AdminPostList />} />
+        <Route path="posts/create" element={<AdminPostForm />} />
+        <Route path="posts/edit/:id" element={<AdminPostForm />} />
+        <Route path="tags" element={<AdminTagManagement />} />
+      </Route>
       
       <Route path="*" element={<NotFoundPage />} />
     </Routes>

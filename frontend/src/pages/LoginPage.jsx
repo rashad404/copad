@@ -1,9 +1,11 @@
 import { useState, useContext } from "react";
 import { useNavigate, Link, useLocation } from "react-router-dom";
-import { login } from "../api";
+import { login as apiLogin } from "../api";
 import Navbar from "../components/Navbar";
 import { AuthContext } from "../context/AuthContext.jsx";
 import { useTranslation } from 'react-i18next';
+import { useAuth } from "../context/AuthContext";
+
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -14,34 +16,30 @@ export default function LoginPage() {
   const location = useLocation();
   const { setIsAuthenticated } = useContext(AuthContext);
 
+  const { login } = useAuth();
+
+  
   const handleChange = e => {
     setForm({ ...form, [e.target.name]: e.target.value });
     if (error) setError(null);
   };
 
-  const handleSubmit = async e => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    setLoading(true);
+    
     try {
-      const res = await login(form);
-      localStorage.setItem("token", res.data);
-      setIsAuthenticated(true);
-      // Redirect to the saved path or home
-      const redirectPath = location.state?.redirect || "/";
-      navigate(redirectPath);
-    } catch (err) {
-      console.error('Login error:', err);
-      if (err.response?.status === 401) {
-        setError(t('auth.errors.invalid_credentials'));
-      } else if (err.response?.status === 404) {
-        setError(t('auth.errors.user_not_found'));
-      } else {
-        setError(t('auth.errors.login_failed'));
-      }
+      setLoading(true);
+      const response = await apiLogin(form); // call API login
+      login(response.data); // update AuthContext login
+      navigate('/'); // redirect
+    } catch (error) {
+      console.error("Login failed:", error);
+      setError(t("auth.errors.login_failed"));
     } finally {
       setLoading(false);
     }
   };
+  
 
   const handleSocialLogin = (provider) => {
     window.location.href = `${import.meta.env.VITE_API_URL}/oauth2/authorization/${provider}`;

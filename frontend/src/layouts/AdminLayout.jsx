@@ -18,17 +18,14 @@ const AdminLayout = () => {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const { t } = useTranslation();
   const navigate = useNavigate();
-  const { isAuthenticated, user, setIsAuthenticated } = useAuth();
-  
-  // Check if user is admin
-  const isAdmin = isAuthenticated && user?.roles?.includes('ADMIN');
-  
+  const { isAuthenticated, setIsAuthenticated } = useAuth();
+
   useEffect(() => {
-    // Redirect if not authenticated or not admin
-    if (!isAuthenticated || !isAdmin) {
+    // Ensure user is authenticated for the admin layout
+    if (!isAuthenticated) {
       navigate('/login');
     }
-  }, [isAuthenticated, isAdmin, navigate]);
+  }, [isAuthenticated, navigate]);
 
   const handleLogout = () => {
     localStorage.removeItem("token");
@@ -133,6 +130,7 @@ const AdminLayout = () => {
                   {item.name}
                 </a>
               ))}
+
               <button
                 onClick={handleLogout}
                 className="w-full group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -158,23 +156,24 @@ const AdminLayout = () => {
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('admin.title')}</h1>
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
-              {menuItems.map((item) => (
-                <a
-                  key={item.name}
-                  href={item.href}
-                  className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    navigate(item.href);
-                  }}
-                >
-                  <item.icon
-                    className="mr-3 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                    aria-hidden="true"
-                  />
-                  {item.name}
-                </a>
-              ))}
+            {menuItems.map((item) => (
+              <a
+                key={item.name}
+                href={item.href}
+                className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                onClick={(e) => {
+                  e.preventDefault();
+                  navigate(item.href);
+                }}
+              >
+                <item.icon
+                  className="mr-3 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                  aria-hidden="true"
+                />
+                {item.name}
+              </a>
+            ))}
+
               <button
                 onClick={handleLogout}
                 className="w-full group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"

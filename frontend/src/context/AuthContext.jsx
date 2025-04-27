@@ -1,4 +1,6 @@
 import { createContext, useState, useEffect, useContext } from "react";
+import axios from "axios";
+import { getApiUrl } from "../config/domains";
 
 export const AuthContext = createContext();
 
@@ -12,15 +14,82 @@ export const useAuth = () => {
 
 export default function AuthProvider({ children }) {
   const [isAuthenticated, setIsAuthenticated] = useState(!!localStorage.getItem("token"));
+  const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true);
+
+  const fetchUserData = async () => {
+    try {
+      setLoading(true);
+      const token = localStorage.getItem("token");
+      
+      if (!token) {
+        setUser(null);
+        setLoading(false);
+        return;
+      }
+      
+      const response = await axios.get(`${getApiUrl()}/user/me`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      setUser(response.data);
+    } catch (error) {
+      console.error("Error fetching user data:", error);
+      // If the request fails (e.g., token is invalid), clear the token
+      if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        localStorage.removeItem("token");
+        setIsAuthenticated(false);
+      }
+      setUser(null);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   useEffect(() => {
-    const checkAuth = () => setIsAuthenticated(!!localStorage.getItem("token"));
+    if (isAuthenticated) {
+      fetchUserData();
+    } else {
+      setUser(null);
+      setLoading(false);
+    }
+  }, [isAuthenticated]);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const hasToken = !!localStorage.getItem("token");
+      setIsAuthenticated(hasToken);
+    };
+    
     window.addEventListener("storage", checkAuth);
     return () => window.removeEventListener("storage", checkAuth);
   }, []);
 
+  const login = (token) => {
+    localStorage.setItem("token", token);
+    setIsAuthenticated(true);
+  };
+
+  const logout = () => {
+    localStorage.removeItem("token");
+    setIsAuthenticated(false);
+    setUser(null);
+  };
+
   return (
-    <AuthContext.Provider value={{ isAuthenticated, setIsAuthenticated }}>
+    <AuthContext.Provider 
+      value={{ 
+        isAuthenticated, 
+        setIsAuthenticated, 
+        user, 
+        loading,
+        login,
+        logout,
+        refreshUser: fetchUserData
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );
