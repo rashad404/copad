@@ -1,5 +1,5 @@
-import { useState, useEffect, useRef } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useState, useEffect } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import {
   ArrowLeftIcon,
@@ -10,29 +10,7 @@ import {
   ExclamationCircleIcon,
   EyeIcon,
 } from '@heroicons/react/24/outline';
-import { getBlogPostBySlug, createBlogPost, updateBlogPost, getAllTags, createTag } from '../../api';
-
-// Import a rich text editor - for a production app, you might want to use a more robust solution
-// Such as TinyMCE, CKEditor, or Quill. This is a simplified version for the example.
-const RichTextEditor = ({ value, onChange }) => {
-  const editorRef = useRef(null);
-
-  const handleInput = () => {
-    if (editorRef.current) {
-      onChange(editorRef.current.innerHTML);
-    }
-  };
-
-  return (
-    <div 
-      ref={editorRef}
-      contentEditable={true}
-      className="border border-gray-300 dark:border-gray-600 rounded-md p-4 min-h-[400px] focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
-      dangerouslySetInnerHTML={{ __html: value }}
-      onInput={handleInput}
-    />
-  );
-};
+import { getBlogPostById, createBlogPost, updateBlogPost, getAllTags, createTag } from '../../api';
 
 const AdminPostForm = () => {
   const { id } = useParams();
@@ -88,7 +66,8 @@ const AdminPostForm = () => {
       const fetchPost = async () => {
         try {
           setLoading(true);
-          const response = await getBlogPostBySlug(id);
+          // Use getBlogPostById instead of getBlogPostBySlug
+          const response = await getBlogPostById(id);
           const post = response.data;
           
           // Populate form data
@@ -528,9 +507,17 @@ const AdminPostForm = () => {
               {t('admin.posts.form.content')} *
             </label>
             <div className="mt-1">
-              <RichTextEditor 
-                value={formData.content} 
-                onChange={handleContentChange} 
+              <textarea
+                id="content"
+                name="content"
+                rows={15}
+                value={formData.content}
+                onChange={(e) => handleContentChange(e.target.value)}
+                className={`block w-full shadow-sm sm:text-sm rounded-md ${
+                  errors.content
+                    ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
+                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
+                } dark:bg-gray-800 dark:text-white`}
               />
             </div>
             {errors.content && (

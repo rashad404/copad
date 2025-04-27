@@ -100,3 +100,10 @@ export const updateBlogPost = (id, data) => {
   if (!data.language) data.language = i18n.language;
   return API.put(`/blog/${id}`, data);
 };
+
+// Get blog post by ID (for admin panel)
+export const getBlogPostById = (id) => API.get(`/admin/blog/posts/${id}`);
+
+
+// Use this endpoint for admin actions
+export const getAdminBlogPostById = (id) => API.get(`/admin/blog/posts/${id}`);

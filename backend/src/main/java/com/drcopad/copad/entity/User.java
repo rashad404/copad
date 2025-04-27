@@ -1,7 +1,6 @@
 package com.drcopad.copad.entity;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -15,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import java.util.stream.Collectors;
 
 @Entity
 @Getter
@@ -64,12 +65,14 @@ public class User implements UserDetails {
     }
     // --------------------------------
 
-    // UserDetails implementation
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        return Collections.emptyList(); // Or return roles if needed
+        // Map each role to a SimpleGrantedAuthority
+        return roles.stream()
+            .map(role -> new SimpleGrantedAuthority(role))
+            .collect(Collectors.toList());
     }
-
+    
     @Override
     public String getUsername() {
         return this.email;

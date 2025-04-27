@@ -269,7 +269,7 @@ public class BlogService {
         return blogPostRepository.findAll(pageable)
                 .map(this::convertToListDTO);
     }
-    
+
     /**
      * Get post by ID (for admin)
      */
