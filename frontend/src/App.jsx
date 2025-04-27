@@ -41,45 +41,55 @@ const AppRoutes = () => {
   
   return (
     <Routes>
-      {/* Public routes */}
-      <Route path="/" element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />} />
-      <Route path="/login" element={<LoginPage />} />
-      <Route path="/register" element={<RegisterPage />} />
-      <Route path="/login/callback" element={<OAuthCallbackPage />} />
+    {/* Public Pages wrapped in MainLayout */}
+    <Route element={<MainLayout />}>
+    <Route 
+      path="/" 
+      element={isAuthenticated ? <Navigate to="/dashboard" /> : <HomePage />} 
+    />
+
       <Route path="/about" element={<AboutPage />} />
       <Route path="/faq" element={<FAQPage />} />
       <Route path="/privacy" element={<PrivacyPolicyPage />} />
       <Route path="/terms" element={<TermsOfServicePage />} />
       <Route path="/security" element={<SecurityPage />} />
       <Route path="/contact" element={<ContactPage />} />
-      
-      {/* Blog routes */}
       <Route path="/blog" element={<BlogPage />} />
       <Route path="/blog/tag/:tagSlug" element={<BlogTagPage />} />
       <Route path="/blog/search" element={<BlogSearchPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
-      
-      {/* Protected routes with MainLayout */}
-      <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" /> }>
-        <Route path="/dashboard" element={<DashboardPage />} />
-        <Route path="/appointments" element={<AppointmentsPage />} />
-        <Route path="/appointments/new" element={<NewAppointmentPage />} />
-        <Route path="/profile" element={<ProfilePage />} />
-        <Route path="/chat" element={<ChatLayout><ChatPage /></ChatLayout>} />
-        <Route path="/chat/:id" element={<ChatLayout><ChatPage /></ChatLayout>} />
-      </Route>
-      
-      {/* Admin Routes */}
-      <Route path="/admin" element={isAuthenticated ? <AdminLayout /> : <Navigate to="/login" /> }>
-        <Route index element={<AdminDashboard />} />
-        <Route path="posts" element={<AdminPostList />} />
-        <Route path="posts/create" element={<AdminPostForm />} />
-        <Route path="posts/edit/:id" element={<AdminPostForm />} />
-        <Route path="tags" element={<AdminTagManagement />} />
-      </Route>
-      
-      <Route path="*" element={<NotFoundPage />} />
-    </Routes>
+
+      {/* Authentication pages */}
+      <Route path="/login" element={<LoginPage />} />
+      <Route path="/register" element={<RegisterPage />} />
+    </Route>
+
+    {/* OAuth callback */}
+    <Route path="/login/callback" element={<OAuthCallbackPage />} />
+
+    {/* Protected Routes */}
+    <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" />}>
+      <Route path="/dashboard" element={<DashboardPage />} />
+      <Route path="/appointments" element={<AppointmentsPage />} />
+      <Route path="/appointments/new" element={<NewAppointmentPage />} />
+      <Route path="/profile" element={<ProfilePage />} />
+      <Route path="/chat" element={<ChatLayout><ChatPage /></ChatLayout>} />
+      <Route path="/chat/:id" element={<ChatLayout><ChatPage /></ChatLayout>} />
+    </Route>
+
+    {/* Admin Routes */}
+    <Route path="/admin" element={isAuthenticated ? <AdminLayout /> : <Navigate to="/login" />}>
+      <Route index element={<AdminDashboard />} />
+      <Route path="posts" element={<AdminPostList />} />
+      <Route path="posts/create" element={<AdminPostForm />} />
+      <Route path="posts/edit/:id" element={<AdminPostForm />} />
+      <Route path="tags" element={<AdminTagManagement />} />
+    </Route>
+
+    {/* 404 */}
+    <Route path="*" element={<NotFoundPage />} />
+  </Routes>
+
   );
 };
 
