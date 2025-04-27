@@ -748,6 +748,7 @@
     "recentPosts": "Recent Posts",
     "noPosts": "No posts found",
     "unknownAuthor": "Unknown Author",
+    "filtersText": "Filters",
     "filters": {
       "all": "All",
       "published": "Published",

@@ -33,6 +33,7 @@ const AdminLayout = () => {
     navigate("/login");
   };
 
+  // Fixed menu items with proper translation keys
   const menuItems = [
     {
       name: t('admin.dashboard'),
@@ -50,17 +51,20 @@ const AdminLayout = () => {
       icon: PlusCircleIcon,
     },
     {
-      name: t('admin.tags'),
+      // Changed from admin.tags to admin.tags.title
+      name: t('admin.tags.title'),
       href: '/admin/tags',
       icon: TagIcon,
     },
     {
-      name: t('admin.users'),
+      // Changed from admin.users to admin.users.title
+      name: t('admin.users.title'),
       href: '/admin/users',
       icon: UsersIcon,
     },
     {
-      name: t('admin.settings'),
+      // Changed from admin.settings to admin.settings.title
+      name: t('admin.settings.title'),
       href: '/admin/settings',
       icon: Cog6ToothIcon,
     },
@@ -130,7 +134,6 @@ const AdminLayout = () => {
                   {item.name}
                 </a>
               ))}
-
               <button
                 onClick={handleLogout}
                 className="w-full group flex items-center px-2 py-2 text-base font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -139,7 +142,7 @@ const AdminLayout = () => {
                   className="mr-4 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   aria-hidden="true"
                 />
-                {t('admin.logout')}
+                {t('navbar.logout')}
               </button>
             </nav>
           </div>
@@ -156,24 +159,23 @@ const AdminLayout = () => {
               <h1 className="text-xl font-bold text-gray-900 dark:text-white">{t('admin.title')}</h1>
             </div>
             <nav className="mt-5 flex-1 px-2 space-y-1">
-            {menuItems.map((item) => (
-              <a
-                key={item.name}
-                href={item.href}
-                className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
-                onClick={(e) => {
-                  e.preventDefault();
-                  navigate(item.href);
-                }}
-              >
-                <item.icon
-                  className="mr-3 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
-                  aria-hidden="true"
-                />
-                {item.name}
-              </a>
-            ))}
-
+              {menuItems.map((item) => (
+                <a
+                  key={item.name}
+                  href={item.href}
+                  className="group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    navigate(item.href);
+                  }}
+                >
+                  <item.icon
+                    className="mr-3 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
+                    aria-hidden="true"
+                  />
+                  {item.name}
+                </a>
+              ))}
               <button
                 onClick={handleLogout}
                 className="w-full group flex items-center px-2 py-2 text-sm font-medium rounded-md text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-700"
@@ -182,7 +184,7 @@ const AdminLayout = () => {
                   className="mr-3 h-6 w-6 text-gray-500 dark:text-gray-400 group-hover:text-gray-900 dark:group-hover:text-white"
                   aria-hidden="true"
                 />
-                {t('admin.logout')}
+                {t('navbar.logout')}
               </button>
             </nav>
           </div>

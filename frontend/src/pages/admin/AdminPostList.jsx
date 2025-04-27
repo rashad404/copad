@@ -161,7 +161,7 @@ const AdminPostList = () => {
       <div className="mt-6 sm:flex sm:items-center sm:justify-between">
         <div className="flex items-center">
           <FunnelIcon className="h-5 w-5 text-gray-400 dark:text-gray-500" aria-hidden="true" />
-          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">{t('admin.filters')}:</span>
+          <span className="ml-2 text-sm text-gray-500 dark:text-gray-400">{t('admin.filtersText')}:</span>
           <div className="ml-2 space-x-2">
             <button
               type="button"
