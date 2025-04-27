@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Navbar from "../components/Navbar";
 import Breadcrumb from "../components/Breadcrumb";
 import axios from "axios";
 import { Save, User, AlertCircle, Loader, CheckCircle } from "lucide-react";
@@ -8,7 +7,24 @@ import { getApiUrl } from "../config/domains";
 
 const API_URL = getApiUrl();
 
+const normalizeProfile = (data) => ({
+  ...data,
+  name: data.name ?? "",
+  email: data.email ?? "",
+  age: data.age ?? "",
+  gender: data.gender ?? "",
+  medicalProfile: {
+    height: data.medicalProfile?.height ?? "",
+    weight: data.medicalProfile?.weight ?? "",
+    conditions: data.medicalProfile?.conditions ?? "",
+    allergies: data.medicalProfile?.allergies ?? "",
+    medications: data.medicalProfile?.medications ?? "",
+    lifestyle: data.medicalProfile?.lifestyle ?? "",
+  }
+});
+
 export default function ProfilePage() {
+  console.log("ProfilePage rendered");
   const { t } = useTranslation();
   const [profile, setProfile] = useState({
     name: "",
@@ -27,29 +43,24 @@ export default function ProfilePage() {
 
   const [loading, setLoading] = useState(true);
   const [saved, setSaved] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
+    console.log("ProfilePage useEffect - fetching profile");
     axios.get(`${API_URL}/profile`, {
         headers: { Authorization: `Bearer ${localStorage.getItem("token")}` }
-      }).then(res => {
+      })
+      .then(res => {
         const data = res.data;
-      
-        // Fix: if no medicalProfile, initialize it
-        if (!data.medicalProfile) {
-          data.medicalProfile = {
-            height: "",
-            weight: "",
-            conditions: "",
-            allergies: "",
-            medications: "",
-            lifestyle: ""
-          };
-        }
-      
-        setProfile(data);
+        console.log("Profile data loaded", data);
+        setProfile(normalizeProfile(data));
+        setLoading(false);
+      })
+      .catch(err => {
+        console.error("Profile API error", err);
+        setError(t("profile.errorLoading"));
         setLoading(false);
       });
-      
   }, []);
 
   const handleChange = e => {
@@ -77,7 +88,6 @@ export default function ProfilePage() {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Navbar />
       <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <Breadcrumb items={[{ label: t("navbar.profile") }]} />
         
@@ -106,6 +116,11 @@ export default function ProfilePage() {
               <div className="flex justify-center items-center py-12">
                 <Loader className="w-8 h-8 text-indigo-600 animate-spin" />
                 <span className="ml-2 text-gray-600">{t("profile.loading")}</span>
+              </div>
+            ) : error ? (
+              <div className="flex justify-center items-center py-12">
+                <AlertCircle className="w-8 h-8 text-red-500 mr-2" />
+                <span className="text-red-600">{error}</span>
               </div>
             ) : (
               <form id="profile-form" onSubmit={handleSubmit} className="space-y-8">

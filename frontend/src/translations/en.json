@@ -22,7 +22,8 @@
     "profile": "Profile",
     "login": "Login",
     "register": "Register",
-    "logout": "Logout"
+    "logout": "Logout",
+    "chat": "Chat"
   },
   "auth": {
     "email": "Email",

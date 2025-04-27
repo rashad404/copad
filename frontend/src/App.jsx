@@ -59,32 +59,18 @@ const AppRoutes = () => {
       <Route path="/blog/search" element={<BlogSearchPage />} />
       <Route path="/blog/:slug" element={<BlogPostPage />} />
       
-      {/* Protected routes */}
-      <Route path="/dashboard" element={
-        isAuthenticated ? <MainLayout><DashboardPage /></MainLayout> : <Navigate to="/login" />
-      } />
-      <Route path="/appointments" element={
-        isAuthenticated ? <MainLayout><AppointmentsPage /></MainLayout> : <Navigate to="/login" />
-      } />
-      <Route path="/appointments/new" element={
-        isAuthenticated ? <MainLayout><NewAppointmentPage /></MainLayout> : <Navigate to="/login" />
-      } />
-      <Route path="/profile" element={
-        isAuthenticated ? <MainLayout><ProfilePage /></MainLayout> : <Navigate to="/login" />
-      } />
-      
-      {/* Chat routes */}
-      <Route path="/chat" element={
-        isAuthenticated ? <MainLayout><ChatLayout><ChatPage /></ChatLayout></MainLayout> : <Navigate to="/login" />
-      } />
-      <Route path="/chat/:id" element={
-        isAuthenticated ? <MainLayout><ChatLayout><ChatPage /></ChatLayout></MainLayout> : <Navigate to="/login" />
-      } />
+      {/* Protected routes with MainLayout */}
+      <Route element={isAuthenticated ? <MainLayout /> : <Navigate to="/login" /> }>
+        <Route path="/dashboard" element={<DashboardPage />} />
+        <Route path="/appointments" element={<AppointmentsPage />} />
+        <Route path="/appointments/new" element={<NewAppointmentPage />} />
+        <Route path="/profile" element={<ProfilePage />} />
+        <Route path="/chat" element={<ChatLayout><ChatPage /></ChatLayout>} />
+        <Route path="/chat/:id" element={<ChatLayout><ChatPage /></ChatLayout>} />
+      </Route>
       
       {/* Admin Routes */}
-      <Route path="/admin" element={
-        isAuthenticated ? <AdminLayout /> : <Navigate to="/login" />
-      }>
+      <Route path="/admin" element={isAuthenticated ? <AdminLayout /> : <Navigate to="/login" /> }>
         <Route index element={<AdminDashboard />} />
         <Route path="posts" element={<AdminPostList />} />
         <Route path="posts/create" element={<AdminPostForm />} />

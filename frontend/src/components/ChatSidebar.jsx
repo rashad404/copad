@@ -137,20 +137,28 @@ const ChatSidebar = ({
                           </div>
                           <div className="flex space-x-1 opacity-0 group-hover:opacity-100 transition-opacity">
                             {onUpdateChatTitle && (
-                              <button
+                              <span
                                 onClick={(e) => startEditingTitle(chat, e)}
-                                className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                                className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
+                                role="button"
+                                tabIndex={0}
+                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingTitle(chat, e); }}
+                                aria-label={t('chat.editTitle')}
                               >
                                 <PencilIcon className="w-4 h-4" />
-                              </button>
+                              </span>
                             )}
                             {onDeleteChat && (
-                              <button
+                              <span
                                 onClick={(e) => handleDeleteChat(chat.id, e)}
-                                className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400"
+                                className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 cursor-pointer"
+                                role="button"
+                                tabIndex={0}
+                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDeleteChat(chat.id, e); }}
+                                aria-label={t('chat.deleteChat')}
                               >
                                 <TrashIcon className="w-4 h-4" />
-                              </button>
+                              </span>
                             )}
                           </div>
                         </div>
