@@ -25,6 +25,7 @@ import java.util.Map;
 @RestController
 @RequestMapping("/api/admin/blog")
 @PreAuthorize("hasRole('ADMIN')")
+
 @RequiredArgsConstructor
 public class AdminBlogController {
 

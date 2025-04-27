@@ -1,5 +1,7 @@
 package com.drcopad.copad.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpStatus;
@@ -13,6 +15,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.web.OAuth2LoginAuthenticationFilter;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -35,6 +38,8 @@ public class SecurityConfig {
             "https://logman.az"
     );
 
+    private static final Logger log = LoggerFactory.getLogger(SecurityConfig.class);
+
     public SecurityConfig(JwtFilter jwtFilter, OAuth2Config oauth2Config) {
         this.jwtFilter = jwtFilter;
         this.oauth2Config = oauth2Config;
@@ -42,6 +47,8 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http, ClientRegistrationRepository clientRegistrationRepository) throws Exception {
+        log.info("Public endpoints: {}", PublicEndpoints.PUBLIC_URLS);
+
         http
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .csrf(AbstractHttpConfigurer::disable)
@@ -62,7 +69,7 @@ public class SecurityConfig {
                                 .baseUri("/api/login/oauth2/code/*")
                         )
                 )
-                .addFilterBefore(jwtFilter, OAuth2LoginAuthenticationFilter.class)
+                .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.ALWAYS)
                 )

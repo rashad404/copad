@@ -5,7 +5,12 @@ import java.util.List;
 public class PublicEndpoints {
 
     public static final List<String> PUBLIC_URLS = List.of(
-            "/api/**",         // Allow ALL /api/ requests
-            "/custom-error"    // Allow custom error page separately
+            "/api/auth/**",
+            "/api/oauth2/**",
+            "/api/guest/**",
+            "/api/user/me",
+            "/api/tags",
+            "/api/blog/posts",
+            "/custom-error"
     );
 }
