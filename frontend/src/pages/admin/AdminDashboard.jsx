@@ -30,7 +30,7 @@ const AdminDashboard = () => {
         setLoading(true);
         
         // Fetch posts data
-        const postsResponse = await getBlogPosts(0, 5, 'createdAt', 'desc');
+        const postsResponse = await getBlogPosts(0, 5, 'createdAt', 'desc', undefined, true);
         let posts = [];
         let publishedCount = 0;
         let draftCount = 0;

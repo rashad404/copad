@@ -68,8 +68,13 @@ export const deleteGuestChat = (sessionId, chatId) => {
 export const getChatHistory = (sessionId, chatId) => API.get(`/guest/chat/${sessionId}/${chatId}/history`);
 
 // Blog endpoints
-export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc", language = i18n.language) => 
-  API.get(`/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}&language=${language}`);
+export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc", language = i18n.language, ignoreLanguage = false) => {
+  let url = `/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`;
+  if (!ignoreLanguage) {
+    url += `&language=${language}`;
+  }
+  return API.get(url);
+};
 
 export const getTopTags = (limit = 10) => API.get(`/tags/top?limit=${limit}`);
 
