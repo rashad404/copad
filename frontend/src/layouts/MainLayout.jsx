@@ -53,8 +53,6 @@ const MainLayout = () => {
     ? [
         { path: '/dashboard', icon: HomeIcon, label: t('navbar.dashboard') },
         { path: '/appointments', icon: CalendarIcon, label: t('navbar.appointments') },
-        { path: '/chat', icon: ChatBubbleLeftRightIcon, label: t('navbar.chat') },
-        { path: '/blog', icon: DocumentTextIcon, label: t('navbar.blog') },
         { path: '/profile', icon: UserIcon, label: t('navbar.profile') },
       ]
     : [
