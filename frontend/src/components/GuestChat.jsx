@@ -7,7 +7,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import userAvatar from '../assets/user.png';
 import doctorAvatar from '../assets/doctor.png';
 import ChatSidebar from './ChatSidebar';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { ListBulletIcon } from '@heroicons/react/24/outline';
 
 const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) => {
   const { t } = useTranslation();
@@ -134,7 +134,7 @@ const GuestChat = ({ containerClassName, messagesClassName, inputClassName }) =>
             className="p-2 mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
             title={t('chat.openSidebar')}
           >
-            <Bars3Icon className="w-6 h-6" />
+            <ListBulletIcon className="w-6 h-6" />
           </button>
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
             {chats.find(chat => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
