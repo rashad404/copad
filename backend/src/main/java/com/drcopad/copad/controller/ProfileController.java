@@ -8,7 +8,9 @@ import com.drcopad.copad.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -20,8 +22,12 @@ public class ProfileController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<UserProfileDTO> getProfile(@AuthenticationPrincipal User authenticatedUser) {
-        User user = userRepository.findByEmail(authenticatedUser.getEmail())
+    public ResponseEntity<UserProfileDTO> getProfile() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String email = authentication.getName(); // Subject (email) from token
+
+        // Always reload from DB
+        User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         UserProfileDTO dto = new UserProfileDTO();
@@ -43,8 +49,6 @@ public class ProfileController {
 
         return ResponseEntity.ok(dto);
     }
-
-
 
     @PutMapping
     public ResponseEntity<User> updateProfile(@AuthenticationPrincipal User user,
