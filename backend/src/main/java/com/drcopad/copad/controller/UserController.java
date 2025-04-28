@@ -24,10 +24,19 @@ public class UserController {
     @GetMapping("/me")
     public ResponseEntity<UserProfileDTO> getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String email = authentication.getName(); // Get email from token
+
+        String email;
+        Object principal = authentication.getPrincipal();
+        if (principal instanceof User user) {
+            email = user.getEmail(); // from authenticated User
+        } else if (principal instanceof String username) {
+            email = username; // fallback if principal is email directly
+        } else {
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Invalid authentication principal");
+        }
 
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+                .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
 
         UserProfileDTO dto = new UserProfileDTO();
         dto.setName(user.getName());
@@ -49,4 +58,5 @@ public class UserController {
 
         return ResponseEntity.ok(dto);
     }
+
 }
