@@ -190,8 +190,8 @@
   },
   "home": {
     "hero": {
-      "title": "Sizin Sİ Həkiminiz. 24/7 əlçatan.",
-      "subtitle": "Sağlamlıq sualı verin və Copad Sİ Həkimindən dərhal məsləhət alın — qeydiyyat tələb olunmur.",
+      "title": "Sizin AI Həkiminiz. 24/7 əlçatan.",
+      "subtitle": "Sağlamlıq sualı verin və Copad AI Həkimindən dərhal məsləhət alın — qeydiyyat tələb olunmur.",
       "createAccount": "Hesab yaradın",
       "login": "Daxil olun",
       "trustBar": {
@@ -205,7 +205,7 @@
       "subtitle": "Üç asan addımda peşəkar tibbi təlimat alın",
       "step1": {
         "title": "1. AI Həkim ilə məsləhətləşin",
-        "description": "Sağlamlıq narahatlıqlarınızı və ya əlamətlərinizi daxil edin və Sİ həkimimizdən dərhal rəy alın."
+        "description": "Sağlamlıq narahatlıqlarınızı və ya əlamətlərinizi daxil edin və AI həkimimizdən dərhal rəy alın."
       },
       "step2": {
         "title": "2. Fərdi Təlimat alın",
@@ -221,7 +221,7 @@
       "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
       "description": "Əlçatan, etibarlı və fərdi Sİ ilə təchiz edilmiş tibbi yardım.",
       "chat": {
-        "title": "Sİ Həkimi ilə məsləhətləşin",
+        "title": "AI Həkimi ilə məsləhətləşin",
         "description": "Əlamətlərinizi təsvir edin və dərhal ekspert təlimatı alın — 24/7. Gözləmə otaqları, təyin olunmuş görüşlər lazım deyil."
       },
       "upload": {
@@ -454,7 +454,7 @@
       },
       "1": {
         "question": "{{agentName}} necə işləyir?",
-        "answer": "Sadəcə əlamətlərinizi və ya sağlamlıq narahatlıqlarınızı təsvir edin, və Sİ həkimimiz dərhal, peşəkar tibbi məsləhət təqdim edəcək. Sistem giriş məlumatlarınızı təhlil edir və tibbi biliklərə və ən yaxşı təcrübələrə əsaslanaraq cavablar yaradır."
+        "answer": "Sadəcə əlamətlərinizi və ya sağlamlıq narahatlıqlarınızı təsvir edin, və AI həkimimiz dərhal, peşəkar tibbi məsləhət təqdim edəcək. Sistem giriş məlumatlarınızı təhlil edir və tibbi biliklərə və ən yaxşı təcrübələrə əsaslanaraq cavablar yaradır."
       },
       "2": {
         "question": "{{agentName}} həqiqi həkimlərin əvəzinə istifadə edilə bilərmi?",
@@ -589,7 +589,7 @@
     "note": "Tibbi suallar və ya sağlamlıq məsləhəti üçün ana səhifəyə qayıdın və Sİ söhbət xidmətimizdən istifadə edin. Tibbi təcili hallar üçün dərhal yerli təcili yardım xidmətləri ilə əlaqə saxlayın.",
     "medicalNote": {
       "title": "Tibbi Məsləhət Axtarırsınız?",
-      "description": "Sağlamlıqla əlaqəli hər hansı sual üçün ana səhifəmizdəki Sİ söhbət xidmətimizdən istifadə edin. Sİ həkimimiz tibbi sorğularınıza kömək etmək üçün 24/7 əlçatandır."
+      "description": "Sağlamlıqla əlaqəli hər hansı sual üçün ana səhifəmizdəki Sİ söhbət xidmətimizdən istifadə edin. AI həkimimiz tibbi sorğularınıza kömək etmək üçün 24/7 əlçatandır."
     }
   },
   "blog": {
