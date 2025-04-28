@@ -20,6 +20,8 @@ import org.springframework.web.server.ResponseStatusException;
 import java.io.IOException;
 import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
+import org.springframework.security.web.authentication.logout.SecurityContextLogoutHandler;
+import jakarta.servlet.http.HttpServletRequest;
 
 @RestController
 @RequestMapping("/api/auth")
@@ -55,32 +57,35 @@ public class AuthController {
     }
 
     @RequestMapping(value = "/success", method = {RequestMethod.GET, RequestMethod.POST})
-    public void handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User, HttpServletResponse response) throws IOException {
+    public void handleOAuthSuccess(@AuthenticationPrincipal OAuth2User oauth2User,
+                                    HttpServletResponse response,
+                                    HttpServletRequest request) throws IOException {
         if (oauth2User == null) {
             response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
             return;
         }
-        
+
         String email = oauth2User.getAttribute("email");
         String name = oauth2User.getAttribute("name");
-        
+
         if (email == null || name == null) {
             response.sendError(HttpStatus.BAD_REQUEST.value(), "Missing user information");
             return;
         }
-        
-        // Check if user exists, if not create new user
+
+        // Create token
         AuthResponse authResponse = authService.handleOAuthLogin(email, name);
-        
-        // Redirect to frontend with token as query parameter
+
+        // Logout user to clear session immediately after creating JWT
+        new SecurityContextLogoutHandler().logout(request, response, null);
+
+        // Redirect to frontend with token
         String redirectUrl = String.format("https://virtualhekim.az/login/callback?token=%s&name=%s&email=%s",
-            URLEncoder.encode(authResponse.getToken(), StandardCharsets.UTF_8),
-            URLEncoder.encode(authResponse.getFullName(), StandardCharsets.UTF_8),
-            URLEncoder.encode(authResponse.getEmail(), StandardCharsets.UTF_8));
-        
+                URLEncoder.encode(authResponse.getToken(), StandardCharsets.UTF_8),
+                URLEncoder.encode(authResponse.getFullName(), StandardCharsets.UTF_8),
+                URLEncoder.encode(authResponse.getEmail(), StandardCharsets.UTF_8));
         response.sendRedirect(redirectUrl);
     }
-
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Auth endpoint is working");
