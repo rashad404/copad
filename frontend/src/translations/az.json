@@ -166,7 +166,7 @@
     },
     "newAppointment": {
       "title": "Yeni Konsultasiyaya başlayın",
-      "description": "{{agentName}} ilə yeni Sİ konsultasiyası yaradın.",
+      "description": "{{agentName}} ilə yeni AI konsultasiyası yaradın.",
       "action": "İndi başlayın",
       "recommended": "Tövsiyə edilir"
     },
@@ -183,15 +183,15 @@
     },
     "footer": "Sağlamlığınız bizim üçün əhəmiyyətlidir. Bu platforma sizin rahatlığınız üçün hazırlanmışdır.",
     "chat": {
-      "title": "Sİ Söhbət",
-      "description": "Sİ sağlamlıq köməkçimizlə söhbətə başlayın.",
+      "title": "AI Söhbət",
+      "description": "AI sağlamlıq köməkçimizlə söhbətə başlayın.",
       "action": "Söhbətə keçin"
     }
   },
   "home": {
     "hero": {
-      "title": "Sizin AI Həkiminiz. 24/7 əlçatan.",
-      "subtitle": "Sağlamlıq sualı verin və Copad AI Həkimindən dərhal məsləhət alın — qeydiyyat tələb olunmur.",
+      "title": "Şəxsi AI Həkiminiz. 24/7 xidmətinizdə!",
+      "subtitle": "Sağlamlıqla bağlı sualınızı verin və dərhal professional məsləhət alın — qeydiyyatsız!",
       "createAccount": "Hesab yaradın",
       "login": "Daxil olun",
       "trustBar": {
@@ -219,18 +219,18 @@
     "features": {
       "title": "Xüsusiyyətlər",
       "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
-      "description": "Əlçatan, etibarlı və fərdi Sİ ilə təchiz edilmiş tibbi yardım.",
+      "description": "Əlçatan, etibarlı və fərdi AI ilə təchiz edilmiş tibbi yardım.",
       "chat": {
         "title": "AI Həkimi ilə məsləhətləşin",
         "description": "Əlamətlərinizi təsvir edin və dərhal ekspert təlimatı alın — 24/7. Gözləmə otaqları, təyin olunmuş görüşlər lazım deyil."
       },
       "upload": {
         "title": "Tibbi Faylları Yükləyin",
-        "description": "Laboratoriya nəticələrinizi, şəkillərinizi və tibbi tarixçənizi Sİ köməyi ilə analiz edin. Sadə dildə izahlar və anlayışlar əldə edin."
+        "description": "Laboratoriya nəticələrinizi, şəkillərinizi və tibbi tarixçənizi AI köməyi ilə analiz edin. Sadə dildə izahlar və anlayışlar əldə edin."
       },
       "track": {
         "title": "Konsultasiyaları İzləyin",
-        "description": "Sağlamlıq səyahətinizi tarixçə, xülasələr və Sİ qeydləri ilə təşkil edin. İstənilən vaxt əvvəlki konsultasiyalarınıza daxil olun."
+        "description": "Sağlamlıq səyahətinizi tarixçə, xülasələr və AI qeydləri ilə təşkil edin. İstənilən vaxt əvvəlki konsultasiyalarınıza daxil olun."
       }
     },
     "testimonials": {
@@ -269,7 +269,7 @@
       "title": "Səhiyyə mütəxəssisləri tərəfindən etibar edilir"
     },
     "footer": {
-      "description": "Etibarlı Sİ səhiyyə yoldaşınız. Ekspert tibbi təlimat alın, sağlamlığınızı izləyin və konsultasiyalarınızı bir yerdə idarə edin.",
+      "description": "Etibarlı AI səhiyyə yoldaşınız. Ekspert tibbi təlimat alın, sağlamlığınızı izləyin və konsultasiyalarınızı bir yerdə idarə edin.",
       "product": "Məhsul",
       "company": "Şirkət",
       "legal": "Hüquqi",
@@ -287,8 +287,8 @@
     }
   },
   "chat": {
-    "title": "Sİ Sağlamlıq Köməkçisi",
-    "subtitle": "Şəxsi Sİ tibbi köməkçiniz",
+    "title": "AI Sağlamlıq Köməkçisi",
+    "subtitle": "Şəxsi AI tibbi köməkçiniz",
     "status": {
       "online": "Onlayn",
       "offline": "Oflayn"
@@ -300,7 +300,7 @@
     "send": "Göndər",
     "sending": "Göndərilir...",
     "saveChat": "Konsultasiya kimi saxla",
-    "welcomeMessage": "Salam! Mən Dr. Copad, Sİ tibbi köməkçinizəm. Bu gün sizə necə kömək edə bilərəm?",
+    "welcomeMessage": "Salam! Mən Dr. Copad, AI tibbi köməkçinizəm. Bu gün sizə necə kömək edə bilərəm?",
     "empty": {
       "title": "Mesaja başlayın",
       "description": "Mənə hər hansı bir sağlamlıqla əlaqəli sual verin və mən peşəkar təlimat təqdim edəcəyəm."
@@ -319,7 +319,6 @@
     "noMessages": "Hələ mesaj yoxdur",
     "closeSidebar": "Yan paneli bağla",
     "openSidebar": "Yan paneli aç",
-    "welcomeMessage": "Salam! Bu gün sizə necə kömək edə bilərəm?",
     "error": {
       "initialization": "Söhbət başladıla bilmədi",
       "message": "Mesaj göndərilə bilmədi"
@@ -368,7 +367,7 @@
     "subtitle": "Başlamaq üçün məlumatlarınızı doldurun",
     "illustration": {
       "title": "Səhiyyə İcmamıza Qoşulun",
-      "description": "Sİ ilə təchiz edilmiş tibbi konsultasiyalara və sağlamlıq resurslarına daxil olmaq üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
+      "description": "AI ilə təchiz edilmiş tibbi konsultasiyalara və sağlamlıq resurslarına daxil olmaq üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
       "features": {
         "private": {
           "title": "Məxfi və Təhlükəsiz",
@@ -383,8 +382,8 @@
           "description": "Sağlamlıq səyahətinizi fərdiləşdirilmiş məlumatlarla izləyin"
         },
         "ai": {
-          "title": "Sİ ilə Təchiz Edilmiş",
-          "description": "Tibbi Sİ texnologiyasında ən son yenilikləri təcrübə edin"
+          "title": "AI ilə Təchiz Edilmiş",
+          "description": "Tibbi AI texnologiyasında ən son yenilikləri təcrübə edin"
         }
       }
     },
@@ -420,7 +419,7 @@
     "introduction": "Süni intellekt vasitəsilə səhiyyədə inqilab edirik, tibbi məsləhətləri əvvəlkindən daha əlçatan və fərdiləşdirilmiş edirik.",
     "mission": {
       "title": "Missiyamız",
-      "description": "Süni intellektin gücü ilə səhiyyəni daha əlçatan, səmərəli və fərdiləşdirilmiş etməyə çalışırıq. Platformamız xəstələri Sİ ilə təkmilləşdirilmiş tibbi məsləhətlə əlaqələndirir və dərhal, etibarlı və məxfi sağlamlıq dəstəyi təqdim edir."
+      "description": "Süni intellektin gücü ilə səhiyyəni daha əlçatan, səmərəli və fərdiləşdirilmiş etməyə çalışırıq. Platformamız xəstələri AI ilə təkmilləşdirilmiş tibbi məsləhətlə əlaqələndirir və dərhal, etibarlı və məxfi sağlamlıq dəstəyi təqdim edir."
     },
     "vision": {
       "title": "Vizyonumuz",
@@ -429,7 +428,7 @@
     "values": {
       "title": "Dəyərlərimiz",
       "items": {
-        "innovation": "Səhiyyədə Sİ sahəsində sərhədləri davamlı olaraq genişləndirmək",
+        "innovation": "Səhiyyədə AI sahəsində sərhədləri davamlı olaraq genişləndirmək",
         "quality": "Dəqiq və etibarlı tibbi məlumatlar təqdim etmək",
         "accessibility": "Səhiyyəni hər kəs üçün əlçatan etmək",
         "privacy": "Bütün tibbi məlumatların məxfiliyini təmin etmək"
@@ -437,11 +436,11 @@
     },
     "team": {
       "title": "Komandamız",
-      "description": "Səhiyyəyə çıxışı və çatdırılmasını yaxşılaşdırmaq üçün birlikdə çalışan səhiyyə mütəxəssisləri, Sİ ekspertləri və texnologiya yenilikçilərindən ibarət müxtəlif bir qrup."
+      "description": "Səhiyyəyə çıxışı və çatdırılmasını yaxşılaşdırmaq üçün birlikdə çalışan səhiyyə mütəxəssisləri, AI ekspertləri və texnologiya yenilikçilərindən ibarət müxtəlif bir qrup."
     },
     "technology": {
       "title": "Texnologiyamız",
-      "description": "Qabaqcıl Sİ alqoritmləri və maşın öyrənməsi ilə təchiz edilmiş platformamız, məlumat təhlükəsizliyi və məxfiliyinin ən yüksək standartlarını qoruyaraq intellektual, kontekstə həssas tibbi təlimat təqdim edir."
+      "description": "Qabaqcıl AI alqoritmləri və maşın öyrənməsi ilə təchiz edilmiş platformamız, məlumat təhlükəsizliyi və məxfiliyinin ən yüksək standartlarını qoruyaraq intellektual, kontekstə həssas tibbi təlimat təqdim edir."
     }
   },
   "faq": {
@@ -450,7 +449,7 @@
     "questions": {
       "0": {
         "question": "{{agentName}} nədir?",
-        "answer": "{{agentName}} dərhal, məxfi sağlamlıq məsləhəti təqdim edən Sİ ilə təchiz edilmiş tibbi köməkçidir. Platformamız fərdiləşdirilmiş tibbi təlimat təqdim etmək üçün qabaqcıl süni intellektdən istifadə edir 24/7."
+        "answer": "{{agentName}} dərhal, məxfi sağlamlıq məsləhəti təqdim edən AI ilə təchiz edilmiş tibbi köməkçidir. Platformamız fərdiləşdirilmiş tibbi təlimat təqdim etmək üçün qabaqcıl süni intellektdən istifadə edir 24/7."
       },
       "1": {
         "question": "{{agentName}} necə işləyir?",
@@ -517,7 +516,7 @@
     },
     "services": {
       "title": "Xidmət Təsviri",
-      "description": "{{agentName}} Sİ əsaslı tibbi məsləhət platformasıdır. Ümumi sağlamlıq məlumatları təqdim edirik, lakin peşəkar tibbi məsləhətin əvəzedicisi deyilik."
+      "description": "{{agentName}} AI əsaslı tibbi məsləhət platformasıdır. Ümumi sağlamlıq məlumatları təqdim edirik, lakin peşəkar tibbi məsləhətin əvəzedicisi deyilik."
     },
     "userResponsibilities": {
       "title": "İstifadəçi Məsuliyyətləri",
@@ -586,10 +585,10 @@
       "title": "Texniki Dəstək Saatları",
       "description": "Bütün texniki və biznes sorğularına 24 saat ərzində cavab verməyə çalışırıq."
     },
-    "note": "Tibbi suallar və ya sağlamlıq məsləhəti üçün ana səhifəyə qayıdın və Sİ söhbət xidmətimizdən istifadə edin. Tibbi təcili hallar üçün dərhal yerli təcili yardım xidmətləri ilə əlaqə saxlayın.",
+    "note": "Tibbi suallar və ya sağlamlıq məsləhəti üçün ana səhifəyə qayıdın və AI söhbət xidmətimizdən istifadə edin. Tibbi təcili hallar üçün dərhal yerli təcili yardım xidmətləri ilə əlaqə saxlayın.",
     "medicalNote": {
       "title": "Tibbi Məsləhət Axtarırsınız?",
-      "description": "Sağlamlıqla əlaqəli hər hansı sual üçün ana səhifəmizdəki Sİ söhbət xidmətimizdən istifadə edin. AI həkimimiz tibbi sorğularınıza kömək etmək üçün 24/7 əlçatandır."
+      "description": "Sağlamlıqla əlaqəli hər hansı sual üçün ana səhifəmizdəki AI söhbət xidmətimizdən istifadə edin. AI həkimimiz tibbi sorğularınıza kömək etmək üçün 24/7 əlçatandır."
     }
   },
   "blog": {
