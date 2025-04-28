@@ -8,7 +8,6 @@ public class PublicEndpoints {
             "/api/auth/**",
             "/api/oauth2/**",
             "/api/guest/**",
-            "/api/user/me",
             "/api/tags/**",
             "/api/blog/**",
             "/custom-error"
