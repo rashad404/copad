@@ -22,9 +22,13 @@ import Logo from '../components/Logo';
 import { getSiteInfo } from '../context/SiteContext';
 
 const MainLayout = () => {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  
   const [isMobile, setIsMobile] = useState(false);
   const { isAuthenticated, setIsAuthenticated } = useContext(AuthContext);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(() => {
+    const isDesktop = window.innerWidth >= 768;
+    return isAuthenticated && isDesktop;
+  });
   const { t } = useTranslation();
   const location = useLocation();
   const navigate = useNavigate();
