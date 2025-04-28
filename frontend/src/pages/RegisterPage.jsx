@@ -8,7 +8,7 @@ import { useTranslation } from "react-i18next";
 export default function RegisterPage() {
   const { t } = useTranslation();
   const [form, setForm] = useState({
-    fullName: "",
+    name: "",
     email: "",
     password: "",
     age: "",
@@ -101,12 +101,12 @@ export default function RegisterPage() {
               
               <form onSubmit={handleSubmit} className="space-y-5">
                 <div>
-                  <label htmlFor="fullName" className="block text-sm font-medium text-gray-700 mb-1">
+                  <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-1">
                     {t("register.form.fullName")}
                   </label>
                   <input
-                    id="fullName"
-                    name="fullName"
+                    id="name"
+                    name="name"
                     type="text"
                     autoComplete="name"
                     required
@@ -202,8 +202,8 @@ export default function RegisterPage() {
                       }}
                     >
                       <option value="">{t("register.form.genderPlaceholder")}</option>
-                      <option value="Male">{t("register.form.genderOptions.male")}</option>
-                      <option value="Female">{t("register.form.genderOptions.female")}</option>
+                      <option value="male">{t("register.form.genderOptions.male")}</option>
+                      <option value="female">{t("register.form.genderOptions.female")}</option>
                     </select>
                   </div>
                 </div>
