@@ -29,9 +29,14 @@ public class ProfileController {
     @GetMapping
     public ResponseEntity<UserProfileDTO> getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("[/api/profile] Authentication Class: {}", authentication.getClass().getName());
+        log.info("[/api/profile] Authentication Principal Class: {}", 
+                authentication.getPrincipal() != null ? 
+                authentication.getPrincipal().getClass().getName() : "null");
         log.info("[/api/profile] Full Authentication Object: {}", authentication);
-        String email = authentication.getName(); // Subject (email) from token
-        log.info("[/api/profile] Authentication Principal: {}", email);
+        
+        String email = authentication.getName();
+        log.info("[/api/profile] Email from authentication: {}", email);
 
         // Always reload from DB
         User user = userRepository.findByEmail(email)

@@ -2,6 +2,8 @@ import React, { useState, useEffect, useContext } from 'react';
 import { Outlet, useLocation, Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { AuthContext } from "../context/AuthContext.jsx";
+import { logout } from '../api';
+
 import {
   HomeIcon,
   CalendarIcon,
@@ -53,10 +55,18 @@ const MainLayout = () => {
   }, [isAuthenticated, isMobile]);
 
   
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsAuthenticated(false);
-    navigate('/login');
+  const handleLogout = async () => {
+    try {
+      // Call the server-side logout endpoint
+      await logout();
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // Always clear the client-side state even if API call fails
+      localStorage.removeItem('token');
+      setIsAuthenticated(false);
+      navigate('/login');
+    }
   };
 
   const toggleSidebar = () => {

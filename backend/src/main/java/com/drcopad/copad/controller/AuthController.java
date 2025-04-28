@@ -11,6 +11,8 @@ import com.drcopad.copad.service.AuthService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
@@ -43,8 +45,12 @@ public class AuthController {
 
 
     @PostMapping("/login")
-    public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
+    public ResponseEntity<String> login(@RequestBody UserLoginDTO dto, HttpServletRequest request, HttpServletResponse response) {
         try {
+            // Clear any existing security context
+            SecurityContextHolder.clearContext();
+            new SecurityContextLogoutHandler().logout(request, response, null);
+            
             User user = userRepository.findByEmail(dto.getEmail())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
                 
@@ -57,6 +63,16 @@ public class AuthController {
         } catch (ResponseStatusException e) {
             return ResponseEntity.status(e.getStatusCode()).body(e.getReason());
         }
+    }
+
+    @PostMapping("/logout") 
+    public ResponseEntity<String> logout(HttpServletRequest request, HttpServletResponse response) {
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        if (auth != null) {
+            new SecurityContextLogoutHandler().logout(request, response, auth);
+        }
+        SecurityContextHolder.clearContext();
+        return ResponseEntity.ok("Logged out successfully");
     }
 
     @RequestMapping(value = "/success", method = {RequestMethod.GET, RequestMethod.POST})

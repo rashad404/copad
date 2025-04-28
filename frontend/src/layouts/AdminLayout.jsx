@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { logout } from '../api';
+
 import {
   Bars3Icon,
   XMarkIcon,
@@ -27,10 +29,18 @@ const AdminLayout = () => {
     }
   }, [isAuthenticated, navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    navigate("/login");
+  const handleLogout = async () => {
+    try {
+      // Call the server-side logout endpoint
+      await logout();
+    } catch (error) {
+      console.error("Logout API error:", error);
+    } finally {
+      // Always clear the client-side state even if API call fails
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+      navigate("/login");
+    }
   };
 
   // Fixed menu items with proper translation keys

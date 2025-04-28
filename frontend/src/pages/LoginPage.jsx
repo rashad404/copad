@@ -29,9 +29,13 @@ export default function LoginPage() {
     
     try {
       setLoading(true);
-      const response = await apiLogin(form); // call API login
-      login(response.data); // update AuthContext login
-      navigate('/'); // redirect
+      // Clear security context first - log out any existing user
+      localStorage.removeItem("token");
+      
+      const response = await apiLogin(form);
+      localStorage.setItem("token", response.data);
+      login(response.data);
+      navigate('/');
     } catch (error) {
       console.error("Login failed:", error);
       setError(t("auth.errors.login_failed"));

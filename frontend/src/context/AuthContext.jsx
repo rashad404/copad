@@ -72,10 +72,22 @@ export default function AuthProvider({ children }) {
     setIsAuthenticated(true);
   };
 
-  const logout = () => {
-    localStorage.removeItem("token");
-    setIsAuthenticated(false);
-    setUser(null);
+  const logout = async () => {
+    try {
+      // Call the server-side logout endpoint
+      await logout();
+      // Clear the token from localStorage
+      localStorage.removeItem("token");
+      // Update auth state
+      setIsAuthenticated(false);
+      // Redirect to login page or home
+      navigate('/login');
+    } catch (error) {
+      console.error("Logout failed:", error);
+      // Still remove token and update state even if server logout fails
+      localStorage.removeItem("token");
+      setIsAuthenticated(false);
+    }
   };
 
   return (
