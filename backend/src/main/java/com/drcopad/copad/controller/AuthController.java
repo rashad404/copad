@@ -35,9 +35,12 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<User> register(@RequestBody UserRegisterDTO dto) {
-        return ResponseEntity.ok(userService.register(dto));
+    public ResponseEntity<String> register(@RequestBody UserRegisterDTO dto) {
+        User user = userService.register(dto);
+        String token = jwtService.generateToken(user.getEmail());
+        return ResponseEntity.ok(token);
     }
+
 
     @PostMapping("/login")
     public ResponseEntity<String> login(@RequestBody UserLoginDTO dto) {
