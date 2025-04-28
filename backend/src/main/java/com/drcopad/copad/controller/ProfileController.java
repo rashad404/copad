@@ -13,6 +13,8 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -21,14 +23,24 @@ public class ProfileController {
 
     private final UserRepository userRepository;
 
+    private static final Logger log = LoggerFactory.getLogger(ProfileController.class);
+
+
     @GetMapping
     public ResponseEntity<UserProfileDTO> getProfile() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        log.info("[/api/profile] Full Authentication Object: {}", authentication);
         String email = authentication.getName(); // Subject (email) from token
+        log.info("[/api/profile] Authentication Principal: {}", email);
 
         // Always reload from DB
         User user = userRepository.findByEmail(email)
-            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+            .orElseThrow(() -> {
+                log.warn("[/api/profile] User not found in DB for email: {}", email);
+                return new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found");
+            });
+
+        log.info("[/api/profile] Loaded User from DB: id={}, name={}, email={}", user.getId(), user.getName(), user.getEmail());
 
         UserProfileDTO dto = new UserProfileDTO();
         dto.setName(user.getName());
