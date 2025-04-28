@@ -43,6 +43,16 @@ const MainLayout = () => {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  useEffect(() => {
+    const isDesktop = window.innerWidth >= 768;
+    if (isAuthenticated && isDesktop) {
+      setIsSidebarOpen(true);
+    } else {
+      setIsSidebarOpen(false);
+    }
+  }, [isAuthenticated, isMobile]);
+
+  
   const handleLogout = () => {
     localStorage.removeItem('token');
     setIsAuthenticated(false);

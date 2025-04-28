@@ -74,7 +74,8 @@
     "filters": {
       "all": "Bütün Məsləhətləşmələr",
       "upcoming": "Gələcək",
-      "completed": "Tamamlanmış"
+      "completed": "Tamamlanmış",
+      "past": "Keçmiş"
     },
     "loading": "Məsləhətləşmələriniz yüklənir...",
     "empty": {
@@ -167,7 +168,12 @@
       "description": "Şifrələnmiş, məxfi və qorunur",
       "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin →"
     },
-    "footer": "Sağlamlığınız bizim üçün vacibdir. Bu platforma sizin rahatlığınız üçün hazırlanıb."
+    "footer": "Sağlamlığınız bizim üçün vacibdir. Bu platforma sizin rahatlığınız üçün hazırlanıb.",
+    "chat": {
+      "title": "AI Söhbət",
+      "description": "AI səhiyyə köməkçimizlə söhbətə başlayın.",
+      "action": "Söhbətə keç"
+    }
   },
   "home": {
     "hero": {
@@ -272,7 +278,8 @@
     "subtitle": "Şəxsi AI tibb köməkçiniz",
     "status": {
       "online": "Onlayn",
-      "offline": "Oflayn"
+      "offline": "Oflayn",
+      "undefined": "Naməlum Status"
     },
     "input": {
       "placeholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?"
@@ -308,7 +315,8 @@
       "initialization": "Söhbəti başlatmaq alınmadı",
       "message": "Mesaj göndərmək alınmadı"
     },
-    "inputPlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?"
+    "inputPlaceholder": "Mesajınızı yazın... Məs: Alergiyam var, nə etməliyəm?",
+    "viewDetails": "Ətraflı bax"
   },
   "profile": {
     "title": "Profiliniz",

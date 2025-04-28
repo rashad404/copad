@@ -83,7 +83,8 @@
     "filters": {
       "all": "All Consultations",
       "upcoming": "Upcoming",
-      "completed": "Completed"
+      "completed": "Completed",
+      "past": "Past"
     },
     "loading": "Loading your consultations...",
     "empty": {
@@ -97,7 +98,11 @@
       "primaryConcern": "Primary Concern",
       "date": "Date",
       "time": "Time"
-    }
+    },
+    "status": {
+      "undefined": "Unknown Status"
+    },
+    "viewDetails": "View Details"
   },
   "newAppointment": {
     "title": "Start a New Consultation",
@@ -176,7 +181,12 @@
       "description": "Encrypted, confidential, and protected",
       "learnMore": "Learn more about our privacy policy →"
     },
-    "footer": "Your health matters to us. This platform is designed for your convenience."
+    "footer": "Your health matters to us. This platform is designed for your convenience.",
+    "chat": {
+      "title": "AI Chat",
+      "description": "Start a conversation with our AI health assistant.",
+      "action": "Go to Chat"
+    }
   },
   "home": {
     "hero": {
@@ -768,5 +778,15 @@
       "next": "Next",
       "showing": "Showing {{from}} to {{to}} of {{total}} results"
     }
-  }
+  },
+  "filters": {
+    "all": "All Consultations",
+    "upcoming": "Upcoming",
+    "completed": "Completed",
+    "past": "Past"
+  },
+  "status": {
+    "undefined": "Unknown Status"
+  },
+  "viewDetails": "View Details"
 }
