@@ -6,9 +6,11 @@ import com.drcopad.copad.entity.MedicalProfile;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.server.ResponseStatusException;
 
 @RestController
 @RequestMapping("/api/profile")
@@ -18,7 +20,10 @@ public class ProfileController {
     private final UserRepository userRepository;
 
     @GetMapping
-    public ResponseEntity<UserProfileDTO> getProfile(@AuthenticationPrincipal User user) {
+    public ResponseEntity<UserProfileDTO> getProfile(@AuthenticationPrincipal User authenticatedUser) {
+        User user = userRepository.findByEmail(authenticatedUser.getEmail())
+            .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
         UserProfileDTO dto = new UserProfileDTO();
         dto.setName(user.getName());
         dto.setEmail(user.getEmail());
@@ -38,6 +43,7 @@ public class ProfileController {
 
         return ResponseEntity.ok(dto);
     }
+
 
 
     @PutMapping
