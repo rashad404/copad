@@ -22,7 +22,11 @@ export default function AuthProvider({ children }) {
       setLoading(true);
       const token = localStorage.getItem("token");
       
+      console.log('AuthContext: Fetching user data');
+      console.log('Token exists:', !!token);
+      
       if (!token) {
+        console.log('AuthContext: No token found');
         setUser(null);
         setLoading(false);
         return;
@@ -34,11 +38,13 @@ export default function AuthProvider({ children }) {
         }
       });
       
+      console.log('AuthContext: User data received:', response.data);
       setUser(response.data);
     } catch (error) {
-      console.error("Error fetching user data:", error);
+      console.error("AuthContext: Error fetching user data:", error.response || error);
       // If the request fails (e.g., token is invalid), clear the token
       if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+        console.log('AuthContext: Clearing invalid token');
         localStorage.removeItem("token");
         setIsAuthenticated(false);
       }
@@ -49,6 +55,7 @@ export default function AuthProvider({ children }) {
   };
 
   useEffect(() => {
+    console.log('AuthContext: Authentication state changed:', isAuthenticated);
     if (isAuthenticated) {
       fetchUserData();
     } else {
