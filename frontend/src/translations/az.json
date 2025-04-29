@@ -419,7 +419,7 @@
     "introduction": "Süni intellekt vasitəsilə səhiyyədə inqilab edirik, tibbi məsləhətləri əvvəlkindən daha əlçatan və fərdiləşdirilmiş edirik.",
     "mission": {
       "title": "Missiyamız",
-      "description": "Süni intellektin gücü ilə səhiyyəni daha əlçatan, səmərəli və fərdiləşdirilmiş etməyə çalışırıq. Platformamız xəstələri AI ilə təkmilləşdirilmiş tibbi məsləhətlə əlaqələndirir və dərhal, etibarlı və məxfi sağlamlıq dəstəyi təqdim edir."
+      "description": "Süni intellektin gücü ilə səhiyyəni daha əlçatan, səmərəli və fərdiləşdirilmiş etmək üçün çalışırıq. Platformamız xəstələri AI ilə təkmilləşdirilmiş tibbi məsləhətlə əlaqələndirir və dərhal, etibarlı və məxfi sağlamlıq dəstəyi təqdim edir."
     },
     "vision": {
       "title": "Vizyonumuz",
@@ -643,7 +643,8 @@
           "az": "Azərbaycanca",
           "en": "İngiliscə",
           "tr": "Türkcə"
-        }
+        },
+        "save": "Yazını Saxla"
       },
       "messages": {
         "createSuccess": "Məqalə uğurla yaradıldı",
@@ -724,7 +725,8 @@
           "imageRequired": "Örtük şəkli URL-i tələb olunur",
           "invalidUrl": "Zəhmət olmasa, düzgün URL daxil edin",
           "imageUploadFailed": "Şəkil yüklənmədi. Zəhmət olmasa yenidən cəhd edin."
-        }
+        },
+        "save": "Yazını Saxla"
       }
     },
     "tags": {

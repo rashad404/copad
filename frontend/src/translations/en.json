@@ -726,7 +726,8 @@
           "imageRequired": "Featured image URL is required",
           "invalidUrl": "Please enter a valid URL",
           "imageUploadFailed": "Image upload failed. Please try again."
-        }
+        },
+        "save": "Save Post"
       }
     },
     "tags": {
