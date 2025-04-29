@@ -173,34 +173,42 @@ const AdminPostForm = () => {
     
     setFormTouched(true);
     
-    // Check if tag already exists in current selection
-    if (formData.tagNames.includes(newTag.trim())) {
-      setNewTag('');
-      return;
-    }
+    // Split tags by comma and trim each tag
+    const tagsToAdd = newTag
+      .split(',')
+      .map(tag => tag.trim())
+      .filter(tag => tag.length > 0);
     
-    // Check if tag exists in available tags
-    const tagExists = availableTags.some(tag => 
-      tag.name.toLowerCase() === newTag.trim().toLowerCase()
-    );
+    if (tagsToAdd.length === 0) return;
     
-    if (!tagExists) {
-      try {
-        // Create new tag
-        const response = await createTag(newTag.trim());
-        if (response.data) {
-          setAvailableTags(prev => [...prev, response.data]);
+    // Process each tag
+    for (const tag of tagsToAdd) {
+      // Check if tag already exists in current selection
+      if (formData.tagNames.includes(tag)) continue;
+      
+      // Check if tag exists in available tags
+      const tagExists = availableTags.some(availableTag => 
+        availableTag.name.toLowerCase() === tag.toLowerCase()
+      );
+      
+      if (!tagExists) {
+        try {
+          // Create new tag
+          const response = await createTag(tag);
+          if (response.data) {
+            setAvailableTags(prev => [...prev, response.data]);
+          }
+        } catch (err) {
+          console.error('Error creating tag:', err);
         }
-      } catch (err) {
-        console.error('Error creating tag:', err);
       }
+      
+      // Add tag to form data
+      setFormData(prev => ({
+        ...prev,
+        tagNames: [...prev.tagNames, tag]
+      }));
     }
-    
-    // Add tag to form data
-    setFormData(prev => ({
-      ...prev,
-      tagNames: [...prev.tagNames, newTag.trim()]
-    }));
     
     setNewTag('');
   };
