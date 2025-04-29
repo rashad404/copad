@@ -202,22 +202,31 @@ public class BlogService {
                 .map(this::convertToListDTO);
     }
     
-    private String createSlug(String title) {
-        // Basic slug creation - lowercase, replace spaces with hyphens
-        String slug = title.toLowerCase()
-                .replaceAll("[^a-z0-9\\s]", "")
-                .replaceAll("\\s+", "-");
-        
-        // Check if slug already exists and append a number if needed
-        String baseSlug = slug;
-        int count = 1;
-        while (blogPostRepository.findBySlug(slug).isPresent()) {
-            slug = baseSlug + "-" + count;
-            count++;
-        }
-        
-        return slug;
+private String createSlug(String title) {
+    // Replace Turkish characters with English equivalents
+    String slugText = title;
+    slugText = slugText.replace("ə", "e").replace("ü", "u").replace("ç", "c")
+               .replace("ş", "s").replace("ı", "i").replace("ö", "o").replace("ğ", "g")
+               .replace("Ə", "E").replace("Ü", "U").replace("Ç", "C")
+               .replace("Ş", "S").replace("I", "I").replace("Ö", "O").replace("Ğ", "G");
+    
+    // Create slug - lowercase, remove special chars, replace spaces with hyphens
+    String slug = slugText.toLowerCase()
+               .replaceAll("[^a-z0-9\\s]", "") // Remove all non-alphanumeric chars except spaces
+               .replaceAll("\\s+", "-")        // Replace spaces with hyphens
+               .replaceAll("-+", "-")          // Replace multiple hyphens with single hyphen
+               .trim();
+    
+    // Check if slug already exists and append a number if needed
+    String baseSlug = slug;
+    int count = 1;
+    while (blogPostRepository.findBySlug(slug).isPresent()) {
+        slug = baseSlug + "-" + count;
+        count++;
     }
+    
+    return slug;
+}
     
     private int calculateReadingTime(String content) {
         // Average reading speed: 200-250 words per minute
