@@ -725,7 +725,7 @@
           "contentRequired": "Content is required",
           "imageRequired": "Featured image URL is required",
           "invalidUrl": "Please enter a valid URL",
-          "invalidImage": "Please enter a valid image URL"
+          "imageUploadFailed": "Image upload failed. Please try again."
         }
       }
     },

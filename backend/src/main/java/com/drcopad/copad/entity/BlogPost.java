@@ -72,7 +72,9 @@ public class BlogPost {
     private LocalDateTime publishedAt;
     
     @Column(nullable = false)
-    @Pattern(regexp = "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$", message = "Invalid URL format")
+    // @Pattern(regexp = "^(https?://)?([\\da-z.-]+)\\.([a-z.]{2,6})([/\\w .-]*)*/?$", message = "Invalid URL format")
+    @Pattern(regexp = "^(http|https)://.*", message = "Invalid URL format")
+
     private String featuredImage;
     
     @Column(nullable = false)

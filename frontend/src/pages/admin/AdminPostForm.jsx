@@ -547,12 +547,18 @@ const AdminPostForm = () => {
                       const formData = new FormData();
                       formData.append('file', file);
                       const response = await uploadImage(formData);
-                      // Parse the JSON response to get the image URLs
-                      const imageData = JSON.parse(response.data);
-                      // Use the original image URL
+                      console.log('Upload response:', response);
+                      console.log('Image URL:', response.data.original);
+                      
+                      // Construct a valid URL by ensuring it starts with http(s)://
+                      const imageUrl = response.data.original.startsWith('http') 
+                        ? response.data.original 
+                        : `http://${window.location.host}${response.data.original}`;
+                      console.log('Full image URL:', imageUrl);
+                      
                       setFormData(prev => ({
                         ...prev,
-                        featuredImage: imageData.original
+                        featuredImage: imageUrl
                       }));
                       setErrors(prev => ({ ...prev, featuredImage: null }));
                     } catch (err) {
@@ -585,6 +591,7 @@ const AdminPostForm = () => {
                   alt="Featured"
                   className="h-40 w-full object-cover"
                   onError={(e) => {
+                    console.error('Image failed to load:', e.target.src);
                     e.target.onerror = null;
                     e.target.src = 'https://placehold.co/600x400?text=Invalid+Image';
                   }}
@@ -675,11 +682,15 @@ const AdminPostForm = () => {
             <select
               id="language"
               name="language"
-              className={`${inputClassName} pl-3 pr-10`}
               value={formData.language}
               onChange={handleInputChange}
+              className={`${inputClassName} ${
+                errors.language
+                  ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
+                  : ''
+              }`}
             >
-              {languageOptions.map(option => (
+              {languageOptions.map((option) => (
                 <option key={option.code} value={option.code}>
                   {option.name}
                 </option>
@@ -687,102 +698,34 @@ const AdminPostForm = () => {
             </select>
           </div>
 
-          {/* Published Checkbox */}
-          <div className="relative flex items-start">
-            <div className="flex items-center h-5">
+          {/* Publish Status */}
+          <div>
+            <label htmlFor="published" className="flex items-center">
               <input
+                type="checkbox"
                 id="published"
                 name="published"
-                type="checkbox"
                 checked={formData.published}
                 onChange={handleInputChange}
-                className={`${inputClassName} ${
-                  errors.title
-                    ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                    : ''
-                }`}
+                className="form-checkbox h-4 w-4 text-indigo-600"
               />
-            </div>
-            <div className="ml-3 text-sm">
-              <label htmlFor="published" className="font-medium text-gray-700 dark:text-gray-300">
-                {t('admin.posts.form.published')}
-              </label>
-              <p className="text-gray-500 dark:text-gray-400">{t('admin.posts.form.publishedHelp')}</p>
-            </div>
+              <span className="ml-2 text-sm text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.publish')}
+              </span>
+            </label>
           </div>
 
-          {/* Form Actions */}
-          <div className="flex justify-end space-x-3">
+          {/* Save Button */}
+          <div className="mt-6">
             <button
               type="button"
-              onClick={handleCancel}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+              onClick={() => handleSave()}
+              className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md shadow-sm text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
             >
-              {t('admin.posts.form.cancel')}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSave(false)}
-              disabled={saving}
-              className="inline-flex items-center px-4 py-2 border border-gray-300 dark:border-gray-600 shadow-sm text-sm font-medium rounded-md text-gray-700 dark:text-gray-300 bg-white dark:bg-gray-800 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {t('admin.posts.form.saveDraft')}
-            </button>
-            <button
-              type="button"
-              onClick={() => handleSave(true)}
-              disabled={saving}
-              className="inline-flex items-center px-4 py-2 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
-            >
-              {saving ? t('admin.posts.form.saving') : t('admin.posts.form.publish')}
+              {t('admin.posts.form.save')}
             </button>
           </div>
         </form>
-      )}
-
-      {/* Confirm Leave Modal */}
-      {confirmLeave && (
-        <div className="fixed z-10 inset-0 overflow-y-auto" aria-labelledby="modal-title" role="dialog" aria-modal="true">
-          <div className="flex items-end justify-center min-h-screen pt-4 px-4 pb-20 text-center sm:block sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" aria-hidden="true"></div>
-
-            <span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
-
-            <div className="inline-block align-bottom bg-white dark:bg-gray-800 rounded-lg px-4 pt-5 pb-4 text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full sm:p-6">
-              <div>
-                <div className="mx-auto flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 dark:bg-yellow-900">
-                  <ExclamationCircleIcon className="h-6 w-6 text-yellow-600 dark:text-yellow-400" aria-hidden="true" />
-                </div>
-                <div className="mt-3 text-center sm:mt-5">
-                  <h3 className="text-lg leading-6 font-medium text-gray-900 dark:text-white" id="modal-title">
-                    {t('admin.posts.form.unsavedChanges')}
-                  </h3>
-                  <div className="mt-2">
-                    <p className="text-sm text-gray-500 dark:text-gray-400">
-                      {t('admin.posts.form.unsavedChangesWarning')}
-                    </p>
-                  </div>
-                </div>
-              </div>
-              <div className="mt-5 sm:mt-6 sm:grid sm:grid-cols-2 sm:gap-3 sm:grid-flow-row-dense">
-                <button
-                  type="button"
-                  className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-indigo-600 text-base font-medium text-white hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:col-start-2 sm:text-sm"
-                  onClick={confirmNavigateAway}
-                >
-                  {t('admin.posts.form.leaveAnyway')}
-                </button>
-                <button
-                  type="button"
-                  className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 dark:border-gray-600 shadow-sm px-4 py-2 bg-white dark:bg-gray-800 text-base font-medium text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500 sm:mt-0 sm:col-start-1 sm:text-sm"
-                  onClick={() => setConfirmLeave(false)}
-                >
-                  {t('admin.posts.form.stayAndEdit')}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
       )}
     </div>
   );

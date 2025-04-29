@@ -83,7 +83,6 @@ export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", directi
 export const getTopTags = (limit = 10) => API.get(`/tags/top?limit=${limit}`);
 
 // Blog post management
-export const deleteBlogPost = (postId) => API.delete(`/blog/${postId}`);
 export const getBlogPostBySlug = (slug) => API.get(`/blog/${slug}`);
 
 // Blog search functionality
@@ -120,6 +119,9 @@ export const createBlogPost = (data) => {
 export const updateBlogPost = (id, data) => {
   return API.put(`/admin/blog/posts/${id}`, data);
 };
+
+export const deleteBlogPost = (postId) => API.delete(`/admin/blog/posts/${postId}`);
+
 
 // Get blog post by ID (for admin panel)
 export const getBlogPostById = (id) => API.get(`/admin/blog/posts/${id}`);
