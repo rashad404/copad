@@ -226,12 +226,25 @@ const AdminPostForm = () => {
   const handleGenerateSlug = () => {
     if (!formData.title.trim()) return;
     
-    // Generate slug from title
-    const slug = formData.title
+    // First replace Turkish characters with English equivalents
+    const turkishToEnglish = {
+      'ə': 'e', 'ü': 'u', 'ç': 'c', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ğ': 'g',
+      'Ə': 'E', 'Ü': 'U', 'Ç': 'C', 'Ş': 'S', 'I': 'I', 'Ö': 'O', 'Ğ': 'G'
+    };
+    
+    let slugText = formData.title;
+    
+    // Replace each Turkish character with its English equivalent
+    Object.entries(turkishToEnglish).forEach(([turkish, english]) => {
+      slugText = slugText.replace(new RegExp(turkish, 'g'), english);
+    });
+    
+    // Then generate slug as before
+    const slug = slugText
       .toLowerCase()
       .replace(/[^\w\s-]/g, '') // Remove special chars
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/\s+/g, '-')     // Replace spaces with hyphens
+      .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
       .trim();
     
     setFormData(prev => ({

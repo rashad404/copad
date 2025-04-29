@@ -20,12 +20,6 @@ public class TagController {
         return ResponseEntity.ok(tagService.getAllTags());
     }
 
-    @GetMapping("/test")
-    public String getTest( @RequestParam(defaultValue = "22") int limit) {
-        tagService.getTopTags(limit);
-        return "Hi";
-    }
-
     @GetMapping("/top")
     public ResponseEntity<List<TagDTO>> getTopTags(
             @RequestParam(defaultValue = "22") int limit

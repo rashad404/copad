@@ -1,15 +1,16 @@
 package com.drcopad.copad.service;
 
-import com.drcopad.copad.dto.TagDTO;
-import com.drcopad.copad.entity.Tag;
-import com.drcopad.copad.repository.TagRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
+import com.drcopad.copad.dto.TagDTO;
+import com.drcopad.copad.entity.Tag;
+import com.drcopad.copad.repository.TagRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
@@ -56,7 +57,7 @@ public class TagService {
                     return tagRepository.save(newTag);
                 });
     }
-    
+        
     public TagDTO createTag(String name) {
         if (tagRepository.existsByName(name)) {
             throw new RuntimeException("Tag already exists");
@@ -64,7 +65,22 @@ public class TagService {
         
         Tag tag = new Tag();
         tag.setName(name);
-        tag.setSlug(name.toLowerCase().replace(' ', '-'));
+        
+        // Replace Turkish characters with English equivalents
+        String slugText = name;
+        slugText = slugText.replace("ə", "e").replace("ü", "u").replace("ç", "c")
+                    .replace("ş", "s").replace("ı", "i").replace("ö", "o").replace("ğ", "g")
+                    .replace("Ə", "E").replace("Ü", "U").replace("Ç", "C")
+                    .replace("Ş", "S").replace("I", "I").replace("Ö", "O").replace("Ğ", "G");
+        
+        // Generate slug
+        String slug = slugText.toLowerCase()
+                    .replaceAll("[^\\w\\s-]", "") // Remove special chars
+                    .replaceAll("\\s+", "-")      // Replace spaces with hyphens
+                    .replaceAll("-+", "-")        // Replace multiple hyphens with single hyphen
+                    .trim();
+        
+        tag.setSlug(slug);
         
         Tag savedTag = tagRepository.save(tag);
         return convertToDTO(savedTag);
