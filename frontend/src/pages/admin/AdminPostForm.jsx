@@ -317,6 +317,8 @@ const AdminPostForm = () => {
     );
   }
 
+  const inputClassName = "mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white shadow-sm";
+
   return (
     <div>
       {/* Header */}
@@ -423,7 +425,7 @@ const AdminPostForm = () => {
         </div>
       ) : (
         /* Edit Mode */
-        <form className="space-y-6">
+        <form className="space-y-6 dark:bg-gray-900">
           {/* Title */}
           <div>
             <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
@@ -435,11 +437,11 @@ const AdminPostForm = () => {
               id="title"
               value={formData.title}
               onChange={handleInputChange}
-              className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md ${
+              className={`${inputClassName} ${
                 errors.title
                   ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-              } dark:bg-gray-800 dark:text-white`}
+                  : ''
+              }`}
             />
             {errors.title && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.title}</p>
@@ -467,7 +469,11 @@ const AdminPostForm = () => {
               value={formData.slug}
               onChange={handleInputChange}
               placeholder={t('admin.posts.form.slugPlaceholder')}
-              className="mt-1 block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+              className={`${inputClassName} ${
+                errors.slug
+                  ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
+                  : ''
+              }`}
             />
             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
               {t('admin.posts.form.slugHelp')}
@@ -486,11 +492,11 @@ const AdminPostForm = () => {
                 rows={3}
                 value={formData.summary}
                 onChange={handleInputChange}
-                className={`block w-full shadow-sm sm:text-sm rounded-md ${
+                className={`${inputClassName} ${
                   errors.summary
                     ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                } dark:bg-gray-800 dark:text-white`}
+                    : ''
+                }`}
               />
             </div>
             <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
@@ -513,11 +519,11 @@ const AdminPostForm = () => {
                 rows={15}
                 value={formData.content}
                 onChange={(e) => handleContentChange(e.target.value)}
-                className={`block w-full shadow-sm sm:text-sm rounded-md ${
+                className={`${inputClassName} ${
                   errors.content
                     ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                    : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                } dark:bg-gray-800 dark:text-white`}
+                    : ''
+                }`}
               />
             </div>
             {errors.content && (
@@ -537,11 +543,11 @@ const AdminPostForm = () => {
               value={formData.featuredImage}
               onChange={handleInputChange}
               placeholder="https://example.com/image.jpg"
-              className={`mt-1 block w-full shadow-sm sm:text-sm rounded-md ${
+              className={`${inputClassName} ${
                 errors.featuredImage
                   ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                  : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-              } dark:bg-gray-800 dark:text-white`}
+                  : ''
+              }`}
             />
             {errors.featuredImage && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
@@ -591,7 +597,11 @@ const AdminPostForm = () => {
                   value={newTag}
                   onChange={(e) => setNewTag(e.target.value)}
                   placeholder={t('admin.posts.form.addTag')}
-                  className="block w-full shadow-sm sm:text-sm border-gray-300 dark:border-gray-600 rounded-md focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white"
+                  className={`${inputClassName} ${
+                    errors.newTag
+                      ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
+                      : ''
+                  }`}
                   onKeyPress={(e) => {
                     if (e.key === 'Enter') {
                       e.preventDefault();
@@ -639,7 +649,7 @@ const AdminPostForm = () => {
             <select
               id="language"
               name="language"
-              className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-800 dark:text-white"
+              className={`${inputClassName} pl-3 pr-10`}
               value={formData.language}
               onChange={handleInputChange}
             >
@@ -660,7 +670,11 @@ const AdminPostForm = () => {
                 type="checkbox"
                 checked={formData.published}
                 onChange={handleInputChange}
-                className="focus:ring-indigo-500 h-4 w-4 text-indigo-600 border-gray-300 dark:border-gray-700 rounded dark:bg-gray-800"
+                className={`${inputClassName} ${
+                  errors.title
+                    ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
+                    : ''
+                }`}
               />
             </div>
             <div className="ml-3 text-sm">

@@ -73,6 +73,7 @@ export const getChatHistory = (sessionId, chatId) => API.get(`/guest/chat/${sess
 // Blog endpoints
 export const getBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc", language = i18n.language, ignoreLanguage = false) => {
   let url = `/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`;
+  console.log(page, size, sortBy, direction, language, ignoreLanguage);
   if (!ignoreLanguage) {
     url += `&language=${language}`;
   }
@@ -95,18 +96,29 @@ export const getBlogPostsByTag = (tagSlug, page = 0, size = 9, language = i18n.l
 
 export const getTagBySlug = (slug) => API.get(`/tags/${slug}`);
 
-export const createBlogPost = (data) => {
-  if (!data.language) data.language = i18n.language;
-  return API.post('/blog', data);
-};
-
 export const createTag = (name) => API.post('/tags', null, { params: { name } });
 
 export const getAllTags = () => API.get('/tags');
 
-export const updateBlogPost = (id, data) => {
+
+// Admin blog endpoints
+
+
+export const getAdminBlogPosts = (page = 0, size = 9, sortBy = "publishedAt", direction = "desc") => {
+  let url = `/admin/blog/posts?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}`;
+  console.log(page, size, sortBy, direction);
+  return API.get(url);
+};
+
+
+export const createBlogPost = (data) => {
   if (!data.language) data.language = i18n.language;
-  return API.put(`/blog/${id}`, data);
+  return API.post('/admin/blog/posts', data);
+};
+
+
+export const updateBlogPost = (id, data) => {
+  return API.put(`/admin/blog/posts/${id}`, data);
 };
 
 // Get blog post by ID (for admin panel)

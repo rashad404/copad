@@ -14,7 +14,7 @@ import {
   FunnelIcon,
   MagnifyingGlassIcon,
 } from '@heroicons/react/24/outline';
-import { getBlogPosts, deleteBlogPost } from '../../api';
+import { getAdminBlogPosts, deleteBlogPost } from '../../api';
 import { format } from 'date-fns';
 
 const AdminPostList = () => {
@@ -40,7 +40,7 @@ const AdminPostList = () => {
   const fetchPosts = async (search = searchTerm) => {
     try {
       setLoading(true);
-      const response = await getBlogPosts(page, size, sortBy, sortDirection);
+      const response = await getAdminBlogPosts(page, size, sortBy, sortDirection);
       
       let fetchedPosts = [];
       if (response.data && response.data.content) {
