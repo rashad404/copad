@@ -722,7 +722,8 @@
           "summaryTooLong": "Xülasə 500 simvoldan az olmalıdır",
           "contentRequired": "Məzmun tələb olunur",
           "imageRequired": "Örtük şəkli URL-i tələb olunur",
-          "invalidUrl": "Zəhmət olmasa, düzgün URL daxil edin"
+          "invalidUrl": "Zəhmət olmasa, düzgün URL daxil edin",
+          "imageUploadFailed": "Şəkil yüklənmədi. Zəhmət olmasa yenidən cəhd edin."
         }
       }
     },

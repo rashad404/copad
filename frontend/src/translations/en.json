@@ -724,7 +724,8 @@
           "summaryTooLong": "Summary must be less than 500 characters",
           "contentRequired": "Content is required",
           "imageRequired": "Featured image URL is required",
-          "invalidUrl": "Please enter a valid URL"
+          "invalidUrl": "Please enter a valid URL",
+          "invalidImage": "Please enter a valid image URL"
         }
       }
     },

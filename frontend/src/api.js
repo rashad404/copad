@@ -127,3 +127,12 @@ export const getBlogPostById = (id) => API.get(`/admin/blog/posts/${id}`);
 
 // Use this endpoint for admin actions
 export const getAdminBlogPostById = (id) => API.get(`/admin/blog/posts/${id}`);
+
+// File upload endpoints
+export const uploadImage = (formData) => {
+  return API.post('/upload/image', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  });
+};

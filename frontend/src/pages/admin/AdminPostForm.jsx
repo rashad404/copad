@@ -10,7 +10,7 @@ import {
   ExclamationCircleIcon,
   EyeIcon,
 } from '@heroicons/react/24/outline';
-import { getBlogPostById, createBlogPost, updateBlogPost, getAllTags, createTag } from '../../api';
+import { getBlogPostById, createBlogPost, updateBlogPost, getAllTags, createTag, uploadImage } from '../../api';
 
 const AdminPostForm = () => {
   const { id } = useParams();
@@ -124,10 +124,8 @@ const AdminPostForm = () => {
       newErrors.content = t('admin.posts.form.errors.contentRequired');
     }
     
-    if (!formData.featuredImage.trim()) {
+    if (!formData.featuredImage) {
       newErrors.featuredImage = t('admin.posts.form.errors.imageRequired');
-    } else if (!isValidUrl(formData.featuredImage)) {
-      newErrors.featuredImage = t('admin.posts.form.errors.invalidUrl');
     }
     
     setErrors(newErrors);
@@ -536,19 +534,47 @@ const AdminPostForm = () => {
             <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
               {t('admin.posts.form.featuredImage')} *
             </label>
-            <input
-              type="text"
-              name="featuredImage"
-              id="featuredImage"
-              value={formData.featuredImage}
-              onChange={handleInputChange}
-              placeholder="https://example.com/image.jpg"
-              className={`${inputClassName} ${
-                errors.featuredImage
-                  ? 'border-red-300 dark:border-red-700 focus:ring-red-500 focus:border-red-500'
-                  : ''
-              }`}
-            />
+            <div className="mt-1 flex items-center">
+              <input
+                type="file"
+                id="featuredImage"
+                accept="image/*"
+                onChange={async (e) => {
+                  const file = e.target.files[0];
+                  if (file) {
+                    try {
+                      setSaving(true);
+                      const formData = new FormData();
+                      formData.append('file', file);
+                      const response = await uploadImage(formData);
+                      // Parse the JSON response to get the image URLs
+                      const imageData = JSON.parse(response.data);
+                      // Use the original image URL
+                      setFormData(prev => ({
+                        ...prev,
+                        featuredImage: imageData.original
+                      }));
+                      setErrors(prev => ({ ...prev, featuredImage: null }));
+                    } catch (err) {
+                      console.error('Error uploading image:', err);
+                      setErrors(prev => ({
+                        ...prev,
+                        featuredImage: t('admin.posts.form.errors.imageUploadFailed')
+                      }));
+                    } finally {
+                      setSaving(false);
+                    }
+                  }
+                }}
+                className="block w-full text-sm text-gray-500 dark:text-gray-400
+                  file:mr-4 file:py-2 file:px-4
+                  file:rounded-md file:border-0
+                  file:text-sm file:font-semibold
+                  file:bg-indigo-50 dark:file:bg-indigo-900
+                  file:text-indigo-700 dark:file:text-indigo-300
+                  hover:file:bg-indigo-100 dark:hover:file:bg-indigo-800"
+              />
+            </div>
             {errors.featuredImage && (
               <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
             )}
