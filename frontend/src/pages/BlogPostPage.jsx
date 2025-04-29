@@ -179,13 +179,13 @@ const BlogPostPage = () => {
             </div>
             
             {/* Post Summary */}
-            <div className="text-lg text-gray-700 dark:text-gray-300 italic border-l-4 border-indigo-500 pl-4 mb-8">
+            <div className="text-lg text-gray-700 dark:text-gray-300 italic border-l-4 border-indigo-500 pl-4 mb-8 whitespace-pre-line">
               {post.summary}
             </div>
             
             {/* Post Content */}
             <div 
-              className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300"
+              className="prose prose-lg dark:prose-invert max-w-none text-gray-700 dark:text-gray-300 whitespace-pre-line"
               dangerouslySetInnerHTML={{ __html: DOMPurify.sanitize(post.content) }}
             />
           </div>
