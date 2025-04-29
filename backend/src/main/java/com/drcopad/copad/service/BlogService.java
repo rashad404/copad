@@ -1,9 +1,21 @@
 package com.drcopad.copad.service;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -33,6 +45,10 @@ public class BlogService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     
+    @Value("${upload.dir}")
+    private String uploadDir;
+
+    private static final Logger log = LoggerFactory.getLogger(BlogService.class);
 
     public Page<BlogPostListDTO> getAllPublishedPosts(Pageable pageable, String language) {
         return blogPostRepository.findAllByPublishedTrueAndLanguage(language, pageable)
@@ -152,6 +168,30 @@ public class BlogService {
         // Ensure author is allowed to delete this post
         if (!blogPost.getAuthor().getId().equals(authorId)) {
             throw new RuntimeException("Not authorized to delete this post");
+        }
+
+        // Delete associated image files if they exist
+        if (blogPost.getFeaturedImage() != null && !blogPost.getFeaturedImage().isEmpty()) {
+            try {
+                // Extract filename from the URL
+                String imageUrl = blogPost.getFeaturedImage();
+                String filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
+                
+                // Delete original image
+                Path imagePath = Paths.get(uploadDir, filename);
+                if (Files.exists(imagePath)) {
+                    Files.delete(imagePath);
+                }
+                
+                // Delete thumbnail
+                Path thumbPath = Paths.get(uploadDir, "thumbs", filename);
+                if (Files.exists(thumbPath)) {
+                    Files.delete(thumbPath);
+                }
+            } catch (IOException e) {
+                // Log the error but don't fail the deletion
+                log.error("Failed to delete image files for post {}: {}", postId, e.getMessage());
+            }
         }
         
         blogPostRepository.delete(blogPost);
