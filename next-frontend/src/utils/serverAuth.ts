@@ -65,6 +65,17 @@ export function isAuthenticatedFromRequest(request: NextRequest) {
 }
 
 /**
+ * Middleware helper to check if user has admin role
+ * This performs a basic check if the user is authenticated
+ * The actual detailed role check will happen in the AdminLayout component
+ */
+export function hasAdminRole(request: NextRequest) {
+  // We can only check if the user is authenticated at the middleware level
+  // since we can't easily decode the JWT token here
+  return isAuthenticatedFromRequest(request);
+}
+
+/**
  * Middleware helper to redirect based on authentication status
  */
 export function redirectIfUnauthenticated(request: NextRequest, path: string) {
@@ -74,5 +85,29 @@ export function redirectIfUnauthenticated(request: NextRequest, path: string) {
     return NextResponse.redirect(loginUrl);
   }
   
+  return null;
+}
+
+/**
+ * Middleware helper to redirect if not admin
+ */
+export function redirectIfNotAdmin(request: NextRequest) {
+  // First check if authenticated - don't redirect for RSC requests
+  const isRscRequest = request.nextUrl.searchParams.has('_rsc');
+  
+  if (!isAuthenticatedFromRequest(request)) {
+    if (isRscRequest) {
+      // Don't redirect RSC requests - let the client component handle auth
+      console.log('Middleware: RSC request to admin without auth - allowing through');
+      return null;
+    }
+    
+    const loginUrl = new URL('/login', request.url);
+    loginUrl.searchParams.set('redirect', request.nextUrl.pathname);
+    return NextResponse.redirect(loginUrl);
+  }
+  
+  // We can't verify admin role in middleware, 
+  // so we'll let the client component handle this
   return null;
 }

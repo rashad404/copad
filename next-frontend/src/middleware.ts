@@ -2,7 +2,8 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { 
   isAuthenticatedFromRequest, 
-  redirectIfUnauthenticated 
+  redirectIfUnauthenticated,
+  redirectIfNotAdmin 
 } from '@/utils/serverAuth';
 
 export function middleware(request: NextRequest) {
@@ -21,7 +22,11 @@ export function middleware(request: NextRequest) {
     '/appointments',
     '/profile',
     '/chat',
-    '/admin',
+  ];
+  
+  // Admin routes need special handling
+  const adminRoutes = [
+    '/admin'
   ];
 
   // Public routes that should bypass auth checks
@@ -33,6 +38,9 @@ export function middleware(request: NextRequest) {
     '/contact',
     '/blog', 
     '/faq',
+    '/privacy-policy',
+    '/terms-of-service',
+    '/security',
   ];
 
   // Check if it's an RSC (React Server Component) request
@@ -41,8 +49,12 @@ export function middleware(request: NextRequest) {
   // The normalized path for route matching
   const requestPath = normalizedPath;
 
-  // Check if the route is protected
+  // Check route types
   const isProtectedRoute = protectedRoutes.some((route) =>
+    requestPath.startsWith(route)
+  );
+  
+  const isAdminRoute = adminRoutes.some((route) =>
     requestPath.startsWith(route)
   );
 
@@ -53,7 +65,7 @@ export function middleware(request: NextRequest) {
 
   // Skip middleware for non-HTML and non-RSC requests (assets, api, etc.)
   const isHtmlRequest = request.headers.get('accept')?.includes('text/html');
-  if (!isProtectedRoute && !isPublicRoute && !isHtmlRequest && !isRscRequest) {
+  if (!isProtectedRoute && !isAdminRoute && !isPublicRoute && !isHtmlRequest && !isRscRequest) {
     return NextResponse.next();
   }
 
@@ -61,9 +73,22 @@ export function middleware(request: NextRequest) {
   const isAuthenticated = isAuthenticatedFromRequest(request);
   
   // Log the request for debugging
-  console.log(`Middleware: Path=${requestPath}, Protected=${isProtectedRoute}, RSC=${isRscRequest}, Authenticated=${isAuthenticated}`);
+  console.log(`Middleware: Path=${requestPath}, Protected=${isProtectedRoute}, Admin=${isAdminRoute}, RSC=${isRscRequest}, Authenticated=${isAuthenticated}`);
 
-  // Handle protected routes
+  // Handle admin routes - need both authentication and admin role
+  if (isAdminRoute) {
+    const adminRedirect = redirectIfNotAdmin(request);
+    if (adminRedirect && !isRscRequest) {
+      return adminRedirect;
+    }
+    
+    // For RSC requests, let them through
+    if (isRscRequest) {
+      return NextResponse.next();
+    }
+  }
+
+  // Handle regular protected routes
   if (isProtectedRoute) {
     if (!isAuthenticated) {
       // IMPORTANT: For RSC requests, we should NEVER redirect

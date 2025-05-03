@@ -16,12 +16,14 @@ interface User {
   email: string;
   name: string;
   role: string;
+  roles?: string[];
 }
 
 interface AuthContextType {
   user: User | null;
   isAuthenticated: boolean;
   isLoading: boolean;
+  isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
   logout: () => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
@@ -33,6 +35,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isTokenChecked, setIsTokenChecked] = useState(false);
+  const [isAdmin, setIsAdmin] = useState(false);
 
   // On initial load, check if we have a token and fetch user if we do
   useEffect(() => {
@@ -76,7 +79,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         
         // Only update state if component is still mounted
         if (isMounted) {
-          setUser(response.data);
+          const userData = response.data;
+          setUser(userData);
+          
+          // Check for admin role
+          const hasAdminRole = 
+            userData.role === 'ADMIN' || 
+            (userData.roles && userData.roles.includes('ADMIN'));
+          
+          console.log('AuthProvider: Initial load - User data:', userData);
+          console.log('AuthProvider: Initial load - Roles check:', { 
+            role: userData.role, 
+            roles: userData.roles,
+            hasAdminRole 
+          });
+          
+          setIsAdmin(hasAdminRole);
+          
           // Special flag to indicate auth has been verified with server
           sessionStorage.setItem('auth_verified', 'true');
         }
@@ -150,7 +169,23 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         console.log('AuthProvider: Fetching user after login');
         const userResponse = await api.get('/user/me');
         console.log('AuthProvider: User data received after login', userResponse.data);
-        setUser(userResponse.data);
+        
+        const userData = userResponse.data;
+        setUser(userData);
+        
+        // Check for admin role
+        const hasAdminRole = 
+          userData.role === 'ADMIN' || 
+          (userData.roles && userData.roles.includes('ADMIN'));
+        
+        console.log('AuthProvider: User data:', userData);
+        console.log('AuthProvider: Roles check:', { 
+          role: userData.role, 
+          roles: userData.roles,
+          hasAdminRole 
+        });
+        
+        setIsAdmin(hasAdminRole);
       } catch (userError) {
         console.error('AuthProvider: Failed to fetch user after login', userError);
         // Still considered logged in even if we can't get user data
@@ -175,6 +210,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       removeTokenFromLocalStorage();
       clearAuthCookie();
       setUser(null);
+      setIsAdmin(false);
       console.log('AuthProvider: Logged out');
     }
   };
@@ -214,6 +250,29 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   // we have a token but haven't fetched user yet
   const hasToken = typeof window !== 'undefined' ? !!localStorage.getItem('token') : false;
   const isAuthenticated = !!user || (isLoading && hasToken);
+  
+  // Debug output token to help troubleshoot auth issues
+  useEffect(() => {
+    if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+      const token = localStorage.getItem('token');
+      if (token) {
+        try {
+          // Decode token for debugging (without verification)
+          const base64Url = token.split('.')[1];
+          const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+          const jsonPayload = decodeURIComponent(
+            atob(base64)
+              .split('')
+              .map(c => '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2))
+              .join('')
+          );
+          console.log('Auth token payload:', JSON.parse(jsonPayload));
+        } catch (error) {
+          console.error('Failed to decode token for debugging:', error);
+        }
+      }
+    }
+  }, []);
 
   console.log('AuthProvider rendering with isAuthenticated:', isAuthenticated);
 
@@ -223,6 +282,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
         user,
         isAuthenticated,
         isLoading,
+        isAdmin,
         login,
         logout,
         register,
