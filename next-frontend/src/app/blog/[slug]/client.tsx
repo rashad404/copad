@@ -121,9 +121,9 @@ const BlogPostClient = ({
           <div className="w-full h-80 sm:h-96 relative overflow-hidden">
             <div className="w-full h-full relative">
               <Image 
-                src={post.featuredImage && !post.featuredImage.includes('example.com') 
+                src={post.featuredImage && !post.featuredImage.includes('example.com') && post.featuredImage !== '' 
                   ? post.featuredImage 
-                  : 'https://placehold.co/600x400?text=No+Image'} 
+                  : '/images/no_image.svg'} 
                 alt={post.title}
                 width={1200}
                 height={675}

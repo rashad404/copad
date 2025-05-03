@@ -19,7 +19,7 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
   const {
     slug = 'post',
     title = 'Untitled Post',
-    featuredImage = 'https://placehold.co/600x400?text=No+Image',
+    featuredImage = '',
     tags = [],
     publishedAt = new Date().toISOString(),
     readingTimeMinutes = 5,
@@ -33,9 +33,9 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
         <div className="relative h-48 overflow-hidden">
           <div className="w-full h-full relative">
             <Image 
-              src={featuredImage && !featuredImage.includes('example.com') 
+              src={featuredImage && !featuredImage.includes('example.com') && featuredImage !== ''
                 ? featuredImage 
-                : 'https://placehold.co/600x400?text=No+Image'}
+                : '/images/no_image.svg'}
               alt={title as string}
               width={600}
               height={400}

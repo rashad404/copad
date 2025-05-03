@@ -2,18 +2,23 @@ import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import { searchBlogPosts } from '@/api/serverFetch';
 import BlogSearchClient from './client';
+import { siteConfig } from '@/context/siteConfig';
 
 // Add metadata generation for SEO
 export async function generateMetadata({ searchParams }: { searchParams: { q?: string } }): Promise<Metadata> {
   const query = searchParams.q || '';
   
+  // Get site info for proper branding
+  const siteInfo = siteConfig.getDefaultSiteInfo();
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   return {
     title: query 
-      ? `Search results for "${query}" | Dr. CoPad Blog` 
-      : 'Search Blog | Dr. CoPad',
+      ? `Search results for "${query}" | ${AGENT_NAME} Blog` 
+      : `Search Blog | ${AGENT_NAME}`,
     description: query 
-      ? `Search results for "${query}" in Dr. CoPad's healthcare and medical blog.` 
-      : 'Search healthcare and medical articles in the Dr. CoPad blog.',
+      ? `Search results for "${query}" in ${AGENT_NAME}'s healthcare and medical blog.` 
+      : `Search healthcare and medical articles in the ${AGENT_NAME} blog.`,
     noindex: true, // Don't index search result pages
   };
 }

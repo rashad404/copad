@@ -7,9 +7,14 @@ import TestimonialsSection from '@/components/sections/TestimonialsSection';
 import CTASection from '@/components/sections/CTASection';
 import GuestChat from '@/components/GuestChat';
 import PublicRoute from '@/components/PublicRoute';
+import { siteConfig } from '@/context/siteConfig';
+
+// Get site info for proper branding
+const siteInfo = siteConfig.getDefaultSiteInfo();
+const AGENT_NAME = siteInfo.AGENT_NAME;
 
 export const metadata: Metadata = {
-  title: 'Dr. Copad - Your AI Healthcare Assistant',
+  title: `${AGENT_NAME} - Your AI Healthcare Assistant`,
   description: 'Get instant medical advice and support from our AI-powered healthcare assistant.',
 };
 

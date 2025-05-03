@@ -2,39 +2,44 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { Providers } from "./providers";
+import { siteConfig } from "@/context/siteConfig";
 
 const inter = Inter({ subsets: ["latin"] });
 
+// Get the site info for metadata
+const siteInfo = siteConfig.getDefaultSiteInfo();
+const AGENT_NAME = siteInfo.AGENT_NAME;
+
 export const metadata: Metadata = {
   title: {
-    template: '%s | Dr. CoPad',
-    default: 'Dr. CoPad - AI-Powered Healthcare Assistant'
+    template: `%s | ${AGENT_NAME}`,
+    default: `${AGENT_NAME} - AI-Powered Healthcare Assistant`
   },
-  description: "Dr. CoPad is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.",
+  description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
   keywords: ['healthcare', 'medical', 'doctor', 'telemedicine', 'AI', 'health assistant'],
-  authors: [{ name: 'Dr. CoPad Team' }],
-  creator: 'Dr. CoPad',
-  publisher: 'Dr. CoPad',
+  authors: [{ name: `${AGENT_NAME} Team` }],
+  creator: AGENT_NAME,
+  publisher: AGENT_NAME,
   openGraph: {
     type: 'website',
     locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://drcopad.com',
-    siteName: 'Dr. CoPad',
-    title: 'Dr. CoPad - AI-Powered Healthcare Assistant',
-    description: 'Dr. CoPad is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.',
+    url: process.env.NEXT_PUBLIC_APP_URL || 'https://example.com',
+    siteName: AGENT_NAME,
+    title: `${AGENT_NAME} - AI-Powered Healthcare Assistant`,
+    description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
     images: [
       {
         url: '/images/og-image.jpg',  // Replace with your actual OpenGraph image
         width: 1200,
         height: 630,
-        alt: 'Dr. CoPad'
+        alt: AGENT_NAME
       }
     ]
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Dr. CoPad - AI-Powered Healthcare Assistant',
-    description: 'Dr. CoPad is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.',
+    title: `${AGENT_NAME} - AI-Powered Healthcare Assistant`,
+    description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
     images: ['/images/og-image.jpg']  // Replace with your actual Twitter card image
   },
   robots: {

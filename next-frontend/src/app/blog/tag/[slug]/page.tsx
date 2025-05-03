@@ -4,6 +4,7 @@ import { notFound } from 'next/navigation';
 import TagPageClient from './client';
 import { getPostsByTag, getTagBySlug, getTopTags } from '@/api/serverFetch';
 import { Tag } from '@/api/blog';
+import { siteConfig } from '@/context/siteConfig';
 
 // Types for generateMetadata props
 type Props = {
@@ -56,6 +57,10 @@ export async function generateMetadata(
     };
   }
   
+  // Get site info for proper branding
+  const siteInfo = siteConfig.getDefaultSiteInfo();
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   
   // Define supported languages based on available translations
@@ -68,21 +73,21 @@ export async function generateMetadata(
   });
   
   return {
-    title: `${tag.name} - Blog Posts | Dr. CoPad`,
+    title: `${tag.name} - Blog Posts | ${AGENT_NAME}`,
     description: `Read articles about ${tag.name} - Healthcare information, articles, and expert advice from medical professionals.`,
     keywords: [tag.name, 'healthcare', 'medical articles', 'health information'],
     openGraph: {
-      title: `${tag.name} - Blog Posts | Dr. CoPad`,
+      title: `${tag.name} - Blog Posts | ${AGENT_NAME}`,
       description: `Read articles about ${tag.name} - Healthcare information, articles, and expert advice from medical professionals.`,
       url: `${baseUrl}/blog/tag/${slug}`,
-      siteName: parentMetadata.openGraph?.siteName || 'Dr. CoPad',
+      siteName: parentMetadata.openGraph?.siteName || AGENT_NAME,
       images: previousImages,
       locale: 'en',
       type: 'website',
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${tag.name} - Blog Posts | Dr. CoPad`,
+      title: `${tag.name} - Blog Posts | ${AGENT_NAME}`,
       description: `Read articles about ${tag.name} - Healthcare information, articles, and expert advice from medical professionals.`,
     },
     alternates: {
@@ -96,6 +101,10 @@ export async function generateMetadata(
 function generateJsonLd(tag: Tag, posts: any[]) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   
+  // Get site info for proper branding
+  const siteInfo = siteConfig.getDefaultSiteInfo();
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   // CollectionPage schema
   const collectionPageSchema = {
     '@context': 'https://schema.org',
@@ -105,12 +114,12 @@ function generateJsonLd(tag: Tag, posts: any[]) {
     url: `${baseUrl}/blog/tag/${tag.slug}`,
     isPartOf: {
       '@type': 'Blog',
-      name: 'Dr. CoPad Blog',
+      name: `${AGENT_NAME} Blog`,
       url: `${baseUrl}/blog`
     },
     publisher: {
       '@type': 'Organization',
-      name: 'Dr. CoPad',
+      name: AGENT_NAME,
       logo: {
         '@type': 'ImageObject',
         url: `${baseUrl}/logo.png`
