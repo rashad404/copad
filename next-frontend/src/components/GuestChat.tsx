@@ -57,6 +57,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log('Send:', { selectedChatId, sessionId, isInitializing, loading });
     if (!newMessage.trim() || loading) return;
     const messageToSend = newMessage.trim();
     setNewMessage('');
@@ -217,13 +218,13 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
               onChange={(e) => setNewMessage(e.target.value)}
               placeholder={t('chat.messagePlaceholder')}
               className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400"
-              disabled={loading || isInitializing}
+              disabled={loading || isInitializing || !selectedChatId || !sessionId}
             />
             <button
               type="submit"
-              disabled={loading || !newMessage.trim() || isInitializing}
+              disabled={loading || !newMessage.trim() || isInitializing || !selectedChatId || !sessionId}
               className={`shrink-0 px-4 py-2 rounded-lg ${
-                loading || !newMessage.trim() || isInitializing
+                loading || !newMessage.trim() || isInitializing || !selectedChatId || !sessionId
                   ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                   : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
               } text-white font-medium`}

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import api from '@/api';
 import { useTranslation } from 'react-i18next';
+import i18n from '@/i18n';
 
 interface Message {
   role: 'user' | 'assistant';
@@ -75,9 +76,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const updateGuestChat = async (sid: string, chatId: string, title: string) => api.put(`/guest/chats/${sid}/${chatId}`, { title });
   const deleteGuestChat = async (sid: string, chatId: string) => api.delete(`/guest/chats/${sid}/${chatId}`);
   const sendGuestMessage = async (sid: string, message: string, chatId: string | null) => {
-    const { i18n } = await import('i18next');
+    console.log('API POST', `/guest/chat/${sid}/${chatId}`, { message, language: i18n.language });
     const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language });
-    return res.data.response || t('chat.error.message');
+    console.log('API RESPONSE', res.data);
+    return typeof res.data === 'string'
+      ? res.data
+      : res.data.response || res.data.message || t('chat.error.message');
   };
   const getChatHistory = async (sid: string, chatId: string) => api.get(`/guest/chat/${sid}/${chatId}/history`);
 
@@ -168,6 +172,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       }));
       return response;
     } catch (err) {
+      console.error('sendMessage error:', err);
       setError('Failed to send message');
       return t('chat.error.message');
     }
