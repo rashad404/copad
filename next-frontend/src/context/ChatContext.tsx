@@ -210,13 +210,20 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           setSelectedChatId(newChatId);
         } else if (chats.length === 0) {
           // Only fetch session details if we don't already have chats loaded
-          const sessionResponse = await getGuestSession(sid);
-          const loadedChats = processSessionData(sessionResponse);
-          setChats(loadedChats);
-          
-          if (loadedChats.length > 0) {
-            setSelectedChatId(loadedChats[0].id);
-          } else {
+          try {
+            const sessionResponse = await getGuestSession(sid);
+            const loadedChats = processSessionData(sessionResponse);
+            setChats(loadedChats);
+            
+            if (loadedChats.length > 0) {
+              setSelectedChatId(loadedChats[0].id);
+            } else {
+              const newChatId = await createInitialChat(sid);
+              setSelectedChatId(newChatId);
+            }
+          } catch (sessionErr) {
+            console.log('Failed to load existing session, creating a new one:', sessionErr.message);
+            // If we can't fetch the session, create a new chat as a fallback
             const newChatId = await createInitialChat(sid);
             setSelectedChatId(newChatId);
           }
