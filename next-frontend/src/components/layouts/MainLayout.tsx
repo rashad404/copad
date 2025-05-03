@@ -16,7 +16,9 @@ export default function MainLayout({ children }: MainLayoutProps) {
       <main className="flex-grow">
         {children}
       </main>
-      <Footer />
+      <footer className="hidden md:block">
+        <Footer />
+      </footer>
     </div>
   );
 } 
