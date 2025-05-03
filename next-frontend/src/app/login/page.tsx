@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
@@ -8,6 +8,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuth } from "@/context/AuthContext";
 import PublicRoute from "@/components/PublicRoute";
 import MainLayout from "@/components/layouts/MainLayout";
+import { handleLogin } from "@/utils/auth";
 
 export default function LoginPage() {
   const { t } = useTranslation();
@@ -15,7 +16,7 @@ export default function LoginPage() {
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
   const router = useRouter();
-  const { login } = useAuth();
+  const { login, isAuthenticated, isLoading } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });
@@ -27,11 +28,74 @@ export default function LoginPage() {
     
     try {
       setLoading(true);
-      // Clear security context first - log out any existing user
-      localStorage.removeItem("token");
+      setError(null);
       
-      await login(form.email, form.password);
-      router.push('/');
+      // Clear any existing auth state and session storage flags
+      localStorage.removeItem("token");
+      document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
+      
+      // Clear any redirect flags from session storage
+      Object.keys(sessionStorage).forEach(key => {
+        if (key.startsWith('redirect_')) {
+          sessionStorage.removeItem(key);
+        }
+      });
+      
+      console.log('LoginPage: Attempting login with', form.email);
+      
+      try {
+        // Make a direct API call instead of using the context method
+        // This can help debug any issues with the login flow
+        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        const response = await fetch(`${apiUrl}/auth/login`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            email: form.email,
+            password: form.password,
+          }),
+          credentials: 'include',
+        });
+        
+        if (!response.ok) {
+          throw new Error(`Login failed with status: ${response.status}`);
+        }
+        
+        // The backend returns the token directly as a string
+        const token = await response.text();
+        console.log('LoginPage: Got token from API:', token ? 'token received' : 'no token');
+        
+        if (token) {
+          // Manually store token
+          localStorage.setItem('token', token);
+          
+          // Set the auth cookie
+          document.cookie = `auth_token=${token}; path=/; max-age=${60 * 60 * 24 * 7}; SameSite=Lax`;
+          
+          console.log('LoginPage: Login successful, token stored in localStorage and cookie');
+          
+          // Get the redirect URL from query parameters if it exists
+          const searchParams = new URLSearchParams(window.location.search);
+          const redirectTo = searchParams.get('redirect') || '/dashboard';
+          
+          console.log('LoginPage: Redirecting to', redirectTo);
+          
+          // Wait a moment to let cookies propagate
+          setTimeout(() => {
+            // Use window.location.href for a full page reload with skip_redirect param
+            window.location.href = `${redirectTo}?skip_redirect=true`;
+          }, 500);
+          
+          return;
+        } else {
+          throw new Error('Login succeeded but no token was returned');
+        }
+      } catch (apiError) {
+        console.error('Direct API call failed:', apiError);
+        throw apiError;
+      }
     } catch (error) {
       console.error("Login failed:", error);
       setError(t("auth.errors.login_failed"));
@@ -45,6 +109,29 @@ export default function LoginPage() {
     window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
   };
 
+  // Debug function to check and display auth state
+  const checkAuth = () => {
+    const token = localStorage.getItem('token');
+    const cookieToken = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
+    
+    console.log('Login Page Auth Debug:', {
+      hasLocalStorageToken: !!token,
+      hasCookieToken: !!cookieToken,
+      isAuthenticatedContext: isAuthenticated,
+      isLoadingAuth: isLoading
+    });
+  };
+
+  // Call on component mount
+  useEffect(() => {
+    console.log('LoginPage: Component mounted, checking auth state', { isAuthenticated, isLoading });
+    checkAuth();
+    
+    // Force clear any existing auth
+    localStorage.removeItem('token');
+    document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
+  }, [isAuthenticated, isLoading]);
+  
   return (
     <PublicRoute>
       <MainLayout>

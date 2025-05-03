@@ -8,6 +8,7 @@ import { useAuth } from "@/context/AuthContext";
 import PublicRoute from "@/components/PublicRoute";
 import MainLayout from "@/components/layouts/MainLayout";
 import api from "@/api";
+import { handleLogin } from "@/utils/auth";
 
 export default function RegisterPage() {
   const { t } = useTranslation();
@@ -33,12 +34,20 @@ export default function RegisterPage() {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await api.post('/auth/register', form);
-      // Store the token
-      localStorage.setItem("token", res.data);
-      // Redirect to the saved path or home
+      // Use the register function from AuthContext
+      await register(form.email, form.password, form.name);
+      
+      // Ensure the token is set in both localStorage and cookie
+      const token = localStorage.getItem("token");
+      if (token) {
+        handleLogin(token);
+      }
+      
+      // Get redirect path
       const redirectPath = searchParams.get('redirect') || "/";
-      router.push(redirectPath);
+      
+      // Force a full page reload to ensure auth state is fresh
+      window.location.href = redirectPath;
     } catch (err: any) {
       setError(err.response?.data?.message || t('auth.errors.registration_failed'));
     } finally {
