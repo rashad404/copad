@@ -1,0 +1,40 @@
+<svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect x="50" y="40" width="300" height="220" rx="10" fill="#f0f4ff" />
+  
+  <!-- Chat window -->
+  <rect x="90" y="60" width="220" height="180" rx="10" fill="white" stroke="#e2e8f0" stroke-width="2" />
+  
+  <!-- Chat header -->
+  <rect x="90" y="60" width="220" height="30" rx="10 10 0 0" fill="#4f46e5" />
+  <circle cx="110" cy="75" r="5" fill="white" />
+  <circle cx="130" cy="75" r="5" fill="white" opacity="0.7" />
+  <circle cx="150" cy="75" r="5" fill="white" opacity="0.4" />
+  
+  <!-- AI message bubbles -->
+  <rect x="110" y="110" width="140" height="30" rx="15" fill="#f1f5f9" />
+  <rect x="125" y="123" width="110" height="4" rx="2" fill="#64748b" />
+  
+  <rect x="110" y="150" width="160" height="30" rx="15" fill="#f1f5f9" />
+  <rect x="125" y="163" width="130" height="4" rx="2" fill="#64748b" />
+  
+  <!-- User message bubble -->
+  <rect x="150" y="190" width="140" height="30" rx="15" fill="#4f46e5" />
+  <rect x="165" y="203" width="110" height="4" rx="2" fill="white" />
+  
+  <!-- AI avatar -->
+  <circle cx="90" cy="125" r="10" fill="#c7d2fe" stroke="#4f46e5" stroke-width="2" />
+  <circle cx="90" cy="165" r="10" fill="#c7d2fe" stroke="#4f46e5" stroke-width="2" />
+  
+  <!-- User avatar -->
+  <circle cx="310" cy="205" r="10" fill="#4f46e5" />
+  
+  <!-- Decorative elements -->
+  <circle cx="70" cy="90" r="8" fill="#818cf8" opacity="0.8" />
+  <circle cx="330" cy="140" r="12" fill="#4f46e5" opacity="0.6" />
+  <circle cx="70" cy="210" r="10" fill="#818cf8" opacity="0.6" />
+  
+  <!-- AI icon in avatar -->
+  <path d="M87 122 L93 122 M90 119 L90 125" stroke="white" stroke-width="1.5" />
+  <path d="M87 162 L93 162 M90 159 L90 165" stroke="white" stroke-width="1.5" />
+</svg>

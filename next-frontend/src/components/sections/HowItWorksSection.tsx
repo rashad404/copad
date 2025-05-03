@@ -7,9 +7,9 @@ export default function HowItWorksSection() {
 
   // Placeholder images for steps (replace with real images if available)
   const stepImages = [
-    '/images/step1.png',
-    '/images/step2.png',
-    '/images/step3.png',
+    '/images/step1.svg',
+    '/images/step2.svg',
+    '/images/step3.svg',
   ];
 
   return (
