@@ -1,30 +1,16 @@
+'use client';
+
 import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
+import { siteConfig, type SiteInfo } from './siteConfig';
 
-interface SiteInfo {
-  AGENT_NAME: string;
-  WEBSITE_NAME: string;
-  logo: string;
-  WEBSITE_TLD: string;
-}
-
-const siteConfigs: Record<string, SiteInfo> = {
-  'virtualhekim.az': { AGENT_NAME: 'VirtualHekim', WEBSITE_NAME: 'VirtualHekim', logo: '/logos/virtualhekim.png', WEBSITE_TLD: '.az' },
-  'azdoc.ai': { AGENT_NAME: 'AzDoc', WEBSITE_NAME: 'AzDoc', logo: '/logos/azdoc.png', WEBSITE_TLD: '.ai' },
-  'localhost': { AGENT_NAME: 'Localhost', WEBSITE_NAME: 'Localhost', logo: '/logos/default.png', WEBSITE_TLD: '.dev' },
-};
-
-function getInitialSiteInfo(): SiteInfo {
-  // Default for SSR
-  return siteConfigs['azdoc.ai'];
-}
-
+// Client-side hook that uses React hooks
 function useSiteInfo(): SiteInfo {
-  const [siteInfo, setSiteInfo] = useState<SiteInfo>(getInitialSiteInfo());
+  const [siteInfo, setSiteInfo] = useState<SiteInfo>(siteConfig.getDefaultSiteInfo());
 
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const hostname = window.location.hostname;
-      setSiteInfo(siteConfigs[hostname] || siteConfigs['azdoc.ai']);
+      setSiteInfo(siteConfig.getSiteInfoByHostname(hostname));
     }
   }, []);
 
@@ -50,4 +36,6 @@ export const useSiteContext = () => {
   return context;
 };
 
-export { getInitialSiteInfo as getSiteInfo }; // for i18n and other files
+// Re-export for backward compatibility
+export const getInitialSiteInfo = siteConfig.getDefaultSiteInfo;
+export const getSiteInfo = siteConfig.getSiteInfoByHostname;

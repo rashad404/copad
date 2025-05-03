@@ -10,6 +10,7 @@ import TagList from '@/components/TagList';
 import BlogSearch from '@/components/BlogSearch';
 import Breadcrumb from '@/components/Breadcrumb';
 import { useAuth } from '@/context/AuthContext';
+import { useSiteContext } from '@/context/SiteContext';
 import MainLayout from '@/components/layouts/MainLayout';
 import type { BlogPostListItem, Tag } from '@/api/blog';
 

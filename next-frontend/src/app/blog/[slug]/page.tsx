@@ -3,6 +3,7 @@ import { headers } from 'next/headers';
 import BlogPostClient from './client';
 import { getBlogPostBySlug, getBlogPosts } from '@/api/serverFetch'; 
 import { BlogPost, BlogPostListItem } from '@/api/blog';
+import { siteConfig } from '@/context/siteConfig';
 
 // Types for generateMetadata props
 type Props = {
@@ -85,6 +86,10 @@ export async function generateMetadata(
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   const postLanguage = post.language || 'en';
   
+  // Get site info for proper branding using the server-safe function
+  const siteInfo = siteConfig.getSiteInfoByHostname('localhost');
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   // Define supported languages based on available translations
   const supportedLanguages = ['en', 'az', 'tr', 'ru', 'es', 'ar', 'zh', 'hi', 'pt'];
   
@@ -105,7 +110,7 @@ export async function generateMetadata(
       title: post.title,
       description: cleanSummary || `Read ${post.title} on our blog.`,
       url: `${baseUrl}/blog/${post.slug}`,
-      siteName: parentMetadata.openGraph?.siteName || 'Dr. CoPad',
+      siteName: parentMetadata.openGraph?.siteName || AGENT_NAME,
       images: post.featuredImage ? [
         {
           url: post.featuredImage,
@@ -138,6 +143,11 @@ export async function generateMetadata(
 // Generate JSON-LD structured data
 function generateJsonLd(post: BlogPost) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
+  
+  // Get site info for proper branding using the server-safe function
+  const siteInfo = siteConfig.getSiteInfoByHostname('localhost');
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   const authorSchema = post.author ? {
     '@type': 'Person',
     name: post.author.name,
@@ -156,7 +166,7 @@ function generateJsonLd(post: BlogPost) {
     author: authorSchema,
     publisher: {
       '@type': 'Organization',
-      name: 'Dr. CoPad',
+      name: AGENT_NAME,
       logo: {
         '@type': 'ImageObject',
         url: `${baseUrl}/logo.png`

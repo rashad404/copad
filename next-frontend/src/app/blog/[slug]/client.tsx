@@ -12,6 +12,7 @@ import Breadcrumb from '@/components/Breadcrumb';
 import TagList from '@/components/TagList';
 import BlogPostCard from '@/components/BlogPostCard';
 import { useAuth } from '@/context/AuthContext';
+import { useSiteContext } from '@/context/SiteContext';
 import DOMPurify from 'dompurify';
 import MainLayout from '@/components/layouts/MainLayout';
 import type { BlogPost, BlogPostListItem } from '@/api/blog';

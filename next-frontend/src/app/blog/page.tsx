@@ -2,11 +2,16 @@ import { Metadata } from 'next';
 import { headers } from 'next/headers';
 import BlogClient from './client';
 import { getBlogPosts, getTopTags } from '@/api/serverFetch';
+import { siteConfig } from '@/context/siteConfig';
 
 // Generate SEO metadata
 export async function generateMetadata({ searchParams }: { searchParams: { page?: string } }): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   const currentPage = searchParams?.page ? parseInt(searchParams.page) - 1 : 0;
+  
+  // Get site info for proper branding using the server-safe function
+  const siteInfo = siteConfig.getSiteInfoByHostname('localhost');
+  const AGENT_NAME = siteInfo.AGENT_NAME;
   
   // Define supported languages based on available translations
   const supportedLanguages = ['en', 'az', 'tr', 'ru', 'es', 'ar', 'zh', 'hi', 'pt'];
@@ -35,13 +40,13 @@ export async function generateMetadata({ searchParams }: { searchParams: { page?
   if (nextPageUrl) otherMetadata['next'] = nextPageUrl;
   
   const metadata: Metadata = {
-    title: 'Dr. CoPad Blog - Healthcare Articles & Information',
+    title: `${AGENT_NAME} Blog - Healthcare Articles & Information`,
     description: 'Read articles on healthcare topics, medical advancements, and expert advice from medical professionals.',
     openGraph: {
-      title: 'Dr. CoPad Blog - Healthcare Articles & Information',
+      title: `${AGENT_NAME} Blog - Healthcare Articles & Information`,
       description: 'Read articles on healthcare topics, medical advancements, and expert advice from medical professionals.',
       url: canonical,
-      siteName: 'Dr. CoPad',
+      siteName: AGENT_NAME,
       images: [
         {
           url: `${baseUrl}/images/blog-banner.jpg`,
@@ -73,16 +78,20 @@ export async function generateMetadata({ searchParams }: { searchParams: { page?
 function generateJsonLd(posts: any[]) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   
+  // Get site info for proper branding using the server-safe function
+  const siteInfo = siteConfig.getSiteInfoByHostname('localhost');
+  const AGENT_NAME = siteInfo.AGENT_NAME;
+  
   // Blog schema
   const blogSchema = {
     '@context': 'https://schema.org',
     '@type': 'Blog',
-    name: 'Dr. CoPad Blog',
+    name: `${AGENT_NAME} Blog`,
     description: 'Healthcare articles and information from medical professionals',
     url: `${baseUrl}/blog`,
     publisher: {
       '@type': 'Organization',
-      name: 'Dr. CoPad',
+      name: AGENT_NAME,
       logo: {
         '@type': 'ImageObject',
         url: `${baseUrl}/logo.png`
