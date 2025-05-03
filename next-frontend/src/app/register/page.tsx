@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from "react";
+import { useState, use } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
@@ -43,8 +43,9 @@ export default function RegisterPage() {
         handleLogin(token);
       }
       
-      // Get redirect path
-      const redirectPath = searchParams.get('redirect') || "/";
+      // Get redirect path - use React.use() to unwrap params
+      const params = use(searchParams);
+      const redirectPath = params.get('redirect') || "/";
       
       // Force a full page reload to ensure auth state is fresh
       window.location.href = redirectPath;

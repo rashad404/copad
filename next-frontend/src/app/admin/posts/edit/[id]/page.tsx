@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, use } from 'react';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -26,7 +26,9 @@ interface EditPostPageProps {
 }
 
 export default function EditPostPage({ params }: EditPostPageProps) {
-  const postId = parseInt(params.id, 10);
+  // Use React.use() to unwrap the params Promise as required by Next.js
+  const unwrappedParams = use(params);
+  const postId = parseInt(unwrappedParams.id, 10);
   const { t, i18n } = useTranslation();
   const router = useRouter();
   
