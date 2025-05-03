@@ -180,30 +180,40 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
 
   // Initialize session and chats
   useEffect(() => {
+    // Avoid duplicate initialization
+    if (isInitializingRef.current || sessionIdRef.current) return;
+
     const initSession = async () => {
       setIsInitializing(true);
       isInitializingRef.current = true;
       try {
-        let sid = localStorage.getItem('guestSessionId');
+        // Check if we already have a session ID in state or localStorage
+        let sid = sessionId || localStorage.getItem('guestSessionId');
         let isNewSession = false;
+
         if (!sid) {
           const response = await startGuestSession();
           sid = response.data.sessionId;
           localStorage.setItem('guestSessionId', sid);
           isNewSession = true;
         }
-        setSessionId(sid);
-        sessionIdRef.current = sid;
+
+        // Only update if state doesn't already have the session ID
+        if (!sessionIdRef.current) {
+          setSessionId(sid);
+          sessionIdRef.current = sid;
+        }
 
         if (isNewSession) {
           // No need to fetch session, just create initial chat
           const newChatId = await createInitialChat(sid);
           setSelectedChatId(newChatId);
-        } else {
-          // Existing session, fetch session details
+        } else if (chats.length === 0) {
+          // Only fetch session details if we don't already have chats loaded
           const sessionResponse = await getGuestSession(sid);
           const loadedChats = processSessionData(sessionResponse);
           setChats(loadedChats);
+          
           if (loadedChats.length > 0) {
             setSelectedChatId(loadedChats[0].id);
           } else {
@@ -212,12 +222,14 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           }
         }
       } catch (err) {
+        console.error('Chat initialization error:', err);
         setError('Failed to initialize chat session');
       } finally {
         setIsInitializing(false);
         isInitializingRef.current = false;
       }
     };
+
     initSession();
   }, []);
 

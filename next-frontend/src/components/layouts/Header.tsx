@@ -56,11 +56,10 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout();
+      router.push('/login');
     } catch (error) {
       console.error('Logout API error:', error);
-    } finally {
-      localStorage.removeItem('token');
-      setIsAuthenticated(false);
+      // Navigate anyway even if API call fails
       router.push('/login');
     }
   };
