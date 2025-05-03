@@ -603,12 +603,23 @@
       "readingTime": "{{minutes}} min read",
       "tags": "Tags",
       "relatedPosts": "Related Articles",
+      "postsTaggedWith": "Posts Tagged with",
+      "tagDescription": "{{count}} articles tagged with {{tag}}",
+      "noPostsWithTag": "No articles found with tag {{tag}}",
+      "checkOtherTags": "Please check other tags or return to the blog home page",
       "search": {
         "title": "Search Blog",
         "placeholder": "Search for articles...",
         "button": "Search",
         "noResults": "No articles found for your search.",
-        "results": "Search Results"
+        "results": "Search Results",
+        "resultsFor": "Search results for",
+        "noResultsFor": "No results found for \"{{query}}\"",
+        "tryAgain": "Please try a different search term or browse our articles below",
+        "searching": "Searching...",
+        "foundResults": "Found {{count}} results",
+        "enterQuery": "What are you looking for?",
+        "enterQueryDescription": "Enter a search term above to find relevant articles"
       },
       "filter": {
         "byTag": "Filter by Tag",
