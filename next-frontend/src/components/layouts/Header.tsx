@@ -36,7 +36,7 @@ function useIsClient() {
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
-  const { isAuthenticated } = useAuth();
+  const { isAuthenticated, logout: contextLogout } = useAuth();
   const [hasToken, setHasToken] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { t } = useTranslation();
@@ -63,13 +63,13 @@ export default function Header() {
     }
   }, []);
   
-  // Also update when route changes, in case login/logout happened
+  // Update when auth state changes or route changes
   useEffect(() => {
     if (typeof window !== 'undefined') {
       const token = localStorage.getItem('token');
       setHasToken(!!token);
     }
-  }, [pathname]);
+  }, [pathname, isAuthenticated]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -80,20 +80,29 @@ export default function Header() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      await logout();
-      // Force token state to update immediately
-      localStorage.removeItem('token');
-      setHasToken(false);
-      router.push('/login');
-    } catch (error) {
-      console.error('Logout API error:', error);
-      // Navigate anyway even if API call fails
-      localStorage.removeItem('token');
-      setHasToken(false);
-      router.push('/login');
-    }
+  const handleLogout = () => {
+    // Use direct DOM manipulation and location change to prevent React from re-rendering
+    
+    // Create and append an invisible overlay to prevent clicks during navigation
+    const overlay = document.createElement('div');
+    overlay.style.position = 'fixed';
+    overlay.style.top = '0';
+    overlay.style.left = '0';
+    overlay.style.width = '100%';
+    overlay.style.height = '100%';
+    overlay.style.backgroundColor = 'transparent';
+    overlay.style.zIndex = '9999';
+    document.body.appendChild(overlay);
+    
+    // Clear tokens now - before the navigation happens
+    localStorage.removeItem('token');
+    document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
+    
+    // Navigate directly to login page - this won't give React a chance to re-render
+    window.location.replace('/login');
+    
+    // Try to call the API in the background
+    contextLogout().catch(() => {});
   };
 
   const toggleSidebar = () => {
@@ -204,8 +213,9 @@ export default function Header() {
             <div className="mt-6 pt-6 border-t border-gray-700">
               <button
                 onClick={() => {
-                  handleLogout();
-                  isMobile && setIsSidebarOpen(false);
+                  // Navigate to the logout page instead of handling logout here
+                  // This prevents any state changes in the current page
+                  window.location.href = '/logout';
                 }}
                 className="flex w-full items-center p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition"
               >
