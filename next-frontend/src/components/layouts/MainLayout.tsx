@@ -11,9 +11,9 @@ interface MainLayoutProps {
 
 export default function MainLayout({ children }: MainLayoutProps) {
   return (
-    <div className={`min-h-screen flex flex-col ${inter.className}`}>
+    <div className={`min-h-screen flex flex-col bg-gray-50 dark:bg-gray-900 ${inter.className}`}>
       <Header />
-      <main className="flex-grow">
+      <main className="flex-grow pt-16">
         {children}
       </main>
       <footer className="hidden md:block">

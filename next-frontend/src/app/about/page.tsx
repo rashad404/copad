@@ -2,16 +2,14 @@
 
 import { useTranslation } from 'react-i18next';
 import { HeartIcon, ShieldCheckIcon, LightBulbIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import Header from '@/components/layouts/Header';
-import Footer from '@/components/layouts/Footer';
+import MainLayout from '@/components/layouts/MainLayout';
 
 export default function AboutPage() {
   const { t } = useTranslation();
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-gray-900">
-      <Header />
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+    <MainLayout>
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="max-w-3xl mx-auto">
           <h1 className="text-4xl font-bold text-gray-900 dark:text-white mb-8">
             {t('about.title')}
@@ -43,8 +41,7 @@ export default function AboutPage() {
             </ul>
           </div>
         </div>
-      </main>
-      <Footer />
-    </div>
+      </div>
+    </MainLayout>
   );
 } 
