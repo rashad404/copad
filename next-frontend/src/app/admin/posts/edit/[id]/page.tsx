@@ -130,11 +130,24 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   }, [unsavedChanges]);
 
   const generateSlug = () => {
-    const slugText = title
-      .toLowerCase()
+    // First replace Turkish and Azerbaijani characters with English equivalents
+    const turkishToEnglish = {
+      'ə': 'e', 'ü': 'u', 'ç': 'c', 'ş': 's', 'ı': 'i', 'ö': 'o', 'ğ': 'g',
+      'Ə': 'E', 'Ü': 'U', 'Ç': 'C', 'Ş': 'S', 'I': 'I', 'Ö': 'O', 'Ğ': 'G'
+    };
+    
+    let slugText = title.toLowerCase();
+    
+    // Replace each Turkish/Azerbaijani character with its English equivalent
+    Object.entries(turkishToEnglish).forEach(([turkish, english]) => {
+      slugText = slugText.replace(new RegExp(turkish, 'g'), english);
+    });
+    
+    // Then generate slug as before
+    slugText = slugText
       .replace(/[^\w\s-]/g, '') // Remove special characters
-      .replace(/\s+/g, '-') // Replace spaces with hyphens
-      .replace(/-+/g, '-') // Replace multiple hyphens with single hyphen
+      .replace(/\s+/g, '-')     // Replace spaces with hyphens
+      .replace(/-+/g, '-')      // Replace multiple hyphens with single hyphen
       .trim();
     
     setSlug(slugText);
