@@ -41,9 +41,12 @@ public class DataInitializer {
             userRepository.save(admin);
 
             // Create and save sample tags
-            Tag technology = tagRepository.save(new Tag("Technology", "technology"));
-            Tag health = tagRepository.save(new Tag("Health", "health"));
-            Tag ai = tagRepository.save(new Tag("Artificial Intelligence", "artificial-intelligence"));
+            Tag technology = tagRepository.findByName("Technology")
+                    .orElseGet(() -> tagRepository.save(new Tag("Technology", "technology")));
+            Tag health = tagRepository.findByName("Health")
+                    .orElseGet(() -> tagRepository.save(new Tag("Health", "health")));
+            Tag ai = tagRepository.findByName("Artificial Intelligence")
+                    .orElseGet(() -> tagRepository.save(new Tag("Artificial Intelligence", "artificial-intelligence")));
 
             // Create sample blog posts
             createBlogPost("Getting Started with Spring Boot", "getting-started-with-spring-boot", "A comprehensive guide to building your first Spring Boot application", "Spring Boot is a powerful framework for building Java applications...", admin, Set.of(technology), "https://example.com/spring-boot.jpg", "en");
