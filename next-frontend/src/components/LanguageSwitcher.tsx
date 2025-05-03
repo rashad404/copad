@@ -91,7 +91,17 @@ export default function LanguageSwitcher() {
 
   const handleLanguageChange = (language: Language) => {
     setSelected(language);
+    // Save language preference to localStorage
+    if (typeof window !== 'undefined') {
+      localStorage.setItem('i18nextLng', language.code);
+    }
     i18n.changeLanguage(language.code);
+    
+    // Reload the page to force server-side rendering with the new language
+    // This ensures blog posts are fetched with the correct language
+    setTimeout(() => {
+      window.location.reload();
+    }, 100);
   };
 
   return (

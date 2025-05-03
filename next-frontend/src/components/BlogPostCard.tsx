@@ -32,13 +32,17 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
       <Link href={`/blog/${slug}`} className="block">
         <div className="relative h-48 overflow-hidden">
           <div className="w-full h-full relative">
-            {/* Using regular img tag to avoid Next.js image domain restrictions during development */}
-            <img 
+            <Image 
               src={featuredImage && !featuredImage.includes('example.com') 
                 ? featuredImage 
                 : 'https://placehold.co/600x400?text=No+Image'}
               alt={title as string}
+              width={600}
+              height={400}
               className="w-full h-full object-cover transform transition-transform duration-500 hover:scale-105"
+              loading="lazy"
+              sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+              priority={false}
             />
           </div>
           {Array.isArray(tags) && tags.length > 0 && (

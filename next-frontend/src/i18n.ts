@@ -23,6 +23,14 @@ i18n
     interpolation: {
       escapeValue: false,
     },
+    detection: {
+      order: ['querystring', 'cookie', 'localStorage', 'navigator'],
+      lookupQuerystring: 'lang',
+      lookupCookie: 'i18nextLng',
+      lookupLocalStorage: 'i18nextLng',
+      caches: ['localStorage', 'cookie'],
+      cookieExpirationDate: new Date(Date.now() + 1000 * 60 * 60 * 24 * 365), // 1 year
+    }
   });
 
 export default i18n; 

@@ -1,5 +1,6 @@
 import { Metadata, ResolvingMetadata } from 'next';
 import { headers } from 'next/headers';
+import DOMPurify from 'isomorphic-dompurify';
 import BlogPostClient from './client';
 import { getBlogPostBySlug, getBlogPosts } from '@/api/serverFetch'; 
 import { BlogPost, BlogPostListItem } from '@/api/blog';
@@ -25,18 +26,10 @@ async function fetchBlogPost(slug: string): Promise<{
       const tagIds = post.tags.map(tag => tag.id);
       
       // Get a few recent posts
-      const { posts } = await getBlogPosts(0, 6);
-      
-      // Extract posts array depending on API response format
-      let postsArray: BlogPostListItem[] = [];
-      if (Array.isArray(posts)) {
-        postsArray = posts;
-      } else if (posts && Array.isArray(posts.content)) {
-        postsArray = posts.content;
-      }
+      const allPosts = await getBlogPosts(0, 6);
       
       // Filter and limit the related posts
-      relatedPosts = postsArray
+      relatedPosts = allPosts
         .filter(p => 
           p.id !== post.id && 
           p.tags && 
@@ -78,22 +71,8 @@ export async function generateMetadata(
     };
   }
   
-  // Create sanitized summary without HTML tags for metadata
-  // We can't use DOMPurify on the server side in Next.js
-  const cleanSummary = post.summary ? post.summary.replace(/<\/?[^>]+(>|$)/g, '') : '';
-  
-  const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-  const postLanguage = post.language || 'en';
-  
-  // Define supported languages based on available translations
-  const supportedLanguages = ['en', 'az', 'tr', 'ru', 'es', 'ar', 'zh', 'hi', 'pt'];
-  
-  // Create alternates/hreflang entries for all supported languages
-  // Assume posts may be available in multiple languages with the same slug
-  const languageAlternates: Record<string, string> = {};
-  supportedLanguages.forEach(lang => {
-    languageAlternates[lang] = `${baseUrl}/${lang}/blog/${post.slug}`;
-  });
+  // Clean summary for description
+  const cleanSummary = post.summary ? DOMPurify.sanitize(post.summary, { ALLOWED_TAGS: [] }) : '';
   
   // Prepare metadata
   return {
@@ -104,7 +83,7 @@ export async function generateMetadata(
     openGraph: {
       title: post.title,
       description: cleanSummary || `Read ${post.title} on our blog.`,
-      url: `${baseUrl}/blog/${post.slug}`,
+      url: `${process.env.NEXT_PUBLIC_APP_URL || ''}/blog/${post.slug}`,
       siteName: parentMetadata.openGraph?.siteName || 'Dr. CoPad',
       images: post.featuredImage ? [
         {
@@ -115,7 +94,7 @@ export async function generateMetadata(
         },
         ...previousImages
       ] : previousImages,
-      locale: postLanguage,
+      locale: post.language || 'en',
       type: 'article',
       publishedTime: post.publishedAt,
       modifiedTime: post.updatedAt,
@@ -129,8 +108,7 @@ export async function generateMetadata(
       images: post.featuredImage ? [post.featuredImage] : undefined,
     },
     alternates: {
-      canonical: `${baseUrl}/blog/${post.slug}`,
-      languages: languageAlternates,
+      canonical: `${process.env.NEXT_PUBLIC_APP_URL || ''}/blog/${post.slug}`,
     }
   };
 }
@@ -144,8 +122,7 @@ function generateJsonLd(post: BlogPost) {
     url: `${baseUrl}/author/${post.author.id}`
   } : undefined;
 
-  // Create BlogPosting schema
-  const blogPostSchema = {
+  return {
     '@context': 'https://schema.org',
     '@type': 'BlogPosting',
     headline: post.title,
@@ -168,70 +145,31 @@ function generateJsonLd(post: BlogPost) {
     },
     keywords: post.tags?.map(tag => tag.name).join(', '),
   };
-
-  // Create BreadcrumbList schema
-  const breadcrumbSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'BreadcrumbList',
-    itemListElement: [
-      {
-        '@type': 'ListItem',
-        position: 1,
-        name: 'Home',
-        item: baseUrl
-      },
-      {
-        '@type': 'ListItem',
-        position: 2,
-        name: 'Blog',
-        item: `${baseUrl}/blog`
-      },
-      {
-        '@type': 'ListItem',
-        position: 3,
-        name: post.title,
-        item: `${baseUrl}/blog/${post.slug}`
-      }
-    ]
-  };
-
-  // Return an array of schema objects
-  return [blogPostSchema, breadcrumbSchema];
 }
 
 // The main page component
-export default async function BlogPostPage({ params, searchParams }: { params: { slug: string }, searchParams: { lang?: string } }) {
+export default async function BlogPostPage({ params }: { params: { slug: string } }) {
   const { slug } = params;
-  const headersList = await headers();
+  const headersList = headers();
   const userAgent = headersList.get('user-agent') || '';
-  
-  // Get language from query param first, then from accept-language header, default to 'en'
-  // Query param allows for explicit language override
-  const langFromHeader = headersList.get('accept-language')?.split(',')[0]?.split('-')[0];
-  const cookieHeader = headersList.get('cookie') || '';
-  const i18nextLngMatch = cookieHeader.match(/i18nextLng=([^;]+)/);
-  const langFromCookie = i18nextLngMatch ? i18nextLngMatch[1] : null;
-  
-  // Priority: 1. URL param, 2. Cookie, 3. Browser header, 4. Default
-  const lang = searchParams?.lang || langFromCookie || langFromHeader || 'en';
+  const lang = headersList.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
   
   // Fetch data on the server
   const { post, relatedPosts, error } = await fetchBlogPost(slug);
   
   // If we have a post, generate the structured data
-  const jsonLdSchemas = post ? generateJsonLd(post) : null;
+  const jsonLd = post ? generateJsonLd(post) : null;
   
   // Return the client component with all data pre-fetched
   return (
     <>
       {/* Add JSON-LD structured data */}
-      {jsonLdSchemas && Array.isArray(jsonLdSchemas) && jsonLdSchemas.map((schema, index) => (
+      {jsonLd && (
         <script
-          key={`schema-${index}`}
           type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(schema) }}
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
         />
-      ))}
+      )}
       
       {/* Render the client component with prefetched data */}
       <BlogPostClient 
