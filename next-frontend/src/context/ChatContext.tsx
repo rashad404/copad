@@ -1,7 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
-import axios from 'axios';
+import api from '@/api';
 import { useTranslation } from 'react-i18next';
 
 interface Message {
@@ -69,15 +69,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // API helpers (replace with your actual endpoints as needed)
-  const startGuestSession = async () => axios.post('/api/guest/session');
-  const getGuestSession = async (sid: string) => axios.get(`/api/guest/session/${sid}`);
-  const createGuestChat = async (sid: string, title: string | null) => axios.post(`/api/guest/session/${sid}/chat`, { title });
-  const updateGuestChat = async (sid: string, chatId: string, title: string) => axios.put(`/api/guest/session/${sid}/chat/${chatId}`, { title });
-  const deleteGuestChat = async (sid: string, chatId: string) => axios.delete(`/api/guest/session/${sid}/chat/${chatId}`);
+  const startGuestSession = async () => api.post('/guest/start');
+  const getGuestSession = async (sid: string) => api.get(`/guest/session/${sid}`);
+  const createGuestChat = async (sid: string, title: string | null) => api.post(`/guest/chats/${sid}`, { title });
+  const updateGuestChat = async (sid: string, chatId: string, title: string) => api.put(`/guest/chats/${sid}/${chatId}`, { title });
+  const deleteGuestChat = async (sid: string, chatId: string) => api.delete(`/guest/chats/${sid}/${chatId}`);
   const sendGuestMessage = async (sid: string, message: string, chatId: string | null) => {
-    const res = await axios.post(`/api/guest/session/${sid}/chat/${chatId}/message`, { message });
+    const { i18n } = await import('i18next');
+    const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language });
     return res.data.response || t('chat.error.message');
   };
+  const getChatHistory = async (sid: string, chatId: string) => api.get(`/guest/chat/${sid}/${chatId}/history`);
 
   // Create initial chat
   const createInitialChat = async (sid: string) => {
@@ -178,17 +180,32 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       isInitializingRef.current = true;
       try {
         let sid = localStorage.getItem('guestSessionId');
+        let isNewSession = false;
         if (!sid) {
           const response = await startGuestSession();
           sid = response.data.sessionId;
           localStorage.setItem('guestSessionId', sid);
+          isNewSession = true;
         }
         setSessionId(sid);
         sessionIdRef.current = sid;
-        const sessionResponse = await getGuestSession(sid);
-        const loadedChats = processSessionData(sessionResponse);
-        setChats(loadedChats);
-        setSelectedChatId(loadedChats.length > 0 ? loadedChats[0].id : null);
+
+        if (isNewSession) {
+          // No need to fetch session, just create initial chat
+          const newChatId = await createInitialChat(sid);
+          setSelectedChatId(newChatId);
+        } else {
+          // Existing session, fetch session details
+          const sessionResponse = await getGuestSession(sid);
+          const loadedChats = processSessionData(sessionResponse);
+          setChats(loadedChats);
+          if (loadedChats.length > 0) {
+            setSelectedChatId(loadedChats[0].id);
+          } else {
+            const newChatId = await createInitialChat(sid);
+            setSelectedChatId(newChatId);
+          }
+        }
       } catch (err) {
         setError('Failed to initialize chat session');
       } finally {

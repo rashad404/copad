@@ -1,7 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
-import axios from 'axios';
+import api from '@/api';
 
 interface User {
   id: string;
@@ -26,12 +26,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    checkAuth();
+    // Only check auth if a token exists
+    const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
+    if (token) {
+      checkAuth();
+    } else {
+      setIsLoading(false);
+      setUser(null);
+    }
   }, []);
 
   const checkAuth = async () => {
     try {
-      const response = await axios.get('/api/auth/me');
+      const response = await api.get('/user/me');
       setUser(response.data);
     } catch (error) {
       setUser(null);
@@ -41,17 +48,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   };
 
   const login = async (email: string, password: string) => {
-    const response = await axios.post('/api/auth/login', { email, password });
+    const response = await api.post('/auth/login', { email, password });
     setUser(response.data.user);
   };
 
   const logout = async () => {
-    await axios.post('/api/auth/logout');
+    await api.post('/auth/logout');
     setUser(null);
   };
 
   const register = async (email: string, password: string, name: string) => {
-    const response = await axios.post('/api/auth/register', { email, password, name });
+    const response = await api.post('/auth/register', { email, password, name });
     setUser(response.data.user);
   };
 

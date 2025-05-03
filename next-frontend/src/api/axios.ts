@@ -25,10 +25,7 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response?.status === 401) {
-      // Handle unauthorized access
-      window.location.href = '/login';
-    }
+    // Remove auto-redirect on 401. Let React handle it.
     return Promise.reject(error);
   }
 );
