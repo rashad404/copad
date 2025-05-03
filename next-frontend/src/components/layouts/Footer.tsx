@@ -3,11 +3,11 @@
 import { useTranslation } from 'react-i18next';
 import Link from 'next/link';
 import Logo from '@/components/Logo';
-import { useSiteInfo } from '@/context/SiteContext';
+import { useSiteContext } from '@/context/SiteContext';
 
 export default function Footer() {
   const { t } = useTranslation();
-  const { WEBSITE_NAME, WEBSITE_TLD } = useSiteInfo();
+  const { WEBSITE_NAME, WEBSITE_TLD, logo } = useSiteContext();
 
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-12 px-4">

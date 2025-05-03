@@ -6,19 +6,19 @@ import i18n from '@/i18n';
 import { AuthProvider } from '@/context/AuthContext';
 import { ChatProvider } from '@/context/ChatContext';
 import { ThemeProvider } from 'next-themes';
-import { SiteProvider } from '@/context/SiteContext';
+import { SiteContextProvider } from '@/context/SiteContext';
 
 export function Providers({ children }: { children: ReactNode }) {
   return (
     <I18nextProvider i18n={i18n}>
       <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-        <SiteProvider>
+        <SiteContextProvider>
           <AuthProvider>
             <ChatProvider>
               {children}
             </ChatProvider>
           </AuthProvider>
-        </SiteProvider>
+        </SiteContextProvider>
       </ThemeProvider>
     </I18nextProvider>
   );

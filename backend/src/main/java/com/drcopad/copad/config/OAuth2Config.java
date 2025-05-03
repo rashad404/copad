@@ -1,26 +1,24 @@
 package com.drcopad.copad.config;
 
-import jakarta.servlet.http.HttpServletRequest;
-import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import java.util.Arrays;
+import java.util.List;
+import java.util.function.Consumer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.userinfo.DefaultOAuth2UserService;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserRequest;
 import org.springframework.security.oauth2.client.userinfo.OAuth2UserService;
 import org.springframework.security.oauth2.client.web.DefaultOAuth2AuthorizationRequestResolver;
 import org.springframework.security.oauth2.client.web.OAuth2AuthorizationRequestResolver;
-import org.springframework.security.oauth2.core.OAuth2AuthenticationException;
-import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.oauth2.core.endpoint.OAuth2AuthorizationRequest;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.util.Arrays;
-import java.util.List;
-import java.util.function.Consumer;
-import java.net.URL;
+import jakarta.servlet.http.HttpServletRequest;
 
 @Component
 public class OAuth2Config {
@@ -30,6 +28,9 @@ public class OAuth2Config {
     private final List<String> allowedDomains = Arrays.asList(
         "http://localhost:5173",
         "http://127.0.0.1:5173",
+        "http://localhost:3000",
+        "http://127.0.0.1:3000",
+        "http://192.168.1.105:3000",
         "https://virtualhekim.az",
         "https://azdoc.ai",
         "https://logman.az"

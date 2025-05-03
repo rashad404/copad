@@ -1,14 +1,11 @@
-import { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import { createContext, useState, useEffect, useContext, ReactNode } from 'react';
 
 interface SiteInfo {
-  AGENT_NAME?: string;
-  WEBSITE_NAME?: string;
-  logo?: string;
-  WEBSITE_TLD?: string;
-  title?: string;
+  AGENT_NAME: string;
+  WEBSITE_NAME: string;
+  logo: string;
+  WEBSITE_TLD: string;
 }
-
-const SiteContext = createContext<SiteInfo | undefined>(undefined);
 
 const siteConfigs: Record<string, SiteInfo> = {
   'virtualhekim.az': { AGENT_NAME: 'VirtualHekim', WEBSITE_NAME: 'VirtualHekim', logo: '/logos/virtualhekim.png', WEBSITE_TLD: '.az' },
@@ -16,33 +13,41 @@ const siteConfigs: Record<string, SiteInfo> = {
   'localhost': { AGENT_NAME: 'Localhost', WEBSITE_NAME: 'Localhost', logo: '/logos/default.png', WEBSITE_TLD: '.dev' },
 };
 
-function resolveSiteInfo(): SiteInfo {
-  if (typeof window !== 'undefined') {
-    const hostname = window.location.hostname;
-    return siteConfigs[hostname] || { title: 'Default', logo: '/logos/default.png' };
-  }
+function getInitialSiteInfo(): SiteInfo {
   // Default for SSR
-  return { title: 'Default', logo: '/logos/default.png' };
+  return siteConfigs['azdoc.ai'];
 }
 
-export function SiteProvider({ children }: { children: ReactNode }) {
-  const [siteInfo, setSiteInfo] = useState<SiteInfo>(resolveSiteInfo);
+function useSiteInfo(): SiteInfo {
+  const [siteInfo, setSiteInfo] = useState<SiteInfo>(getInitialSiteInfo());
 
   useEffect(() => {
-    setSiteInfo(resolveSiteInfo());
+    if (typeof window !== 'undefined') {
+      const hostname = window.location.hostname;
+      setSiteInfo(siteConfigs[hostname] || siteConfigs['azdoc.ai']);
+    }
   }, []);
 
+  return siteInfo;
+}
+
+const SiteContext = createContext<SiteInfo | undefined>(undefined);
+
+export const SiteContextProvider = ({ children }: { children: ReactNode }) => {
+  const siteInfo = useSiteInfo();
   return (
     <SiteContext.Provider value={siteInfo}>
       {children}
     </SiteContext.Provider>
   );
-}
+};
 
-export function useSiteInfo() {
+export const useSiteContext = () => {
   const context = useContext(SiteContext);
-  if (!context) throw new Error('useSiteInfo must be used within a SiteProvider');
+  if (!context) {
+    throw new Error('useSiteContext must be used within a SiteContextProvider');
+  }
   return context;
-}
+};
 
-export { resolveSiteInfo as getSiteInfo }; // for i18n and other files 
+export { getInitialSiteInfo as getSiteInfo }; // for i18n and other files

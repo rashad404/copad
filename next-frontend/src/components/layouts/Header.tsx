@@ -24,7 +24,15 @@ import Logo from '../Logo';
 // TODO: Replace with your Next.js AuthContext or next-auth
 import { useAuth } from '@/context/AuthContext';
 import { logout } from '@/api';
-import { getSiteInfo } from '@/context/SiteContext';
+import { useSiteContext } from '@/context/SiteContext';
+
+function useIsClient() {
+  const [isClient, setIsClient] = useState(false);
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
+  return isClient;
+}
 
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
@@ -33,7 +41,8 @@ export default function Header() {
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
-  const { WEBSITE_NAME, WEBSITE_TLD } = getSiteInfo ? getSiteInfo() : { WEBSITE_NAME: 'DrCopad', WEBSITE_TLD: '.ai' };
+  const { WEBSITE_NAME, WEBSITE_TLD } = useSiteContext();
+  const isClient = useIsClient();
 
   useEffect(() => {
     const handleResize = () => {
@@ -89,7 +98,7 @@ export default function Header() {
           <Link href="/" className="flex items-center space-x-2">
             <Logo className="w-8 h-8" />
             <span className="text-xl font-bold">
-              {WEBSITE_NAME}<span className="text-indigo-400">{WEBSITE_TLD}</span>
+              {isClient ? WEBSITE_NAME : ''}<span className="text-indigo-400">{isClient ? WEBSITE_TLD : ''}</span>
             </span>
           </Link>
         </div>
