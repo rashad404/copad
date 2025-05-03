@@ -37,12 +37,39 @@ function useIsClient() {
 export default function Header() {
   const [isMobile, setIsMobile] = useState(false);
   const { isAuthenticated } = useAuth();
+  const [hasToken, setHasToken] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
   const { WEBSITE_NAME, WEBSITE_TLD } = useSiteContext();
   const isClient = useIsClient();
+  
+  // Check for token in localStorage to determine auth state
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      // Initial check
+      const token = localStorage.getItem('token');
+      setHasToken(!!token);
+      
+      // Listen for storage events (when token is added or removed)
+      const handleStorageChange = () => {
+        const currentToken = localStorage.getItem('token');
+        setHasToken(!!currentToken);
+      };
+      
+      window.addEventListener('storage', handleStorageChange);
+      return () => window.removeEventListener('storage', handleStorageChange);
+    }
+  }, []);
+  
+  // Also update when route changes, in case login/logout happened
+  useEffect(() => {
+    if (typeof window !== 'undefined') {
+      const token = localStorage.getItem('token');
+      setHasToken(!!token);
+    }
+  }, [pathname]);
 
   useEffect(() => {
     const handleResize = () => {
@@ -56,10 +83,15 @@ export default function Header() {
   const handleLogout = async () => {
     try {
       await logout();
+      // Force token state to update immediately
+      localStorage.removeItem('token');
+      setHasToken(false);
       router.push('/login');
     } catch (error) {
       console.error('Logout API error:', error);
       // Navigate anyway even if API call fails
+      localStorage.removeItem('token');
+      setHasToken(false);
       router.push('/login');
     }
   };
@@ -68,7 +100,9 @@ export default function Header() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
-  const menuItems = isAuthenticated
+  const isUserAuthenticated = isAuthenticated || hasToken;
+
+  const menuItems = isUserAuthenticated
     ? [
         { path: '/dashboard', icon: HomeIcon, label: t('navbar.dashboard') },
         { path: '/appointments', icon: CalendarIcon, label: t('navbar.appointments') },
@@ -106,7 +140,7 @@ export default function Header() {
         <div className="flex items-center space-x-4">
           <LanguageSwitcher />
           <DarkModeToggle />
-          {!isAuthenticated && !isMobile && (
+          {!isUserAuthenticated && !isMobile && (
             <>
               <Link href="/login" className="text-sm hover:text-indigo-400">
                 {t('navbar.login')}
@@ -146,7 +180,7 @@ export default function Header() {
           })}
 
           {/* Add login and register buttons to mobile sidebar when not authenticated */}
-          {!isAuthenticated && (
+          {!isUserAuthenticated && (
             <div className="mt-6 pt-6 border-t border-gray-700">
               <Link
                 href="/login"
@@ -166,7 +200,7 @@ export default function Header() {
               </Link>
             </div>
           )}
-          {isAuthenticated && (
+          {isUserAuthenticated && (
             <div className="mt-6 pt-6 border-t border-gray-700">
               <button
                 onClick={() => {
