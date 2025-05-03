@@ -193,7 +193,7 @@ export async function getPostsByTag(
   size = 10
 ): Promise<BlogPostListItem[]> {
   try {
-    // First try the dedicated tag endpoint
+    // First try the dedicated tag endpoint that matches client-side API
     try {
       const response = await fetchAPI<any>(
         `/blog/tag/${tagSlug}?page=${page}&size=${size}`
@@ -217,10 +217,17 @@ export async function getPostsByTag(
       return [];
     }
     
+    // Try to get the tag to match by ID
     const tag = await getTagBySlug(tagSlug);
     
     if (!tag) {
-      return [];
+      // If we can't get the tag, just filter by slug as a last resort
+      return posts.filter(post => {
+        if (!post.tags || !Array.isArray(post.tags)) {
+          return false;
+        }
+        return post.tags.some(t => t.slug === tagSlug);
+      });
     }
     
     // Filter posts that have this tag
@@ -242,15 +249,27 @@ export async function getPostsByTag(
  */
 export async function getTagBySlug(slug: string): Promise<Tag | null> {
   try {
-    // Try direct slug endpoint
-    return await fetchAPI<Tag>(`/tags/slug/${slug}`);
+    // Try the same endpoint as the client-side API uses
+    return await fetchAPI<Tag>(`/tags/${slug}`);
   } catch (error) {
-    console.log(`Tag slug endpoint failed for ${slug}, trying to find tag in all tags`);
+    console.log(`Tag endpoint failed for ${slug}, trying to find tag in all tags`);
     
     // Fallback: Get all tags and find the matching one
     try {
-      const allTags = await getTopTags(100);
-      const tag = allTags.find(t => t.slug === slug);
+      // First try getting all tags
+      try {
+        const allTags = await fetchAPI<Tag[]>(`/tags`);
+        if (Array.isArray(allTags)) {
+          const tag = allTags.find(t => t.slug === slug);
+          if (tag) return tag;
+        }
+      } catch (e) {
+        console.log(`All tags endpoint failed, trying top tags as fallback`);
+      }
+      
+      // If that fails, try top tags
+      const topTags = await getTopTags(100);
+      const tag = topTags.find(t => t.slug === slug);
       
       if (!tag) {
         console.error(`Tag with slug '${slug}' not found in any tags`);

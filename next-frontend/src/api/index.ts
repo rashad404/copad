@@ -8,3 +8,6 @@ export * from './blog';
 
 // Re-export admin API functions
 export * from './admin';
+
+// Export alias for backward compatibility
+export { getBlogPostsByTag as getPostsByTag } from './blog';

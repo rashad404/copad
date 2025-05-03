@@ -61,20 +61,31 @@ const TagPageClient = ({
       const nextPage = page + 1;
       const response = await getPostsByTag(slug, nextPage, 9);
       
-      if (response.data && response.data.content && response.data.content.length > 0) {
-        setPosts(prev => [...prev, ...response.data.content]);
-        setPage(nextPage);
-        setHasMore(posts.length + response.data.content.length < response.data.totalElements);
-      } else if (Array.isArray(response.data) && response.data.length > 0) {
-        setPosts(prev => [...prev, ...response.data]);
-        setPage(nextPage);
-        setHasMore(false); // Can't determine if there's more without page info
+      // Handle different response formats
+      if (response && response.data) {
+        // Check if it's a Spring page response
+        if (response.data.content && Array.isArray(response.data.content)) {
+          setPosts(prev => [...prev, ...response.data.content]);
+          setPage(nextPage);
+          setHasMore(response.data.content.length > 0 && response.data.hasNext);
+        } 
+        // Check if it's a direct array response
+        else if (Array.isArray(response.data)) {
+          setPosts(prev => [...prev, ...response.data]);
+          setPage(nextPage);
+          // Assume there's more if we got a full page
+          setHasMore(response.data.length >= 9);
+        } 
+        // Handle empty or unknown response
+        else {
+          setHasMore(false);
+        }
       } else {
         setHasMore(false);
       }
     } catch (err: any) {
       console.error('Error loading more posts:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(err.message || t('common.errors.generic', { defaultValue: 'An error occurred' }));
     } finally {
       setLoading(false);
     }
@@ -105,14 +116,17 @@ const TagPageClient = ({
       <MainLayout>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12 text-center">
           <div className="text-xl font-medium text-gray-900 dark:text-white mb-4">
-            {t('blog.tag.notFound')}
+            {t('blog.tag.empty.title', { defaultValue: 'Tag Not Found' })}
           </div>
+          <p className="text-gray-600 dark:text-gray-400 mb-6">
+            {t('blog.tag.empty.description', { defaultValue: 'The requested tag does not exist. Please check the URL or browse all articles.' })}
+          </p>
           <Link 
             href="/blog" 
             className="inline-flex items-center px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700"
           >
             <ArrowLeftIcon className="h-5 w-5 mr-2" />
-            {t('blog.backToList')}
+            {t('blog.backToList', { defaultValue: 'Back to Blog' })}
           </Link>
         </div>
       </MainLayout>
@@ -191,7 +205,7 @@ const TagPageClient = ({
             {relatedTags.length > 0 && (
               <div className="bg-white dark:bg-gray-800 rounded-xl shadow p-6">
                 <h3 className="text-lg font-medium text-gray-900 dark:text-white mb-4">
-                  {t('blog.tag.otherTags')}
+                  {t('blog.tag.otherTags', { defaultValue: 'Other Tags' })}
                 </h3>
                 <TagList tags={relatedTags} />
               </div>

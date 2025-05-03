@@ -607,6 +607,16 @@
       "tagDescription": "{{count}} articles tagged with {{tag}}",
       "noPostsWithTag": "No articles found with tag {{tag}}",
       "checkOtherTags": "Please check other tags or return to the blog home page",
+      "tag": {
+        "title": "Tag: {{tag}}",
+        "description": "Browse articles about {{tag}}",
+        "empty": {
+          "title": "Tag Not Found",
+          "description": "The requested tag does not exist. Please check the URL or browse all articles."
+        },
+        "otherTags": "Other Tags",
+        "notFound": "Tag Not Found"
+      },
       "search": {
         "title": "Search Blog",
         "placeholder": "Search for articles...",

@@ -601,6 +601,20 @@
       "readingTime": "{{minutes}} dəq oxu",
       "tags": "Etiketlər",
       "relatedPosts": "Əlaqəli Məqalələr",
+      "postsTaggedWith": "Etiketlənmiş Məqalələr",
+      "tagDescription": "{{tag}} etiketi ilə {{count}} məqalə",
+      "noPostsWithTag": "{{tag}} etiketi ilə heç bir məqalə tapılmadı",
+      "checkOtherTags": "Zəhmət olmasa, digər etiketlərə baxın və ya bloq ana səhifəsinə qayıdın",
+      "tag": {
+        "title": "Etiket: {{tag}}",
+        "description": "{{tag}} haqqında məqalələrə baxın",
+        "empty": {
+          "title": "Etiket Tapılmadı",
+          "description": "İstənilən etiket mövcud deyil. Zəhmət olmasa, URL-i yoxlayın və ya bütün məqalələrə baxın."
+        },
+        "otherTags": "Digər Etiketlər",
+        "notFound": "Etiket Tapılmadı"
+      },
       "search": {
         "title": "Bloqda Axtar",
         "placeholder": "Məqalələr üçün axtarış...",
