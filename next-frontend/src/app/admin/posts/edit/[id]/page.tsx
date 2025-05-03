@@ -197,7 +197,18 @@ export default function EditPostPage({ params }: EditPostPageProps) {
     try {
       setUploadingImage(true);
       const response = await uploadImage(file);
-      setFeaturedImage(response.data.url);
+      
+      // Get the image URL from the response
+      console.log('Upload response:', response);
+      console.log('Image URL:', response.data.original);
+      
+      // Construct a valid URL by ensuring it starts with http(s)://
+      // This matches the React implementation
+      const imageUrl = response.data.original.startsWith('http') 
+        ? response.data.original 
+        : `${window.location.protocol}//${window.location.host}${response.data.original}`;
+      console.log('Full image URL:', imageUrl);
+      setFeaturedImage(imageUrl);
       setErrors({ ...errors, featuredImage: '' });
     } catch (err: any) {
       console.error('Error uploading image:', err);

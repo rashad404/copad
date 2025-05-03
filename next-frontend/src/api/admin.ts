@@ -95,11 +95,11 @@ export const deleteTag = (id: number): Promise<AxiosResponse<void>> => {
 };
 
 // Media/File Upload
-export const uploadImage = (file: File): Promise<AxiosResponse<{ url: string }>> => {
+export const uploadImage = (file: File): Promise<AxiosResponse<{ original: string, thumb: string }>> => {
   const formData = new FormData();
   formData.append('file', file);
   
-  return adminAPI.post('/admin/upload/image', formData, {
+  return adminAPI.post('/upload/image', formData, {
     headers: {
       'Content-Type': 'multipart/form-data'
     }
