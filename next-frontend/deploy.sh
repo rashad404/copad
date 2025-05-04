@@ -34,7 +34,7 @@ pm2 stop nextjs-copad 2>/dev/null || true
 echo "Starting Next.js server with PM2..."
 pm2 start npm --name "nextjs-copad" -- start
 
-# Save the PM2 process list so it starts on reboot
+# Save the PM2 process list so it starts on reboot.
 echo "Saving PM2 process list..."
 pm2 save
 
