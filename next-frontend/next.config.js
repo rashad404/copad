@@ -18,9 +18,6 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  // Disable static export for server-side deployment
-  // output: 'export',
-  
   // Disable TypeScript type checking for build
   typescript: {
     ignoreBuildErrors: true,
@@ -30,6 +27,24 @@ const nextConfig = {
   eslint: {
     ignoreDuringBuilds: true,
   },
+  
+  // No trailing slash for better compatibility
+  trailingSlash: false,
+  
+  // Add a custom header to help debug
+  async headers() {
+    return [
+      {
+        source: '/:path*',
+        headers: [
+          {
+            key: 'X-NextJS-Server',
+            value: 'true',
+          },
+        ],
+      },
+    ]
+  }
 };
 
 module.exports = nextConfig;
