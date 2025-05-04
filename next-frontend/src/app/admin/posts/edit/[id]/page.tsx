@@ -339,12 +339,12 @@ export default function EditPostPage({ params }: EditPostPageProps) {
   }
 
   return (
-    <div>
-      <div className="flex justify-between items-center mb-6">
+    <div className="max-w-3xl mx-auto px-4 py-8">
+      <div className="sm:flex sm:items-center sm:justify-between mb-6">
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
           {t('admin.posts.form.editTitle')}
         </h1>
-        <div className="flex space-x-2">
+        <div className="mt-4 sm:mt-0 flex space-x-2">
           <button
             type="button"
             onClick={handleCancelClick}
@@ -383,285 +383,283 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       </div>
 
       {error && (
-        <div className="mb-4 bg-red-50 dark:bg-red-900 text-red-700 dark:text-red-200 p-4 rounded-md">
+        <div className="mb-6 bg-red-50 dark:bg-red-900 p-4 rounded-md text-red-700 dark:text-red-200">
           {error}
         </div>
       )}
 
-      <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-lg">
-        <div className="px-4 py-5 sm:p-6">
-          <form onSubmit={(e) => handleSubmit(e, false)}>
-            <div className="space-y-6">
-              {/* Title */}
-              <div>
-                <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.title')}
-                </label>
+      <div className="bg-white dark:bg-gray-800 shadow rounded-lg">
+        <div className="p-6">
+          <form onSubmit={(e) => handleSubmit(e, false)} className="space-y-6">
+            {/* Title */}
+            <div>
+              <label htmlFor="title" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.title')}
+              </label>
+              <input
+                type="text"
+                id="title"
+                value={title}
+                onChange={handleTitleChange}
+                className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
+                  errors.title ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
+                } dark:bg-gray-700 dark:text-white`}
+              />
+              {errors.title && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title}</p>
+              )}
+            </div>
+
+            {/* Slug */}
+            <div>
+              <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.slug')}
+              </label>
+              <div className="mt-1 flex rounded-md shadow-sm">
                 <input
                   type="text"
-                  id="title"
-                  value={title}
-                  onChange={handleTitleChange}
-                  className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                    errors.title ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                  } dark:bg-gray-700 dark:text-white`}
+                  id="slug"
+                  value={slug}
+                  onChange={(e) => setSlug(e.target.value)}
+                  className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                  placeholder={t('admin.posts.form.slugPlaceholder')}
                 />
-                {errors.title && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title}</p>
-                )}
-              </div>
-
-              {/* Slug */}
-              <div>
-                <label htmlFor="slug" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.slug')}
-                </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
-                  <input
-                    type="text"
-                    id="slug"
-                    value={slug}
-                    onChange={(e) => setSlug(e.target.value)}
-                    className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-                    placeholder={t('admin.posts.form.slugPlaceholder')}
-                  />
-                  <button
-                    type="button"
-                    onClick={generateSlug}
-                    className="inline-flex items-center px-3 py-2 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 sm:text-sm"
-                  >
-                    {t('admin.posts.form.generateSlug')}
-                  </button>
-                </div>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {t('admin.posts.form.slugHelp')}
-                </p>
-              </div>
-
-              {/* Summary */}
-              <div>
-                <label htmlFor="summary" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.summary')}
-                </label>
-                <div className="mt-1">
-                  <textarea
-                    id="summary"
-                    rows={3}
-                    value={summary}
-                    onChange={(e) => {
-                      setSummary(e.target.value);
-                      setErrors({ ...errors, summary: '' });
-                    }}
-                    className={`block w-full rounded-md shadow-sm sm:text-sm ${
-                      errors.summary ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                    } dark:bg-gray-700 dark:text-white`}
-                  />
-                </div>
-                <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-                  {t('admin.posts.form.summaryHelp')}
-                </p>
-                {errors.summary && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.summary}</p>
-                )}
-              </div>
-
-              {/* Featured Image */}
-              <div>
-                <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.featuredImage')}
-                </label>
-                <div className="mt-1 flex items-center">
-                  <input
-                    type="text"
-                    id="featuredImage"
-                    value={featuredImage}
-                    onChange={(e) => {
-                      setFeaturedImage(e.target.value);
-                      setErrors({ ...errors, featuredImage: '' });
-                    }}
-                    className={`block w-full rounded-l-md shadow-sm sm:text-sm ${
-                      errors.featuredImage ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                    } dark:bg-gray-700 dark:text-white`}
-                  />
-                  <label
-                    htmlFor="image-upload"
-                    className="cursor-pointer inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
-                  >
-                    {uploadingImage ? (
-                      <div className="h-4 w-4 border-2 border-r-transparent rounded-full animate-spin mr-2"></div>
-                    ) : (
-                      <ImageIcon className="h-4 w-4 mr-2" />
-                    )}
-                    {t('admin.posts.form.upload')}
-                  </label>
-                  <input
-                    id="image-upload"
-                    type="file"
-                    className="sr-only"
-                    accept="image/*"
-                    onChange={handleImageUpload}
-                    disabled={uploadingImage}
-                  />
-                </div>
-                {errors.featuredImage && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
-                )}
-                {featuredImage && (
-                  <div className="mt-2">
-                    <img
-                      src={featuredImage}
-                      alt="Featured"
-                      className="h-40 object-cover rounded-md"
-                      onError={() => setErrors({
-                        ...errors,
-                        featuredImage: t('admin.posts.form.errors.invalidUrl')
-                      })}
-                    />
-                  </div>
-                )}
-              </div>
-
-              {/* Tags */}
-              <div>
-                <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.tags')}
-                </label>
-                <div className="mt-1 flex rounded-md shadow-sm">
-                  <input
-                    type="text"
-                    id="tags"
-                    value={tagInput}
-                    onChange={(e) => setTagInput(e.target.value)}
-                    onKeyDown={(e) => {
-                      if (e.key === 'Enter') {
-                        e.preventDefault();
-                        handleTagAdd();
-                      }
-                    }}
-                    className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
-                    placeholder={t('admin.posts.form.addTag')}
-                  />
-                  <button
-                    type="button"
-                    onClick={handleTagAdd}
-                    className="inline-flex items-center px-3 py-2 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 sm:text-sm"
-                  >
-                    <Plus className="h-4 w-4 mr-1" />
-                    {t('admin.posts.form.addTagButton')}
-                  </button>
-                </div>
-                
-                {/* Selected Tags */}
-                {selectedTags.length > 0 && (
-                  <div className="mt-2 flex flex-wrap gap-2">
-                    {selectedTags.map(tagId => {
-                      const tag = availableTags.find(t => t.id === tagId);
-                      return tag ? (
-                        <span
-                          key={tag.id}
-                          className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200"
-                        >
-                          {tag.name}
-                          <button
-                            type="button"
-                            onClick={() => handleTagRemove(tag.id)}
-                            className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-indigo-400 dark:text-indigo-300 hover:text-indigo-500 dark:hover:text-indigo-200 focus:outline-none"
-                          >
-                            <X className="h-3 w-3" />
-                          </button>
-                        </span>
-                      ) : null;
-                    })}
-                  </div>
-                )}
-
-                {/* Available Tags */}
-                {availableTags.length > 0 && (
-                  <div className="mt-2">
-                    <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
-                      {t('admin.posts.form.availableTags')}
-                    </p>
-                    <div className="flex flex-wrap gap-2">
-                      {availableTags.map(tag => (
-                        <button
-                          key={tag.id}
-                          type="button"
-                          onClick={() => {
-                            if (!selectedTags.includes(tag.id)) {
-                              setSelectedTags([...selectedTags, tag.id]);
-                            }
-                          }}
-                          disabled={selectedTags.includes(tag.id)}
-                          className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
-                            selectedTags.includes(tag.id)
-                              ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200'
-                              : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
-                          }`}
-                        >
-                          {tag.name}
-                          {selectedTags.includes(tag.id) && (
-                            <Check className="ml-1 h-3 w-3" />
-                          )}
-                        </button>
-                      ))}
-                    </div>
-                  </div>
-                )}
-              </div>
-
-              {/* Language */}
-              <div>
-                <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.language')}
-                </label>
-                <select
-                  id="language"
-                  value={language}
-                  onChange={(e) => setLanguage(e.target.value)}
-                  className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                <button
+                  type="button"
+                  onClick={generateSlug}
+                  className="inline-flex items-center px-3 py-2 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 sm:text-sm"
                 >
-                  <option value="en">{t('admin.posts.form.languageOptions.en')}</option>
-                  <option value="az">{t('admin.posts.form.languageOptions.az')}</option>
-                  <option value="tr">{t('admin.posts.form.languageOptions.tr')}</option>
-                </select>
+                  {t('admin.posts.form.generateSlug')}
+                </button>
               </div>
-
-              {/* Content / Rich Text Editor */}
-              <div>
-                <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.content')}
-                </label>
-                <div className="mt-1">
-                  <RichTextEditor
-                    value={content}
-                    onChange={(newContent) => {
-                      setContent(newContent);
-                      setErrors({ ...errors, content: '' });
-                    }}
-                  />
-                </div>
-                {errors.content && (
-                  <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.content}</p>
-                )}
-              </div>
-
-              {/* Published checkbox */}
-              <div className="flex items-center">
-                <input
-                  id="published"
-                  type="checkbox"
-                  checked={published}
-                  onChange={(e) => setPublished(e.target.checked)}
-                  className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded"
-                />
-                <label htmlFor="published" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
-                  {t('admin.posts.form.published')}
-                </label>
-              </div>
-              <p className="text-sm text-gray-500 dark:text-gray-400">
-                {t('admin.posts.form.publishedHelp')}
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('admin.posts.form.slugHelp')}
               </p>
             </div>
+
+            {/* Summary */}
+            <div>
+              <label htmlFor="summary" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.summary')}
+              </label>
+              <div className="mt-1">
+                <textarea
+                  id="summary"
+                  rows={3}
+                  value={summary}
+                  onChange={(e) => {
+                    setSummary(e.target.value);
+                    setErrors({ ...errors, summary: '' });
+                  }}
+                  className={`block w-full rounded-md shadow-sm sm:text-sm ${
+                    errors.summary ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
+                  } dark:bg-gray-700 dark:text-white`}
+                />
+              </div>
+              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+                {t('admin.posts.form.summaryHelp')}
+              </p>
+              {errors.summary && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.summary}</p>
+              )}
+            </div>
+
+            {/* Featured Image */}
+            <div>
+              <label htmlFor="featuredImage" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.featuredImage')}
+              </label>
+              <div className="mt-1 flex items-center">
+                <input
+                  type="text"
+                  id="featuredImage"
+                  value={featuredImage}
+                  onChange={(e) => {
+                    setFeaturedImage(e.target.value);
+                    setErrors({ ...errors, featuredImage: '' });
+                  }}
+                  className={`block w-full rounded-l-md shadow-sm sm:text-sm ${
+                    errors.featuredImage ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
+                  } dark:bg-gray-700 dark:text-white`}
+                />
+                <label
+                  htmlFor="image-upload"
+                  className="cursor-pointer inline-flex items-center px-4 py-2 border border-l-0 border-gray-300 dark:border-gray-600 rounded-r-md shadow-sm text-sm font-medium text-gray-700 dark:text-gray-300 bg-gray-50 dark:bg-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600"
+                >
+                  {uploadingImage ? (
+                    <div className="h-4 w-4 border-2 border-r-transparent rounded-full animate-spin mr-2"></div>
+                  ) : (
+                    <ImageIcon className="h-4 w-4 mr-2" />
+                  )}
+                  {t('admin.posts.form.upload')}
+                </label>
+                <input
+                  id="image-upload"
+                  type="file"
+                  className="sr-only"
+                  accept="image/*"
+                  onChange={handleImageUpload}
+                  disabled={uploadingImage}
+                />
+              </div>
+              {errors.featuredImage && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
+              )}
+              {featuredImage && (
+                <div className="mt-2">
+                  <img
+                    src={featuredImage}
+                    alt="Featured"
+                    className="h-40 object-cover rounded-md"
+                    onError={() => setErrors({
+                      ...errors,
+                      featuredImage: t('admin.posts.form.errors.invalidUrl')
+                    })}
+                  />
+                </div>
+              )}
+            </div>
+
+            {/* Tags */}
+            <div>
+              <label htmlFor="tags" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.tags')}
+              </label>
+              <div className="mt-1 flex rounded-md shadow-sm">
+                <input
+                  type="text"
+                  id="tags"
+                  value={tagInput}
+                  onChange={(e) => setTagInput(e.target.value)}
+                  onKeyDown={(e) => {
+                    if (e.key === 'Enter') {
+                      e.preventDefault();
+                      handleTagAdd();
+                    }
+                  }}
+                  className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                  placeholder={t('admin.posts.form.addTag')}
+                />
+                <button
+                  type="button"
+                  onClick={handleTagAdd}
+                  className="inline-flex items-center px-3 py-2 rounded-r-md border border-l-0 border-gray-300 dark:border-gray-600 bg-gray-50 dark:bg-gray-700 text-gray-700 dark:text-gray-300 sm:text-sm"
+                >
+                  <Plus className="h-4 w-4 mr-1" />
+                  {t('admin.posts.form.addTagButton')}
+                </button>
+              </div>
+              
+              {/* Selected Tags */}
+              {selectedTags.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-2">
+                  {selectedTags.map(tagId => {
+                    const tag = availableTags.find(t => t.id === tagId);
+                    return tag ? (
+                      <span
+                        key={tag.id}
+                        className="inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200"
+                      >
+                        {tag.name}
+                        <button
+                          type="button"
+                          onClick={() => handleTagRemove(tag.id)}
+                          className="ml-1.5 inline-flex items-center justify-center h-4 w-4 rounded-full text-indigo-400 dark:text-indigo-300 hover:text-indigo-500 dark:hover:text-indigo-200 focus:outline-none"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </span>
+                    ) : null;
+                  })}
+                </div>
+              )}
+
+              {/* Available Tags */}
+              {availableTags.length > 0 && (
+                <div className="mt-2">
+                  <p className="text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">
+                    {t('admin.posts.form.availableTags')}
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {availableTags.map(tag => (
+                      <button
+                        key={tag.id}
+                        type="button"
+                        onClick={() => {
+                          if (!selectedTags.includes(tag.id)) {
+                            setSelectedTags([...selectedTags, tag.id]);
+                          }
+                        }}
+                        disabled={selectedTags.includes(tag.id)}
+                        className={`inline-flex items-center px-2.5 py-0.5 rounded-md text-sm font-medium ${
+                          selectedTags.includes(tag.id)
+                            ? 'bg-indigo-100 dark:bg-indigo-900 text-indigo-800 dark:text-indigo-200'
+                            : 'bg-gray-100 dark:bg-gray-700 text-gray-800 dark:text-gray-200 hover:bg-gray-200 dark:hover:bg-gray-600'
+                        }`}
+                      >
+                        {tag.name}
+                        {selectedTags.includes(tag.id) && (
+                          <Check className="ml-1 h-3 w-3" />
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Language */}
+            <div>
+              <label htmlFor="language" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.language')}
+              </label>
+              <select
+                id="language"
+                value={language}
+                onChange={(e) => setLanguage(e.target.value)}
+                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+              >
+                <option value="en">{t('admin.posts.form.languageOptions.en')}</option>
+                <option value="az">{t('admin.posts.form.languageOptions.az')}</option>
+                <option value="tr">{t('admin.posts.form.languageOptions.tr')}</option>
+              </select>
+            </div>
+
+            {/* Content / Rich Text Editor */}
+            <div>
+              <label htmlFor="content" className="block text-sm font-medium text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.content')}
+              </label>
+              <div className="mt-1">
+                <RichTextEditor
+                  value={content}
+                  onChange={(newContent) => {
+                    setContent(newContent);
+                    setErrors({ ...errors, content: '' });
+                  }}
+                />
+              </div>
+              {errors.content && (
+                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.content}</p>
+              )}
+            </div>
+
+            {/* Published checkbox */}
+            <div className="flex items-center">
+              <input
+                id="published"
+                type="checkbox"
+                checked={published}
+                onChange={(e) => setPublished(e.target.checked)}
+                className="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 dark:border-gray-600 rounded"
+              />
+              <label htmlFor="published" className="ml-2 block text-sm text-gray-700 dark:text-gray-300">
+                {t('admin.posts.form.published')}
+              </label>
+            </div>
+            <p className="text-sm text-gray-500 dark:text-gray-400">
+              {t('admin.posts.form.publishedHelp')}
+            </p>
           </form>
         </div>
       </div>

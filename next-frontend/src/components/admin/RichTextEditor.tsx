@@ -31,7 +31,7 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
     }
   };
 
-  const executeCommand = (command: string, value: string | null = null) => {
+  const executeCommand = (command: string, value?: string) => {
     document.execCommand(command, false, value);
     handleInput();
     if (editorRef.current) {
@@ -143,7 +143,8 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
       <div 
         ref={editorRef}
         contentEditable={true}
-        className="p-4 min-h-[400px] focus:outline-none dark:bg-gray-800 dark:text-white prose dark:prose-invert max-w-none"
+        dir="ltr"
+        className="p-4 min-h-[400px] focus:outline-none dark:bg-gray-800 dark:text-white max-w-none"
         onInput={handleInput}
         dangerouslySetInnerHTML={{ __html: html }}
       />
