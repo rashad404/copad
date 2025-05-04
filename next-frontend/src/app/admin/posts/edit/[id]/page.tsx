@@ -401,12 +401,10 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                 id="title"
                 value={title}
                 onChange={handleTitleChange}
-                className={`mt-1 block w-full rounded-md shadow-sm sm:text-sm ${
-                  errors.title ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                } dark:bg-gray-700 dark:text-white`}
+                className={`mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white shadow-sm ${errors.title ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
               />
               {errors.title && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.title}</p>
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.title}</p>
               )}
             </div>
 
@@ -421,7 +419,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                   id="slug"
                   value={slug}
                   onChange={(e) => setSlug(e.target.value)}
-                  className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                  className="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white shadow-sm"
                   placeholder={t('admin.posts.form.slugPlaceholder')}
                 />
                 <button
@@ -432,7 +430,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                   {t('admin.posts.form.generateSlug')}
                 </button>
               </div>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 {t('admin.posts.form.slugHelp')}
               </p>
             </div>
@@ -451,16 +449,14 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                     setSummary(e.target.value);
                     setErrors({ ...errors, summary: '' });
                   }}
-                  className={`block w-full rounded-md shadow-sm sm:text-sm ${
-                    errors.summary ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                  } dark:bg-gray-700 dark:text-white`}
+                  className={`block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white shadow-sm ${errors.summary ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
                 />
               </div>
-              <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
+              <p className="mt-2 text-xs text-gray-500 dark:text-gray-400">
                 {t('admin.posts.form.summaryHelp')}
               </p>
               {errors.summary && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.summary}</p>
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.summary}</p>
               )}
             </div>
 
@@ -478,9 +474,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                     setFeaturedImage(e.target.value);
                     setErrors({ ...errors, featuredImage: '' });
                   }}
-                  className={`block w-full rounded-l-md shadow-sm sm:text-sm ${
-                    errors.featuredImage ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : 'border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500'
-                  } dark:bg-gray-700 dark:text-white`}
+                  className={`block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 dark:bg-gray-800 dark:text-white shadow-sm ${errors.featuredImage ? 'border-red-300 focus:ring-red-500 focus:border-red-500' : ''}`}
                 />
                 <label
                   htmlFor="image-upload"
@@ -503,14 +497,14 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                 />
               </div>
               {errors.featuredImage && (
-                <p className="mt-1 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
+                <p className="mt-2 text-sm text-red-600 dark:text-red-400">{errors.featuredImage}</p>
               )}
               {featuredImage && (
-                <div className="mt-2">
+                <div className="mt-2 relative h-40 w-full overflow-hidden rounded-md">
                   <img
                     src={featuredImage}
                     alt="Featured"
-                    className="h-40 object-cover rounded-md"
+                    className="h-40 w-full object-cover"
                     onError={() => setErrors({
                       ...errors,
                       featuredImage: t('admin.posts.form.errors.invalidUrl')
@@ -537,7 +531,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                       handleTagAdd();
                     }
                   }}
-                  className="block w-full rounded-l-md border-gray-300 dark:border-gray-600 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-700 dark:text-white"
+                  className="block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 rounded-l-md focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm dark:bg-gray-800 dark:text-white shadow-sm"
                   placeholder={t('admin.posts.form.addTag')}
                 />
                 <button
@@ -617,7 +611,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
                 id="language"
                 value={language}
                 onChange={(e) => setLanguage(e.target.value)}
-                className="mt-1 block w-full pl-3 pr-10 py-2 text-base border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-700 dark:text-white"
+                className="mt-1 block w-full px-4 py-2 border border-gray-300 dark:border-gray-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm rounded-md dark:bg-gray-800 dark:text-white shadow-sm"
               >
                 <option value="en">{t('admin.posts.form.languageOptions.en')}</option>
                 <option value="az">{t('admin.posts.form.languageOptions.az')}</option>
