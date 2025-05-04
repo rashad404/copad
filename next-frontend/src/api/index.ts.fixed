@@ -13,6 +13,9 @@ export const {
   getBlogPostsByTag,
   getTopTags,
   getTagBySlug,
+  // Skip the conflicting functions
+  // getAllTags,
+  // createTag,
   getAdminBlogPosts,
   getBlogPostById,
   createBlogPost,

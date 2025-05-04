@@ -18,26 +18,9 @@ git pull
 echo "Navigating to Next.js project directory..."
 cd /home/copad/copad/next-frontend
 
-# Fix PostCSS config if needed
-echo "Checking PostCSS configuration..."
-if grep -q "@tailwindcss/postcss" postcss.config.mjs; then
-  echo "Updating PostCSS configuration..."
-  cat > postcss.config.mjs << EOL
-const config = {
-  plugins: {
-    tailwindcss: {},
-    autoprefixer: {},
-  }
-};
-
-export default config;
-EOL
-fi
-
-# Install dependencies with proper flags
+# Install dependencies
 echo "Installing dependencies..."
-npm install tailwindcss autoprefixer --save-dev
-npm install --no-optional
+npm install
 
 # Build the Next.js application
 echo "Building Next.js application..."
