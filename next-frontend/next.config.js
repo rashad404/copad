@@ -14,7 +14,7 @@ const nextConfig = {
       {
         protocol: 'http',
         hostname: 'localhost',
-      }
+      } 
     ],
     unoptimized: true,
   },

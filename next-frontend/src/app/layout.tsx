@@ -9,8 +9,10 @@ const inter = Inter({ subsets: ["latin"] });
 // Get the site info for metadata
 const siteInfo = siteConfig.getDefaultSiteInfo();
 const AGENT_NAME = siteInfo.AGENT_NAME;
+const BASE_URL = process.env.NEXT_PUBLIC_APP_URL || 'https://example.com';
 
 export const metadata: Metadata = {
+  metadataBase: new URL(BASE_URL || 'https://example.com'),
   title: {
     template: `%s | ${AGENT_NAME}`,
     default: `${AGENT_NAME} - AI-Powered Healthcare Assistant`
