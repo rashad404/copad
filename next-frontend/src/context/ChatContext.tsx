@@ -188,13 +188,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       isInitializingRef.current = true;
       try {
         // Check if we already have a session ID in state or localStorage
-        let sid = sessionId || localStorage.getItem('guestSessionId');
+        let sid = sessionId || localStorage.getItem('guestSessionId190190');
         let isNewSession = false;
 
         if (!sid) {
           const response = await startGuestSession();
           sid = response.data.sessionId;
-          localStorage.setItem('guestSessionId', sid);
+          localStorage.setItem('guestSessionId190190', sid);
           isNewSession = true;
         }
 
