@@ -6,7 +6,12 @@ const getBaseUrl = () => {
     return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
   }
   
-  // Client-side: use relative URL
+  // Client-side: check if we're in development
+  if (process.env.NODE_ENV === 'development') {
+    return 'http://localhost:8080/api';
+  }
+  
+  // Production: use relative URL
   return '/api';
 };
 

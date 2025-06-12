@@ -66,7 +66,7 @@ export default function Footer() {
             <h3 className="font-semibold text-gray-900 dark:text-gray-100 mb-4">{t('home.footer.legal')}</h3>
             <ul className="space-y-3">
               <li><Link href="/privacy-policy" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">{t('home.footer.links.privacy')}</Link></li>
-              <li><Link href="/terms" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">{t('home.footer.links.terms')}</Link></li>
+              <li><Link href="/terms-of-service" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">{t('home.footer.links.terms')}</Link></li>
               <li><Link href="/security" className="text-gray-500 dark:text-gray-400 hover:text-indigo-600 dark:hover:text-indigo-400 text-sm">{t('home.footer.links.security')}</Link></li>
             </ul>
           </div>

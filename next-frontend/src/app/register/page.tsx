@@ -235,7 +235,7 @@ export default function RegisterPage() {
                     />
                     <label htmlFor="terms" className="ml-2 block text-sm text-gray-600 dark:text-gray-400">
                       {t("register.form.terms")}{" "}
-                      <Link href="/terms" className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
+                      <Link href="/terms-of-service" className="text-indigo-600 hover:text-indigo-800 dark:text-indigo-400 dark:hover:text-indigo-300">
                         {t("register.form.termsLink")}
                       </Link>{" "}
                       {t("register.form.and")}{" "}
