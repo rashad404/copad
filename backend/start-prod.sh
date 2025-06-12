@@ -19,4 +19,4 @@ fi
 
 # Run the application with production profile
 echo "Starting application with production profile..."
-java -jar -Dspring.profiles.active=prod target/copad-0.0.1-SNAPSHOT.jar
+java -jar -Dspring.profiles.active=prod target/copad-*.jar
