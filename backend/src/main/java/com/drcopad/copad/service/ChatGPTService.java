@@ -37,6 +37,7 @@ public class ChatGPTService {
     private final ObjectMapper objectMapper;
     private final MedicalSpecialtyRepository specialtyRepository;
     private final LanguageMappingService languageMappingService;
+    private final DocumentExtractionService documentExtractionService;
 
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language) {
         return getChatResponse(newUserMessage, history, specialtyCode, language, null);
@@ -120,6 +121,8 @@ public class ChatGPTService {
         // Process user message with attachments
         boolean hasImageAttachments = chatMessage.getAttachments().stream()
                 .anyMatch(attachment -> attachment.getFileType().startsWith("image/"));
+        boolean hasDocumentAttachments = chatMessage.getAttachments().stream()
+                .anyMatch(attachment -> !attachment.getFileType().startsWith("image/"));
                 
         if (hasImageAttachments) {
             // Create a multimodal message with text and images
@@ -180,8 +183,34 @@ public class ChatGPTService {
             multimodalMessage.setContent_objects(contentObjects);
             messages.add(multimodalMessage);
             
+        } else if (hasDocumentAttachments) {
+            // For document attachments, extract text and append to message
+            StringBuilder enhancedMessage = new StringBuilder();
+            if (chatMessage.getMessage() != null && !chatMessage.getMessage().trim().isEmpty()) {
+                enhancedMessage.append(chatMessage.getMessage()).append("\n\n");
+            }
+            
+            enhancedMessage.append("--- Document Content ---\n");
+            
+            for (FileAttachment doc : chatMessage.getAttachments()) {
+                if (!doc.getFileType().startsWith("image/")) {
+                    String extractedText = documentExtractionService.extractTextFromDocument(
+                        doc.getFilePath(), doc.getFileType()
+                    );
+                    
+                    if (extractedText != null && !extractedText.trim().isEmpty()) {
+                        enhancedMessage.append("\nFile: ").append(doc.getOriginalFilename()).append("\n");
+                        enhancedMessage.append(extractedText).append("\n");
+                    } else {
+                        enhancedMessage.append("\nFile: ").append(doc.getOriginalFilename())
+                            .append(" (Could not extract text)\n");
+                    }
+                }
+            }
+            
+            messages.add(new Message(role, enhancedMessage.toString()));
         } else {
-            // For non-image attachments, just include the text message
+            // No attachments, just include the text message
             messages.add(new Message(role, chatMessage.getMessage()));
         }
     }
