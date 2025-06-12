@@ -2,9 +2,11 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ListBulletIcon } from '@heroicons/react/24/outline';
+import { ListBulletIcon, PaperClipIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import ChatSidebar from './ChatSidebar';
+import FileUploadButton from './FileUploadButton';
+import FileAttachmentPreview from './FileAttachmentPreview';
 import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
 
@@ -23,16 +25,21 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     selectedChatId,
     isInitializing,
     error,
+    uploadedFiles,
     createNewChat,
     updateChatTitle,
     deleteChat,
     sendMessage,
-    setSelectedChatId
+    setSelectedChatId,
+    uploadFile,
+    removeUploadedFile,
+    clearUploadedFiles
   } = useChat();
   const [messages, setMessages] = useState<any[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -55,15 +62,37 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     }
   }, [selectedChatId, chats]);
 
+  const handleFileUpload = async (file: File) => {
+    try {
+      await uploadFile(file);
+      setUploadError(null);
+    } catch (error) {
+      console.error('Error uploading file:', error);
+      setUploadError(t('chat.fileUpload.failed'));
+    }
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Send:', { selectedChatId, sessionId, isInitializing, loading });
-    if (!newMessage.trim() || loading) return;
+    
+    // Don't send if message is empty AND there are no file attachments
+    if ((!newMessage.trim() && uploadedFiles.length === 0) || loading) return;
+    
     const messageToSend = newMessage.trim();
     setNewMessage('');
-    const newMessageObj = { role: 'user', content: messageToSend, timestamp: new Date() };
+    
+    // Create new message object with attachments
+    const newMessageObj = { 
+      role: 'user', 
+      content: messageToSend, 
+      timestamp: new Date(),
+      attachments: [...uploadedFiles]
+    };
+    
     setMessages(prev => [...prev, newMessageObj]);
     setLoading(true);
+    
     try {
       const response = await sendMessage(selectedChatId, messageToSend);
       const assistantMessage = {
@@ -172,6 +201,17 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
                   }`}
                 >
                   {formatMessage(message.content)}
+                  
+                  {/* Show file attachments if any */}
+                  {message.attachments && message.attachments.length > 0 && (
+                    <div className="mt-2">
+                      <FileAttachmentPreview 
+                        files={message.attachments} 
+                        readonly={true}
+                      />
+                    </div>
+                  )}
+                  
                   {message.timestamp && (
                     <div className={`text-xs mt-1 ${message.role === 'user' ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'}`}>
                       {new Date(message.timestamp).toLocaleTimeString()}
@@ -211,33 +251,54 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         </div>
         {/* Message input */}
         <div className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
-          <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
-            <input
-              type="text"
-              value={newMessage}
-              onChange={(e) => setNewMessage(e.target.value)}
-              placeholder={t('chat.messagePlaceholder')}
-              className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400"
-              disabled={loading || isInitializing || !selectedChatId || !sessionId}
-            />
-            <button
-              type="submit"
-              disabled={loading || !newMessage.trim() || isInitializing || !selectedChatId || !sessionId}
-              className={`shrink-0 px-4 py-2 rounded-lg ${
-                loading || !newMessage.trim() || isInitializing || !selectedChatId || !sessionId
-                  ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
-                  : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
-              } text-white font-medium`}
-            >
-              {loading ? (
-                <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
-              ) : (
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
-                </svg>
-              )}
-            </button>
-          </form>
+          <div className="flex flex-col w-full">
+            {/* File attachments preview */}
+            {uploadedFiles.length > 0 && (
+              <div className="mb-2">
+                <FileAttachmentPreview 
+                  files={uploadedFiles} 
+                  onRemove={removeUploadedFile}
+                />
+              </div>
+            )}
+            
+            <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
+              {/* File upload button */}
+              <FileUploadButton
+                onFileSelected={handleFileUpload}
+                isDisabled={loading || isInitializing || !selectedChatId || !sessionId}
+              />
+              
+              <input
+                type="text"
+                value={newMessage}
+                onChange={(e) => setNewMessage(e.target.value)}
+                placeholder={uploadedFiles.length > 0 
+                  ? t('chat.messageWithFilesPlaceholder') 
+                  : t('chat.messagePlaceholder')}
+                className="flex-1 min-w-0 rounded-lg border border-gray-300 dark:border-gray-600 px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500 dark:bg-gray-800 dark:text-gray-200 dark:placeholder-gray-400"
+                disabled={loading || isInitializing || !selectedChatId || !sessionId}
+              />
+              
+              <button
+                type="submit"
+                disabled={(loading || (!newMessage.trim() && uploadedFiles.length === 0) || isInitializing || !selectedChatId || !sessionId)}
+                className={`shrink-0 px-4 py-2 rounded-lg ${
+                  loading || (!newMessage.trim() && uploadedFiles.length === 0) || isInitializing || !selectedChatId || !sessionId
+                    ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
+                    : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
+                } text-white font-medium`}
+              >
+                {loading ? (
+                  <div className="w-6 h-6 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : (
+                  <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
+                  </svg>
+                )}
+              </button>
+            </form>
+          </div>
         </div>
       </div>
     </div>

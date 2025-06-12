@@ -3,6 +3,8 @@ package com.drcopad.copad.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Data
@@ -32,10 +34,23 @@ public class ChatMessage {
     @JoinColumn(name = "guest_session_id")
     private GuestSession guestSession;
     
+    @OneToMany(mappedBy = "message", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<FileAttachment> attachments = new ArrayList<>();
+    
     @PrePersist
     protected void onCreate() {
         if (this.timestamp == null) {
             this.timestamp = LocalDateTime.now();
         }
+    }
+    
+    public void addAttachment(FileAttachment attachment) {
+        attachments.add(attachment);
+        attachment.setMessage(this);
+    }
+    
+    public void removeAttachment(FileAttachment attachment) {
+        attachments.remove(attachment);
+        attachment.setMessage(null);
     }
 }

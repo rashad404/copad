@@ -297,6 +297,7 @@
         "placeholder": "Type your message... e.g. I have an allergy, what should I do?"
       },
       "messagePlaceholder": "Type your message... e.g. I have an allergy, what should I do?",
+      "messageWithFilesPlaceholder": "Describe your question or the attached files...",
       "send": "Send",
       "sending": "Sending...",
       "saveChat": "Save as consultation",
@@ -313,10 +314,18 @@
         "general": "Secure",
         "save": "Save Chat"
       },
+      "fileUpload": {
+        "buttonTitle": "Upload a photo or document",
+        "invalidType": "Invalid file type. Please upload a supported file.",
+        "tooLarge": "File is too large. Maximum size is {{size}}MB.",
+        "failed": "Failed to upload file. Please try again.",
+        "remove": "Remove file",
+        "photoHint": "Upload a photo",
+        "documentHint": "Upload a document"
+      },
       "messages": "Messages",
       "newChat": "New Chat",
       "untitledChat": "Untitled Chat",
-      "noMessages": "No messages yet",
       "noMessages": "No messages yet",
       "closeSidebar": "Close sidebar",
       "openSidebar": "Open sidebar",

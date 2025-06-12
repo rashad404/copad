@@ -5,10 +5,22 @@ import api from '@/api';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 
+interface FileAttachment {
+  fileId: string;
+  url: string;
+  filename: string;
+  fileType: string;
+  fileSize: number;
+  uploadedAt: string | Date;
+  thumbnailUrl?: string;
+  isImage: boolean;
+}
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string | Date;
+  attachments?: FileAttachment[];
 }
 
 interface Chat {
@@ -25,11 +37,15 @@ interface ChatContextType {
   selectedChatId: string | null;
   isInitializing: boolean;
   error: string | null;
+  uploadedFiles: FileAttachment[];
   createNewChat: () => Promise<string | null>;
   updateChatTitle: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
   sendMessage: (chatId: string | null, message: string) => Promise<string>;
   setSelectedChatId: (chatId: string) => void;
+  uploadFile: (file: File) => Promise<FileAttachment>;
+  clearUploadedFiles: () => void;
+  removeUploadedFile: (fileId: string) => void;
 }
 
 const ChatContext = createContext<ChatContextType | undefined>(undefined);
@@ -41,6 +57,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
   const [isInitializing, setIsInitializing] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [uploadedFiles, setUploadedFiles] = useState<FileAttachment[]>([]);
   const isInitializingRef = useRef(false);
   const sessionIdRef = useRef<string | null>(null);
 
@@ -75,9 +92,18 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const createGuestChat = async (sid: string, title: string | null) => api.post(`/guest/chats/${sid}`, { title });
   const updateGuestChat = async (sid: string, chatId: string, title: string) => api.put(`/guest/chats/${sid}/${chatId}`, { title });
   const deleteGuestChat = async (sid: string, chatId: string) => api.delete(`/guest/chats/${sid}/${chatId}`);
-  const sendGuestMessage = async (sid: string, message: string, chatId: string | null) => {
-    console.log('API POST', `/guest/chat/${sid}/${chatId}`, { message, language: i18n.language });
-    const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language });
+  const uploadGuestFile = async (sid: string, file: File) => {
+    const formData = new FormData();
+    formData.append('file', file);
+    return api.post(`/guest/upload/${sid}`, formData, {
+      headers: {
+        'Content-Type': 'multipart/form-data'
+      }
+    });
+  };
+  const sendGuestMessage = async (sid: string, message: string, chatId: string | null, fileIds: string[] = []) => {
+    console.log('API POST', `/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
+    const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
     console.log('API RESPONSE', res.data);
     return typeof res.data === 'string'
       ? res.data
@@ -153,23 +179,67 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  // Upload file
+  const uploadFile = async (file: File) => {
+    if (!sessionIdRef.current) throw new Error('Session missing');
+    try {
+      const response = await uploadGuestFile(sessionIdRef.current, file);
+      const fileData = response.data as FileAttachment;
+      setUploadedFiles(prev => [...prev, fileData]);
+      return fileData;
+    } catch (err) {
+      console.error('uploadFile error:', err);
+      setError('Failed to upload file');
+      throw err;
+    }
+  };
+  
+  // Clear uploaded files
+  const clearUploadedFiles = () => {
+    setUploadedFiles([]);
+  };
+  
+  // Remove uploaded file
+  const removeUploadedFile = (fileId: string) => {
+    setUploadedFiles(prev => prev.filter(file => file.fileId !== fileId));
+  };
+
   // Send message
   const sendMessage = async (chatId: string | null, message: string) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
     try {
-      const response = await sendGuestMessage(sessionIdRef.current, message, chatId);
+      // Get file IDs from uploaded files
+      const fileIds = uploadedFiles.map(file => file.fileId);
+      
+      // Send message with file IDs
+      const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds);
+      
+      // Update chats state
       setChats(prev => prev.map(chat => {
         if (chat.id === chatId) {
           const newMessages = [
             ...chat.messages,
-            { role: 'user', content: message, timestamp: new Date().toISOString() },
-            { role: 'assistant', content: response, timestamp: new Date().toISOString() }
+            { 
+              role: 'user', 
+              content: message, 
+              timestamp: new Date().toISOString(),
+              attachments: [...uploadedFiles]
+            },
+            { 
+              role: 'assistant', 
+              content: response, 
+              timestamp: new Date().toISOString() 
+            }
           ];
           const title = chat.messages.length === 0 ? message.split(' ').slice(0, 3).join(' ') + '...' : chat.title;
           return { ...chat, messages: newMessages, title };
         }
         return chat;
       }));
+      
+      // Clear uploaded files after sending
+      clearUploadedFiles();
+      
       return response;
     } catch (err) {
       console.error('sendMessage error:', err);
@@ -248,11 +318,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
         selectedChatId,
         isInitializing,
         error,
+        uploadedFiles,
         createNewChat,
         updateChatTitle,
         deleteChat,
         sendMessage,
-        setSelectedChatId
+        setSelectedChatId,
+        uploadFile,
+        clearUploadedFiles,
+        removeUploadedFile
       }}
     >
       {children}

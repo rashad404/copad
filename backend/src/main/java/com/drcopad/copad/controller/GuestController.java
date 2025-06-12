@@ -1,9 +1,10 @@
 package com.drcopad.copad.controller;
 
+import com.drcopad.copad.dto.FileAttachmentDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.dto.MessageRequest;
-import com.drcopad.copad.dto.ChatGPTResponse;
 import com.drcopad.copad.exception.RateLimitExceededException;
+import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.service.RateLimiterService;
 import jakarta.servlet.http.HttpServletRequest;
@@ -12,7 +13,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
 import java.util.Map;
 
 @Slf4j
@@ -23,6 +26,7 @@ public class GuestController {
 
     private final GuestSessionService guestSessionService;
     private final RateLimiterService rateLimiterService;
+    private final FileAttachmentService fileAttachmentService;
 
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -68,14 +72,22 @@ public class GuestController {
             @PathVariable String chatId,
             @RequestBody MessageRequest messageRequest,
             @RequestParam(defaultValue = "general") String specialty) {
-        log.info("Received chat request for session {} and chat {} with message: {}, specialty: {}, and language: {}", 
-                 sessionId, chatId, messageRequest.getMessage(), specialty, messageRequest.getLanguage());
+        log.info("Received chat request for session {} and chat {} with message: {}, specialty: {}, language: {}, and fileIds: {}", 
+                 sessionId, chatId, messageRequest.getMessage(), specialty, messageRequest.getLanguage(), messageRequest.getFileIds());
         try {
-            String response = guestSessionService.processChat(sessionId, messageRequest.getMessage(), specialty, messageRequest.getLanguage(), chatId);
+            String response = guestSessionService.processChat(
+                sessionId, 
+                messageRequest.getMessage(), 
+                specialty, 
+                messageRequest.getLanguage(), 
+                chatId, 
+                messageRequest.getFileIds()
+            );
             return ResponseEntity.ok(response);
         } catch (Exception e) {
             log.error("Error processing chat request", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An error occurred while processing your message: " + e.getMessage());
         }
     }
 
@@ -88,7 +100,35 @@ public class GuestController {
             return ResponseEntity.ok(history);
         } catch (Exception e) {
             log.error("Error retrieving chat history", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("An error occurred while retrieving chat history");
+        }
+    }
+    
+    @PostMapping("/upload/{sessionId}")
+    public ResponseEntity<?> uploadFile(
+            @PathVariable String sessionId,
+            @RequestParam("file") MultipartFile file) {
+        log.info("Uploading file for session {}: {}, size: {}, type: {}", 
+                sessionId, file.getOriginalFilename(), file.getSize(), file.getContentType());
+        
+        if (!rateLimiterService.isAllowed(sessionId)) {
+            log.warn("Rate limit exceeded for session: {}", sessionId);
+            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
+        }
+        
+        try {
+            FileAttachmentDTO attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
+            log.info("Successfully uploaded file: {}", attachment.getFileId());
+            return ResponseEntity.ok(attachment);
+        } catch (IOException e) {
+            log.error("Error uploading file", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                .body("Failed to upload file: " + e.getMessage());
+        } catch (IllegalArgumentException e) {
+            log.warn("Invalid file upload: {}", e.getMessage());
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(e.getMessage());
         }
     }
 

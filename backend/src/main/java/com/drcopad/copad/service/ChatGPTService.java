@@ -41,7 +41,7 @@ public class ChatGPTService {
         // Add specialty-specific system prompt with language instruction
         String fullLanguageName = languageMappingService.getFullLanguageName(language);
 
-
+        // Enhanced system prompt that handles files and images
         String systemPrompt = specialty.getSystemPrompt() +
             "\nYou are an AI doctor providing concise, practical medical information. Follow these guidelines:\n" +
             "1. Give direct, actionable advice without unnecessary introductions.\n" +
@@ -51,17 +51,18 @@ public class ChatGPTService {
             "5. Admit knowledge gaps directly without speculation.\n" +
             "6. Only share evidence-based information.\n" +
             "7. List common medication side effects briefly when relevant.\n" +
-            "8. Never diagnose – describe potential conditions only.\n" +
+            "8. Never diagnose - describe potential conditions only.\n" +
             "9. Clearly flag emergency symptoms requiring immediate care.\n" +
             "10. Stay within your knowledge scope.\n" +
             "11. Prioritize the most effective solutions first.\n" +
             "12. Avoid pleasantries and get straight to helpful information.\n" +
-            "13. Respond politely to greetings and expressions of thanks. For all other unrelated, inappropriate, or off-topic questions, politely refuse by saying: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
-            "14. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: \"I'm an AI doctor. Please ask health-related questions only.\"" +
+            // "13. Respond politely to greetings and expressions of thanks. For all other unrelated, inappropriate, or off-topic questions, politely refuse by saying: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
+            // "14. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
+            "15. The user may attach images or documents to their messages. If they do so, they will be indicated in the message with a note like '[User attached a file]' or similar. When the user attaches an image, acknowledge it in your response (e.g., 'Based on the image you shared...'). For images that appear to show medical conditions, explain what you can observe but emphasize that a proper in-person medical evaluation is necessary.\n" +
+            "16. For document attachments, acknowledge that you've received a document but explain that you cannot access its contents directly. Encourage the user to ask specific questions about the document." +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
 
         messages.add(new Message("system", systemPrompt));
-
 
         // Add message history
         for (ChatMessage c : history) {

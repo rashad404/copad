@@ -1,6 +1,7 @@
 package com.drcopad.copad.service;
 
 import com.drcopad.copad.dto.ChatDTO;
+import com.drcopad.copad.dto.FileAttachmentDTO;
 import com.drcopad.copad.dto.MessageDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.entity.Chat;
@@ -35,6 +36,7 @@ public class GuestSessionService {
     private final MessageRepository MessageRepository;
     private final ChatRepository chatRepository;
     private final ChatGPTService chatGPTService;
+    private final FileAttachmentService fileAttachmentService;
 
     @Transactional
     public GuestSessionDTO createSession(HttpServletRequest request) {
@@ -67,9 +69,9 @@ public class GuestSessionService {
     }
 
     @Transactional
-    public String processChat(String sessionId, String message, String specialty, String language, String chatId) {
-        log.info("Processing chat message for session: {} - Chat: {} - Message: {} - Specialty: {} - Language: {}", 
-                sessionId, chatId, message, specialty, language);
+    public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds) {
+        log.info("Processing chat message for session: {} - Chat: {} - Message: {} - Specialty: {} - Language: {} - FileIds: {}", 
+                sessionId, chatId, message, specialty, language, fileIds);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {
@@ -95,10 +97,7 @@ public class GuestSessionService {
 
         // Get message history for this specific chat
         List<ChatMessage> chatHistory = MessageRepository.findByChatOrderByTimestampAsc(chat);
-
-        // Get AI response with specialty and language
-        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
-
+        
         // Create and save user message
         ChatMessage userMsg = new ChatMessage();
         userMsg.setMessage(message);
@@ -106,7 +105,19 @@ public class GuestSessionService {
         userMsg.setTimestamp(LocalDateTime.now());
         userMsg.setGuestSession(session);
         userMsg.setChat(chat);
-        MessageRepository.save(userMsg);
+        
+        // Save message first to get the ID
+        ChatMessage savedUserMsg = MessageRepository.save(userMsg);
+        
+        // Process file attachments if any
+        if (fileIds != null && !fileIds.isEmpty()) {
+            fileAttachmentService.linkFilesToMessage(fileIds, savedUserMsg);
+            // Append file context to the message if needed
+            message = processAttachments(message, fileIds, savedUserMsg);
+        }
+
+        // Get AI response with specialty and language
+        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
 
         // Create and save AI message
         ChatMessage aiMsg = new ChatMessage();
@@ -118,15 +129,38 @@ public class GuestSessionService {
         MessageRepository.save(aiMsg);
 
         // If this is the first message in the chat, set it as the title
-        log.info("!!! chat.getTitle()" + chat.getTitle() + "123");
         if (chatHistory.isEmpty() && chat.getTitle() == null) {
-            log.info("!!! This is the first message in the chat, set it as the title");
             String title = message.length() > 50 ? message.substring(0, 47) + "..." : message;
             chat.setTitle(title);
             chatRepository.save(chat);
         }
 
         return response;
+    }
+    
+    private String processAttachments(String message, List<String> fileIds, ChatMessage userMsg) {
+        // This method would enhance the message with content from the files
+        // For example, for images we might want to tell the AI "User uploaded an image"
+        // For documents, we might want to extract text and include it
+        
+        StringBuilder enhancedMessage = new StringBuilder(message);
+        
+        // If the message doesn't already mention files, add a note
+        if (!message.toLowerCase().contains("file") && 
+            !message.toLowerCase().contains("image") && 
+            !message.toLowerCase().contains("document") && 
+            !message.toLowerCase().contains("photo") && 
+            !message.toLowerCase().contains("picture")) {
+            
+            enhancedMessage.append("\n\n[User attached ");
+            enhancedMessage.append(fileIds.size() == 1 ? "a file" : fileIds.size() + " files");
+            enhancedMessage.append(" with this message]");
+        }
+        
+        // In a more advanced implementation, we would extract text from documents
+        // and add it to the message, or use OCR for images
+        
+        return enhancedMessage.toString();
     }
 
     @Transactional
@@ -174,11 +208,28 @@ public class GuestSessionService {
                     }
                     
                     List<MessageDTO> messagesDTOs = messages.stream()
-                            .map(msg -> MessageDTO.builder()
-                                    .message(msg.getMessage())
-                                    .sender(msg.getSender())
-                                    .timestamp(msg.getTimestamp())
-                                    .build())
+                            .map(msg -> {
+                                // Convert file attachments to DTOs
+                                List<FileAttachmentDTO> attachmentDTOs = msg.getAttachments().stream()
+                                        .map(attachment -> {
+                                            boolean isImage = attachment.getFileType().startsWith("image/");
+                                            return new FileAttachmentDTO(
+                                                    attachment.getFileId(),
+                                                    "/" + attachment.getFilePath(),
+                                                    attachment.getOriginalFilename(),
+                                                    attachment.getFileType(),
+                                                    attachment.getFileSize(),
+                                                    attachment.getUploadedAt(),
+                                                    null,
+                                                    isImage
+                                            );
+                                        })
+                                        .collect(Collectors.toList());
+                                
+                                MessageDTO messageDTO = new MessageDTO(msg.getMessage(), msg.getSender(), msg.getTimestamp());
+                                messageDTO.setAttachments(attachmentDTOs);
+                                return messageDTO;
+                            })
                             .collect(Collectors.toList());
                     
                     return ChatDTO.builder()
