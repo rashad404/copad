@@ -9,6 +9,7 @@ import java.util.Base64;
 import java.util.List;
 import java.util.concurrent.ThreadLocalRandom;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 
@@ -38,6 +39,12 @@ public class ChatGPTService {
     private final MedicalSpecialtyRepository specialtyRepository;
     private final LanguageMappingService languageMappingService;
     private final DocumentExtractionService documentExtractionService;
+    
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
+    
+    @Value("${upload.base-dir:../public_html}")
+    private String uploadBaseDir;
 
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language) {
         return getChatResponse(newUserMessage, history, specialtyCode, language, null);
@@ -141,16 +148,13 @@ public class ChatGPTService {
                     .filter(attachment -> attachment.getFileType().startsWith("image/"))
                     .forEach(image -> {
                         try {
-                            // For localhost, use base64 encoding since OpenAI can't access localhost URLs
-                            String serverUrl = chatGPTConfig.getBaseUrl() != null ? 
-                                chatGPTConfig.getBaseUrl() : "http://localhost:8080";
-                            
                             MessageContent imageContent = new MessageContent();
                             imageContent.setType("image_url");
                             
-                            if (serverUrl.contains("localhost") || serverUrl.contains("127.0.0.1")) {
-                                // Read the file and encode as base64
-                                Path imagePath = Paths.get(image.getFilePath());
+                            if (publicUrl.contains("localhost") || publicUrl.contains("127.0.0.1")) {
+                                // For localhost, use base64 encoding since OpenAI can't access localhost URLs
+                                // Construct the full path to the image in public_html
+                                Path imagePath = Paths.get(uploadBaseDir, image.getFilePath());
                                 byte[] imageBytes = Files.readAllBytes(imagePath);
                                 String base64Image = Base64.getEncoder().encodeToString(imageBytes);
                                 
@@ -165,7 +169,7 @@ public class ChatGPTService {
                                 imageContent.setImage_url(new MessageContent.ImageUrl(dataUrl, "high"));
                             } else {
                                 // For production, use the actual URL
-                                String imageUrl = serverUrl + "/" + image.getFilePath();
+                                String imageUrl = publicUrl + "/" + image.getFilePath();
                                 log.info("Generated image URL for OpenAI: {}", imageUrl);
                                 imageContent.setImage_url(new MessageContent.ImageUrl(imageUrl, "high"));
                             }
@@ -194,8 +198,10 @@ public class ChatGPTService {
             
             for (FileAttachment doc : chatMessage.getAttachments()) {
                 if (!doc.getFileType().startsWith("image/")) {
+                    // Construct the full path to the document in public_html
+                    String fullPath = Paths.get(uploadBaseDir, doc.getFilePath()).toString();
                     String extractedText = documentExtractionService.extractTextFromDocument(
-                        doc.getFilePath(), doc.getFileType()
+                        fullPath, doc.getFileType()
                     );
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {

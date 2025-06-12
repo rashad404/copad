@@ -45,7 +45,7 @@ public class BlogService {
     private final UserRepository userRepository;
     private final TagRepository tagRepository;
     
-    @Value("${upload.dir}")
+    @Value("${upload.base-dir}")
     private String uploadDir;
 
     private static final Logger log = LoggerFactory.getLogger(BlogService.class);
@@ -178,13 +178,13 @@ public class BlogService {
                 String filename = imageUrl.substring(imageUrl.lastIndexOf("/") + 1);
                 
                 // Delete original image
-                Path imagePath = Paths.get(uploadDir, filename);
+                Path imagePath = Paths.get(uploadDir, "uploads", "images", filename);
                 if (Files.exists(imagePath)) {
                     Files.delete(imagePath);
                 }
                 
                 // Delete thumbnail
-                Path thumbPath = Paths.get(uploadDir, "thumbs", filename);
+                Path thumbPath = Paths.get(uploadDir, "uploads", "images", "thumbs", filename);
                 if (Files.exists(thumbPath)) {
                     Files.delete(thumbPath);
                 }

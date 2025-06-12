@@ -8,6 +8,7 @@ import com.drcopad.copad.repository.FileAttachmentRepository;
 import com.drcopad.copad.repository.GuestSessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -30,6 +31,12 @@ public class FileAttachmentService {
     private final FileAttachmentRepository fileAttachmentRepository;
     private final GuestSessionRepository guestSessionRepository;
     
+    @Value("${upload.base-dir:../public_html}")
+    private String uploadBaseDir;
+    
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
+    
     private static final String IMAGE_DIR = "uploads/images";
     private static final String DOCUMENTS_DIR = "uploads/documents";
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -45,8 +52,8 @@ public class FileAttachmentService {
                 .orElseThrow(() -> new IllegalArgumentException("Invalid session ID"));
         
         // Determine upload directory based on file type
-        String uploadDir = fileType.startsWith("image/") ? IMAGE_DIR : DOCUMENTS_DIR;
-        Path uploadPath = Paths.get(uploadDir);
+        String relativeDir = fileType.startsWith("image/") ? IMAGE_DIR : DOCUMENTS_DIR;
+        Path uploadPath = Paths.get(uploadBaseDir, relativeDir);
         
         // Create directory if it doesn't exist
         if (!Files.exists(uploadPath)) {
@@ -65,7 +72,7 @@ public class FileAttachmentService {
         // Create file attachment entity
         FileAttachment attachment = FileAttachment.builder()
                 .fileId(UUID.randomUUID().toString())
-                .filePath(uploadDir + "/" + uniqueFilename)
+                .filePath(relativeDir + "/" + uniqueFilename)
                 .originalFilename(originalFilename)
                 .fileType(file.getContentType())
                 .fileSize(file.getSize())
@@ -111,7 +118,7 @@ public class FileAttachmentService {
         
         return new FileAttachmentDTO(
                 attachment.getFileId(),
-                "/" + attachment.getFilePath(),
+                publicUrl + "/" + attachment.getFilePath(),
                 attachment.getOriginalFilename(),
                 attachment.getFileType(),
                 attachment.getFileSize(),

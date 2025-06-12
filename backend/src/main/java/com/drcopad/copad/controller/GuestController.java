@@ -30,8 +30,8 @@ public class GuestController {
     private final RateLimiterService rateLimiterService;
     private final FileAttachmentService fileAttachmentService;
     
-    @Value("${app.chatgpt.base-url:http://localhost:8080}")
-    private String baseUrl;
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
 
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -126,10 +126,10 @@ public class GuestController {
             FileAttachment attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
             log.info("Successfully uploaded file: {}", attachment.getFileId());
             
-            // Convert to DTO and add the base URL for proper rendering
+            // Convert to DTO and add the public URL for proper rendering
             FileAttachmentDTO dto = new FileAttachmentDTO(
                 attachment.getFileId(),
-                baseUrl + "/" + attachment.getFilePath(),
+                publicUrl + "/" + attachment.getFilePath(),
                 attachment.getOriginalFilename(),
                 attachment.getFileType(),
                 attachment.getFileSize(),

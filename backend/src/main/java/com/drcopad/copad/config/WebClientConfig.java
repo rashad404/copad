@@ -22,15 +22,5 @@ public class WebClientConfig implements WebMvcConfigurer {
                 .build();
     }
     
-    // Configure resource handlers to serve uploaded files
-    @Override
-    public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        // Register resource handler for images
-        registry.addResourceHandler("/uploads/images/**")
-                .addResourceLocations("file:uploads/images/");
-                
-        // Register resource handler for documents
-        registry.addResourceHandler("/uploads/documents/**")
-                .addResourceLocations("file:uploads/documents/");
-    }
+    // Resource handlers removed - files are now served directly from public_html
 } 

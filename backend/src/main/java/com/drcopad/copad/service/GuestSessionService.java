@@ -40,8 +40,8 @@ public class GuestSessionService {
     private final ChatGPTService chatGPTService;
     private final FileAttachmentService fileAttachmentService;
     
-    @Value("${app.chatgpt.base-url:http://localhost:8080}")
-    private String baseUrl;
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
 
     @Transactional
     public GuestSessionDTO createSession(HttpServletRequest request) {
@@ -221,7 +221,7 @@ public class GuestSessionService {
                                             boolean isImage = attachment.getFileType().startsWith("image/");
                                             return new FileAttachmentDTO(
                                                     attachment.getFileId(),
-                                                    baseUrl + "/" + attachment.getFilePath(),
+                                                    publicUrl + "/" + attachment.getFilePath(),
                                                     attachment.getOriginalFilename(),
                                                     attachment.getFileType(),
                                                     attachment.getFileSize(),

@@ -26,7 +26,7 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class FileUploadController {
 
-    @Value("${upload.dir}")
+    @Value("${upload.base-dir}")
     private String uploadDir;
     
     @Value("${upload.docs.dir:uploads/documents}")
@@ -52,14 +52,14 @@ public class FileUploadController {
                         .body("Only JPG, PNG, and WEBP images are allowed.");
             }
 
-            // Create main upload directory if it doesn't exist
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            // Create images directory structure
+            Path imagesPath = Paths.get(uploadDir).resolve("uploads").resolve("images");
+            if (!Files.exists(imagesPath)) {
+                Files.createDirectories(imagesPath);
             }
 
             // Create thumbs directory if it doesn't exist
-            Path thumbsPath = uploadPath.resolve("thumbs");
+            Path thumbsPath = imagesPath.resolve("thumbs");
             if (!Files.exists(thumbsPath)) {
                 Files.createDirectories(thumbsPath);
             }
@@ -70,7 +70,7 @@ public class FileUploadController {
             String uniqueFilename = UUID.randomUUID().toString() + extension;
 
             // Save main resized image (800x800 max)
-            Path filePath = uploadPath.resolve(uniqueFilename);
+            Path filePath = imagesPath.resolve(uniqueFilename);
             try (var inputStream = file.getInputStream()) {
                 Thumbnails.of(inputStream)
                           .size(800, 800)
@@ -123,7 +123,7 @@ public class FileUploadController {
             }
 
             // Create documents directory if it doesn't exist
-            Path documentsPath = Paths.get(documentsDir);
+            Path documentsPath = Paths.get(uploadDir).resolve("uploads").resolve("documents");
             if (!Files.exists(documentsPath)) {
                 Files.createDirectories(documentsPath);
             }
@@ -170,10 +170,10 @@ public class FileUploadController {
                         .body("Only JPG, PNG, and WEBP images are allowed.");
             }
 
-            // Create main upload directory if it doesn't exist
-            Path uploadPath = Paths.get(uploadDir);
-            if (!Files.exists(uploadPath)) {
-                Files.createDirectories(uploadPath);
+            // Create images directory structure
+            Path imagesPath = Paths.get(uploadDir).resolve("uploads").resolve("images");
+            if (!Files.exists(imagesPath)) {
+                Files.createDirectories(imagesPath);
             }
 
             // Generate unique filename
@@ -182,7 +182,7 @@ public class FileUploadController {
             String uniqueFilename = UUID.randomUUID().toString() + extension;
 
             // Save the image
-            Path filePath = uploadPath.resolve(uniqueFilename);
+            Path filePath = imagesPath.resolve(uniqueFilename);
             Files.copy(file.getInputStream(), filePath);
 
             // Return the URL path and metadata
@@ -222,7 +222,7 @@ public class FileUploadController {
             }
 
             // Create documents directory if it doesn't exist
-            Path documentsPath = Paths.get(documentsDir);
+            Path documentsPath = Paths.get(uploadDir).resolve("uploads").resolve("documents");
             if (!Files.exists(documentsPath)) {
                 Files.createDirectories(documentsPath);
             }
