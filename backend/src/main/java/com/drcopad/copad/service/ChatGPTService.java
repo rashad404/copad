@@ -74,11 +74,10 @@ public class ChatGPTService {
             "9. Clearly flag emergency symptoms requiring immediate care.\n" +
             "10. Stay within your knowledge scope.\n" +
             "11. Prioritize the most effective solutions first.\n" +
-            "12. Avoid pleasantries and get straight to helpful information.\n" +
+            // "12. Avoid pleasantries and get straight to helpful information.\n" +
             // "13. Respond politely to greetings and expressions of thanks. For all other unrelated, inappropriate, or off-topic questions, politely refuse by saying: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
             // "14. If a user asks non-medical questions (e.g., about coding, finance, games, etc.), kindly remind them: \"I'm an AI doctor. Please ask health-related questions only.\"\n" +
             "15. For images that appear to show medical conditions, explain what you can observe but emphasize that a proper in-person medical evaluation is necessary.\n" +
-            "16. For document attachments, acknowledge that you've received a document but explain that you cannot access its contents directly. Encourage the user to ask specific questions about the document." +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
 
         messages.add(new Message("system", systemPrompt));
