@@ -6,6 +6,7 @@ import com.drcopad.copad.dto.MessageDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.entity.Chat;
 import com.drcopad.copad.entity.ChatMessage;
+import com.drcopad.copad.entity.FileAttachment;
 import com.drcopad.copad.entity.GuestSession;
 import com.drcopad.copad.repository.ChatRepository;
 import com.drcopad.copad.repository.MessageRepository;
@@ -110,14 +111,15 @@ public class GuestSessionService {
         ChatMessage savedUserMsg = MessageRepository.save(userMsg);
         
         // Process file attachments if any
+        List<FileAttachment> attachments = new ArrayList<>();
         if (fileIds != null && !fileIds.isEmpty()) {
-            fileAttachmentService.linkFilesToMessage(fileIds, savedUserMsg);
+            attachments = fileAttachmentService.linkFilesToMessage(fileIds, savedUserMsg);
             // Append file context to the message if needed
             message = processAttachments(message, fileIds, savedUserMsg);
         }
 
         // Get AI response with specialty and language
-        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language);
+        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language, attachments);
 
         // Create and save AI message
         ChatMessage aiMsg = new ChatMessage();

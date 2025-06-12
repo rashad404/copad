@@ -3,6 +3,7 @@ package com.drcopad.copad.controller;
 import com.drcopad.copad.dto.FileAttachmentDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.dto.MessageRequest;
+import com.drcopad.copad.entity.FileAttachment;
 import com.drcopad.copad.exception.RateLimitExceededException;
 import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
@@ -10,6 +11,7 @@ import com.drcopad.copad.service.RateLimiterService;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -27,6 +29,9 @@ public class GuestController {
     private final GuestSessionService guestSessionService;
     private final RateLimiterService rateLimiterService;
     private final FileAttachmentService fileAttachmentService;
+    
+    @Value("${app.chatgpt.base-url:http://localhost:8080}")
+    private String baseUrl;
 
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -118,9 +123,22 @@ public class GuestController {
         }
         
         try {
-            FileAttachmentDTO attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
+            FileAttachment attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
             log.info("Successfully uploaded file: {}", attachment.getFileId());
-            return ResponseEntity.ok(attachment);
+            
+            // Convert to DTO and add the base URL for proper rendering
+            FileAttachmentDTO dto = new FileAttachmentDTO(
+                attachment.getFileId(),
+                baseUrl + "/" + attachment.getFilePath(),
+                attachment.getOriginalFilename(),
+                attachment.getFileType(),
+                attachment.getFileSize(),
+                attachment.getUploadedAt(),
+                null,
+                attachment.getFileType().startsWith("image/")
+            );
+            
+            return ResponseEntity.ok(dto);
         } catch (IOException e) {
             log.error("Error uploading file", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

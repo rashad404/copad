@@ -32,6 +32,10 @@ public class FileUploadController {
     @Value("${upload.docs.dir:uploads/documents}")
     private String documentsDir;
     
+    // Define constant paths for web access
+    private static final String IMAGES_WEB_PATH = "uploads/images";
+    private static final String DOCS_WEB_PATH = "uploads/documents";
+    
     private final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 
     @PostMapping("/image")

@@ -34,7 +34,7 @@ public class FileAttachmentService {
     private static final String DOCUMENTS_DIR = "uploads/documents";
     private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
     
-    public FileAttachmentDTO uploadFile(MultipartFile file, String sessionId, String fileType) throws IOException {
+    public FileAttachment uploadFile(MultipartFile file, String sessionId, String fileType) throws IOException {
         // Validate file size
         if (file.getSize() > MAX_FILE_SIZE) {
             throw new IllegalArgumentException("File size exceeds the maximum limit of 10MB");
@@ -72,11 +72,8 @@ public class FileAttachmentService {
                 .guestSession(session)
                 .build();
         
-        // Save attachment to database
-        FileAttachment savedAttachment = fileAttachmentRepository.save(attachment);
-        
-        // Return DTO
-        return mapToDTO(savedAttachment);
+        // Save attachment to database and return entity
+        return fileAttachmentRepository.save(attachment);
     }
     
     @Transactional
