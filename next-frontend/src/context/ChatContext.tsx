@@ -70,7 +70,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           ? chat.messages.map((msg: any) => ({
               role: msg.sender === 'USER' ? 'user' : 'assistant',
               content: msg.message,
-              timestamp: msg.timestamp
+              timestamp: msg.timestamp,
+              attachments: msg.attachments || []
             }))
           : [];
         return {

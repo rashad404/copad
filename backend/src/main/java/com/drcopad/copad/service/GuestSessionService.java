@@ -14,6 +14,7 @@ import com.drcopad.copad.repository.GuestSessionRepository;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -38,6 +39,9 @@ public class GuestSessionService {
     private final ChatRepository chatRepository;
     private final ChatGPTService chatGPTService;
     private final FileAttachmentService fileAttachmentService;
+    
+    @Value("${app.chatgpt.base-url:http://localhost:8080}")
+    private String baseUrl;
 
     @Transactional
     public GuestSessionDTO createSession(HttpServletRequest request) {
@@ -217,7 +221,7 @@ public class GuestSessionService {
                                             boolean isImage = attachment.getFileType().startsWith("image/");
                                             return new FileAttachmentDTO(
                                                     attachment.getFileId(),
-                                                    "/" + attachment.getFilePath(),
+                                                    baseUrl + "/" + attachment.getFilePath(),
                                                     attachment.getOriginalFilename(),
                                                     attachment.getFileType(),
                                                     attachment.getFileSize(),
