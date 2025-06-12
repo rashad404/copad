@@ -1,7 +1,17 @@
 import axios from 'axios';
 
+const getBaseUrl = () => {
+  if (typeof window === 'undefined') {
+    // Server-side: use environment variable or default
+    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+  }
+  
+  // Client-side: use relative URL
+  return '/api';
+};
+
 const api = axios.create({
-  baseURL: process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api',
+  baseURL: getBaseUrl(),
   withCredentials: true,
   headers: {
     'Content-Type': 'application/json',
