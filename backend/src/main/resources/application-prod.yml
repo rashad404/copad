@@ -16,19 +16,6 @@ spring:
           useUnicode: true
           charSet: UTF-8
         format_sql: false
-
-# Production environment settings
-app:
-  chatgpt:
-    use-dummy-data: false
-    base-url: https://virtualhekim.az
-    openai:
-      key: ${OPENAI_API_KEY}
-      model: gpt-4o-mini
-      url: https://api.openai.com/v1/chat/completions
-
-# OAuth2 settings for production
-spring:
   security:
     oauth2:
       client:
@@ -43,6 +30,16 @@ spring:
             client-secret: ${FACEBOOK_CLIENT_SECRET}
             scope: public_profile,email
             redirect-uri: https://virtualhekim.az/api/login/oauth2/code/facebook
+
+# Production environment settings
+app:
+  chatgpt:
+    use-dummy-data: false
+    base-url: https://virtualhekim.az
+    openai:
+      key: ${OPENAI_API_KEY}
+      model: gpt-4o-mini
+      url: https://api.openai.com/v1/chat/completions
 
 # Upload settings for production
 upload:
