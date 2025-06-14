@@ -1,9 +1,6 @@
 spring:
   mvc:
     throw-exception-if-no-handler-found: true  # Needed to catch 404s manually
-    web:
-      resources:
-        add-mappings: false # Needed if you want custom handling for static resources too
   devtools:
     restart:
       enabled: true
@@ -64,6 +61,7 @@ server:
 app:
   chatgpt:
     use-dummy-data: false
+    base-url: ${BASE_URL:http://localhost:8080}
     openai:
       key: ${OPENAI_API_KEY}
       # model: gpt-3.5-turbo
@@ -76,4 +74,5 @@ logging:
 
 
 upload:
-  dir: ${UPLOAD_DIR:../public_html/uploads/images/}
+  base-dir: ${UPLOAD_BASE_DIR:../public_html}
+  public-url: ${PUBLIC_URL:http://localhost:8080}

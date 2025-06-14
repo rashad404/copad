@@ -1,0 +1,66 @@
+spring:
+  datasource:
+    url: ${DATABASE_URL}
+    username: ${DATABASE_USERNAME}
+    password: ${DATABASE_PASSWORD}
+    driver-class-name: com.mysql.cj.jdbc.Driver
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: false
+    database-platform: org.hibernate.dialect.MySQLDialect
+    properties:
+      hibernate:
+        connection:
+          characterEncoding: UTF-8
+          useUnicode: true
+          charSet: UTF-8
+        format_sql: false
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            client-id: ${GOOGLE_CLIENT_ID}
+            client-secret: ${GOOGLE_CLIENT_SECRET}
+            scope: openid,profile,email
+            redirect-uri: https://virtualhekim.az/api/login/oauth2/code/google
+          facebook:
+            client-id: ${FACEBOOK_CLIENT_ID}
+            client-secret: ${FACEBOOK_CLIENT_SECRET}
+            scope: public_profile,email
+            redirect-uri: https://virtualhekim.az/api/login/oauth2/code/facebook
+
+# Production environment settings
+app:
+  chatgpt:
+    use-dummy-data: false
+    base-url: https://virtualhekim.az
+    openai:
+      key: ${OPENAI_API_KEY}
+      model: gpt-4o-mini
+      url: https://api.openai.com/v1/chat/completions
+
+# Upload settings for production
+upload:
+  base-dir: /home/copad/public_html
+  public-url: https://virtualhekim.az
+
+# Logging for production
+logging:
+  level:
+    root: INFO
+    org.springframework.security: INFO
+    com.drcopad.copad: INFO
+    org.hibernate.SQL: WARN
+    
+# Server configuration
+server:
+  port: ${PORT:8080}
+  forward-headers-strategy: framework
+  tomcat:
+    remoteip:
+      protocol-header: X-Forwarded-Proto
+      remote-ip-header: X-Forwarded-For
+      internal-proxies: .*
+  use-forward-headers: true

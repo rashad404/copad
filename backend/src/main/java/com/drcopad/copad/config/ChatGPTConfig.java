@@ -14,6 +14,7 @@ import org.slf4j.LoggerFactory;
 public class ChatGPTConfig {
     private static final Logger log = LoggerFactory.getLogger(ChatGPTConfig.class);
     private boolean useDummyData = false;
+    private String baseUrl; // URL for uploaded files (e.g., http://localhost:8080 or https://yourdomain.com)
     private OpenAIConfig openai = new OpenAIConfig();
 
     @Data

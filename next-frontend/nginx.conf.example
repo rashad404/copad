@@ -1,0 +1,75 @@
+# Example Nginx configuration for the Next.js app
+# Copy this to /etc/nginx/sites-available/your-site and create a symlink in sites-enabled
+
+server {
+    listen 80;
+    server_name your-domain.com www.your-domain.com;
+    
+    # Redirect HTTP to HTTPS
+    location / {
+        return 301 https://$host$request_uri;
+    }
+}
+
+server {
+    listen 443 ssl;
+    server_name your-domain.com www.your-domain.com;
+    
+    # SSL configuration
+    ssl_certificate /path/to/fullchain.pem;
+    ssl_certificate_key /path/to/privkey.pem;
+    
+    # Include recommended SSL settings
+    ssl_protocols TLSv1.2 TLSv1.3;
+    ssl_ciphers HIGH:!aNULL:!MD5;
+    ssl_prefer_server_ciphers on;
+    ssl_session_cache shared:SSL:10m;
+    
+    # Security headers
+    add_header X-Frame-Options "SAMEORIGIN";
+    add_header X-Content-Type-Options "nosniff";
+    add_header X-XSS-Protection "1; mode=block";
+    
+    # Proxy Next.js application
+    location / {
+        proxy_pass http://localhost:3000;  # Next.js server
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+    }
+    
+    # Cache static assets
+    location /_next/static/ {
+        proxy_pass http://localhost:3000/_next/static/;
+        proxy_cache_valid 60m;
+        add_header Cache-Control "public, max-age=31536000, immutable";
+    }
+    
+    # Cache public images
+    location /images/ {
+        proxy_pass http://localhost:3000/images/;
+        proxy_cache_valid 60m;
+        add_header Cache-Control "public, max-age=86400";
+    }
+    
+    # Serve other static files directly if they exist, otherwise proxy
+    location ~* \.(jpg|jpeg|png|gif|ico|css|js)$ {
+        try_files $uri @proxy;
+        expires 30d;
+        add_header Cache-Control "public, max-age=2592000";
+    }
+    
+    location @proxy {
+        proxy_pass http://localhost:3000;
+        proxy_http_version 1.1;
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection 'upgrade';
+        proxy_set_header Host $host;
+        proxy_cache_bypass $http_upgrade;
+    }
+}

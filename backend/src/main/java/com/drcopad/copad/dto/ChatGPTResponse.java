@@ -26,6 +26,7 @@ public class ChatGPTResponse {
     public static class Choice {
         private int index;
         private Message message;
+        @com.fasterxml.jackson.annotation.JsonProperty("finish_reason")
         private String finishReason;
     }
 
@@ -34,8 +35,11 @@ public class ChatGPTResponse {
     @NoArgsConstructor
     @AllArgsConstructor
     public static class Usage {
+        @com.fasterxml.jackson.annotation.JsonProperty("prompt_tokens")
         private int promptTokens;
+        @com.fasterxml.jackson.annotation.JsonProperty("completion_tokens")
         private int completionTokens;
+        @com.fasterxml.jackson.annotation.JsonProperty("total_tokens")
         private int totalTokens;
     }
 }

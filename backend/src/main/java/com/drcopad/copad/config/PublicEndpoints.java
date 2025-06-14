@@ -10,6 +10,7 @@ public class PublicEndpoints {
             "/api/guest/**",
             "/api/tags/**",
             "/api/blog/**",
+            "/uploads/**", // Make uploads publicly accessible
             "/custom-error"
     );
 }
