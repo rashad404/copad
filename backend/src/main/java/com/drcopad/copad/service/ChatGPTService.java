@@ -80,20 +80,20 @@ public class ChatGPTService {
             "15. For images that appear to show medical conditions, explain what you can observe but emphasize that a proper in-person medical evaluation is necessary.\n" +
             (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
 
-        messages.add(new Message("system", systemPrompt));
+        // messages.add(new Message("system", systemPrompt));
 
         // Add message history
-        for (ChatMessage c : history) {
-            String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
+        // for (ChatMessage c : history) {
+        //     String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
             
-            // Regular text message
-            if (c.getAttachments() == null || c.getAttachments().isEmpty()) {
-                messages.add(new Message(role, c.getMessage()));
-            } else {
-                // Message with attachments - handle differently
-                processMessageWithAttachments(messages, c, role);
-            }
-        }
+        //     // Regular text message
+        //     if (c.getAttachments() == null || c.getAttachments().isEmpty()) {
+        //         messages.add(new Message(role, c.getMessage()));
+        //     } else {
+        //         // Message with attachments - handle differently
+        //         processMessageWithAttachments(messages, c, role);
+        //     }
+        // }
 
         // Process current message
         if (history.isEmpty() || !history.get(history.size() - 1).getMessage().equals(newUserMessage)) {
