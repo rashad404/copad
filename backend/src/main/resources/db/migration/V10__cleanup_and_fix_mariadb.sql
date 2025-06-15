@@ -1,14 +1,15 @@
--- Force fix for MariaDB JSON compatibility by dropping and recreating tables
--- WARNING: This will DELETE all data in these tables
+-- Cleanup script to fix MariaDB compatibility
+-- This script checks for existence before dropping/altering
 
--- Drop tables with JSON columns
+-- Only drop and recreate tables that have JSON columns
+-- Check and drop only if they exist
 DROP TABLE IF EXISTS `openai_responses`;
 DROP TABLE IF EXISTS `conversation_files`;
 DROP TABLE IF EXISTS `usage_metrics`;
 DROP TABLE IF EXISTS `batch_file_uploads`;
 
--- Recreate openai_responses table with LONGTEXT instead of JSON
-CREATE TABLE `openai_responses` (
+-- Recreate with LONGTEXT
+CREATE TABLE IF NOT EXISTS `openai_responses` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `response_id` VARCHAR(255) NOT NULL UNIQUE,
     `conversation_id` VARCHAR(255) NOT NULL,
@@ -27,8 +28,7 @@ CREATE TABLE `openai_responses` (
     CONSTRAINT `fk_openai_response_message` FOREIGN KEY (`chat_message_id`) REFERENCES `chat_messages` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Recreate conversation_files table with LONGTEXT instead of JSON
-CREATE TABLE `conversation_files` (
+CREATE TABLE IF NOT EXISTS `conversation_files` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `conversation_id` VARCHAR(255) NOT NULL,
     `file_attachment_id` BIGINT NOT NULL,
@@ -43,8 +43,7 @@ CREATE TABLE `conversation_files` (
     CONSTRAINT `fk_conversation_file_attachment` FOREIGN KEY (`file_attachment_id`) REFERENCES `file_attachments` (`id`) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Recreate usage_metrics table with LONGTEXT instead of JSON
-CREATE TABLE `usage_metrics` (
+CREATE TABLE IF NOT EXISTS `usage_metrics` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `user_id` BIGINT,
     `guest_session_id` BIGINT,
@@ -68,8 +67,7 @@ CREATE TABLE `usage_metrics` (
     CONSTRAINT `fk_usage_guest` FOREIGN KEY (`guest_session_id`) REFERENCES `guest_sessions` (`id`) ON DELETE SET NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
--- Recreate batch_file_uploads table with LONGTEXT instead of JSON
-CREATE TABLE `batch_file_uploads` (
+CREATE TABLE IF NOT EXISTS `batch_file_uploads` (
     `id` BIGINT NOT NULL AUTO_INCREMENT,
     `batch_id` VARCHAR(255) NOT NULL UNIQUE,
     `chat_id` VARCHAR(255) NOT NULL,
