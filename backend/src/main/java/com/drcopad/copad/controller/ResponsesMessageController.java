@@ -13,6 +13,7 @@ import com.drcopad.copad.repository.MessageRepository;
 import com.drcopad.copad.repository.responses.BatchFileUploadRepository;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -31,6 +32,9 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/api/v2/messages")
 public class ResponsesMessageController {
+    
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
     
     private final ChatRepository chatRepository;
     private final MessageRepository messageRepository;
@@ -263,7 +267,8 @@ public class ResponsesMessageController {
                     fileInfo.put("fileType", file.getFileType());
                     fileInfo.put("fileSize", file.getFileSize());
                     fileInfo.put("uploadedAt", file.getUploadedAt());
-                    fileInfo.put("url", "/api/guest/files/" + file.getFileId());
+                    // Use the same URL pattern as single file upload
+                    fileInfo.put("url", publicUrl + "/" + file.getFilePath());
                     fileInfo.put("isImage", file.getFileType() != null && file.getFileType().startsWith("image/"));
                     return fileInfo;
                 })

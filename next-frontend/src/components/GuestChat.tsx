@@ -78,7 +78,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
   };
 
   const handleMultiFileSelect = (files: File[]) => {
-    console.log('Multiple files selected:', files);
+    // Files are selected in the MultiFileUpload component
   };
 
   const handleMultiFileUploadComplete = (results: any[]) => {
@@ -89,14 +89,15 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     // Create FileAttachment objects for preview
     const newFiles: FileAttachment[] = successfulFiles.map(file => ({
       fileId: file.fileId,
-      url: file.url || `/api/guest/files/${file.fileId}`,
+      url: file.url, // Use the URL from backend which now matches single file upload pattern
       filename: file.filename,
       fileType: file.fileType || 'application/octet-stream',
       fileSize: file.fileSize || 0,
       uploadedAt: file.uploadedAt || new Date(),
-      isImage: file.isImage || (file.fileType ? file.fileType.startsWith('image/') : false)
+      isImage: file.isImage !== undefined ? file.isImage : (file.fileType ? file.fileType.startsWith('image/') : false)
     }));
     
+    // Update states with new arrays to ensure re-render
     setPendingFileIds(prev => [...prev, ...fileIds]);
     setPendingFiles(prev => [...prev, ...newFiles]);
     setShowMultiFileUpload(false);
@@ -122,6 +123,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     };
     
     // Clear pending file IDs and files after including them in the message
+    const currentPendingFiles = [...pendingFiles];
     setPendingFileIds([]);
     setPendingFiles([]);
     
@@ -129,7 +131,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     setLoading(true);
     
     try {
-      const response = await sendMessage(selectedChatId, messageToSend, pendingFileIds);
+      const response = await sendMessage(selectedChatId, messageToSend, pendingFileIds, currentPendingFiles);
       const assistantMessage = {
         role: 'assistant',
         content: response,

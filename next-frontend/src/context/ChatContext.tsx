@@ -215,7 +215,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Send message
-  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[]) => {
+  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[], additionalFiles?: FileAttachment[]) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
     try {
       // Get file IDs from uploaded files and additional file IDs
@@ -234,7 +234,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
               role: 'user', 
               content: message, 
               timestamp: new Date().toISOString(),
-              attachments: [...uploadedFiles]
+              attachments: [...uploadedFiles, ...(additionalFiles || [])]
             },
             { 
               role: 'assistant', 
