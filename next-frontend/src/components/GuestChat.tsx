@@ -184,7 +184,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
       />
       <div className="flex-1 flex flex-col h-full w-full md:w-3xl mx-auto">
         {/* Chat header */}
-        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-30">
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -200,7 +200,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         <div
           ref={messagesContainerRef}
           className={`flex-1 overflow-y-auto px-4 py-6 ${messagesClassName}`}
-          style={{ height: 'calc(100vh - 80px)' }}
+          style={{ paddingBottom: '120px' }}
         >
           {isInitializing ? (
             <div className="flex justify-center items-center h-full">
@@ -333,7 +333,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         )}
         
         {/* Message input */}
-        <div className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
+        <div className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 z-40 ${inputClassName}`}>
           <div className="flex flex-col w-full">
             {/* File attachments preview */}
             {uploadedFiles.length > 0 && (
