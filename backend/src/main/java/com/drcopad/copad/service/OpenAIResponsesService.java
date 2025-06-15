@@ -306,13 +306,11 @@ public class OpenAIResponsesService {
             // Add image parts using URLs
             for (FileAttachment image : imageAttachments) {
                 Map<String, Object> imagePart = new HashMap<>();
-                imagePart.put("type", "image_url");
+                imagePart.put("type", "input_image");
                 
-                Map<String, Object> imageUrlObj = new HashMap<>();
+                // Use the actual URL of the image
                 String imageUrl = publicUrl + "/" + image.getFilePath();
-                imageUrlObj.put("url", imageUrl);
-                
-                imagePart.put("image_url", imageUrlObj);
+                imagePart.put("image_url", imageUrl);
                 content.add(imagePart);
                 
                 log.info("Added image with URL: {} for file: {}", 
