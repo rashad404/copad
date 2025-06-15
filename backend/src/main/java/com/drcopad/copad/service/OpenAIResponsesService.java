@@ -258,7 +258,7 @@ public class OpenAIResponsesService {
             
             // Add text part
             Map<String, Object> textPart = new HashMap<>();
-            textPart.put("type", "text");
+            textPart.put("type", "input_text");
             textPart.put("text", userMessage);
             content.add(textPart);
             
@@ -266,7 +266,7 @@ public class OpenAIResponsesService {
             for (FileAttachment doc : documentAttachments) {
                 if (doc.getOpenaiFileId() != null) {
                     Map<String, Object> filePart = new HashMap<>();
-                    filePart.put("type", "file");
+                    filePart.put("type", "input_file");
                     filePart.put("file_id", doc.getOpenaiFileId());
                     content.add(filePart);
                     
@@ -368,7 +368,15 @@ public class OpenAIResponsesService {
     }
 
     private Mono<ResponsesAPIResponse> executeAPICall(ResponsesAPIRequest request, Conversation conversation, Instant startTime) {
-        log.info("Calling OpenAI Responses API at URL: {} with request: {}", responsesConfig.getUrl(), request);
+        // Log the complete request payload
+        try {
+            String requestJson = objectMapper.writeValueAsString(request);
+            log.info("OpenAI Responses API Request URL: {}", responsesConfig.getUrl());
+            log.info("OpenAI Responses API Request Payload: {}", requestJson);
+        } catch (Exception e) {
+            log.error("Failed to serialize request for logging", e);
+        }
+        
         return webClient.post()
             .uri(responsesConfig.getUrl())
             .header("Authorization", "Bearer " + chatGPTService.getChatGPTConfig().getOpenai().getKey())
