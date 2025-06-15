@@ -38,10 +38,16 @@ public class ResponsesAPIResponse {
     @AllArgsConstructor
     public static class Output {
         @JsonProperty("type")
-        private String type;  // "text", "function_call", "tool_use"
+        private String type;  // "text", "function_call", "tool_use", "message"
         
         @JsonProperty("text")
         private String text;
+        
+        @JsonProperty("content")
+        private Object content;  // Can be String or Array
+        
+        @JsonProperty("message")
+        private Object message;  // Can be various types
         
         @JsonProperty("function")
         private FunctionCall function;

@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.transaction.annotation.Propagation;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -82,7 +83,9 @@ public class ConversationManager {
                 .expiresAt(LocalDateTime.now().plusDays(responsesConfig.getConversationTtlDays()))
                 .build();
         
-        return conversationRepository.save(conversation);
+        Conversation savedConversation = conversationRepository.saveAndFlush(conversation);
+        log.info("Created new conversation with ID: {}", savedConversation.getConversationId());
+        return savedConversation;
     }
     
     /**
@@ -108,9 +111,23 @@ public class ConversationManager {
      * Record a new OpenAI response
      */
     public OpenAIResponse recordResponse(OpenAIResponse response) {
-        OpenAIResponse saved = responseRepository.save(response);
-        updateConversationResponse(response.getConversationId(), response.getResponseId());
-        return saved;
+        log.info("About to save OpenAIResponse with responseId: {}", response.getResponseId());
+        log.debug("OpenAIResponse details - conversationId: {}, chatMessageId: {}", 
+            response.getConversationId(), 
+            response.getChatMessage() != null ? response.getChatMessage().getId() : "null");
+        
+        try {
+            OpenAIResponse saved = responseRepository.save(response);
+            log.info("Saved OpenAIResponse with responseId: {}", saved.getResponseId());
+            
+            updateConversationResponse(response.getConversationId(), response.getResponseId());
+            log.info("Updated conversation with latest response ID");
+            
+            return saved;
+        } catch (Exception e) {
+            log.error("Error saving OpenAIResponse", e);
+            throw e;
+        }
     }
     
     /**
