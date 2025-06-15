@@ -21,7 +21,9 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Collectors;
 
@@ -225,6 +227,28 @@ public class ResponsesMessageController {
                     batch.getProgressPercentage()
                 )))
                 .orElse(ResponseEntity.notFound().build());
+    }
+    
+    /**
+     * Get files from a batch upload
+     */
+    @GetMapping("/files/batch/{batchId}/files")
+    public ResponseEntity<?> getBatchFiles(@PathVariable String batchId) {
+        List<FileAttachment> files = fileAttachmentRepository.findByBatchId(batchId);
+        
+        List<Map<String, Object>> fileList = files.stream()
+                .map(file -> {
+                    Map<String, Object> fileInfo = new HashMap<>();
+                    fileInfo.put("fileId", file.getFileId());
+                    fileInfo.put("filename", file.getOriginalFilename());
+                    fileInfo.put("fileType", file.getFileType());
+                    fileInfo.put("fileSize", file.getFileSize());
+                    fileInfo.put("uploadedAt", file.getUploadedAt());
+                    return fileInfo;
+                })
+                .collect(Collectors.toList());
+                
+        return ResponseEntity.ok(fileList);
     }
     
     /**

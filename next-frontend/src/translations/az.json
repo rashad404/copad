@@ -313,6 +313,25 @@
         "general": "Təhlükəsiz",
         "save": "Söhbəti Saxla"
       },
+      "fileUpload": {
+        "buttonTitle": "Şəkil və ya sənəd yükləyin",
+        "invalidType": "Yanlış fayl növü. Zəhmət olmasa, dəstəklənən fayl yükləyin.",
+        "tooLarge": "Fayl çox böyükdür. Maksimum ölçü {{size}}MB-dir.",
+        "failed": "Fayl yüklənə bilmədi. Zəhmət olmasa, yenidən cəhd edin.",
+        "remove": "Faylı sil",
+        "photoHint": "Şəkil yükləyin",
+        "documentHint": "Sənəd yükləyin",
+        "multipleFiles": "Çoxlu Fayl Yüklə",
+        "selectCategory": "Sənəd kateqoriyasını seçin:",
+        "filesReady": "fayl(lar) göndərilməyə hazırdır",
+        "categories": {
+          "general": "Ümumi Tibbi Sənədlər",
+          "labResults": "Laboratoriya Nəticələri",
+          "imaging": "Tibbi Görüntüləmə",
+          "prescriptions": "Reseptlər",
+          "clinicalNotes": "Klinik Qeydlər"
+        }
+      },
       "messages": "Mesajlar",
       "newChat": "Yeni Söhbət",
       "untitledChat": "Başlıqsız Söhbət",

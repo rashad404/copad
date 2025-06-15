@@ -1,5 +1,6 @@
 import React, { useState, useCallback, useRef } from 'react';
 import { Upload, X, File, AlertCircle, CheckCircle, Loader } from 'lucide-react';
+import api from '@/api';
 
 interface FileUploadItem {
   id: string;
@@ -154,7 +155,8 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
       formData.append('files', fileItem.file);
     });
     formData.append('category', category);
-    if (conversationId) {
+    // Only append conversationId if it's a valid OpenAI conversation ID
+    if (conversationId && conversationId.startsWith('conv_')) {
       formData.append('conversationId', conversationId);
     }
 
@@ -164,21 +166,13 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
         f.status === 'pending' ? { ...f, status: 'uploading' as const } : f
       ));
 
-      const response = await fetch(`/api/v2/messages/chat/${chatId}/files/batch`, {
-        method: 'POST',
+      const response = await api.post(`/v2/messages/chat/${chatId}/files/batch`, formData, {
         headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`,
           'X-Guest-Session-Id': localStorage.getItem('guestSessionId') || ''
-        },
-        body: formData
+        }
       });
 
-      if (!response.ok) {
-        throw new Error(`Upload failed: ${response.statusText}`);
-      }
-
-      const result = await response.json();
-      const batchId = result.batchId;
+      const batchId = response.data.batchId;
 
       // Poll for batch upload status
       await pollBatchStatus(batchId);
@@ -204,17 +198,8 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
         throw new Error('Upload timeout');
       }
 
-      const response = await fetch(`/api/v2/messages/files/batch/${batchId}/status`, {
-        headers: {
-          'Authorization': `Bearer ${localStorage.getItem('authToken')}`
-        }
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to check status');
-      }
-
-      const status = await response.json();
+      const response = await api.get(`/v2/messages/files/batch/${batchId}/status`);
+      const status = response.data;
       
       // Update progress
       const progress = status.progressPercentage;
@@ -230,9 +215,25 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
             : f
         ));
 
-        if (onUploadComplete) {
-          // Fetch detailed results if needed
-          onUploadComplete([]);
+        // Fetch the uploaded files details
+        try {
+          const filesResponse = await api.get(`/v2/messages/files/batch/${batchId}/files`);
+          const uploadedFiles = filesResponse.data;
+          
+          if (onUploadComplete) {
+            // Map the files to the expected format
+            const results = uploadedFiles.map((file: any) => ({
+              filename: file.filename,
+              fileId: file.fileId,
+              success: true
+            }));
+            onUploadComplete(results);
+          }
+        } catch (error) {
+          console.error('Failed to fetch uploaded files:', error);
+          if (onUploadComplete) {
+            onUploadComplete([]);
+          }
         }
       } else if (status.status === 'failed') {
         throw new Error('Batch upload failed');

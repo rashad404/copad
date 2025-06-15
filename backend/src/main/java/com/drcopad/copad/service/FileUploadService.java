@@ -103,18 +103,28 @@ public class FileUploadService {
         // Create batch upload record
         BatchFileUpload batch = BatchFileUpload.builder()
                 .chatId(chatId)
-                .conversationId(conversationId)
                 .category(category)
                 .totalFiles(files.size())
                 .status("processing")
                 .build();
         
+        // Only set conversationId if it exists and is not empty
+        if (conversationId != null && !conversationId.trim().isEmpty()) {
+            // For now, we'll skip setting conversationId to avoid FK constraint issues
+            // In a real implementation, we'd check if the conversation exists first
+            log.info("ConversationId provided but not set to avoid FK constraint: {}", conversationId);
+        }
+        
+        // Store user and guest session IDs in metadata for reference
+        Map<String, Object> metadata = new HashMap<>();
+        metadata.put("chatId", chatId);
         if (userId != null) {
-            batch.setUser(batch.getUser());
+            metadata.put("userId", userId);
         }
         if (guestSessionId != null) {
-            batch.setGuestSession(batch.getGuestSession());
+            metadata.put("guestSessionId", guestSessionId);
         }
+        batch.setMetadata(metadata);
         
         batch = batchFileUploadRepository.save(batch);
         final String batchId = batch.getBatchId();

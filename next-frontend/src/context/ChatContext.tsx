@@ -41,7 +41,7 @@ interface ChatContextType {
   createNewChat: () => Promise<string | null>;
   updateChatTitle: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
-  sendMessage: (chatId: string | null, message: string) => Promise<string>;
+  sendMessage: (chatId: string | null, message: string, additionalFileIds?: string[]) => Promise<string>;
   setSelectedChatId: (chatId: string) => void;
   uploadFile: (file: File) => Promise<FileAttachment>;
   clearUploadedFiles: () => void;
@@ -206,11 +206,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Send message
-  const sendMessage = async (chatId: string | null, message: string) => {
+  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[]) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
     try {
-      // Get file IDs from uploaded files
-      const fileIds = uploadedFiles.map(file => file.fileId);
+      // Get file IDs from uploaded files and additional file IDs
+      const uploadedFileIds = uploadedFiles.map(file => file.fileId);
+      const fileIds = [...uploadedFileIds, ...(additionalFileIds || [])];
       
       // Send message with file IDs
       const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds);
