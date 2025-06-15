@@ -100,7 +100,17 @@ public class ResponsesMessageController {
             // Get attachments if any
             List<FileAttachment> attachments = new ArrayList<>();
             if (messageRequest.getFileIds() != null && !messageRequest.getFileIds().isEmpty()) {
+                log.info("Message request includes {} file IDs: {}", 
+                    messageRequest.getFileIds().size(), messageRequest.getFileIds());
                 attachments = fileAttachmentRepository.findAllByFileIdIn(messageRequest.getFileIds());
+                log.info("Retrieved {} attachments from database: {}", 
+                    attachments.size(), 
+                    attachments.stream()
+                        .map(att -> String.format("%s (openaiFileId: %s)", 
+                            att.getOriginalFilename(), att.getOpenaiFileId()))
+                        .collect(Collectors.toList()));
+            } else {
+                log.info("No file IDs provided in message request");
             }
             
             // Save user message
