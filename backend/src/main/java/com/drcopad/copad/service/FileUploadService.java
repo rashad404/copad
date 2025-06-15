@@ -65,6 +65,35 @@ public class FileUploadService {
             throw new IOException("File not found: " + filePath);
         }
         
+        // Log file details
+        log.info("Uploading file to OpenAI: name={}, size={} bytes, type={}, path={}", 
+            attachment.getOriginalFilename(), 
+            file.length(), 
+            attachment.getFileType(),
+            filePath);
+            
+        // Validate file is not empty
+        if (file.length() == 0) {
+            throw new IOException("File is empty: " + attachment.getOriginalFilename());
+        }
+        
+        // For PDFs, check if it's a valid PDF file
+        if ("application/pdf".equals(attachment.getFileType())) {
+            try {
+                byte[] header = Files.readAllBytes(filePath);
+                if (header.length >= 4) {
+                    String pdfHeader = new String(header, 0, Math.min(4, header.length));
+                    log.info("PDF file header: {}", pdfHeader);
+                    if (!pdfHeader.startsWith("%PDF")) {
+                        log.warn("File {} does not appear to be a valid PDF (header: {})", 
+                            attachment.getOriginalFilename(), pdfHeader);
+                    }
+                }
+            } catch (Exception e) {
+                log.error("Error checking PDF validity", e);
+            }
+        }
+        
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(openaiApiKey);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
@@ -84,6 +113,8 @@ public class FileUploadService {
             String fileId = jsonResponse.get("id").asText();
             
             log.info("Successfully uploaded file to OpenAI: {} -> {}", attachment.getOriginalFilename(), fileId);
+            log.info("OpenAI file upload response: {}", response.getBody());
+            
             return fileId;
             
         } catch (Exception e) {
