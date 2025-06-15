@@ -129,7 +129,12 @@ public class OpenAIResponsesService {
 
         List<String> fileIds = new ArrayList<>();
         if (attachments != null && !attachments.isEmpty()) {
+            log.info("Processing {} attachments for conversation {}", 
+                attachments.size(), conversation.getConversationId());
             fileIds = processFileAttachments(attachments, conversation);
+            log.info("Processed attachments, got {} OpenAI file IDs", fileIds.size());
+        } else {
+            log.info("No attachments to process for conversation {}", conversation.getConversationId());
         }
 
         ResponsesAPIRequest request = buildRequest(
@@ -230,6 +235,9 @@ public class OpenAIResponsesService {
             
             // Separate images and documents
             for (FileAttachment att : attachments) {
+                log.debug("Processing attachment: {} (type: {}, openaiFileId: {})", 
+                    att.getOriginalFilename(), att.getFileType(), att.getOpenaiFileId());
+                    
                 if (att.getFileType() != null && att.getFileType().startsWith("image/")) {
                     imageAttachments.add(att);
                 } else {
