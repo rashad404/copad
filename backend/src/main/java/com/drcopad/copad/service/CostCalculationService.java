@@ -87,9 +87,9 @@ public class CostCalculationService {
                 case "web_search_preview_2025_03_11":
                     totalToolsCost = totalToolsCost.add(costConfig.getWebSearchCostPerQuery());
                     break;
-                case "code_interpreter":
-                    totalToolsCost = totalToolsCost.add(costConfig.getCodeInterpreterCostPerSession());
-                    break;
+                // case "code_interpreter":
+                //     totalToolsCost = totalToolsCost.add(costConfig.getCodeInterpreterCostPerSession());
+                //     break;
                 default:
                     log.debug("Unknown tool for cost calculation: {}", tool);
             }

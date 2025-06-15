@@ -202,16 +202,16 @@ public class OpenAIResponsesService {
             webSearch.put("type", "web_search_preview");
             tools.add(webSearch);
         }
-        if (responsesConfig.getTools().isCodeInterpreter()) {
-            Map<String, Object> codeInterpreter = new HashMap<>();
-            codeInterpreter.put("type", "code_interpreter");
+        // if (responsesConfig.getTools().isCodeInterpreter()) {
+        //     Map<String, Object> codeInterpreter = new HashMap<>();
+        //     codeInterpreter.put("type", "code_interpreter");
         
-            Map<String, Object> container = new HashMap<>();
-            container.put("type", "auto"); // per official doc :contentReference[oaicite:4]{index=4}
+        //     Map<String, Object> container = new HashMap<>();
+        //     container.put("type", "auto"); // per official doc :contentReference[oaicite:4]{index=4}
         
-            codeInterpreter.put("container", container);
-            tools.add(codeInterpreter);
-        }
+        //     codeInterpreter.put("container", container);
+        //     tools.add(codeInterpreter);
+        // }
         
 
         // Use the same enhanced system prompt as ChatGPTService
