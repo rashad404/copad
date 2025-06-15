@@ -34,8 +34,8 @@ public class CostCalculationService {
                 .getModelPricing().get(model);
         
         if (pricing == null) {
-            log.warn("No pricing found for model: {}, using default gpt-o3 pricing", model);
-            pricing = responsesConfig.getCost().getModelPricing().get("gpt-o3");
+            log.warn("No pricing found for model: {}, using default o3 pricing", model);
+            pricing = responsesConfig.getCost().getModelPricing().get("o3");
         }
         
         // Calculate token costs (per 1K tokens)

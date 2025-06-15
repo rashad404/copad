@@ -75,7 +75,7 @@ app:
         enabled: ${OPENAI_RESPONSES_ENABLED:true}
         url: https://api.openai.com/v1/responses
         fallback-to-chat: ${OPENAI_RESPONSES_FALLBACK:false}
-        default-model: gpt-o3
+        default-model: o3
         conversation-ttl-days: 30
         tools:
           file-search: true
