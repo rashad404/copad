@@ -38,8 +38,9 @@ public class BatchFileUpload {
     private String conversationId;
     
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "conversation_id", referencedColumnName = "conversationId", 
-                insertable = false, updatable = false)
+    @JoinColumn(name = "conversation_id", referencedColumnName = "conversation_id", 
+                insertable = false, updatable = false,
+                foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Conversation conversation;
     
     @Column(name = "chat_id")

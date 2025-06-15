@@ -36,7 +36,7 @@ public class Conversation {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     
-    @Column(nullable = false, unique = true)
+    @Column(name = "conversation_id", nullable = false, unique = true)
     private String conversationId;
     
     @Column(nullable = false)
