@@ -9,8 +9,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -77,8 +75,8 @@ public class BatchFileUpload {
     @Column(length = 50)
     private String category;
     
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(columnDefinition = "LONGTEXT")
+    @Convert(converter = JsonMapConverter.class)
     private Map<String, Object> metadata;
     
     @CreationTimestamp

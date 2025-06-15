@@ -8,8 +8,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -86,8 +84,8 @@ public class UsageMetric {
     @Builder.Default
     private BigDecimal toolsCost = BigDecimal.ZERO;
     
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "tools_used", columnDefinition = "LONGTEXT")
+    @Convert(converter = JsonListConverter.class)
     private List<String> toolsUsed;
     
     @Column(name = "api_type", nullable = false, length = 20)

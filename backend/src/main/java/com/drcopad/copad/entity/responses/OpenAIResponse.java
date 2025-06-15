@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -51,8 +49,8 @@ public class OpenAIResponse {
     @Column(nullable = false, length = 50)
     private String model;
     
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "tools_used", columnDefinition = "LONGTEXT")
+    @Convert(converter = JsonListConverter.class)
     private List<String> toolsUsed;
     
     @Column(name = "completion_tokens")

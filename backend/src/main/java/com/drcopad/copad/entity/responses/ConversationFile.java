@@ -7,8 +7,6 @@ import lombok.NoArgsConstructor;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import org.hibernate.annotations.CreationTimestamp;
-import org.hibernate.annotations.JdbcTypeCode;
-import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
 import java.util.Map;
@@ -54,8 +52,8 @@ public class ConversationFile {
     @Builder.Default
     private String status = "uploaded";
     
-    @JdbcTypeCode(SqlTypes.JSON)
     @Column(name = "processing_details", columnDefinition = "LONGTEXT")
+    @Convert(converter = JsonMapConverter.class)
     private Map<String, Object> processingDetails;
     
     @CreationTimestamp
