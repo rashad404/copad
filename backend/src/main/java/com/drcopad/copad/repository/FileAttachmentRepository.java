@@ -18,5 +18,9 @@ public interface FileAttachmentRepository extends JpaRepository<FileAttachment, 
     
     Optional<FileAttachment> findByFileId(String fileId);
     
+    List<FileAttachment> findAllByFileIdIn(List<String> fileIds);
+    
+    List<FileAttachment> findByBatchId(String batchId);
+    
     void deleteByGuestSession(GuestSession session);
 }

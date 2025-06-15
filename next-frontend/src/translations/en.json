@@ -321,7 +321,17 @@
         "failed": "Failed to upload file. Please try again.",
         "remove": "Remove file",
         "photoHint": "Upload a photo",
-        "documentHint": "Upload a document"
+        "documentHint": "Upload a document",
+        "multipleFiles": "Upload Multiple Files",
+        "selectCategory": "Select document category:",
+        "filesReady": "file(s) ready to send",
+        "categories": {
+          "general": "General Medical Documents",
+          "labResults": "Lab Results",
+          "imaging": "Medical Imaging",
+          "prescriptions": "Prescriptions",
+          "clinicalNotes": "Clinical Notes"
+        }
       },
       "messages": "Messages",
       "newChat": "New Chat",

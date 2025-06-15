@@ -41,7 +41,7 @@ interface ChatContextType {
   createNewChat: () => Promise<string | null>;
   updateChatTitle: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
-  sendMessage: (chatId: string | null, message: string) => Promise<string>;
+  sendMessage: (chatId: string | null, message: string, additionalFileIds?: string[]) => Promise<string>;
   setSelectedChatId: (chatId: string) => void;
   uploadFile: (file: File) => Promise<FileAttachment>;
   clearUploadedFiles: () => void;
@@ -103,8 +103,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     });
   };
   const sendGuestMessage = async (sid: string, message: string, chatId: string | null, fileIds: string[] = []) => {
-    console.log('API POST', `/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
-    const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
+    console.log('API POST', `/v2/messages/chat/${chatId}`, { message, language: i18n.language, fileIds });
+    const res = await api.post(`/v2/messages/chat/${chatId}`, { 
+      message, 
+      language: i18n.language, 
+      fileIds,
+      specialty: 'GENERAL' // Default specialty for general medical questions
+    }, {
+      headers: {
+        'X-Guest-Session-Id': sid
+      }
+    });
     console.log('API RESPONSE', res.data);
     return typeof res.data === 'string'
       ? res.data
@@ -206,11 +215,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Send message
-  const sendMessage = async (chatId: string | null, message: string) => {
+  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[], additionalFiles?: FileAttachment[]) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
     try {
-      // Get file IDs from uploaded files
-      const fileIds = uploadedFiles.map(file => file.fileId);
+      // Get file IDs from uploaded files and additional file IDs
+      const uploadedFileIds = uploadedFiles.map(file => file.fileId);
+      const fileIds = [...uploadedFileIds, ...(additionalFileIds || [])];
       
       // Send message with file IDs
       const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds);
@@ -224,7 +234,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
               role: 'user', 
               content: message, 
               timestamp: new Date().toISOString(),
-              attachments: [...uploadedFiles]
+              attachments: [...uploadedFiles, ...(additionalFiles || [])]
             },
             { 
               role: 'assistant', 

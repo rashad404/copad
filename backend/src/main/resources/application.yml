@@ -1,4 +1,8 @@
 spring:
+  flyway:
+    enabled: false
+    baseline-on-migrate: true
+    locations: classpath:db/migration
   mvc:
     throw-exception-if-no-handler-found: true  # Needed to catch 404s manually
   devtools:
@@ -67,6 +71,24 @@ app:
       # model: gpt-3.5-turbo
       model: gpt-4o-mini
       url: https://api.openai.com/v1/chat/completions
+      responses:
+        enabled: ${OPENAI_RESPONSES_ENABLED:true}
+        url: https://api.openai.com/v1/responses
+        fallback-to-chat: ${OPENAI_RESPONSES_FALLBACK:false}
+        default-model: gpt-4o-mini
+        conversation-ttl-days: 30
+        tools:
+          file-search: true
+          web-search: false
+          code-interpreter: true
+        cost:
+          alert-threshold: 10.00
+          daily-limit: 50.00
+        retry:
+          max-attempts: 3
+          initial-interval: 1000
+          max-interval: 10000
+          multiplier: 2.0
 
 logging:
   level:
@@ -76,3 +98,49 @@ logging:
 upload:
   base-dir: ${UPLOAD_BASE_DIR:../public_html}
   public-url: ${PUBLIC_URL:http://localhost:8080}
+  max-batch-size: 10
+  allowed-medical-formats:
+    images: jpg,jpeg,png,webp,dicom
+    documents: pdf,doc,docx,txt,csv
+    max-file-size-mb:
+      images: 50
+      documents: 10
+
+resilience4j:
+  circuitbreaker:
+    instances:
+      openai-responses:
+        registerHealthIndicator: true
+        slidingWindowSize: 10
+        minimumNumberOfCalls: 5
+        permittedNumberOfCallsInHalfOpenState: 3
+        automaticTransitionFromOpenToHalfOpenEnabled: true
+        waitDurationInOpenState: 60s
+        failureRateThreshold: 50
+        eventConsumerBufferSize: 10
+  retry:
+    instances:
+      openai-responses:
+        maxAttempts: 3
+        waitDuration: 1000
+        retryExceptions:
+          - java.io.IOException
+          - java.net.SocketTimeoutException
+        ignoreExceptions:
+          - java.lang.IllegalArgumentException
+  ratelimiter:
+    instances:
+      openai-responses:
+        limitForPeriod: 100
+        limitRefreshPeriod: 1m
+        timeoutDuration: 0
+
+management:
+  endpoints:
+    web:
+      exposure:
+        include: health,info,metrics,prometheus
+  metrics:
+    export:
+      prometheus:
+        enabled: true

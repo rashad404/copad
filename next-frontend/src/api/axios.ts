@@ -18,9 +18,6 @@ const getBaseUrl = () => {
 const api = axios.create({
   baseURL: getBaseUrl(),
   withCredentials: true,
-  headers: {
-    'Content-Type': 'application/json',
-  },
 });
 
 // Add a request interceptor
@@ -33,6 +30,16 @@ api.interceptors.request.use(
         config.headers.Authorization = `Bearer ${token}`;
       }
     }
+    
+    // Set content type based on data
+    if (config.data instanceof FormData) {
+      // Let the browser set the content type for FormData (includes boundary)
+      delete config.headers['Content-Type'];
+    } else if (config.headers && !config.headers['Content-Type']) {
+      // Set JSON content type for other requests if not already set
+      config.headers['Content-Type'] = 'application/json';
+    }
+    
     return config;
   },
   (error) => {

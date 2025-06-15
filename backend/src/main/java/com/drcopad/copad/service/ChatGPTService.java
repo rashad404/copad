@@ -40,6 +40,10 @@ public class ChatGPTService {
     private final LanguageMappingService languageMappingService;
     private final DocumentExtractionService documentExtractionService;
     
+    public ChatGPTConfig getChatGPTConfig() {
+        return chatGPTConfig;
+    }
+    
     @Value("${upload.public-url:http://localhost:8080}")
     private String publicUrl;
     

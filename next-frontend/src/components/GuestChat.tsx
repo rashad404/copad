@@ -2,11 +2,12 @@
 
 import React, { useState, useEffect, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ListBulletIcon, PaperClipIcon } from '@heroicons/react/24/outline';
+import { ListBulletIcon, PaperClipIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import ChatSidebar from './ChatSidebar';
 import FileUploadButton from './FileUploadButton';
 import FileAttachmentPreview from './FileAttachmentPreview';
+import { MultiFileUpload } from './MultiFileUpload';
 import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
 
@@ -40,6 +41,10 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
   const [uploadError, setUploadError] = useState<string | null>(null);
+  const [showMultiFileUpload, setShowMultiFileUpload] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState<'general' | 'lab-results' | 'imaging' | 'prescriptions' | 'clinical-notes'>('general');
+  const [pendingFileIds, setPendingFileIds] = useState<string[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<FileAttachment[]>([]);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -72,12 +77,38 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     }
   };
 
+  const handleMultiFileSelect = (files: File[]) => {
+    // Files are selected in the MultiFileUpload component
+  };
+
+  const handleMultiFileUploadComplete = (results: any[]) => {
+    // Extract file IDs and create file attachments from results
+    const successfulFiles = results.filter(r => r.success);
+    const fileIds = successfulFiles.map(r => r.fileId);
+    
+    // Create FileAttachment objects for preview
+    const newFiles: FileAttachment[] = successfulFiles.map(file => ({
+      fileId: file.fileId,
+      url: file.url, // Use the URL from backend which now matches single file upload pattern
+      filename: file.filename,
+      fileType: file.fileType || 'application/octet-stream',
+      fileSize: file.fileSize || 0,
+      uploadedAt: file.uploadedAt || new Date(),
+      isImage: file.isImage !== undefined ? file.isImage : (file.fileType ? file.fileType.startsWith('image/') : false)
+    }));
+    
+    // Update states with new arrays to ensure re-render
+    setPendingFileIds(prev => [...prev, ...fileIds]);
+    setPendingFiles(prev => [...prev, ...newFiles]);
+    setShowMultiFileUpload(false);
+  };
+
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
     console.log('Send:', { selectedChatId, sessionId, isInitializing, loading });
     
     // Don't send if message is empty AND there are no file attachments
-    if ((!newMessage.trim() && uploadedFiles.length === 0) || loading) return;
+    if ((!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || loading) return;
     
     const messageToSend = newMessage.trim();
     setNewMessage('');
@@ -87,14 +118,20 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
       role: 'user', 
       content: messageToSend, 
       timestamp: new Date(),
-      attachments: [...uploadedFiles]
+      attachments: [...uploadedFiles, ...pendingFiles],
+      fileIds: [...pendingFileIds]
     };
+    
+    // Clear pending file IDs and files after including them in the message
+    const currentPendingFiles = [...pendingFiles];
+    setPendingFileIds([]);
+    setPendingFiles([]);
     
     setMessages(prev => [...prev, newMessageObj]);
     setLoading(true);
     
     try {
-      const response = await sendMessage(selectedChatId, messageToSend);
+      const response = await sendMessage(selectedChatId, messageToSend, pendingFileIds, currentPendingFiles);
       const assistantMessage = {
         role: 'assistant',
         content: response,
@@ -249,6 +286,52 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
             </div>
           )}
         </div>
+        
+        {/* Multi-file upload modal */}
+        {showMultiFileUpload && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
+            <div className="bg-white dark:bg-gray-800 rounded-lg p-6 max-w-2xl w-full max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-4">
+                <h2 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
+                  {t('chat.fileUpload.multipleFiles')}
+                </h2>
+                <button
+                  onClick={() => setShowMultiFileUpload(false)}
+                  className="text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
+                >
+                  <XMarkIcon className="w-6 h-6" />
+                </button>
+              </div>
+              
+              {/* Category selector */}
+              <div className="mb-4">
+                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
+                  {t('chat.fileUpload.selectCategory')}
+                </label>
+                <select
+                  value={selectedCategory}
+                  onChange={(e) => setSelectedCategory(e.target.value as any)}
+                  className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-200"
+                >
+                  <option value="general">{t('chat.fileUpload.categories.general')}</option>
+                  <option value="lab-results">{t('chat.fileUpload.categories.labResults')}</option>
+                  <option value="imaging">{t('chat.fileUpload.categories.imaging')}</option>
+                  <option value="prescriptions">{t('chat.fileUpload.categories.prescriptions')}</option>
+                  <option value="clinical-notes">{t('chat.fileUpload.categories.clinicalNotes')}</option>
+                </select>
+              </div>
+              
+              <MultiFileUpload
+                chatId={selectedChatId}
+                category={selectedCategory}
+                onFilesSelected={handleMultiFileSelect}
+                onUploadComplete={handleMultiFileUploadComplete}
+                maxFiles={10}
+              />
+            </div>
+          </div>
+        )}
+        
         {/* Message input */}
         <div className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
           <div className="flex flex-col w-full">
@@ -262,12 +345,38 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
               </div>
             )}
             
+            {/* Show pending files preview */}
+            {pendingFiles.length > 0 && (
+              <div className="mb-2">
+                <FileAttachmentPreview 
+                  files={pendingFiles} 
+                  onRemove={(fileId) => {
+                    setPendingFiles(prev => prev.filter(f => f.fileId !== fileId));
+                    setPendingFileIds(prev => prev.filter(id => id !== fileId));
+                  }}
+                />
+              </div>
+            )}
+            
             <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
-              {/* File upload button */}
-              <FileUploadButton
-                onFileSelected={handleFileUpload}
-                isDisabled={loading || isInitializing || !selectedChatId || !sessionId}
-              />
+              {/* File upload buttons */}
+              <div className="flex gap-1">
+                <FileUploadButton
+                  onFileSelected={handleFileUpload}
+                  isDisabled={loading || isInitializing || !selectedChatId || !sessionId}
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowMultiFileUpload(true)}
+                  disabled={loading || isInitializing || !selectedChatId || !sessionId}
+                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                  title={t('chat.fileUpload.multipleFiles')}
+                >
+                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
+                  </svg>
+                </button>
+              </div>
               
               <input
                 type="text"
@@ -282,9 +391,9 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
               
               <button
                 type="submit"
-                disabled={(loading || (!newMessage.trim() && uploadedFiles.length === 0) || isInitializing || !selectedChatId || !sessionId)}
+                disabled={(loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || isInitializing || !selectedChatId || !sessionId)}
                 className={`shrink-0 px-4 py-2 rounded-lg ${
-                  loading || (!newMessage.trim() && uploadedFiles.length === 0) || isInitializing || !selectedChatId || !sessionId
+                  loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || isInitializing || !selectedChatId || !sessionId
                     ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                     : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
                 } text-white font-medium`}
