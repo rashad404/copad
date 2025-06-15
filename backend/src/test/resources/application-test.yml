@@ -1,0 +1,49 @@
+spring:
+  datasource:
+    url: jdbc:h2:mem:testdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: 
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.H2Dialect
+  flyway:
+    enabled: false
+
+app:
+  chatgpt:
+    openai:
+      key: test-key
+      model: gpt-4o-mini
+      url: https://api.openai.com/v1/chat/completions
+      responses:
+        enabled: true
+        url: https://api.openai.com/v1/responses
+        fallback-to-chat: true
+        default-model: gpt-4o-mini
+        conversation-ttl-days: 30
+        tools:
+          file-search: true
+          web-search: false
+          code-interpreter: true
+        cost:
+          alert-threshold: 10.00
+          daily-limit: 50.00
+          model-pricing:
+            gpt-4o-mini:
+              input-cost-per-1k: 0.00015
+              output-cost-per-1k: 0.0006
+            gpt-4o:
+              input-cost-per-1k: 0.0025
+              output-cost-per-1k: 0.01
+          file-search-cost-per-query: 0.01
+          web-search-cost-per-query: 0.02
+          code-interpreter-cost-per-session: 0.03
+        retry:
+          max-attempts: 3
+          initial-interval: 1000
+          max-interval: 10000
+          multiplier: 2.0

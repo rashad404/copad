@@ -30,6 +30,9 @@ public class ChatMessage {
 
     private LocalDateTime timestamp;
     
+    @Column(name = "openai_response_id")
+    private String openaiResponseId;
+    
     @ManyToOne
     @JoinColumn(name = "guest_session_id")
     private GuestSession guestSession;

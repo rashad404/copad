@@ -14,7 +14,7 @@ public interface GuestSessionRepository extends JpaRepository<GuestSession, Stri
     Optional<GuestSession> findBySessionId(String sessionId);
 
     @Modifying
-    @Query("DELETE FROM GuestSession g WHERE g.lastActive < :cutoff")
+    @Query("DELETE FROM GuestSession g WHERE g.lastActive < :cutoff AND g.id NOT IN (SELECT DISTINCT c.guestSession.id FROM Chat c WHERE c.guestSession IS NOT NULL)")
     void deleteExpiredSessions(@Param("cutoff") LocalDateTime cutoff);
 
     @Modifying

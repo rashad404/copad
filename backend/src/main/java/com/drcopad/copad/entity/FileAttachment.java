@@ -38,6 +38,12 @@ public class FileAttachment {
     @Column
     private String extractedText;
     
+    @Column(name = "openai_file_id")
+    private String openaiFileId;
+    
+    @Column(name = "batch_id")
+    private String batchId;
+    
     @ManyToOne
     @JoinColumn(name = "message_id")
     private ChatMessage message;
