@@ -355,6 +355,12 @@ public class OpenAIResponsesService {
         List<String> openaiFileIds = new ArrayList<>();
         for (FileAttachment attachment : attachments) {
             try {
+                // Skip image files - they will be handled with direct URLs
+                if (attachment.getFileType() != null && attachment.getFileType().startsWith("image/")) {
+                    log.info("Skipping OpenAI upload for image: {} - will use direct URL", attachment.getOriginalFilename());
+                    continue;
+                }
+                
                 if (attachment.getOpenaiFileId() != null) {
                     openaiFileIds.add(attachment.getOpenaiFileId());
                     continue;
