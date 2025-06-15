@@ -333,8 +333,8 @@ public class OpenAIResponsesService {
             userId = "chat_" + conversation.getChatId();
         }
         
-        // Set store=true for initial turn (when there's no previous response)
-        boolean shouldStore = previousResponseId == null;
+
+        boolean shouldStore = true;
         
         return ResponsesAPIRequest.builder()
             .model(conversation.getModel())
