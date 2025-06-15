@@ -162,6 +162,15 @@ export default function Header() {
         </div>
       </div>
 
+      {/* Backdrop overlay */}
+      {isSidebarOpen && (
+        <div
+          className="fixed inset-0 top-16 bg-gray-600/10 dark:bg-gray-900/10 backdrop-blur-sm z-30 transition-opacity"
+          onClick={() => setIsSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
+      
       {/* Sidebar */}
       <aside
         className={`fixed top-16 left-0 z-40 w-64 bg-gray-800 h-[calc(100vh-64px)] transition-transform duration-300 ${
