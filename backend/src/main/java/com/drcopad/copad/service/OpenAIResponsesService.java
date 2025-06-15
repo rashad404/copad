@@ -1,5 +1,6 @@
 package com.drcopad.copad.service;
 
+import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
@@ -61,9 +62,13 @@ public class OpenAIResponsesService {
     private final FileUploadService fileUploadService;
     private final ObjectMapper objectMapper;
     private final ChatGPTService chatGPTService;
+    private final DocumentExtractionService documentExtractionService;
     
     @Value("${upload.public-url:http://localhost:8080}")
     private String publicUrl;
+    
+    @Value("${upload.base-dir:../public_html}")
+    private String uploadBaseDir;
 
     public OpenAIResponsesService(WebClient webClient,
                                   @Qualifier("openAIResponsesConfig") OpenAIResponsesConfig responsesConfig,
@@ -77,7 +82,8 @@ public class OpenAIResponsesService {
                                   FileAttachmentRepository fileAttachmentRepository,
                                   FileUploadService fileUploadService,
                                   ObjectMapper objectMapper,
-                                  ChatGPTService chatGPTService) {
+                                  ChatGPTService chatGPTService,
+                                  DocumentExtractionService documentExtractionService) {
         this.webClient = webClient;
         this.responsesConfig = responsesConfig;
         this.conversationManager = conversationManager;
@@ -91,6 +97,7 @@ public class OpenAIResponsesService {
         this.fileUploadService = fileUploadService;
         this.objectMapper = objectMapper;
         this.chatGPTService = chatGPTService;
+        this.documentExtractionService = documentExtractionService;
     }
 
     @CircuitBreaker(name = "openai-responses", fallbackMethod = "fallbackToChatGPT")
@@ -127,12 +134,12 @@ public class OpenAIResponsesService {
         MedicalSpecialty specialty = specialtyRepository.findByCode(specialtyCode)
             .orElseThrow(() -> new IllegalArgumentException("Invalid specialty code: " + specialtyCode));
 
+        // We're now extracting text from documents instead of uploading them
+        // This follows the same pattern as ChatGPTService
         List<String> fileIds = new ArrayList<>();
         if (attachments != null && !attachments.isEmpty()) {
-            log.info("Processing {} attachments for conversation {}", 
+            log.info("Will extract text from {} attachments for conversation {}", 
                 attachments.size(), conversation.getConversationId());
-            fileIds = processFileAttachments(attachments, conversation);
-            log.info("Processed attachments, got {} OpenAI file IDs", fileIds.size());
         } else {
             log.info("No attachments to process for conversation {}", conversation.getConversationId());
         }
@@ -264,26 +271,37 @@ public class OpenAIResponsesService {
             
             List<Map<String, Object>> content = new ArrayList<>();
             
-            // Add text part
-            Map<String, Object> textPart = new HashMap<>();
-            textPart.put("type", "input_text");
-            textPart.put("text", userMessage);
-            content.add(textPart);
+            // Build message with document content extracted as text
+            StringBuilder messageText = new StringBuilder(userMessage);
             
-            // Add document parts using file IDs
-            for (FileAttachment doc : documentAttachments) {
-                if (doc.getOpenaiFileId() != null) {
-                    Map<String, Object> filePart = new HashMap<>();
-                    filePart.put("type", "input_file");
-                    filePart.put("file_id", doc.getOpenaiFileId());
-                    content.add(filePart);
+            // Extract text from documents and append to message
+            if (!documentAttachments.isEmpty()) {
+                messageText.append("\n\n--- Document Content ---");
+                
+                for (FileAttachment doc : documentAttachments) {
+                    String fullPath = Paths.get(uploadBaseDir, doc.getFilePath()).toString();
+                    String extractedText = documentExtractionService.extractTextFromDocument(
+                        fullPath, doc.getFileType()
+                    );
                     
-                    log.info("Added document with file_id: {} for file: {}", 
-                        doc.getOpenaiFileId(), doc.getOriginalFilename());
-                } else {
-                    log.warn("Document {} has no OpenAI file ID, skipping", doc.getOriginalFilename());
+                    if (extractedText != null && !extractedText.trim().isEmpty()) {
+                        messageText.append("\n\nFile: ").append(doc.getOriginalFilename()).append("\n");
+                        messageText.append(extractedText);
+                        log.info("Extracted text from document: {} ({} characters)", 
+                            doc.getOriginalFilename(), extractedText.length());
+                    } else {
+                        messageText.append("\n\nFile: ").append(doc.getOriginalFilename())
+                            .append(" (Could not extract text)");
+                        log.warn("Could not extract text from document: {}", doc.getOriginalFilename());
+                    }
                 }
             }
+            
+            // Add the combined text part
+            Map<String, Object> textPart = new HashMap<>();
+            textPart.put("type", "input_text");
+            textPart.put("text", messageText.toString());
+            content.add(textPart);
             
             // Add image parts using URLs
             for (FileAttachment image : imageAttachments) {
