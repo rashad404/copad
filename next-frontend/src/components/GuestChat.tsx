@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { ListBulletIcon, PaperClipIcon, XMarkIcon } from '@heroicons/react/24/outline';
 import Image from 'next/image';
 import ChatSidebar from './ChatSidebar';
-import FileUploadButton from './FileUploadButton';
 import FileAttachmentPreview from './FileAttachmentPreview';
 import { MultiFileUpload } from './MultiFileUpload';
 import { useAuth } from '@/context/AuthContext';
@@ -67,15 +66,6 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     }
   }, [selectedChatId, chats]);
 
-  const handleFileUpload = async (file: File) => {
-    try {
-      await uploadFile(file);
-      setUploadError(null);
-    } catch (error) {
-      console.error('Error uploading file:', error);
-      setUploadError(t('chat.fileUpload.failed'));
-    }
-  };
 
   const handleMultiFileSelect = (files: File[]) => {
     // Files are selected in the MultiFileUpload component
@@ -184,7 +174,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
       />
       <div className="flex-1 flex flex-col h-full w-full md:w-3xl mx-auto">
         {/* Chat header */}
-        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700">
+        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-30">
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -200,7 +190,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         <div
           ref={messagesContainerRef}
           className={`flex-1 overflow-y-auto px-4 py-6 ${messagesClassName}`}
-          style={{ height: 'calc(100vh - 80px)' }}
+          style={{ paddingBottom: '120px' }}
         >
           {isInitializing ? (
             <div className="flex justify-center items-center h-full">
@@ -333,7 +323,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         )}
         
         {/* Message input */}
-        <div className={`sticky bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 ${inputClassName}`}>
+        <div className={`fixed bottom-0 left-0 right-0 bg-white dark:bg-gray-900 px-3 py-2 border-t border-gray-100 dark:border-gray-700 sm:px-4 sm:py-3 z-40 ${inputClassName}`}>
           <div className="flex flex-col w-full">
             {/* File attachments preview */}
             {uploadedFiles.length > 0 && (
@@ -359,24 +349,16 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
             )}
             
             <form onSubmit={handleSendMessage} className="flex gap-2 w-full max-w-full">
-              {/* File upload buttons */}
-              <div className="flex gap-1">
-                <FileUploadButton
-                  onFileSelected={handleFileUpload}
-                  isDisabled={loading || isInitializing || !selectedChatId || !sessionId}
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowMultiFileUpload(true)}
-                  disabled={loading || isInitializing || !selectedChatId || !sessionId}
-                  className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                  title={t('chat.fileUpload.multipleFiles')}
-                >
-                  <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={1.5} stroke="currentColor" className="w-6 h-6">
-                    <path strokeLinecap="round" strokeLinejoin="round" d="M19.5 14.25v-2.625a3.375 3.375 0 00-3.375-3.375h-1.5A1.125 1.125 0 0113.5 7.125v-1.5a3.375 3.375 0 00-3.375-3.375H8.25m3.75 9v6m3-3H9m1.5-12H5.625c-.621 0-1.125.504-1.125 1.125v17.25c0 .621.504 1.125 1.125 1.125h12.75c.621 0 1.125-.504 1.125-1.125V11.25a9 9 0 00-9-9z" />
-                  </svg>
-                </button>
-              </div>
+              {/* File upload button */}
+              <button
+                type="button"
+                onClick={() => setShowMultiFileUpload(true)}
+                disabled={loading || isInitializing || !selectedChatId || !sessionId}
+                className="p-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                title={t('chat.fileUpload.multipleFiles')}
+              >
+                <PaperClipIcon className="w-6 h-6" />
+              </button>
               
               <input
                 type="text"
