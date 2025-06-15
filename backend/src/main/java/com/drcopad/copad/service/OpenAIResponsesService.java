@@ -223,22 +223,32 @@ public class OpenAIResponsesService {
         // Build input - either simple string or multimodal array
         Object input;
         List<FileAttachment> imageAttachments = new ArrayList<>();
+        List<FileAttachment> documentAttachments = new ArrayList<>();
         
         if (attachments != null && !attachments.isEmpty()) {
             log.info("Processing {} attachments for multimodal input", attachments.size());
-            imageAttachments = attachments.stream()
-                .filter(att -> att.getFileType() != null && att.getFileType().startsWith("image/"))
-                .collect(Collectors.toList());
-            log.info("Found {} image attachments", imageAttachments.size());
+            
+            // Separate images and documents
+            for (FileAttachment att : attachments) {
+                if (att.getFileType() != null && att.getFileType().startsWith("image/")) {
+                    imageAttachments.add(att);
+                } else {
+                    documentAttachments.add(att);
+                }
+            }
+            
+            log.info("Found {} image attachments and {} document attachments", 
+                imageAttachments.size(), documentAttachments.size());
         }
             
-        if (imageAttachments.isEmpty()) {
+        if (imageAttachments.isEmpty() && documentAttachments.isEmpty()) {
             // Simple text input
-            log.info("No images found, using simple text input");
+            log.info("No attachments found, using simple text input");
             input = userMessage;
         } else {
-            // Multimodal input with images - using the correct format from the documentation
-            log.info("Building multimodal input with {} images", imageAttachments.size());
+            // Multimodal input with images and/or documents
+            log.info("Building multimodal input with {} images and {} documents", 
+                imageAttachments.size(), documentAttachments.size());
             List<Map<String, Object>> inputArray = new ArrayList<>();
             
             Map<String, Object> userInput = new HashMap<>();
@@ -248,22 +258,39 @@ public class OpenAIResponsesService {
             
             // Add text part
             Map<String, Object> textPart = new HashMap<>();
-            textPart.put("type", "input_text");
+            textPart.put("type", "text");
             textPart.put("text", userMessage);
             content.add(textPart);
             
-            // Add image parts
+            // Add document parts using file IDs
+            for (FileAttachment doc : documentAttachments) {
+                if (doc.getOpenaiFileId() != null) {
+                    Map<String, Object> filePart = new HashMap<>();
+                    filePart.put("type", "file");
+                    filePart.put("file_id", doc.getOpenaiFileId());
+                    content.add(filePart);
+                    
+                    log.info("Added document with file_id: {} for file: {}", 
+                        doc.getOpenaiFileId(), doc.getOriginalFilename());
+                } else {
+                    log.warn("Document {} has no OpenAI file ID, skipping", doc.getOriginalFilename());
+                }
+            }
+            
+            // Add image parts using URLs
             for (FileAttachment image : imageAttachments) {
                 Map<String, Object> imagePart = new HashMap<>();
-                imagePart.put("type", "input_image");
+                imagePart.put("type", "image_url");
                 
-                // Use the actual URL of the image instead of base64
+                Map<String, Object> imageUrlObj = new HashMap<>();
                 String imageUrl = publicUrl + "/" + image.getFilePath();
-                log.info("Using image URL: {} for file {} (type: {}, path: {})", 
-                    imageUrl, image.getFileId(), image.getFileType(), image.getFilePath());
+                imageUrlObj.put("url", imageUrl);
                 
-                imagePart.put("image_url", imageUrl);
+                imagePart.put("image_url", imageUrlObj);
                 content.add(imagePart);
+                
+                log.info("Added image with URL: {} for file: {}", 
+                    imageUrl, image.getOriginalFilename());
             }
             
             userInput.put("content", content);
@@ -272,6 +299,19 @@ public class OpenAIResponsesService {
             input = inputArray;
         }
 
+        // Determine user ID for the request
+        String userId;
+        if (conversation.getUser() != null) {
+            userId = "user_" + conversation.getUser().getId();
+        } else if (conversation.getGuestSession() != null) {
+            userId = "guest_" + conversation.getGuestSession().getId();
+        } else {
+            userId = "chat_" + conversation.getChatId();
+        }
+        
+        // Set store=true for initial turn (when there's no previous response)
+        boolean shouldStore = previousResponseId == null;
+        
         return ResponsesAPIRequest.builder()
             .model(conversation.getModel())
             .input(input)
@@ -281,6 +321,8 @@ public class OpenAIResponsesService {
             .toolChoice(tools.isEmpty() ? null : "auto")
             .temperature(0.7)
             .maxOutputTokens(2000)
+            .user(userId)
+            .store(shouldStore)
             .build();
     }
 

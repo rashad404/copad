@@ -51,4 +51,10 @@ public class ResponsesAPIRequest {
 
     @JsonProperty("background")
     private Boolean background;
+
+    @JsonProperty("user")
+    private String user;
+
+    @JsonProperty("store")
+    private Boolean store;
 }
