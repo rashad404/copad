@@ -158,7 +158,7 @@ public class OpenAIResponsesService {
         try {
             ResponsesAPIResponse apiResponse = executeAPICall(request, conversation, startTime)
                 .doOnError(error -> log.error("Error in executeAPICall", error))
-                .block(Duration.ofSeconds(45));
+                .block(Duration.ofSeconds(600));
             
             if (apiResponse == null) {
                 log.error("Received null response from API call");
