@@ -37,7 +37,7 @@ public class ResponsesAPIRequest {
 
     @JsonProperty("max_output_tokens")
     @Builder.Default
-    private Integer maxOutputTokens = 2000;
+    private Integer maxOutputTokens = 200000;
 
     @JsonProperty("top_p")
     @Builder.Default

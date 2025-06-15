@@ -345,7 +345,7 @@ public class OpenAIResponsesService {
             .tools(tools.isEmpty() ? null : tools)
             .toolChoice(tools.isEmpty() ? null : "auto")
             .temperature(0.7)
-            .maxOutputTokens(2000)
+            .maxOutputTokens(200000)
             .user(userId)
             .store(shouldStore)
             .build();
