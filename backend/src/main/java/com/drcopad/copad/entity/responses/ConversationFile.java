@@ -55,7 +55,7 @@ public class ConversationFile {
     private String status = "uploaded";
     
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "processing_details", columnDefinition = "json")
+    @Column(name = "processing_details", columnDefinition = "LONGTEXT")
     private Map<String, Object> processingDetails;
     
     @CreationTimestamp

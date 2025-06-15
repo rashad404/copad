@@ -78,7 +78,7 @@ public class BatchFileUpload {
     private String category;
     
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(columnDefinition = "json")
+    @Column(columnDefinition = "LONGTEXT")
     private Map<String, Object> metadata;
     
     @CreationTimestamp

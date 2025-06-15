@@ -52,7 +52,7 @@ public class OpenAIResponse {
     private String model;
     
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "tools_used", columnDefinition = "json")
+    @Column(name = "tools_used", columnDefinition = "LONGTEXT")
     private List<String> toolsUsed;
     
     @Column(name = "completion_tokens")

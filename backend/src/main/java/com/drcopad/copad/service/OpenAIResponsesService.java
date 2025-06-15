@@ -43,11 +43,7 @@ import io.github.resilience4j.retry.annotation.Retry;
 import lombok.extern.slf4j.Slf4j;
 import reactor.core.publisher.Mono;
 
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.io.IOException;
-import java.util.Base64;
+import org.springframework.beans.factory.annotation.Value;
 
 @Slf4j
 @Service
@@ -65,6 +61,9 @@ public class OpenAIResponsesService {
     private final FileUploadService fileUploadService;
     private final ObjectMapper objectMapper;
     private final ChatGPTService chatGPTService;
+    
+    @Value("${upload.public-url:http://localhost:8080}")
+    private String publicUrl;
 
     public OpenAIResponsesService(WebClient webClient,
                                   @Qualifier("openAIResponsesConfig") OpenAIResponsesConfig responsesConfig,
@@ -136,7 +135,8 @@ public class OpenAIResponsesService {
         ResponsesAPIRequest request = buildRequest(
             newUserMessage,
             conversation,
-            specialty.getSystemPrompt(),
+            // specialty.getSystemPrompt(),
+            "",
             language,
             fileIds,
             attachments
@@ -242,26 +242,11 @@ public class OpenAIResponsesService {
                 Map<String, Object> imagePart = new HashMap<>();
                 imagePart.put("type", "input_image");
                 
-                // Read the image file and convert to base64
-                String dataUrl;
+                // Use the actual URL of the image instead of base64
+                String imageUrl = publicUrl + "/" + image.getFilePath();
+                log.info("Using image URL: {} for file {}", imageUrl, image.getFileId());
                 
-                try {
-                    // Always read from local file system for now
-                    // The OpenAI file ID is for the Files API, not for direct image inclusion
-                    // Files are stored in public_html directory at the same level as backend
-                    Path imagePath = Paths.get("../public_html", image.getFilePath());
-                    byte[] imageBytes = Files.readAllBytes(imagePath);
-                    String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                    
-                    // Create data URL
-                    dataUrl = String.format("data:%s;base64,%s", image.getFileType(), base64Image);
-                    log.info("Successfully encoded image {} as base64", image.getFileId());
-                } catch (IOException e) {
-                    log.error("Failed to read image file: {}", image.getFilePath(), e);
-                    continue;
-                }
-                
-                imagePart.put("image_url", dataUrl);
+                imagePart.put("image_url", imageUrl);
                 content.add(imagePart);
             }
             

@@ -87,7 +87,7 @@ public class UsageMetric {
     private BigDecimal toolsCost = BigDecimal.ZERO;
     
     @JdbcTypeCode(SqlTypes.JSON)
-    @Column(name = "tools_used", columnDefinition = "json")
+    @Column(name = "tools_used", columnDefinition = "LONGTEXT")
     private List<String> toolsUsed;
     
     @Column(name = "api_type", nullable = false, length = 20)
