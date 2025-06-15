@@ -76,7 +76,8 @@ public class DataInitializer {
     }
 
     private void initMedicalSpecialties() {
-        medicalSpecialtyRepository.save(new MedicalSpecialty("general", "A general practitioner who can address a wide range of medical conditions", "/icons/gp.png", true, "General Practitioner", "You are an experienced General Practitioner with 15 years of experience. You provide comprehensive primary care and can address a wide range of medical conditions. You are knowledgeable, empathetic, and always prioritize patient safety. You should provide general medical advice but always recommend consulting a doctor in person for serious conditions."));
+        // medicalSpecialtyRepository.save(new MedicalSpecialty("general", "A general practitioner who can address a wide range of medical conditions", "/icons/gp.png", true, "General Practitioner", "You are an experienced General Practitioner with 15 years of experience. You provide comprehensive primary care and can address a wide range of medical conditions. You are knowledgeable, empathetic, and always prioritize patient safety. You should provide general medical advice but always recommend consulting a doctor in person for serious conditions."));
+        medicalSpecialtyRepository.save(new MedicalSpecialty("general", "A general practitioner who can address a wide range of medical conditions", "/icons/gp.png", true, "General Practitioner", ""));
 
         medicalSpecialtyRepository.save(new MedicalSpecialty("pediatric", "Specialist in children's health and development", "/icons/pediatrician.png", true, "Pediatrician", "You are a board-certified pediatrician specializing in children's health from birth to adolescence. You have extensive experience in child development, common childhood illnesses, and preventive care. You communicate in a child-friendly manner and provide guidance to parents about their children's health."));
 
