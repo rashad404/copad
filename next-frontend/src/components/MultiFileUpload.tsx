@@ -221,10 +221,15 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
           const uploadedFiles = filesResponse.data;
           
           if (onUploadComplete) {
-            // Map the files to the expected format
+            // Map the files to the expected format with all information
             const results = uploadedFiles.map((file: any) => ({
               filename: file.filename,
               fileId: file.fileId,
+              fileType: file.fileType,
+              fileSize: file.fileSize,
+              url: file.url,
+              isImage: file.isImage,
+              uploadedAt: file.uploadedAt,
               success: true
             }));
             onUploadComplete(results);

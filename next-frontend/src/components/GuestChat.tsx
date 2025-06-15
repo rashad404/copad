@@ -44,6 +44,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
   const [showMultiFileUpload, setShowMultiFileUpload] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'general' | 'lab-results' | 'imaging' | 'prescriptions' | 'clinical-notes'>('general');
   const [pendingFileIds, setPendingFileIds] = useState<string[]>([]);
+  const [pendingFiles, setPendingFiles] = useState<FileAttachment[]>([]);
   const messagesContainerRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -81,11 +82,23 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
   };
 
   const handleMultiFileUploadComplete = (results: any[]) => {
-    // Extract file IDs from results
-    const fileIds = results
-      .filter(r => r.success)
-      .map(r => r.fileId);
+    // Extract file IDs and create file attachments from results
+    const successfulFiles = results.filter(r => r.success);
+    const fileIds = successfulFiles.map(r => r.fileId);
+    
+    // Create FileAttachment objects for preview
+    const newFiles: FileAttachment[] = successfulFiles.map(file => ({
+      fileId: file.fileId,
+      url: file.url || `/api/guest/files/${file.fileId}`,
+      filename: file.filename,
+      fileType: file.fileType || 'application/octet-stream',
+      fileSize: file.fileSize || 0,
+      uploadedAt: file.uploadedAt || new Date(),
+      isImage: file.isImage || (file.fileType ? file.fileType.startsWith('image/') : false)
+    }));
+    
     setPendingFileIds(prev => [...prev, ...fileIds]);
+    setPendingFiles(prev => [...prev, ...newFiles]);
     setShowMultiFileUpload(false);
   };
 
@@ -94,7 +107,7 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
     console.log('Send:', { selectedChatId, sessionId, isInitializing, loading });
     
     // Don't send if message is empty AND there are no file attachments
-    if ((!newMessage.trim() && uploadedFiles.length === 0 && pendingFileIds.length === 0) || loading) return;
+    if ((!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || loading) return;
     
     const messageToSend = newMessage.trim();
     setNewMessage('');
@@ -104,12 +117,13 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
       role: 'user', 
       content: messageToSend, 
       timestamp: new Date(),
-      attachments: [...uploadedFiles],
+      attachments: [...uploadedFiles, ...pendingFiles],
       fileIds: [...pendingFileIds]
     };
     
-    // Clear pending file IDs after including them in the message
+    // Clear pending file IDs and files after including them in the message
     setPendingFileIds([]);
+    setPendingFiles([]);
     
     setMessages(prev => [...prev, newMessageObj]);
     setLoading(true);
@@ -329,10 +343,16 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
               </div>
             )}
             
-            {/* Show pending files indicator */}
-            {pendingFileIds.length > 0 && (
-              <div className="mb-2 text-sm text-green-600 dark:text-green-400">
-                {pendingFileIds.length} {t('chat.fileUpload.filesReady')}
+            {/* Show pending files preview */}
+            {pendingFiles.length > 0 && (
+              <div className="mb-2">
+                <FileAttachmentPreview 
+                  files={pendingFiles} 
+                  onRemove={(fileId) => {
+                    setPendingFiles(prev => prev.filter(f => f.fileId !== fileId));
+                    setPendingFileIds(prev => prev.filter(id => id !== fileId));
+                  }}
+                />
               </div>
             )}
             
@@ -369,9 +389,9 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
               
               <button
                 type="submit"
-                disabled={(loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFileIds.length === 0) || isInitializing || !selectedChatId || !sessionId)}
+                disabled={(loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || isInitializing || !selectedChatId || !sessionId)}
                 className={`shrink-0 px-4 py-2 rounded-lg ${
-                  loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFileIds.length === 0) || isInitializing || !selectedChatId || !sessionId
+                  loading || (!newMessage.trim() && uploadedFiles.length === 0 && pendingFiles.length === 0) || isInitializing || !selectedChatId || !sessionId
                     ? 'bg-gray-300 dark:bg-gray-600 cursor-not-allowed'
                     : 'bg-indigo-600 hover:bg-indigo-700 dark:bg-indigo-500 dark:hover:bg-indigo-600'
                 } text-white font-medium`}

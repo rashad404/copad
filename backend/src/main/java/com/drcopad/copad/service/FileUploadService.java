@@ -71,7 +71,7 @@ public class FileUploadService {
         
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
         body.add("file", new FileSystemResource(file));
-        body.add("purpose", "assistants"); // For file search functionality
+        body.add("purpose", "responses"); // For file search functionality in Responses API
         
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);
         

@@ -103,8 +103,17 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     });
   };
   const sendGuestMessage = async (sid: string, message: string, chatId: string | null, fileIds: string[] = []) => {
-    console.log('API POST', `/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
-    const res = await api.post(`/guest/chat/${sid}/${chatId}`, { message, language: i18n.language, fileIds });
+    console.log('API POST', `/v2/messages/chat/${chatId}`, { message, language: i18n.language, fileIds });
+    const res = await api.post(`/v2/messages/chat/${chatId}`, { 
+      message, 
+      language: i18n.language, 
+      fileIds,
+      specialty: 'GENERAL' // Default specialty for general medical questions
+    }, {
+      headers: {
+        'X-Guest-Session-Id': sid
+      }
+    });
     console.log('API RESPONSE', res.data);
     return typeof res.data === 'string'
       ? res.data

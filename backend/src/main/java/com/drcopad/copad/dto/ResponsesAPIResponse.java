@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.List;
+import java.util.Map;
 
 @Data
 @Builder
@@ -14,29 +15,51 @@ import java.util.List;
 @AllArgsConstructor
 public class ResponsesAPIResponse {
     
-    @JsonProperty("response_id")
-    private String responseId;
+    @JsonProperty("id")
+    private String id;
     
-    @JsonProperty("conversation_id")
-    private String conversationId;
+    @JsonProperty("status")
+    private String status;  // "completed", "in_progress", "failed"
     
-    @JsonProperty("content")
-    private String content;
+    @JsonProperty("output")
+    private List<Output> output;
     
-    @JsonProperty("model")
-    private String model;
-    
-    @JsonProperty("created")
-    private Long created;
+    @JsonProperty("output_text")
+    private String outputText;  // Convenience property for text output
     
     @JsonProperty("usage")
     private Usage usage;
     
-    @JsonProperty("tools_used")
-    private List<String> toolsUsed;
+    @JsonProperty("model")
+    private String model;
     
-    @JsonProperty("citations")
-    private List<Citation> citations;
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class Output {
+        @JsonProperty("type")
+        private String type;  // "text", "function_call", "tool_use"
+        
+        @JsonProperty("text")
+        private String text;
+        
+        @JsonProperty("function")
+        private FunctionCall function;
+        
+        @JsonProperty("id")
+        private String id;  // For function calls
+    }
+    
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class FunctionCall {
+        @JsonProperty("name")
+        private String name;
+        
+        @JsonProperty("arguments")
+        private Map<String, Object> arguments;
+    }
     
     @Data
     @NoArgsConstructor
@@ -50,25 +73,5 @@ public class ResponsesAPIResponse {
         
         @JsonProperty("total_tokens")
         private Integer totalTokens;
-    }
-    
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    public static class Citation {
-        @JsonProperty("file_id")
-        private String fileId;
-        
-        @JsonProperty("quote")
-        private String quote;
-        
-        @JsonProperty("page")
-        private Integer page;
-        
-        @JsonProperty("start_index")
-        private Integer startIndex;
-        
-        @JsonProperty("end_index")
-        private Integer endIndex;
     }
 }

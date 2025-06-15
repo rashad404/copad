@@ -83,6 +83,8 @@ public class CostCalculationService {
                     totalToolsCost = totalToolsCost.add(costConfig.getFileSearchCostPerQuery());
                     break;
                 case "web_search":
+                case "web_search_preview":
+                case "web_search_preview_2025_03_11":
                     totalToolsCost = totalToolsCost.add(costConfig.getWebSearchCostPerQuery());
                     break;
                 case "code_interpreter":

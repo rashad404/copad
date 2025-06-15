@@ -112,20 +112,39 @@ public class ResponsesMessageController {
             
             // Get AI response
             String aiResponse;
+            boolean usedResponsesApi = false;
+            
             if (responsesConfig.isEnabled()) {
-                // Use Responses API
-                aiResponse = responsesService.getResponsesAPIResponse(
-                    messageRequest.getMessage(),
-                    history,
-                    messageRequest.getSpecialty(),
-                    messageRequest.getLanguage(),
-                    attachments,
-                    chatId,
-                    user,
-                    guestSession
-                );
+                try {
+                    // Use Responses API
+                    aiResponse = responsesService.getResponsesAPIResponse(
+                        messageRequest.getMessage(),
+                        history,
+                        messageRequest.getSpecialty(),
+                        messageRequest.getLanguage(),
+                        attachments,
+                        chatId,
+                        user,
+                        guestSession
+                    );
+                    usedResponsesApi = true;
+                } catch (Exception e) {
+                    log.warn("Responses API failed, falling back to ChatGPT API: {}", e.getMessage());
+                    // Fallback to ChatGPT API
+                    if (responsesConfig.isFallbackToChat()) {
+                        aiResponse = chatGPTService.getChatResponse(
+                            messageRequest.getMessage(),
+                            history,
+                            messageRequest.getSpecialty(),
+                            messageRequest.getLanguage(),
+                            attachments
+                        );
+                    } else {
+                        throw e;
+                    }
+                }
             } else {
-                // Use ChatGPT API
+                // Use ChatGPT API directly
                 aiResponse = chatGPTService.getChatResponse(
                     messageRequest.getMessage(),
                     history,
@@ -135,8 +154,8 @@ public class ResponsesMessageController {
                 );
             }
             
-            // Save AI response (already saved in Responses API flow)
-            if (!responsesConfig.isEnabled()) {
+            // Save AI response only if we didn't use Responses API (which saves internally)
+            if (!usedResponsesApi) {
                 ChatMessage aiMessage = new ChatMessage();
                 aiMessage.setChat(chat);
                 aiMessage.setSender("AI");
@@ -244,6 +263,8 @@ public class ResponsesMessageController {
                     fileInfo.put("fileType", file.getFileType());
                     fileInfo.put("fileSize", file.getFileSize());
                     fileInfo.put("uploadedAt", file.getUploadedAt());
+                    fileInfo.put("url", "/api/guest/files/" + file.getFileId());
+                    fileInfo.put("isImage", file.getFileType() != null && file.getFileType().startsWith("image/"));
                     return fileInfo;
                 })
                 .collect(Collectors.toList());

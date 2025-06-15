@@ -34,7 +34,9 @@ import reactor.core.publisher.Mono;
 import java.time.Duration;
 import java.time.Instant;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Slf4j
@@ -148,15 +150,34 @@ public class OpenAIResponsesService {
             .orElse(null);
         
         // Build tools list based on configuration
-        List<String> tools = new ArrayList<>();
+        List<Map<String, Object>> tools = new ArrayList<>();
+        
+        // Add file search tool with file IDs if available
         if (responsesConfig.getTools().isFileSearch() && !fileIds.isEmpty()) {
-            tools.add("file_search");
+            Map<String, Object> fileSearchTool = new HashMap<>();
+            fileSearchTool.put("type", "file_search");
+            fileSearchTool.put("file_ids", fileIds);
+            tools.add(fileSearchTool);
         }
+        
+        // Add web search tool
         if (responsesConfig.getTools().isWebSearch()) {
-            tools.add("web_search");
+            Map<String, Object> webSearchTool = new HashMap<>();
+            webSearchTool.put("type", "web_search_preview");
+            tools.add(webSearchTool);
         }
+        
+        // Add code interpreter tool
         if (responsesConfig.getTools().isCodeInterpreter()) {
-            tools.add("code_interpreter");
+            Map<String, Object> codeInterpreterTool = new HashMap<>();
+            codeInterpreterTool.put("type", "code_interpreter");
+            
+            // Add container configuration as required by the API
+            Map<String, Object> container = new HashMap<>();
+            container.put("environment", "default");  // Use default environment
+            codeInterpreterTool.put("container", container);
+            
+            tools.add(codeInterpreterTool);
         }
         
         // Enhance system prompt with language instruction
@@ -166,11 +187,10 @@ public class OpenAIResponsesService {
         return ResponsesAPIRequest.builder()
             .model(conversation.getModel())
             .input(userMessage)
-            .systemPrompt(fullSystemPrompt)
+            .systemPrompt(fullSystemPrompt)  // This will be serialized as "instructions" via @JsonProperty
             .previousResponseId(previousResponseId)
-            .conversationId(conversation.getConversationId())
             .tools(tools)
-            .fileIds(fileIds)
+            .toolChoice(tools.isEmpty() ? null : "auto")  // Let model decide when to use tools
             .temperature(0.7)
             .maxTokens(2000)
             .build();
@@ -255,6 +275,16 @@ public class OpenAIResponsesService {
         // Calculate response time
         long responseTimeMs = Duration.between(startTime, Instant.now()).toMillis();
         
+        // Extract text content from response
+        String textContent = response.getOutputText();
+        if (textContent == null && response.getOutput() != null) {
+            // If output_text is not provided, extract from output array
+            textContent = response.getOutput().stream()
+                .filter(o -> "text".equals(o.getType()) && o.getText() != null)
+                .map(ResponsesAPIResponse.Output::getText)
+                .collect(Collectors.joining("\n"));
+        }
+        
         // Save chat message
         Chat chat = chatRepository.findByChatId(conversation.getChatId())
             .orElseThrow(() -> new IllegalArgumentException("Chat not found"));
@@ -262,21 +292,30 @@ public class OpenAIResponsesService {
         ChatMessage aiMessage = new ChatMessage();
         aiMessage.setChat(chat);
         aiMessage.setSender("AI");
-        aiMessage.setMessage(response.getContent());
-        aiMessage.setOpenaiResponseId(response.getResponseId());
+        aiMessage.setMessage(textContent);
+        aiMessage.setOpenaiResponseId(response.getId());
         ChatMessage savedMessage = messageRepository.save(aiMessage);
+        
+        // Extract tool types as strings
+        List<String> toolTypes = null;
+        if (request.getTools() != null && !request.getTools().isEmpty()) {
+            toolTypes = request.getTools().stream()
+                .map(tool -> (String) tool.get("type"))
+                .filter(type -> type != null)
+                .collect(Collectors.toList());
+        }
         
         // Record OpenAI response
         OpenAIResponse openAIResponse = OpenAIResponse.builder()
-            .responseId(response.getResponseId())
+            .responseId(response.getId())
             .conversationId(conversation.getConversationId())
             .chatMessage(savedMessage)
             .previousResponseId(request.getPreviousResponseId())
-            .model(request.getModel())
-            .toolsUsed(request.getTools())
-            .completionTokens(response.getUsage().getCompletionTokens())
-            .promptTokens(response.getUsage().getPromptTokens())
-            .totalTokens(response.getUsage().getTotalTokens())
+            .model(response.getModel() != null ? response.getModel() : request.getModel())
+            .toolsUsed(toolTypes)
+            .completionTokens(response.getUsage() != null ? response.getUsage().getCompletionTokens() : 0)
+            .promptTokens(response.getUsage() != null ? response.getUsage().getPromptTokens() : 0)
+            .totalTokens(response.getUsage() != null ? response.getUsage().getTotalTokens() : 0)
             .responseTimeMs((int) responseTimeMs)
             .build();
         
@@ -303,7 +342,7 @@ public class OpenAIResponsesService {
                     conversation.getConversationId(), metric.getTotalCost());
         }
         
-        return response.getContent();
+        return textContent;
     }
     
     /**
