@@ -15,7 +15,7 @@ public class OpenAIResponsesConfig {
     private boolean enabled = false;
     private String url = "https://api.openai.com/v1/responses";
     private boolean fallbackToChat = true;
-    private String defaultModel = "gpt-4o-mini";
+    private String defaultModel = "gpt-o3";
     private int conversationTtlDays = 30;
     
     private ToolsConfig tools = new ToolsConfig();
@@ -36,6 +36,7 @@ public class OpenAIResponsesConfig {
         
         // Pricing per 1K tokens (as of 2024)
         private Map<String, ModelPricing> modelPricing = Map.of(
+            "gpt-o3", new ModelPricing(new BigDecimal("0.015"), new BigDecimal("0.060")),
             "gpt-4o", new ModelPricing(new BigDecimal("0.015"), new BigDecimal("0.060")),
             "gpt-4o-mini", new ModelPricing(new BigDecimal("0.00015"), new BigDecimal("0.0006")),
             "gpt-4-turbo", new ModelPricing(new BigDecimal("0.01"), new BigDecimal("0.03")),

@@ -55,7 +55,7 @@ public class Conversation {
     
     @Column(nullable = false, length = 50)
     @Builder.Default
-    private String model = "gpt-4o-mini";
+    private String model = "gpt-o3";
     
     @Column(name = "specialty_code", length = 50)
     private String specialtyCode;

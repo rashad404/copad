@@ -41,7 +41,7 @@ app:
     base-url: https://virtualhekim.az
     openai:
       key: ${OPENAI_API_KEY}
-      model: gpt-4o-mini
+      model: o3
       url: https://api.openai.com/v1/chat/completions
 
 # Upload settings for production
