@@ -34,9 +34,10 @@ public class OpenAIResponse {
     @Column(name = "conversation_id", nullable = false)
     private String conversationId;
     
-    // Removed @ManyToOne relationship to avoid foreign key issues with MariaDB
-    // The conversationId field is sufficient for our needs
-    @Transient
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "conversation_id", referencedColumnName = "conversation_id", 
+                insertable = false, updatable = false,
+                foreignKey = @ForeignKey(ConstraintMode.NO_CONSTRAINT))
     private Conversation conversation;
     
     @ManyToOne(fetch = FetchType.LAZY)
