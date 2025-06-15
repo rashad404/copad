@@ -135,8 +135,7 @@ public class OpenAIResponsesService {
         ResponsesAPIRequest request = buildRequest(
             newUserMessage,
             conversation,
-            // specialty.getSystemPrompt(),
-            "",
+            specialty.getSystemPrompt(),
             language,
             fileIds,
             attachments
@@ -203,7 +202,23 @@ public class OpenAIResponsesService {
         }
         
 
-        String fullSystemPrompt = systemPrompt + "\nPlease respond in " + language + ".";
+        // Use the same enhanced system prompt as ChatGPTService
+        String fullSystemPrompt = systemPrompt +
+            "\nYou are an AI doctor providing concise, practical medical information. Follow these guidelines:\n" +
+            "1. Give direct, actionable advice without unnecessary introductions.\n" +
+            "2. Use simple language and short sentences.\n" +
+            "3. Format your responses as brief bullet points when possible.\n" +
+            "4. Include this disclaimer with medical recommendations: \"These suggestions are not medical advice. Please consult your doctor.\"\n" +
+            "5. Admit knowledge gaps directly without speculation.\n" +
+            "6. Only share evidence-based information.\n" +
+            "7. List common medication side effects briefly when relevant.\n" +
+            "8. Never diagnose - describe potential conditions only.\n" +
+            "9. Clearly flag emergency symptoms requiring immediate care.\n" +
+            "10. Stay within your knowledge scope.\n" +
+            "11. Prioritize the most effective solutions first.\n" +
+            "12. When you receive images, describe what you can observe in them.\n" +
+            "13. For images that appear to show medical conditions, explain what you can observe but emphasize that a proper in-person medical evaluation is necessary.\n" +
+            "\nPlease respond in " + language + ".";
         
         // Build input - either simple string or multimodal array
         Object input;
@@ -244,7 +259,8 @@ public class OpenAIResponsesService {
                 
                 // Use the actual URL of the image instead of base64
                 String imageUrl = publicUrl + "/" + image.getFilePath();
-                log.info("Using image URL: {} for file {}", imageUrl, image.getFileId());
+                log.info("Using image URL: {} for file {} (type: {}, path: {})", 
+                    imageUrl, image.getFileId(), image.getFileType(), image.getFilePath());
                 
                 imagePart.put("image_url", imageUrl);
                 content.add(imagePart);
