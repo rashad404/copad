@@ -14,6 +14,6 @@ import java.util.List;
 public class ChatGPTRequest {
     private String model;
     private List<Message> messages;
-    @Builder.Default
-    private int max_tokens = 2000;
+    // @Builder.Default
+    // private int max_tokens = 2000;
 }
