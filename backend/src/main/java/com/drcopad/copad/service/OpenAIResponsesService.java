@@ -158,7 +158,7 @@ public class OpenAIResponsesService {
         try {
             ResponsesAPIResponse apiResponse = executeAPICall(request, conversation, startTime)
                 .doOnError(error -> log.error("Error in executeAPICall", error))
-                .block(Duration.ofSeconds(45));
+                .block(Duration.ofSeconds(600));
             
             if (apiResponse == null) {
                 log.error("Received null response from API call");
@@ -202,16 +202,16 @@ public class OpenAIResponsesService {
             webSearch.put("type", "web_search_preview");
             tools.add(webSearch);
         }
-        if (responsesConfig.getTools().isCodeInterpreter()) {
-            Map<String, Object> codeInterpreter = new HashMap<>();
-            codeInterpreter.put("type", "code_interpreter");
+        // if (responsesConfig.getTools().isCodeInterpreter()) {
+        //     Map<String, Object> codeInterpreter = new HashMap<>();
+        //     codeInterpreter.put("type", "code_interpreter");
         
-            Map<String, Object> container = new HashMap<>();
-            container.put("type", "auto"); // per official doc :contentReference[oaicite:4]{index=4}
+        //     Map<String, Object> container = new HashMap<>();
+        //     container.put("type", "auto"); // per official doc :contentReference[oaicite:4]{index=4}
         
-            codeInterpreter.put("container", container);
-            tools.add(codeInterpreter);
-        }
+        //     codeInterpreter.put("container", container);
+        //     tools.add(codeInterpreter);
+        // }
         
 
         // Use the same enhanced system prompt as ChatGPTService
@@ -344,8 +344,8 @@ public class OpenAIResponsesService {
             .previousResponseId(previousResponseId)
             .tools(tools.isEmpty() ? null : tools)
             .toolChoice(tools.isEmpty() ? null : "auto")
-            .temperature(0.7)
-            .maxOutputTokens(2000)
+            // .temperature(0.7)
+            // .maxOutputTokens(200000)
             .user(userId)
             .store(shouldStore)
             .build();
@@ -355,6 +355,12 @@ public class OpenAIResponsesService {
         List<String> openaiFileIds = new ArrayList<>();
         for (FileAttachment attachment : attachments) {
             try {
+                // Skip image files - they will be handled with direct URLs
+                if (attachment.getFileType() != null && attachment.getFileType().startsWith("image/")) {
+                    log.info("Skipping OpenAI upload for image: {} - will use direct URL", attachment.getOriginalFilename());
+                    continue;
+                }
+                
                 if (attachment.getOpenaiFileId() != null) {
                     openaiFileIds.add(attachment.getOpenaiFileId());
                     continue;

@@ -200,9 +200,15 @@ public class FileUploadService {
                 // Save file locally
                 FileAttachment attachment = saveFileLocally(file, batchId);
                 
-                // Upload to OpenAI
-                String openaiFileId = uploadToOpenAI(attachment);
-                attachment.setOpenaiFileId(openaiFileId);
+                // Only upload non-image files to OpenAI
+                String openaiFileId = null;
+                if (file.getContentType() != null && file.getContentType().startsWith("image/")) {
+                    log.info("Skipping OpenAI upload for image: {} - will use direct URL instead", file.getOriginalFilename());
+                } else {
+                    // Upload documents to OpenAI
+                    openaiFileId = uploadToOpenAI(attachment);
+                    attachment.setOpenaiFileId(openaiFileId);
+                }
                 fileAttachmentRepository.save(attachment);
                 
                 return FileUploadResult.builder()

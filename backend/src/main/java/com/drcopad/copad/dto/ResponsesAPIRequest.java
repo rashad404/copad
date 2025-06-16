@@ -31,13 +31,13 @@ public class ResponsesAPIRequest {
     @JsonProperty("tools")
     private List<Map<String, Object>> tools;
 
-    @JsonProperty("temperature")
-    @Builder.Default
-    private Double temperature = 0.7;
+    // @JsonProperty("temperature")
+    // @Builder.Default
+    // private Double temperature = 0.7;
 
     @JsonProperty("max_output_tokens")
     @Builder.Default
-    private Integer maxOutputTokens = 2000;
+    private Integer maxOutputTokens = 200000;
 
     @JsonProperty("top_p")
     @Builder.Default

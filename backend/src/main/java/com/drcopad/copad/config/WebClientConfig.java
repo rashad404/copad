@@ -28,7 +28,7 @@ public class WebClientConfig implements WebMvcConfigurer {
         
         // Configure HTTP client with timeouts
         HttpClient httpClient = HttpClient.create(connectionProvider)
-                .responseTimeout(Duration.ofSeconds(45))
+                .responseTimeout(Duration.ofSeconds(600))
                 .option(io.netty.channel.ChannelOption.CONNECT_TIMEOUT_MILLIS, 10000);
         
         // Increase memory buffer to handle larger responses (images, etc)
