@@ -66,20 +66,44 @@ public class OAuth2Config {
                 logger.info("OAuth2 request received - Origin: {}, Referer: {}, ForwardedProto: {}, ForwardedHost: {}, URL: {}", 
                     origin, referer, forwardedProto, forwardedHost, request.getRequestURL());
                 
-                // Always set the redirect URI to the production domain
-                String registrationId = request.getParameter("registration_id");
-                if (registrationId != null) {
-                    String baseUrl = "https://virtualhekim.az";
-                    if (forwardedProto != null && forwardedHost != null) {
-                        baseUrl = forwardedProto + "://" + forwardedHost;
+                // Extract registration ID from the request path
+                String requestPath = request.getRequestURI();
+                String registrationId = null;
+                if (requestPath != null && requestPath.contains("/oauth2/authorization/")) {
+                    String[] parts = requestPath.split("/");
+                    if (parts.length > 0) {
+                        registrationId = parts[parts.length - 1];
                     }
+                }
+                
+                if (registrationId != null && !registrationId.isEmpty()) {
+                    String baseUrl = determineBaseUrl(request, origin, referer, forwardedProto, forwardedHost);
                     String redirectUri = baseUrl + "/api/login/oauth2/code/" + registrationId;
-                    logger.info("Setting redirect URI to: {}", redirectUri);
+                    logger.info("Setting redirect URI to: {} for registration: {}", redirectUri, registrationId);
                     builder.redirectUri(redirectUri);
+                } else {
+                    logger.warn("No registration ID found in request path: {}", requestPath);
                 }
             } else {
                 logger.error("No request attributes found in RequestContextHolder");
             }
         };
+    }
+    
+    private String determineBaseUrl(HttpServletRequest request, String origin, String referer, 
+                                   String forwardedProto, String forwardedHost) {
+        // If we have forwarded headers from a proxy/load balancer, use them
+        if (forwardedProto != null && forwardedHost != null) {
+            return forwardedProto + "://" + forwardedHost;
+        }
+        
+        // Check if this is localhost development
+        String serverName = request.getServerName();
+        if ("localhost".equals(serverName) || "127.0.0.1".equals(serverName)) {
+            return "http://localhost:" + request.getServerPort();
+        }
+        
+        // For production, use the known domain
+        return "https://virtualhekim.az";
     }
 } 
