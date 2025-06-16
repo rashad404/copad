@@ -1,11 +1,18 @@
 import axios from 'axios';
+import { API_BASE_URL, isLocalDevelopment } from '../config/environment';
 
 export const testBackendConnection = async () => {
-  const urls = [
+  // Use configured URL first
+  const primaryUrl = `${API_BASE_URL}/api/guest/start`;
+  
+  // Fallback URLs for local development
+  const fallbackUrls = isLocalDevelopment() ? [
     'http://localhost:8080/api/guest/start',
     'http://127.0.0.1:8080/api/guest/start',
     'http://192.168.1.105:8080/api/guest/start',
-  ];
+  ] : [];
+  
+  const urls = [primaryUrl, ...fallbackUrls];
 
   for (const url of urls) {
     try {

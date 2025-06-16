@@ -1,7 +1,8 @@
 import axios, { AxiosInstance, AxiosError, InternalAxiosRequestConfig } from 'axios';
 import * as SecureStore from 'expo-secure-store';
 import { Platform } from 'react-native';
-import { API_BASE_URL, API_TIMEOUT, STORAGE_KEYS } from '../constants/config';
+import { API_TIMEOUT, STORAGE_KEYS } from '../constants/config';
+import { API_BASE_URL } from '../config/environment';
 
 class ApiClient {
   private instance: AxiosInstance;
@@ -33,8 +34,8 @@ class ApiClient {
         } catch (error) {
           console.error('Error getting auth token:', error);
         }
-        console.log('Making request to:', config.baseURL + config.url);
-        console.log('Full config:', { baseURL: config.baseURL, url: config.url, method: config.method });
+        console.log('Making request to:', (config.baseURL || '') + (config.url || ''));
+        console.log('Full config:', { baseURL: config.baseURL || '', url: config.url || '', method: config.method });
         return config;
       },
       (error: AxiosError) => {

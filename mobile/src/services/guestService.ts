@@ -51,13 +51,13 @@ export const guestService = {
     return response.data;
   },
 
-  async sendGuestMessage(sessionId: string, chatId: string | number, content: string): Promise<any> {
+  async sendGuestMessage(sessionId: string, chatId: string | number, content: string, fileIds: string[] = []): Promise<any> {
     const response = await api.post(
       `/api/v2/messages/chat/${chatId}`,
       { 
         message: content,
         language: 'en',
-        fileIds: [],
+        fileIds: fileIds,
         specialty: 'GENERAL'
       },
       {

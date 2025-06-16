@@ -16,8 +16,6 @@ export const AuthNavigator: React.FC = () => {
       screenOptions={{
         headerStyle: {
           backgroundColor: '#ffffff',
-          borderBottomWidth: 1,
-          borderBottomColor: '#e5e7eb',
         },
         headerTintColor: '#111827',
         headerTitleStyle: {

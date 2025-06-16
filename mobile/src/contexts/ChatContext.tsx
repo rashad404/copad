@@ -4,7 +4,7 @@ import { guestService } from '../services/guestService';
 import { STORAGE_KEYS } from '../constants/config';
 import { testBackendConnection } from '../utils/testApi';
 import { debugApiResponses } from '../utils/debugApi';
-import { normalizeChat, normalizeMessage, extractChatId, isValidChatId, extractMessagesFromHistory } from '../utils/chatHelpers';
+import { normalizeChat as normalizeChatHelper, normalizeMessage, extractChatId, isValidChatId, extractMessagesFromHistory, NormalizedChat } from '../utils/chatHelpers';
 
 interface Chat {
   id: string | number;
@@ -23,6 +23,12 @@ interface Message {
   role: 'user' | 'assistant';
   timestamp?: string;
   isLoading?: boolean;
+  files?: Array<{
+    fileId: string;
+    filename: string;
+    url: string;
+    type: string;
+  }>;
 }
 
 interface ChatContextType {
@@ -31,7 +37,7 @@ interface ChatContextType {
   currentChat: Chat | null;
   messages: Message[];
   isLoading: boolean;
-  sendMessage: (content: string) => Promise<void>;
+  sendMessage: (content: string, fileIds?: string[]) => Promise<void>;
   createNewChat: (title?: string) => Promise<void>;
   selectChat: (chat: Chat) => void;
   deleteChat: (chatId: string | number) => Promise<void>;
@@ -93,24 +99,36 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
             // Map chats with messages included from session data
             const processedChats = sessionData.chats
               .map((chat: any) => {
-                const normalizedChat = normalizeChat(chat, sessionId);
+                const normalizedChat = normalizeChatHelper(chat, sessionId!);
                 if (!normalizedChat) return null;
+                
+                // Convert NormalizedChat to Chat interface
+                const convertedChat: Chat = {
+                  id: normalizedChat.id,
+                  title: normalizedChat.title,
+                  messages: [],
+                  timestamp: normalizedChat.timestamp,
+                  lastMessage: normalizedChat.lastMessage,
+                  sessionId: normalizedChat.sessionId,
+                  createdAt: normalizedChat.createdAt,
+                  updatedAt: normalizedChat.updatedAt,
+                };
                 
                 // Include messages from the chat object if available
                 if (chat.messages && Array.isArray(chat.messages)) {
-                  normalizedChat.messages = chat.messages.map((msg: any) => ({
+                  convertedChat.messages = chat.messages.map((msg: any) => ({
                     content: msg.message || msg.content || '',
                     role: msg.sender === 'USER' ? 'user' : msg.isUser ? 'user' : 'assistant',
                     timestamp: msg.timestamp || msg.createdAt || new Date().toISOString(),
                   }));
                 } else {
-                  normalizedChat.messages = [];
+                  convertedChat.messages = [];
                 }
                 
-                return normalizedChat;
+                return convertedChat;
               })
               .filter((chat: any): chat is Chat => chat !== null && isValidChatId(chat?.id))
-              .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+              .sort((a: Chat, b: Chat) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
             
             setChats(processedChats);
             
@@ -127,12 +145,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
             console.log('New chat created:', JSON.stringify(newChatResponse, null, 2));
             
             // Normalize the new chat response
-            const newChat = normalizeChat(newChatResponse, sessionId);
-            if (!newChat) {
+            const normalizedNewChat = normalizeChatHelper(newChatResponse, sessionId!);
+            if (!normalizedNewChat) {
               throw new Error('Failed to create valid chat object');
             }
-            // Initialize with empty messages array
-            newChat.messages = [];
+            // Convert to Chat interface
+            const newChat: Chat = {
+              id: normalizedNewChat.id,
+              title: normalizedNewChat.title,
+              messages: [],
+              timestamp: normalizedNewChat.timestamp,
+              lastMessage: normalizedNewChat.lastMessage,
+              sessionId: normalizedNewChat.sessionId,
+              createdAt: normalizedNewChat.createdAt,
+              updatedAt: normalizedNewChat.updatedAt,
+            };
             setChats([newChat]);
             setCurrentChat(newChat);
             setMessages([]);
@@ -161,12 +188,21 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
         console.log('Created new chat for new session:', JSON.stringify(response, null, 2));
         
         // Normalize the new chat response
-        const newChat = normalizeChat(response, sessionId);
-        if (!newChat) {
+        const normalizedNewChat = normalizeChatHelper(response, sessionId!);
+        if (!normalizedNewChat) {
           throw new Error('Failed to create valid chat object');
         }
-        // Initialize with empty messages array
-        newChat.messages = [];
+        // Convert to Chat interface
+        const newChat: Chat = {
+          id: normalizedNewChat.id,
+          title: normalizedNewChat.title,
+          messages: [],
+          timestamp: normalizedNewChat.timestamp,
+          lastMessage: normalizedNewChat.lastMessage,
+          sessionId: normalizedNewChat.sessionId,
+          createdAt: normalizedNewChat.createdAt,
+          updatedAt: normalizedNewChat.updatedAt,
+        };
         setChats([newChat]);
         setCurrentChat(newChat);
         setMessages([]);
@@ -178,7 +214,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
   };
 
-  const sendMessage = async (content: string) => {
+  const sendMessage = async (content: string, fileIds?: string[]) => {
     if (!currentChat || !guestSessionId) {
       console.error('Cannot send message: currentChat =', currentChat, 'guestSessionId =', guestSessionId);
       return;
@@ -198,6 +234,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       content,
       role: 'user',
       timestamp: new Date().toISOString(),
+      files: fileIds ? [] : undefined, // Will be populated after upload
     };
 
     setMessages((prev) => [...prev, userMessage]);
@@ -215,7 +252,8 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       const response = await guestService.sendGuestMessage(
         guestSessionId,
         currentChat.id,
-        content
+        content,
+        fileIds || []
       );
       
       console.log('Message response:', JSON.stringify(response, null, 2));
@@ -240,12 +278,31 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
               userMessage,
               assistantMessage
             ];
-            return { 
+            
+            // Auto-generate title from first message if chat has no title
+            let updatedTitle = chat.title;
+            if ((!chat.title || chat.title === 'New Chat') && chat.messages.length === 0) {
+              updatedTitle = content.split(' ').slice(0, 5).join(' ') + '...';
+              
+              // Update title on backend
+              guestService.updateChatTitle(guestSessionId, chat.id, updatedTitle)
+                .catch(err => console.error('Failed to update chat title:', err));
+            }
+            
+            const updatedChat = { 
               ...chat, 
+              title: updatedTitle,
               messages: updatedMessages,
               lastMessage: content, 
               updatedAt: new Date().toISOString() 
             };
+            
+            // Update currentChat if title changed
+            if (updatedTitle !== chat.title) {
+              setCurrentChat(updatedChat);
+            }
+            
+            return updatedChat;
           }
           return chat;
         })
@@ -267,13 +324,22 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       console.log('Created new chat in createNewChat:', JSON.stringify(response, null, 2));
       
       // Normalize the new chat response
-      const newChat = normalizeChat(response, guestSessionId);
-      if (!newChat) {
+      const normalizedNewChat = normalizeChatHelper(response, guestSessionId);
+      if (!normalizedNewChat) {
         throw new Error('Failed to create valid chat object from response');
       }
       
-      // Initialize with empty messages array
-      newChat.messages = [];
+      // Convert to Chat interface
+      const newChat: Chat = {
+        id: normalizedNewChat.id,
+        title: normalizedNewChat.title,
+        messages: [],
+        timestamp: normalizedNewChat.timestamp,
+        lastMessage: normalizedNewChat.lastMessage,
+        sessionId: normalizedNewChat.sessionId,
+        createdAt: normalizedNewChat.createdAt,
+        updatedAt: normalizedNewChat.updatedAt,
+      };
       
       // Override title if different from response
       if (newChat.title !== title && response.title !== title) {
@@ -328,7 +394,7 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
     }
   };
 
-  const updateChatTitle = async (chatId: number, title: string) => {
+  const updateChatTitle = async (chatId: string | number, title: string) => {
     if (!guestSessionId) return;
 
     try {
@@ -355,24 +421,36 @@ export const ChatProvider: React.FC<ChatProviderProps> = ({ children }) => {
       if (sessionData.chats && Array.isArray(sessionData.chats)) {
         const processedChats = sessionData.chats
           .map((chat: any) => {
-            const normalizedChat = normalizeChat(chat, guestSessionId);
+            const normalizedChat = normalizeChatHelper(chat, guestSessionId);
             if (!normalizedChat) return null;
+            
+            // Convert NormalizedChat to Chat interface
+            const convertedChat: Chat = {
+              id: normalizedChat.id,
+              title: normalizedChat.title,
+              messages: [],
+              timestamp: normalizedChat.timestamp,
+              lastMessage: normalizedChat.lastMessage,
+              sessionId: normalizedChat.sessionId,
+              createdAt: normalizedChat.createdAt,
+              updatedAt: normalizedChat.updatedAt,
+            };
             
             // Include messages from the chat object if available
             if (chat.messages && Array.isArray(chat.messages)) {
-              normalizedChat.messages = chat.messages.map((msg: any) => ({
+              convertedChat.messages = chat.messages.map((msg: any) => ({
                 content: msg.message || msg.content || '',
                 role: msg.sender === 'USER' ? 'user' : msg.isUser ? 'user' : 'assistant',
                 timestamp: msg.timestamp || msg.createdAt || new Date().toISOString(),
               }));
             } else {
-              normalizedChat.messages = [];
+              convertedChat.messages = [];
             }
             
-            return normalizedChat;
+            return convertedChat;
           })
           .filter((chat: any): chat is Chat => chat !== null && isValidChatId(chat?.id))
-          .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
+          .sort((a: Chat, b: Chat) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
         
         setChats(processedChats);
         

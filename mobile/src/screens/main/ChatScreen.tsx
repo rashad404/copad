@@ -301,7 +301,6 @@ export const ChatScreen: React.FC = () => {
                   onChangeText={setInputText}
                   placeholder="Type a message..."
                   multiline
-                  maxHeight={100}
                   disabled={sending}
                   onSubmitEditing={sendMessage}
                 />

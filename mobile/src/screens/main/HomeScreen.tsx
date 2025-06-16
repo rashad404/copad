@@ -13,7 +13,7 @@ export const HomeScreen: React.FC = () => {
     <SafeAreaView style={styles.container}>
       <ScrollView contentContainerStyle={styles.content}>
         <Text variant="headlineMedium" style={styles.greeting}>
-          Welcome back, {user?.firstName || user?.username || 'User'}!
+          Welcome back, {user?.username || 'User'}!
         </Text>
 
         <Card style={styles.card}>

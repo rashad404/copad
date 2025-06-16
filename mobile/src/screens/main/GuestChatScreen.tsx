@@ -8,6 +8,7 @@ import {
   Dimensions,
   TouchableOpacity,
   Modal,
+  Alert,
 } from 'react-native';
 import {
   Text,
@@ -22,16 +23,21 @@ import {
 } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useChat } from '../../contexts/ChatContext';
-import { useAuth } from '../../contexts/AuthContext';
 import { Drawer } from 'react-native-drawer-layout';
-import { useNavigation } from '@react-navigation/native';
-import { NavigationProp } from '../../navigation/types';
+import { useTheme } from '../../contexts/ThemeContext';
+import { getThemeColors } from '../../constants/theme';
+import { Ionicons } from '@expo/vector-icons';
+import * as ImagePicker from 'expo-image-picker';
+import * as DocumentPicker from 'expo-document-picker';
+import { FileAttachmentPreview } from '../../components/FileAttachmentPreview';
+import { fileService, validateFile, UploadedFile } from '../../services/fileService';
+import { optimizeImages, OPTIMIZATION_PRESETS } from '../../utils/imageOptimizer';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export const GuestChatScreen: React.FC = () => {
-  const navigation = useNavigation<NavigationProp>();
   const { 
+    guestSessionId,
     chats, 
     currentChat, 
     messages, 
@@ -42,12 +48,17 @@ export const GuestChatScreen: React.FC = () => {
     deleteChat,
     updateChatTitle,
   } = useChat();
-  const { isAuthenticated, user } = useAuth();
+  const { theme, resolvedTheme, setTheme } = useTheme();
+  const colors = getThemeColors(resolvedTheme);
+  const styles = createStyles(colors);
   
   const [inputText, setInputText] = useState('');
   const [sending, setSending] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
   const [showMainMenu, setShowMainMenu] = useState(false);
+  const [pendingFiles, setPendingFiles] = useState<any[]>([]);
+  const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
+  const [uploading, setUploading] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
   useEffect(() => {
@@ -58,18 +69,176 @@ export const GuestChatScreen: React.FC = () => {
   }, [messages]);
 
   const handleSendMessage = async () => {
-    if (!inputText.trim() || sending) return;
+    if ((!inputText.trim() && uploadedFiles.length === 0) || sending) return;
 
     setSending(true);
     setInputText('');
     
     try {
-      await sendMessage(inputText.trim());
+      const fileIds = uploadedFiles.map(f => f.fileId);
+      await sendMessage(inputText.trim() || 'Attached files', fileIds);
+      // Clear files after sending
+      setUploadedFiles([]);
+      setPendingFiles([]);
     } catch (error) {
       console.error('Failed to send message:', error);
+      Alert.alert('Error', 'Failed to send message. Please try again.');
     } finally {
       setSending(false);
     }
+  };
+
+  const pickImage = async () => {
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: 'Images' as any,
+      allowsMultipleSelection: true,
+      quality: 0.8,
+      base64: false,
+    });
+
+    if (!result.canceled && result.assets) {
+      const newFiles = result.assets.map(asset => ({
+        uri: asset.uri,
+        name: asset.fileName || `image_${Date.now()}.jpg`,
+        type: asset.mimeType || 'image/jpeg',
+        localUri: asset.uri,
+      }));
+      
+      // Show files immediately in preview
+      setPendingFiles([...pendingFiles, ...newFiles]);
+      
+      // Optimize images before uploading
+      optimizeAndUploadImages(newFiles);
+    }
+  };
+
+  const pickDocument = async () => {
+    try {
+      const result = await DocumentPicker.getDocumentAsync({
+        type: ['application/pdf', 'text/plain', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'],
+        multiple: true,
+      });
+
+      if (!result.canceled && result.assets) {
+        const newFiles = result.assets.map(asset => ({
+          uri: asset.uri,
+          name: asset.name,
+          type: asset.mimeType || 'application/octet-stream',
+          size: asset.size,
+          localUri: asset.uri,
+        }));
+        
+        // Validate files
+        for (const file of newFiles) {
+          const validation = validateFile(file);
+          if (!validation.valid) {
+            Alert.alert('Invalid File', validation.error);
+            return;
+          }
+        }
+        
+        setPendingFiles([...pendingFiles, ...newFiles]);
+        uploadFiles(newFiles);
+      }
+    } catch (error) {
+      console.error('Document picker error:', error);
+      Alert.alert('Error', 'Failed to pick document');
+    }
+  };
+
+  const optimizeAndUploadImages = async (imageFiles: any[]) => {
+    if (!currentChat || !guestSessionId) return;
+    
+    setUploading(true);
+    try {
+      // Choose optimization preset based on file sizes
+      let totalSize = 0;
+      for (const file of imageFiles) {
+        if (file.size) totalSize += file.size;
+      }
+      
+      // Select preset based on total size
+      let preset = OPTIMIZATION_PRESETS.medical; // Default for medical use
+      if (totalSize > 20 * 1024 * 1024) { // > 20MB total
+        preset = OPTIMIZATION_PRESETS.aggressive;
+        console.log('Using aggressive optimization for large files');
+      } else if (totalSize > 10 * 1024 * 1024) { // > 10MB total
+        preset = OPTIMIZATION_PRESETS.chat;
+        console.log('Using chat optimization for medium files');
+      }
+      
+      // Optimize images with selected preset
+      const optimizedFiles = await optimizeImages(imageFiles, preset);
+      
+      // Update pending files with optimized versions
+      setPendingFiles(prev => 
+        prev.map(file => {
+          const optimized = optimizedFiles.find(opt => 
+            file.name === opt.name || file.uri === imageFiles.find(img => img.name === file.name)?.uri
+          );
+          return optimized || file;
+        })
+      );
+      
+      // Upload optimized files
+      await uploadFiles(optimizedFiles);
+    } catch (error) {
+      console.error('Image optimization error:', error);
+      // Fall back to uploading original files if optimization fails
+      await uploadFiles(imageFiles);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  const uploadFiles = async (files: any[]) => {
+    if (!currentChat || !guestSessionId) return;
+    
+    try {
+      const response = await fileService.uploadBatch(
+        currentChat.id,
+        files,
+        guestSessionId
+      );
+      
+      // Poll for upload completion
+      let attempts = 0;
+      const maxAttempts = 30;
+      
+      const checkStatus = async () => {
+        const status = await fileService.getBatchStatus(response.batchId, guestSessionId);
+        
+        if (status.status === 'completed') {
+          const uploadedFilesData = await fileService.getBatchFiles(response.batchId, guestSessionId);
+          setUploadedFiles([...uploadedFiles, ...uploadedFilesData]);
+          setPendingFiles([]);
+        } else if (status.status === 'failed') {
+          Alert.alert('Upload Failed', 'Failed to upload files. Please try again.');
+          setPendingFiles([]);
+        } else if (attempts < maxAttempts) {
+          attempts++;
+          setTimeout(checkStatus, 1000);
+        } else {
+          Alert.alert('Upload Timeout', 'File upload is taking too long. Please try again.');
+          setPendingFiles([]);
+        }
+      };
+      
+      await checkStatus();
+    } catch (error) {
+      console.error('Upload error:', error);
+      Alert.alert('Upload Error', 'Failed to upload files. Please try again.');
+      setPendingFiles([]);
+    } finally {
+      if (!files.some(f => f.type && f.type.startsWith('image/'))) {
+        setUploading(false);
+      }
+    }
+  };
+
+  const removeFile = (fileId: string) => {
+    setUploadedFiles(uploadedFiles.filter(f => f.fileId !== fileId));
+    setPendingFiles(pendingFiles.filter(f => f.uri !== fileId));
   };
 
 
@@ -79,7 +248,7 @@ export const GuestChatScreen: React.FC = () => {
     if (item.isLoading) {
       return (
         <View style={[styles.messageContainer, styles.assistantMessage]}>
-          <ActivityIndicator size="small" color="#2563eb" />
+          <ActivityIndicator size="small" color={colors.primary} />
         </View>
       );
     }
@@ -94,6 +263,13 @@ export const GuestChatScreen: React.FC = () => {
         <Text style={[styles.messageText, isUser && styles.userMessageText]}>
           {item.content}
         </Text>
+        {item.files && item.files.length > 0 && (
+          <FileAttachmentPreview
+            files={item.files}
+            onRemove={() => {}}
+            showInMessage={true}
+          />
+        )}
       </View>
     );
   };
@@ -106,7 +282,7 @@ export const GuestChatScreen: React.FC = () => {
           icon="close"
           size={24}
           onPress={() => setDrawerOpen(false)}
-          iconColor="#6b7280"
+          iconColor={colors.textSecondary}
         />
       </View>
       
@@ -119,6 +295,7 @@ export const GuestChatScreen: React.FC = () => {
         }}
         style={styles.newChatButton}
         icon="plus"
+        buttonColor={colors.primary}
       >
         New Chat
       </Button>
@@ -152,13 +329,13 @@ export const GuestChatScreen: React.FC = () => {
                   icon="pencil"
                   size={18}
                   onPress={() => {/* TODO: Edit chat title */}}
-                  iconColor="#6b7280"
+                  iconColor={colors.textSecondary}
                 />
                 <IconButton
                   icon="delete"
                   size={18}
                   onPress={() => deleteChat(item.id)}
-                  iconColor="#6b7280"
+                  iconColor={colors.textSecondary}
                 />
               </View>
             </TouchableOpacity>
@@ -170,9 +347,9 @@ export const GuestChatScreen: React.FC = () => {
 
   if (isLoading) {
     return (
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#2563eb" />
+          <ActivityIndicator size="large" color={colors.primary} />
           <Text style={styles.loadingText}>Setting up your chat...</Text>
         </View>
       </SafeAreaView>
@@ -182,21 +359,19 @@ export const GuestChatScreen: React.FC = () => {
   return (
     <Drawer
       open={drawerOpen}
-      drawerWidth={Math.min(screenWidth * 0.8, 300)}
-      drawerPosition="left"
-      renderDrawerContent={renderDrawerContent}
       onOpen={() => setDrawerOpen(true)}
       onClose={() => setDrawerOpen(false)}
-      swipeEnabled={true}
-      drawerType="slide"
+      renderDrawerContent={renderDrawerContent}
+      drawerPosition="left"
+      drawerStyle={{ width: Math.min(screenWidth * 0.8, 300) }}
     >
-      <SafeAreaView style={styles.container}>
+      <SafeAreaView style={[styles.container, { backgroundColor: colors.background }]}>
         <View style={styles.header}>
           <IconButton
             icon="format-list-bulleted"
             size={24}
             onPress={() => setDrawerOpen(true)}
-            iconColor="#6b7280"
+            iconColor={colors.textSecondary}
             style={styles.headerButton}
           />
           <Text 
@@ -210,7 +385,7 @@ export const GuestChatScreen: React.FC = () => {
             icon="menu"
             size={24}
             onPress={() => setShowMainMenu(true)}
-            iconColor="#6b7280"
+            iconColor={colors.textSecondary}
             style={styles.headerButton}
           />
         </View>
@@ -238,28 +413,69 @@ export const GuestChatScreen: React.FC = () => {
             }
           />
 
-          <View style={styles.inputContainer}>
-            <TextInput
-              style={styles.input}
-              value={inputText}
-              onChangeText={setInputText}
-              placeholder="Type your message... e.g. I have an allergy, what should I do?"
-              multiline
-              maxHeight={100}
-              disabled={sending}
-              onSubmitEditing={handleSendMessage}
-              mode="outlined"
-              outlineColor="#e5e7eb"
-              activeOutlineColor="#4f46e5"
-            />
-            <IconButton
-              icon="send"
-              size={24}
-              onPress={handleSendMessage}
-              disabled={!inputText.trim() || sending}
-              iconColor="#4f46e5"
-              style={styles.sendButton}
-            />
+          <View style={styles.inputWrapper}>
+            {/* File attachments preview */}
+            {(uploadedFiles.length > 0 || pendingFiles.length > 0) && (
+              <View style={styles.filePreviewContainer}>
+                <FileAttachmentPreview
+                  files={[...uploadedFiles, ...pendingFiles]}
+                  onRemove={removeFile}
+                />
+              </View>
+            )}
+            
+            <View style={styles.inputContainer}>
+              <TouchableOpacity
+                onPress={pickImage}
+                disabled={sending || uploading}
+                style={styles.attachButton}
+              >
+                <Ionicons name="image-outline" size={22} color={colors.textSecondary} />
+              </TouchableOpacity>
+              
+              <TouchableOpacity
+                onPress={pickDocument}
+                disabled={sending || uploading}
+                style={styles.attachButton}
+              >
+                <Ionicons name="document-outline" size={22} color={colors.textSecondary} />
+              </TouchableOpacity>
+              
+              <TextInput
+                style={styles.input}
+                value={inputText}
+                onChangeText={setInputText}
+                placeholder={uploadedFiles.length > 0 ? "Add a message (optional)..." : "Type your message..."}
+                placeholderTextColor={colors.textTertiary}
+                multiline={false}
+                disabled={sending || uploading}
+                onSubmitEditing={handleSendMessage}
+                mode="flat"
+                textColor={colors.text}
+                underlineColor="transparent"
+                activeUnderlineColor="transparent"
+                theme={{
+                  colors: {
+                    background: colors.inputBackground,
+                  }
+                }}
+              />
+              
+              <TouchableOpacity
+                onPress={handleSendMessage}
+                disabled={(!inputText.trim() && uploadedFiles.length === 0) || sending || uploading}
+                style={[
+                  styles.sendButton,
+                  ((!inputText.trim() && uploadedFiles.length === 0) || sending || uploading) && styles.sendButtonDisabled
+                ]}
+              >
+                {sending || uploading ? (
+                  <ActivityIndicator size="small" color="#ffffff" />
+                ) : (
+                  <Ionicons name="send" size={20} color="#ffffff" />
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </KeyboardAvoidingView>
 
@@ -292,39 +508,60 @@ export const GuestChatScreen: React.FC = () => {
                   </View>
                   
                   <View style={styles.mainMenuItems}>
-                    {!isAuthenticated && (
-                      <>
-                        <TouchableOpacity
-                          style={styles.mainMenuItem}
-                          onPress={() => {
-                            setShowMainMenu(false);
-                            navigation.navigate('Auth' as never);
-                          }}
-                        >
-                          <Text style={styles.mainMenuItemText}>Sign In</Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                          style={styles.mainMenuItem}
-                          onPress={() => {
-                            setShowMainMenu(false);
-                            navigation.navigate('Auth' as never, { screen: 'Register' });
-                          }}
-                        >
-                          <Text style={styles.mainMenuItemText}>Register</Text>
-                        </TouchableOpacity>
-                      </>
-                    )}
-                    {isAuthenticated && (
+                    <View style={styles.themeSection}>
+                      <Text style={styles.themeSectionTitle}>Theme</Text>
                       <TouchableOpacity
-                        style={styles.mainMenuItem}
-                        onPress={() => {
-                          setShowMainMenu(false);
-                          navigation.navigate('Profile' as never);
-                        }}
+                        style={[
+                          styles.themeOption,
+                          theme === 'light' && styles.themeOptionActive
+                        ]}
+                        onPress={() => setTheme('light')}
                       >
-                        <Text style={styles.mainMenuItemText}>Profile</Text>
+                        <Ionicons 
+                          name="sunny-outline" 
+                          size={20} 
+                          color={theme === 'light' ? '#4f46e5' : '#ffffff'} 
+                        />
+                        <Text style={[
+                          styles.themeOptionText,
+                          theme === 'light' && styles.themeOptionTextActive
+                        ]}>Light</Text>
                       </TouchableOpacity>
-                    )}
+                      <TouchableOpacity
+                        style={[
+                          styles.themeOption,
+                          theme === 'dark' && styles.themeOptionActive
+                        ]}
+                        onPress={() => setTheme('dark')}
+                      >
+                        <Ionicons 
+                          name="moon-outline" 
+                          size={20} 
+                          color={theme === 'dark' ? '#4f46e5' : '#ffffff'} 
+                        />
+                        <Text style={[
+                          styles.themeOptionText,
+                          theme === 'dark' && styles.themeOptionTextActive
+                        ]}>Dark</Text>
+                      </TouchableOpacity>
+                      <TouchableOpacity
+                        style={[
+                          styles.themeOption,
+                          theme === 'system' && styles.themeOptionActive
+                        ]}
+                        onPress={() => setTheme('system')}
+                      >
+                        <Ionicons 
+                          name="phone-portrait-outline" 
+                          size={20} 
+                          color={theme === 'system' ? '#4f46e5' : '#ffffff'} 
+                        />
+                        <Text style={[
+                          styles.themeOptionText,
+                          theme === 'system' && styles.themeOptionTextActive
+                        ]}>System</Text>
+                      </TouchableOpacity>
+                    </View>
                   </View>
                 </SafeAreaView>
               </TouchableOpacity>
@@ -336,24 +573,23 @@ export const GuestChatScreen: React.FC = () => {
   );
 };
 
-const styles = StyleSheet.create({
+const createStyles = (colors: any) => StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#ffffff',
   },
   header: {
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
     height: 44,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
     paddingHorizontal: 4,
   },
   headerTitle: {
     flex: 1,
-    color: '#111827',
+    color: colors.text,
     fontSize: 16,
     fontWeight: '600',
     textAlign: 'center',
@@ -369,7 +605,7 @@ const styles = StyleSheet.create({
   },
   loadingText: {
     marginTop: 16,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   chatContainer: {
     flex: 1,
@@ -386,7 +622,7 @@ const styles = StyleSheet.create({
   },
   userMessage: {
     alignSelf: 'flex-end',
-    backgroundColor: '#e5e7eb',
+    backgroundColor: colors.userMessage,
     paddingHorizontal: 16,
     paddingVertical: 8,
   },
@@ -399,26 +635,50 @@ const styles = StyleSheet.create({
   messageText: {
     fontSize: 16,
     lineHeight: 22,
-    color: '#1f2937',
+    color: colors.assistantMessageText,
   },
   userMessageText: {
-    color: '#1f2937',
+    color: colors.userMessageText,
+  },
+  inputWrapper: {
+    borderTopWidth: 1,
+    borderTopColor: colors.border,
+    backgroundColor: colors.background,
+  },
+  filePreviewContainer: {
+    paddingHorizontal: 12,
+    paddingTop: 8,
   },
   inputContainer: {
     flexDirection: 'row',
-    alignItems: 'flex-end',
+    alignItems: 'center',
     padding: 12,
-    borderTopWidth: 1,
-    borderTopColor: '#f3f4f6',
-    backgroundColor: '#ffffff',
+    gap: 8,
+  },
+  attachButton: {
+    padding: 8,
   },
   input: {
     flex: 1,
-    marginRight: 8,
-    backgroundColor: '#fff',
+    backgroundColor: colors.inputBackground,
+    borderRadius: 21,
+    paddingHorizontal: 12,
+    paddingVertical: 0,
+    fontSize: 15,
+    borderWidth: 1,
+    borderColor: colors.border,
+    height: 42,
   },
   sendButton: {
-    margin: 0,
+    width: 42,
+    height: 42,
+    borderRadius: 21,
+    backgroundColor: colors.primary,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  sendButtonDisabled: {
+    backgroundColor: colors.border,
   },
   emptyContainer: {
     flex: 1,
@@ -428,39 +688,39 @@ const styles = StyleSheet.create({
     paddingTop: 100,
   },
   welcomeTitle: {
-    color: '#111827',
+    color: colors.text,
     marginBottom: 8,
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
   },
   welcomeText: {
-    color: '#6b7280',
+    color: colors.textSecondary,
     textAlign: 'center',
   },
   drawerContent: {
     flex: 1,
-    backgroundColor: '#ffffff',
+    backgroundColor: colors.background,
+    paddingTop: 50, // 50px padding for status bar
   },
   drawerHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: 8,
+    paddingTop: Platform.OS === 'ios' ? 8 : 16, // More padding on Android
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   drawerTitle: {
     fontSize: 18,
     fontWeight: '600',
-    color: '#111827',
+    color: colors.text,
   },
   newChatButton: {
     margin: 16,
     marginBottom: 8,
-    backgroundColor: '#4f46e5',
   },
   chatItem: {
     flexDirection: 'row',
@@ -468,44 +728,38 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderBottomWidth: 1,
-    borderBottomColor: '#e5e7eb',
+    borderBottomColor: colors.border,
   },
   chatItemContent: {
     flex: 1,
   },
   chatItemTitle: {
     fontSize: 14,
-    color: '#111827',
+    color: colors.text,
     marginBottom: 4,
   },
   chatItemTime: {
     fontSize: 12,
-    color: '#6b7280',
+    color: colors.textSecondary,
   },
   chatItemActions: {
     flexDirection: 'row',
   },
   activeChatItem: {
-    backgroundColor: '#f3f4f6',
-  },
-  drawerFooter: {
-    padding: 16,
-    borderTopWidth: 1,
-    borderTopColor: '#e5e7eb',
-  },
-  signInButton: {
-    paddingVertical: 8,
+    backgroundColor: colors.hover,
   },
   mainMenuContent: {
     flex: 1,
     backgroundColor: '#1f2937',
+    paddingTop: 50, // 50px padding for status bar
   },
   mainMenuHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingVertical: 16,
+    paddingTop: Platform.OS === 'ios' ? 16 : 16, // Consistent padding since we added it to container
+    paddingBottom: 16,
     borderBottomWidth: 1,
     borderBottomColor: '#374151',
   },
@@ -517,13 +771,36 @@ const styles = StyleSheet.create({
   mainMenuItems: {
     paddingTop: 8,
   },
-  mainMenuItem: {
-    paddingHorizontal: 16,
-    paddingVertical: 12,
+  themeSection: {
+    padding: 16,
   },
-  mainMenuItemText: {
+  themeSectionTitle: {
+    fontSize: 14,
+    fontWeight: '600',
+    color: '#9ca3af',
+    marginBottom: 12,
+    textTransform: 'uppercase',
+    letterSpacing: 0.5,
+  },
+  themeOption: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    paddingHorizontal: 12,
+    borderRadius: 8,
+    marginBottom: 4,
+  },
+  themeOptionActive: {
+    backgroundColor: 'rgba(79, 70, 229, 0.1)',
+  },
+  themeOptionText: {
+    marginLeft: 12,
     fontSize: 16,
     color: '#ffffff',
+  },
+  themeOptionTextActive: {
+    color: '#4f46e5',
+    fontWeight: '600',
   },
   modalOverlay: {
     flex: 1,
