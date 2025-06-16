@@ -98,8 +98,12 @@ public class AuthController {
         // Logout user to clear session immediately after creating JWT
         new SecurityContextLogoutHandler().logout(request, response, null);
 
+        // Determine the frontend URL based on the request
+        String frontendUrl = determineFrontendUrl(request);
+        
         // Redirect to frontend with token
-        String redirectUrl = String.format("https://virtualhekim.az/login/callback?token=%s&name=%s&email=%s",
+        String redirectUrl = String.format("%s/login/callback?token=%s&name=%s&email=%s",
+                frontendUrl,
                 URLEncoder.encode(authResponse.getToken(), StandardCharsets.UTF_8),
                 URLEncoder.encode(authResponse.getFullName(), StandardCharsets.UTF_8),
                 URLEncoder.encode(authResponse.getEmail(), StandardCharsets.UTF_8));
@@ -108,5 +112,68 @@ public class AuthController {
     @GetMapping("/test")
     public ResponseEntity<String> test() {
         return ResponseEntity.ok("Auth endpoint is working");
+    }
+
+    @GetMapping("/failure")
+    public void handleOAuthFailure(HttpServletResponse response,
+                                   HttpServletRequest request) throws IOException {
+        // Log the failure for debugging
+        String error = request.getParameter("error");
+        String errorDescription = request.getParameter("error_description");
+        
+        System.err.println("OAuth2 login failed - Error: " + error + ", Description: " + errorDescription);
+        
+        // Redirect to frontend login page with error
+        String frontendUrl = determineFrontendUrl(request);
+        String redirectUrl = frontendUrl + "/login?error=oauth_failed";
+        if (error != null) {
+            redirectUrl += "&reason=" + URLEncoder.encode(error, StandardCharsets.UTF_8);
+        }
+        response.sendRedirect(redirectUrl);
+    }
+    
+    private String determineFrontendUrl(HttpServletRequest request) {
+        String referer = request.getHeader("Referer");
+        String origin = request.getHeader("Origin");
+        String forwardedProto = request.getHeader("X-Forwarded-Proto");
+        String forwardedHost = request.getHeader("X-Forwarded-Host");
+        
+        // Use forwarded headers if available
+        if (forwardedProto != null && forwardedHost != null) {
+            return forwardedProto + "://" + forwardedHost;
+        }
+        
+        // Try to determine from origin header
+        if (origin != null && !origin.isEmpty()) {
+            if (origin.contains("virtualhekim.az")) {
+                return "https://virtualhekim.az";
+            } else if (origin.contains("azdoc.ai")) {
+                return "https://azdoc.ai";
+            } else if (origin.contains("logman.az")) {
+                return "https://logman.az";
+            }
+        }
+        
+        // Try to determine from referer
+        if (referer != null && !referer.isEmpty()) {
+            if (referer.contains("virtualhekim.az")) {
+                return "https://virtualhekim.az";
+            } else if (referer.contains("azdoc.ai")) {
+                return "https://azdoc.ai";
+            } else if (referer.contains("logman.az")) {
+                return "https://logman.az";
+            }
+        }
+        
+        // Check for localhost development
+        String serverName = request.getServerName();
+        if ("localhost".equals(serverName) || "127.0.0.1".equals(serverName) || 
+            serverName.startsWith("192.168.")) {
+            // For local development, use port 3000 (Next.js default)
+            return "http://localhost:3000";
+        }
+        
+        // Default to virtualhekim.az for production
+        return "https://virtualhekim.az";
     }
 }
