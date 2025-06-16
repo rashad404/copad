@@ -105,7 +105,16 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+    // Use the current domain for API calls in production
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+    
+    // If we're in production (not localhost), use the current domain
+    if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+      const protocol = window.location.protocol;
+      const hostname = window.location.hostname;
+      apiUrl = `${protocol}//${hostname}/api`;
+    }
+    
     window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
   };
 
