@@ -34,11 +34,23 @@ function useIsClient() {
   return isClient;
 }
 
-export default function Header() {
+interface HeaderProps {
+  initialSidebarOpen?: boolean;
+  externalSidebarOpen?: boolean;
+  onSidebarClose?: () => void;
+  className?: string;
+}
+
+export default function Header({ 
+  initialSidebarOpen = false,
+  externalSidebarOpen,
+  onSidebarClose,
+  className = ''
+}: HeaderProps = {}) {
   const [isMobile, setIsMobile] = useState(false);
   const { isAuthenticated, logout: contextLogout } = useAuth();
   const [hasToken, setHasToken] = useState(false);
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(initialSidebarOpen);
   const { t } = useTranslation();
   const pathname = usePathname();
   const router = useRouter();
@@ -80,6 +92,13 @@ export default function Header() {
     return () => window.removeEventListener('resize', handleResize);
   }, []);
 
+  // Handle external sidebar control - only on mobile
+  useEffect(() => {
+    if (isMobile && externalSidebarOpen !== undefined && externalSidebarOpen !== isSidebarOpen) {
+      setIsSidebarOpen(externalSidebarOpen);
+    }
+  }, [externalSidebarOpen, isSidebarOpen, isMobile]);
+
   const handleLogout = () => {
     // Use direct DOM manipulation and location change to prevent React from re-rendering
     
@@ -109,6 +128,14 @@ export default function Header() {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const closeSidebar = () => {
+    setIsSidebarOpen(false);
+    // Only notify parent on mobile
+    if (isMobile && onSidebarClose) {
+      onSidebarClose();
+    }
+  };
+
   const isUserAuthenticated = isAuthenticated || hasToken;
 
   const menuItems = isUserAuthenticated
@@ -126,8 +153,9 @@ export default function Header() {
       ];
 
   return (
-    <header className="fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white shadow-lg">
-      <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
+    <>
+      <header className={`fixed top-0 left-0 right-0 z-50 bg-gray-900 text-white shadow-lg ${className}`}>
+        <div className="max-w-7xl mx-auto px-4 flex justify-between items-center h-16">
         {/* Left: Menu + Logo */}
         <div className="flex items-center space-x-4">
           <button onClick={toggleSidebar} className="focus:outline-none">
@@ -137,7 +165,7 @@ export default function Header() {
               <Bars3Icon className="w-6 h-6 text-gray-200" />
             )}
           </button>
-          <Link href="/" className="flex items-center space-x-2">
+          <Link href="/" className="hidden md:flex items-center space-x-2">
             <Logo className="w-8 h-8" />
             <span className="text-xl font-bold">
               {isClient ? WEBSITE_NAME : ''}<span className="text-indigo-400">{isClient ? WEBSITE_TLD : ''}</span>
@@ -147,8 +175,10 @@ export default function Header() {
 
         {/* Right: Actions */}
         <div className="flex items-center space-x-4">
-          <LanguageSwitcher />
-          <DarkModeToggle />
+          <div className="hidden md:flex items-center space-x-4">
+            <LanguageSwitcher />
+            <DarkModeToggle />
+          </div>
           {!isUserAuthenticated && !isMobile && (
             <>
               <Link href="/login" className="text-sm hover:text-indigo-400">
@@ -161,30 +191,52 @@ export default function Header() {
           )}
         </div>
       </div>
+      </header>
 
-      {/* Backdrop overlay */}
+      {/* Backdrop overlay - always render regardless of header visibility */}
       {isSidebarOpen && (
         <div
-          className="fixed inset-0 top-16 bg-gray-600/10 dark:bg-gray-900/10 backdrop-blur-sm z-30 transition-opacity"
-          onClick={() => setIsSidebarOpen(false)}
+          className={`fixed inset-0 bg-gray-600/10 dark:bg-gray-900/10 backdrop-blur-sm z-[60] transition-opacity ${!className.includes('hidden') ? 'top-16' : 'top-11'}`}
+          onClick={closeSidebar}
           aria-hidden="true"
         />
       )}
       
-      {/* Sidebar */}
+      {/* Sidebar - always render regardless of header visibility */}
       <aside
-        className={`fixed top-16 left-0 z-40 w-64 bg-gray-800 h-[calc(100vh-64px)] transition-transform duration-300 ${
+        className={`fixed left-0 z-[70] w-64 bg-gray-800 transition-transform duration-300 ${
           isSidebarOpen ? 'translate-x-0' : '-translate-x-full'
-        }`}
+        } ${!className.includes('hidden') ? 'top-16 h-[calc(100vh-64px)]' : 'top-11 h-[calc(100vh-44px)]'}`}
       >
         <nav className="flex flex-col space-y-2 p-4">
+          {/* Logo, Language Switcher, and Dark Mode - Mobile Only */}
+          {isMobile && (
+            <div className="mb-6 pb-6 border-b border-gray-700">
+              {/* Logo */}
+              <Link href="/" className="flex items-center space-x-2 mb-4" onClick={closeSidebar}>
+                <Logo className="w-8 h-8" />
+                <span className="text-xl font-bold text-white">
+                  {isClient ? WEBSITE_NAME : ''}<span className="text-indigo-400">{isClient ? WEBSITE_TLD : ''}</span>
+                </span>
+              </Link>
+              
+              {/* Language Switcher and Dark Mode */}
+              <div className="flex items-center justify-between">
+                <div className="scale-90 origin-left">
+                  <LanguageSwitcher />
+                </div>
+                <DarkModeToggle />
+              </div>
+            </div>
+          )}
+          
           {menuItems.map(({ path, icon: Icon, label }) => {
             const active = pathname === path;
             return (
               <Link
                 key={path}
                 href={path}
-                onClick={() => isMobile && setIsSidebarOpen(false)}
+                onClick={() => isMobile && closeSidebar()}
                 className={`flex items-center p-2 rounded-lg transition ${
                   active
                     ? 'bg-indigo-700 text-white'
@@ -202,7 +254,7 @@ export default function Header() {
             <div className="mt-6 pt-6 border-t border-gray-700">
               <Link
                 href="/login"
-                onClick={() => isMobile && setIsSidebarOpen(false)}
+                onClick={() => isMobile && closeSidebar()}
                 className="flex items-center p-2 rounded-lg text-gray-300 hover:bg-gray-700 transition"
               >
                 <ArrowRightOnRectangleIcon className="w-5 h-5 mr-3" />
@@ -210,7 +262,7 @@ export default function Header() {
               </Link>
               <Link
                 href="/register"
-                onClick={() => isMobile && setIsSidebarOpen(false)}
+                onClick={() => isMobile && closeSidebar()}
                 className="flex items-center p-2 mt-2 rounded-lg bg-indigo-600 text-white hover:bg-indigo-700 transition"
               >
                 <UserPlusIcon className="w-5 h-5 mr-3" />
@@ -235,6 +287,6 @@ export default function Header() {
           )}
         </nav>
       </aside>
-    </header>
+    </>
   );
 } 
