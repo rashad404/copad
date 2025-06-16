@@ -138,18 +138,42 @@ public class AuthController {
         String forwardedProto = request.getHeader("X-Forwarded-Proto");
         String forwardedHost = request.getHeader("X-Forwarded-Host");
         
-        // Check for localhost development
-        String serverName = request.getServerName();
-        if ("localhost".equals(serverName) || "127.0.0.1".equals(serverName)) {
-            // For local development, use port 3000 (Next.js default)
-            return "http://localhost:3000";
-        }
-        
-        // For production, use the forwarded headers or default to the known domain
+        // Use forwarded headers if available
         if (forwardedProto != null && forwardedHost != null) {
             return forwardedProto + "://" + forwardedHost;
         }
         
+        // Try to determine from origin header
+        if (origin != null && !origin.isEmpty()) {
+            if (origin.contains("virtualhekim.az")) {
+                return "https://virtualhekim.az";
+            } else if (origin.contains("azdoc.ai")) {
+                return "https://azdoc.ai";
+            } else if (origin.contains("logman.az")) {
+                return "https://logman.az";
+            }
+        }
+        
+        // Try to determine from referer
+        if (referer != null && !referer.isEmpty()) {
+            if (referer.contains("virtualhekim.az")) {
+                return "https://virtualhekim.az";
+            } else if (referer.contains("azdoc.ai")) {
+                return "https://azdoc.ai";
+            } else if (referer.contains("logman.az")) {
+                return "https://logman.az";
+            }
+        }
+        
+        // Check for localhost development
+        String serverName = request.getServerName();
+        if ("localhost".equals(serverName) || "127.0.0.1".equals(serverName) || 
+            serverName.startsWith("192.168.")) {
+            // For local development, use port 3000 (Next.js default)
+            return "http://localhost:3000";
+        }
+        
+        // Default to virtualhekim.az for production
         return "https://virtualhekim.az";
     }
 }
