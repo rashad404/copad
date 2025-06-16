@@ -46,7 +46,13 @@ export default function LoginPage() {
       try {
         // Make a direct API call instead of using the context method
         // This can help debug any issues with the login flow
-        const apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        
+        // If we're in production (not localhost), use relative path
+        if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
+          apiUrl = '/api';
+        }
+        
         const response = await fetch(`${apiUrl}/auth/login`, {
           method: 'POST',
           headers: {
@@ -105,14 +111,12 @@ export default function LoginPage() {
   };
 
   const handleSocialLogin = (provider: string) => {
-    // Use the current domain for API calls in production
+    // Use relative path for API calls in production
     let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
     
-    // If we're in production (not localhost), use the current domain
+    // If we're in production (not localhost), use relative path
     if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
-      const protocol = window.location.protocol;
-      const hostname = window.location.hostname;
-      apiUrl = `${protocol}//${hostname}/api`;
+      apiUrl = '/api';
     }
     
     window.location.href = `${apiUrl}/oauth2/authorization/${provider}`;
