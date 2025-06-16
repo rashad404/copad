@@ -9,14 +9,27 @@ import FileAttachmentPreview from './FileAttachmentPreview';
 import { MultiFileUpload } from './MultiFileUpload';
 import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
+import { FileAttachment } from '@/types/chat';
 
 interface GuestChatProps {
   containerClassName?: string;
   messagesClassName?: string;
   inputClassName?: string;
+  hideHeaderOnMobile?: boolean;
+  onTitleChange?: (title: string) => void;
+  externalSidebarOpen?: boolean;
+  onSidebarClose?: () => void;
 }
 
-const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messagesClassName = '', inputClassName = '' }) => {
+const GuestChat: React.FC<GuestChatProps> = ({ 
+  containerClassName = '', 
+  messagesClassName = '', 
+  inputClassName = '',
+  hideHeaderOnMobile = false,
+  onTitleChange,
+  externalSidebarOpen,
+  onSidebarClose 
+}) => {
   const { t } = useTranslation();
   const { isAuthenticated } = useAuth();
   const {
@@ -65,6 +78,24 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
       }
     }
   }, [selectedChatId, chats]);
+
+  // Handle external sidebar control - only on mobile
+  useEffect(() => {
+    // Only sync external state on mobile
+    const isMobile = window.innerWidth < 768;
+    if (isMobile && externalSidebarOpen !== undefined && externalSidebarOpen !== isSidebarOpen) {
+      setIsSidebarOpen(externalSidebarOpen);
+    }
+  }, [externalSidebarOpen, isSidebarOpen]);
+
+  // Notify parent of title changes only
+  useEffect(() => {
+    if (onTitleChange) {
+      const selectedChat = chats.find((chat: any) => chat.id === selectedChatId);
+      const title = selectedChat?.title || t('chat.untitledChat');
+      onTitleChange(title);
+    }
+  }, [selectedChatId, chats, onTitleChange, t]);
 
 
   const handleMultiFileSelect = (files: File[]) => {
@@ -170,11 +201,16 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
         onSelectChat={handleSelectChat}
         selectedChatId={selectedChatId}
         isOpen={isSidebarOpen}
-        onClose={() => setIsSidebarOpen(false)}
+        onClose={() => {
+          setIsSidebarOpen(false);
+          if (onSidebarClose) {
+            onSidebarClose();
+          }
+        }}
       />
       <div className="flex-1 flex flex-col h-full w-full md:w-3xl mx-auto">
-        {/* Chat header */}
-        <div className="flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-30">
+        {/* Chat header - hidden on mobile when unified header is used */}
+        <div className={`flex items-center px-4 py-2 border-b border-gray-200 dark:border-gray-700 bg-white dark:bg-gray-900 sticky top-0 z-30 ${hideHeaderOnMobile ? 'hidden md:flex' : ''}`}>
           <button
             onClick={() => setIsSidebarOpen(true)}
             className="p-2 mr-2 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200"
@@ -211,20 +247,11 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
                 key={index}
                 className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'} mb-4`}
               >
-                {message.role === 'assistant' && (
-                  <Image
-                    src="/doctor.png"
-                    alt="AI"
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 rounded-full mr-2"
-                  />
-                )}
                 <div
-                  className={`max-w-[80%] rounded-lg px-4 py-2 ${
+                  className={`max-w-[80%] ${
                     message.role === 'user'
-                      ? 'bg-indigo-600 text-white'
-                      : 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-200'
+                      ? 'rounded-lg px-4 py-2 bg-gray-200 dark:bg-gray-700 text-gray-800 dark:text-gray-100'
+                      : 'text-gray-800 dark:text-gray-200'
                   }`}
                 >
                   {formatMessage(message.content)}
@@ -239,39 +266,16 @@ const GuestChat: React.FC<GuestChatProps> = ({ containerClassName = '', messages
                     </div>
                   )}
                   
-                  {message.timestamp && (
-                    <div className={`text-xs mt-1 ${message.role === 'user' ? 'text-indigo-200' : 'text-gray-500 dark:text-gray-400'}`}>
-                      {new Date(message.timestamp).toLocaleTimeString()}
-                    </div>
-                  )}
                 </div>
-                {message.role === 'user' && (
-                  <Image
-                    src="/user.png"
-                    alt="User"
-                    width={32}
-                    height={32}
-                    className="h-8 w-8 rounded-full ml-2"
-                  />
-                )}
               </div>
             ))
           )}
           {loading && (
             <div className="flex justify-start mb-4">
-              <Image
-                src="/doctor.png"
-                alt="AI"
-                width={32}
-                height={32}
-                className="h-8 w-8 rounded-full mr-2"
-              />
-              <div className="bg-gray-100 dark:bg-gray-800 rounded-lg px-4 py-2">
-                <div className="flex space-x-2">
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
-                  <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
-                </div>
+              <div className="flex space-x-2">
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '200ms' }}></div>
+                <div className="w-2 h-2 bg-gray-500 dark:bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '400ms' }}></div>
               </div>
             </div>
           )}
