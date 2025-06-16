@@ -47,8 +47,6 @@ export const GuestChatScreen: React.FC = () => {
   const [inputText, setInputText] = useState('');
   const [sending, setSending] = useState(false);
   const [drawerOpen, setDrawerOpen] = useState(false);
-  const [showNewChatDialog, setShowNewChatDialog] = useState(false);
-  const [newChatTitle, setNewChatTitle] = useState('');
   const [showMainMenu, setShowMainMenu] = useState(false);
   const flatListRef = useRef<FlatList>(null);
 
@@ -74,16 +72,6 @@ export const GuestChatScreen: React.FC = () => {
     }
   };
 
-  const handleCreateNewChat = async () => {
-    if (!newChatTitle.trim()) {
-      setNewChatTitle('New Chat');
-    }
-    
-    await createNewChat(newChatTitle.trim() || 'New Chat');
-    setNewChatTitle('');
-    setShowNewChatDialog(false);
-    setDrawerOpen(false);
-  };
 
   const renderMessage = ({ item }: { item: any }) => {
     const isUser = item.role === 'user';
@@ -124,7 +112,11 @@ export const GuestChatScreen: React.FC = () => {
       
       <Button
         mode="contained"
-        onPress={() => setShowNewChatDialog(true)}
+        onPress={async () => {
+          console.log('Creating new chat...');
+          await createNewChat();
+          setDrawerOpen(false);
+        }}
         style={styles.newChatButton}
         icon="plus"
       >
@@ -133,7 +125,7 @@ export const GuestChatScreen: React.FC = () => {
       
       <FlatList
         data={chats}
-        keyExtractor={(item) => item.id.toString()}
+        keyExtractor={(item, index) => item.id?.toString() || `chat-${index}`}
         renderItem={({ item }) => (
           <View>
             <TouchableOpacity
@@ -142,16 +134,17 @@ export const GuestChatScreen: React.FC = () => {
                 currentChat?.id === item.id && styles.activeChatItem,
               ]}
               onPress={() => {
+                console.log('Selecting chat:', item);
                 selectChat(item);
                 setDrawerOpen(false);
               }}
             >
               <View style={styles.chatItemContent}>
                 <Text style={styles.chatItemTitle} numberOfLines={1}>
-                  {item.title}
+                  {item.title || 'Untitled Chat'}
                 </Text>
                 <Text style={styles.chatItemTime}>
-                  {new Date(item.updatedAt).toLocaleDateString()}
+                  {(item.updatedAt || item.timestamp) ? new Date(item.updatedAt || item.timestamp).toLocaleDateString() : ''}
                 </Text>
               </View>
               <View style={styles.chatItemActions}>
@@ -271,23 +264,6 @@ export const GuestChatScreen: React.FC = () => {
         </KeyboardAvoidingView>
 
         <Portal>
-          <Dialog visible={showNewChatDialog} onDismiss={() => setShowNewChatDialog(false)}>
-            <Dialog.Title>New Chat</Dialog.Title>
-            <Dialog.Content>
-              <TextInput
-                label="Chat Title"
-                value={newChatTitle}
-                onChangeText={setNewChatTitle}
-                placeholder="Enter a title for this chat"
-                mode="outlined"
-              />
-            </Dialog.Content>
-            <Dialog.Actions>
-              <Button onPress={() => setShowNewChatDialog(false)}>Cancel</Button>
-              <Button onPress={handleCreateNewChat}>Create</Button>
-            </Dialog.Actions>
-          </Dialog>
-          
           <Modal
             visible={showMainMenu}
             animationType="slide"

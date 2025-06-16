@@ -26,33 +26,47 @@ export const guestService = {
     return response.data;
   },
 
-  async getSession(sessionId: string): Promise<GuestSession & { chats: GuestChat[] }> {
+  async getSession(sessionId: string): Promise<any> {
     const response = await api.get(`/api/guest/session/${sessionId}`);
+    console.log('getSession raw response:', response.data);
     return response.data;
   },
 
-  async createGuestChat(sessionId: string, title: string = 'New Chat'): Promise<GuestChat> {
+  async createGuestChat(sessionId: string, title: string = 'New Chat'): Promise<any> {
     const response = await api.post(`/api/guest/chats/${sessionId}`, { title });
+    console.log('createGuestChat raw response:', response.data);
     return response.data;
   },
 
-  async updateChatTitle(sessionId: string, chatId: number, title: string): Promise<void> {
+  async updateChatTitle(sessionId: string, chatId: string | number, title: string): Promise<void> {
     await api.put(`/api/guest/chats/${sessionId}/${chatId}`, { title });
   },
 
-  async deleteChat(sessionId: string, chatId: number): Promise<void> {
+  async deleteChat(sessionId: string, chatId: string | number): Promise<void> {
     await api.delete(`/api/guest/chats/${sessionId}/${chatId}`);
   },
 
-  async sendGuestMessage(sessionId: string, chatId: number, content: string): Promise<any> {
+  async getChatHistory(sessionId: string, chatId: string | number): Promise<any[]> {
+    const response = await api.get(`/api/guest/chat/${sessionId}/${chatId}/history`);
+    return response.data;
+  },
+
+  async sendGuestMessage(sessionId: string, chatId: string | number, content: string): Promise<any> {
     const response = await api.post(
-      `/api/guest/chat/${sessionId}/${chatId}`,
+      `/api/v2/messages/chat/${chatId}`,
       { 
         message: content,
         language: 'en',
-        fileIds: []
+        fileIds: [],
+        specialty: 'GENERAL'
+      },
+      {
+        headers: {
+          'X-Guest-Session-Id': sessionId
+        }
       }
     );
+    console.log('sendGuestMessage response:', JSON.stringify(response.data, null, 2));
     return response.data;
   },
 

@@ -44,7 +44,15 @@ class ApiClient {
 
     // Response interceptor for error handling
     this.instance.interceptors.response.use(
-      (response) => response,
+      (response) => {
+        console.log('API Response:', {
+          url: response.config.url,
+          method: response.config.method,
+          status: response.status,
+          data: JSON.stringify(response.data, null, 2)
+        });
+        return response;
+      },
       async (error: AxiosError) => {
         console.error('API Error:', error.message, error.config?.url);
         if (error.response?.status === 401) {
