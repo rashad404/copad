@@ -1,0 +1,852 @@
+{
+    "common": {
+      "appName": "Azdoc",
+      "welcome": "Welcome",
+      "login": "Login",
+      "logout": "Logout",
+      "settings": "Settings",
+      "language": "Language",
+      "back_to_home": "Back to Home",
+      "theme": "Theme",
+      "themeLight": "Light",
+      "themeDark": "Dark", 
+      "themeSystem": "System",
+      "loading": "Loading...",
+      "loadMore": "Load More",
+      "retry": "Retry",
+      "scrollToTop": "Scroll to top",
+      "errors": {
+        "generic": "An error occurred. Please try again later."
+      }
+    },
+    "navbar": {
+      "home": "Home",
+      "dashboard": "Dashboard",
+      "appointments": "Consultations",
+      "pricing": "Pricing",
+      "faq": "FAQ",
+      "about": "About Us",
+      "contact": "Contact Us",
+      "privacy": "Privacy Policy",
+      "terms": "Terms of Service",
+      "security": "Security",
+      "blog": "Blog",
+      "profile": "Profile",
+      "login": "Login",
+      "register": "Register",
+      "logout": "Logout",
+      "chat": "Chat"
+    },
+    "auth": {
+      "email": "Email",
+      "email_placeholder": "your@email.com",
+      "username": "Username",
+      "password": "Password",
+      "password_placeholder": "••••••••",
+      "forgot_password": "Forgot password?",
+      "remember_me": "Remember me",
+      "sign_up": "Sign Up",
+      "or": "or continue with",
+      "login_with_google": "Continue with Google",
+      "login_with_facebook": "Continue with Facebook",
+      "validation": {
+        "username_required": "Username is required",
+        "password_required": "Password is required",
+        "email_required": "Email is required",
+        "invalid_email": "Invalid email address"
+      },
+      "login": {
+        "welcome": "Welcome back",
+        "subtitle": "Sign in to your account to continue",
+        "signing_in": "Signing in...",
+        "no_account": "Don't have an account?",
+        "create_account": "Create an account",
+        "secure_title": "Secure Medical Consultations",
+        "secure_description": "Your health data is encrypted and securely stored. Access expert medical guidance anytime with {{agentName}}.",
+        "access": "Access",
+        "secure": "Secure",
+        "powered": "Powered",
+        "sign_in": "Sign In",
+        "signin_button": "Sign In",
+        "error_title": "Login Failed",
+        "error_invalid_credentials": "Invalid username or password"
+      },
+      "register": {
+        "title": "Create an Account",
+        "subtitle": "Sign up to begin your medical consultations",
+        "creating_account": "Creating account...",
+        "create_account": "Create Account",
+        "have_account": "Already have an account?",
+        "sign_in": "Sign in"
+      },
+      "errors": {
+        "invalid_credentials": "Invalid email or password",
+        "user_not_found": "User not found",
+        "login_failed": "Login failed. Please try again."
+      },
+      "saveChatTitle": "Save Your Consultation",
+      "saveChatDescription": "Please login or register to save this consultation to your records."
+    },
+    "errors": {
+      "required": "This field is required",
+      "invalidEmail": "Please enter a valid email address"
+    },
+    "appointments": {
+      "title": "Your Consultations",
+      "subtitle": "Manage and track all your medical consultations",
+      "newAppointment": "New Consultation",
+      "filters": {
+        "all": "All Consultations",
+        "upcoming": "Upcoming",
+        "completed": "Completed",
+        "past": "Past"
+      },
+      "loading": "Loading your consultations...",
+      "empty": {
+        "title": "No consultations found",
+        "all": "You don't have any consultations scheduled yet.",
+        "filtered": "You don't have any {{filter}} consultations.",
+        "schedule": "Schedule a consultation"
+      },
+      "card": {
+        "specialty": "Specialty",
+        "primaryConcern": "Primary Concern",
+        "date": "Date",
+        "time": "Time"
+      },
+      "status": {
+        "undefined": "Unknown Status"
+      },
+      "viewDetails": "View Details"
+    },
+    "newAppointment": {
+      "title": "Start a New Consultation",
+      "subtitle": "Tell us what you need help with and we'll connect you with {{agentName}}",
+      "specialty": {
+        "label": "What type of care do you need?",
+        "options": {
+          "general": "General Consultation",
+          "pediatrics": "Pediatrics",
+          "dermatology": "Dermatology",
+          "cardiology": "Cardiology",
+          "mental health": "Mental Health",
+          "other": "Other Specialty"
+        }
+      },
+      "primaryConcern": {
+        "label": "What's your main concern today?",
+        "placeholder": "Briefly describe what's bothering you (e.g., headache, skin rash, anxiety)"
+      },
+      "duration": {
+        "label": "How long have you had this issue?",
+        "placeholder": "e.g., 3 days, 2 weeks"
+      },
+      "severity": {
+        "label": "How severe is it?",
+        "options": {
+          "mild": "Mild - It's noticeable but doesn't affect daily activities",
+          "moderate": "Moderate - It affects some daily activities",
+          "severe": "Severe - It significantly affects daily activities"
+        }
+      },
+      "symptoms": {
+        "label": "Any other symptoms? (Optional)",
+        "placeholder": "List any other symptoms you're experiencing"
+      },
+      "treatments": {
+        "label": "Have you tried any treatments? (Optional)",
+        "placeholder": "e.g., over-the-counter medications, home remedies"
+      },
+      "notes": {
+        "label": "Anything else {{agentName}} should know? (Optional)",
+        "placeholder": "e.g., allergies, existing conditions, current medications"
+      },
+      "continue": "Continue",
+      "back": "Back",
+      "submit": "Start Consultation",
+      "submitting": "Creating consultation..."
+    },
+    "dashboard": {
+      "title": "Welcome to your Dashboard",
+      "subtitle": "Access your health tools, consultations, and medical history anytime.",
+      "appointments": {
+        "title": "Consultations",
+        "description": "View or create medical consultation sessions.",
+        "action": "Go to Consultations"
+      },
+      "profile": {
+        "title": "Your Profile",
+        "description": "Manage your health information, history, and preferences.",
+        "action": "View Profile"
+      },
+      "newAppointment": {
+        "title": "Start a New Consultation",
+        "description": "Create a new AI consultation with {{agentName}}.",
+        "action": "Start Now",
+        "recommended": "Recommended"
+      },
+      "healthSummary": {
+        "title": "Your Health Summary",
+        "recentConsultations": "Recent Consultations",
+        "profileCompletion": "Profile Completion",
+        "nextAppointment": "Next Consultation"
+      },
+      "security": {
+        "title": "Your data is secure",
+        "description": "Encrypted, confidential, and protected",
+        "learnMore": "Learn more about our privacy policy →"
+      },
+      "footer": "Your health matters to us. This platform is designed for your convenience.",
+      "chat": {
+        "title": "AI Chat",
+        "description": "Start a conversation with our AI health assistant.",
+        "action": "Go to Chat"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Your AI Doctor. Available 24/7.",
+        "subtitle": "Ask a health question and get instant advice from Copad AI Doctor — no registration needed.",
+        "createAccount": "Create Account",
+        "login": "Log In",
+        "trustBar": {
+          "usersHelped": "10,000+ users helped",
+          "privateSecure": "Confidential & Secure",
+          "poweredBy": "Powered by OpenAI GPT-4"
+        }
+      },
+      "howItWorks": {
+        "title": "How It Works",
+        "subtitle": "Get professional medical guidance in three easy steps",
+        "step1": {
+          "title": "1. Consult AI Doctor",
+          "description": "Enter your health concerns or symptoms and receive instant feedback from our AI physician."
+        },
+        "step2": {
+          "title": "2. Get Personalized Guidance",
+          "description": "Receive immediate, confidential advice tailored to your situation."
+        },
+        "step3": {
+          "title": "3. Track & Manage",
+          "description": "Register to manage consultations and keep your health profile updated."
+        }
+      },
+      "features": {
+        "title": "Features",
+        "subtitle": "Everything you need for your health",
+        "description": "Accessible, reliable, and tailored AI-powered medical assistance.",
+        "chat": {
+          "title": "Consult with an AI Physician",
+          "description": "Describe your symptoms and get expert guidance instantly — 24/7. No waiting rooms, no appointments needed."
+        },
+        "upload": {
+          "title": "Upload Medical Files",
+          "description": "Analyze lab results, images, and medical history with AI assistance. Get explanations and insights in plain language."
+        },
+        "track": {
+          "title": "Track Consultations",
+          "description": "Organize your health journey with history, summaries, and AI notes. Access your previous consultations anytime."
+        }
+      },
+      "testimonials": {
+        "title": "Trusted by users worldwide",
+        "subtitle": "See what our users say about their experience",
+        "testimonial1": {
+          "quote": "{{agentName}} helped me understand my lab results when I couldn't get an appointment with my doctor. Explained everything in clear, simple terms.",
+          "author": "Sarah K.",
+          "role": "Patient"
+        },
+        "testimonial2": {
+          "quote": "As someone living in a rural area, having 24/7 medical guidance has transformed my healthcare experience. It's like having a physician in your pocket.",
+          "author": "Michael T.",
+          "role": "Patient"
+        },
+        "testimonial3": {
+          "quote": "The symptom assessment is remarkably accurate. Helped me identify a condition that had been overlooked by my primary physician for months.",
+          "author": "Jessica W.",
+          "role": "Healthcare Worker"
+        }
+      },
+      "cta": {
+        "title": "Ready to take charge of",
+        "subtitle": "your wellbeing?",
+        "description": "Begin your journey with {{agentName}} today and experience next-generation healthcare. No subscription necessary.",
+        "getStarted": "Get Started Free",
+        "login": "Login",
+        "benefit1": "24/7 access to medical guidance",
+        "benefit2": "Secure and confidential consultations",
+        "security": {
+          "title": "Your Health Data is Protected",
+          "description": "We use advanced encryption and follow strict privacy protocols to keep your information secure"
+        }
+      },
+      "trust": {
+        "title": "Trusted by healthcare professionals"
+      },
+      "footer": {
+        "description": "Your trusted AI healthcare companion. Get expert medical guidance, track your health, and manage consultations all in one place.",
+        "product": "Product",
+        "company": "Company",
+        "legal": "Legal",
+        "links": {
+          "pricing": "Pricing",
+          "faq": "FAQ",
+          "about": "About Us",
+          "blog": "Blog",
+          "contact": "Contact Us",
+          "privacy": "Privacy Policy",
+          "terms": "Terms of Service",
+          "security": "Security"
+        },
+        "copyright": "© {{year}} VirtualHekim.az. All rights reserved."
+      }
+    },
+    "chat": {
+      "title": "AI Health Assistant",
+      "subtitle": "Your personal AI medical assistant",
+      "status": {
+        "online": "Online",
+        "offline": "Offline"
+      },
+      "input": {
+        "placeholder": "Type your message... e.g. I have an allergy, what should I do?"
+      },
+      "messagePlaceholder": "Type your message... e.g. I have an allergy, what should I do?",
+      "messageWithFilesPlaceholder": "Describe your question or the attached files...",
+      "send": "Send",
+      "sending": "Sending...",
+      "saveChat": "Save as consultation",
+      "welcomeMessage": "Hello! I'm your AI medical assistant. How can I help you today?",
+      "empty": {
+        "title": "Start a Message",
+        "description": "Ask me any health-related question and I'll provide professional guidance."
+      },
+      "error": {
+        "message": "Sorry, I couldn't process your message. Please try again.",
+        "session": "Connection lost. Please try sending your message again."
+      },
+      "security": {
+        "general": "Secure",
+        "save": "Save Chat"
+      },
+      "fileUpload": {
+        "buttonTitle": "Upload a photo or document",
+        "invalidType": "Invalid file type. Please upload a supported file.",
+        "tooLarge": "File is too large. Maximum size is {{size}}MB.",
+        "failed": "Failed to upload file. Please try again.",
+        "remove": "Remove file",
+        "photoHint": "Upload a photo",
+        "documentHint": "Upload a document",
+        "multipleFiles": "Upload Multiple Files",
+        "selectCategory": "Select document category:",
+        "filesReady": "file(s) ready to send",
+        "categories": {
+          "general": "General Medical Documents",
+          "labResults": "Lab Results",
+          "imaging": "Medical Imaging",
+          "prescriptions": "Prescriptions",
+          "clinicalNotes": "Clinical Notes"
+        }
+      },
+      "messages": "Messages",
+      "newChat": "New Chat",
+      "untitledChat": "Untitled Chat",
+      "noMessages": "No messages yet",
+      "closeSidebar": "Close sidebar",
+      "openSidebar": "Open sidebar",
+      "welcomeMessage": "Hello! How can I help you today?",
+      "error": {
+        "initialization": "Failed to initialize chat",
+        "message": "Failed to send message"
+      },
+      "inputPlaceholder": "Type your message... e.g. I have an allergy, what should I do?"
+    },
+    "profile": {
+      "title": "Your Profile",
+      "subtitle": "Manage your personal and medical information",
+      "saveChanges": "Save Changes",
+      "loading": "Loading your profile...",
+      "saved": "Changes saved successfully",
+      "personalInfo": {
+        "title": "Personal Information",
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "Enter your full name",
+        "email": "Email Address",
+        "emailPlaceholder": "Enter your email",
+        "age": "Age",
+        "agePlaceholder": "Enter your age",
+        "gender": "Gender",
+        "genderPlaceholder": "Select Gender",
+        "genderOptions": {
+          "male": "Male",
+          "female": "Female"
+        }
+      },
+      "medicalInfo": {
+        "title": "Medical Information",
+        "height": "Height (cm)",
+        "heightPlaceholder": "Enter your height",
+        "weight": "Weight (kg)",
+        "weightPlaceholder": "Enter your weight",
+        "conditions": "Medical Conditions",
+        "conditionsPlaceholder": "List any medical conditions",
+        "allergies": "Allergies",
+        "allergiesPlaceholder": "List any allergies",
+        "medications": "Current Medications",
+        "medicationsPlaceholder": "List any current medications",
+        "lifestyle": "Lifestyle",
+        "lifestylePlaceholder": "Describe your lifestyle (e.g., exercise, smoking, alcohol)"
+      }
+    },
+    "register": {
+      "title": "Create your account",
+      "subtitle": "Fill in your details to get started",
+      "illustration": {
+        "title": "Join Our Healthcare Community",
+        "description": "Create your personal account to access AI-powered medical consultations and health resources, all in one secure platform.",
+        "features": {
+          "private": {
+            "title": "Confidential & Secure",
+            "description": "Your health data is encrypted and protected by industry standards"
+          },
+          "access": {
+            "title": "24/7 Access",
+            "description": "Get medical consultations whenever you need them"
+          },
+          "dashboard": {
+            "title": "Personal Dashboard",
+            "description": "Track your health journey with customized insights"
+          },
+          "ai": {
+            "title": "AI-Powered",
+            "description": "Experience the latest in medical AI technology"
+          }
+        }
+      },
+      "form": {
+        "fullName": "Full Name",
+        "fullNamePlaceholder": "John Doe",
+        "email": "Email address",
+        "emailPlaceholder": "your@email.com",
+        "password": "Password",
+        "passwordPlaceholder": "••••••••",
+        "passwordHint": "Password should be at least 8 characters long",
+        "age": "Age",
+        "agePlaceholder": "30",
+        "gender": "Gender",
+        "genderPlaceholder": "Select",
+        "genderOptions": {
+          "male": "Male",
+          "female": "Female"
+        },
+        "terms": "I agree to the",
+        "termsLink": "Terms of Service",
+        "and": "and",
+        "privacyLink": "Privacy Policy",
+        "submit": "Create account",
+        "submitting": "Creating account..."
+      },
+      "error": {
+        "registrationFailed": "Registration failed. Please try again."
+      }
+    },
+    "about": {
+      "title": "About Us",
+      "introduction": "We are revolutionizing healthcare through artificial intelligence, making medical advice more accessible and personalized than ever before.",
+      "mission": {
+        "title": "Our Mission",
+        "description": "We strive to make healthcare more accessible, efficient, and personalized through the power of artificial intelligence. Our platform connects patients with AI-enhanced medical advice, providing immediate, reliable, and confidential health support."
+      },
+      "vision": {
+        "title": "Our Vision",
+        "description": "To revolutionize healthcare by making professional medical advice accessible to everyone, everywhere, and at any time. We envision a world where quality healthcare is just one click away."
+      },
+      "values": {
+        "title": "Our Values",
+        "items": {
+          "innovation": "Continuously pushing the boundaries of AI in healthcare",
+          "quality": "Delivering accurate and reliable medical information",
+          "accessibility": "Making healthcare available to everyone",
+          "privacy": "Ensuring the confidentiality of all medical data"
+        }
+      },
+      "team": {
+        "title": "Our Team",
+        "description": "A diverse group of healthcare professionals, AI experts, and technology innovators working together to improve healthcare access and delivery."
+      },
+      "technology": {
+        "title": "Our Technology",
+        "description": "Powered by advanced AI algorithms and machine learning, our platform provides intelligent, context-aware medical guidance while maintaining the highest standards of data security and privacy."
+      }
+    },
+    "faq": {
+      "title": "Frequently Asked Questions",
+      "subtitle": "Find answers to common questions about our service",
+      "questions": {
+        "0": {
+          "question": "What is {{agentName}}?",
+          "answer": "{{agentName}} is an AI-powered medical assistant that provides instant, confidential health advice. Our platform uses advanced artificial intelligence to offer personalized medical guidance 24/7."
+        },
+        "1": {
+          "question": "How does {{agentName}} work?",
+          "answer": "Simply describe your symptoms or health concerns, and our AI doctor will provide immediate, professional medical advice. The system analyzes your input and generates responses based on medical knowledge and best practices."
+        },
+        "2": {
+          "question": "Is {{agentName}} a replacement for real doctors?",
+          "answer": "No, {{agentName}} is not a replacement for professional medical care. It's designed to provide initial guidance and information. Always consult with a healthcare professional for serious medical conditions or emergencies."
+        },
+        "3": {
+          "question": "Is my information secure?",
+          "answer": "Yes, we take your privacy seriously. All conversations are encrypted and confidential. We follow strict data protection protocols to ensure your health information remains secure."
+        },
+        "4": {
+          "question": "Do I need to create an account?",
+          "answer": "No, you can use {{agentName}} without creating an account. However, creating an account allows you to save your consultations and track your health history."
+        },
+        "5": {
+          "question": "What kind of medical advice can I get?",
+          "answer": "You can ask about symptoms, general health concerns, medication information, and lifestyle advice. However, {{agentName}} cannot diagnose serious conditions or prescribe medications."
+        },
+        "6": {
+          "question": "Is the service available 24/7?",
+          "answer": "Yes, {{agentName}} is available around the clock. You can get medical advice whenever you need it, without waiting for office hours."
+        },
+        "7": {
+          "question": "How accurate is the medical advice?",
+          "answer": "While {{agentName}} provides information based on medical knowledge and best practices, it's important to remember that it's not a substitute for professional medical advice. Always consult with a healthcare provider for serious concerns."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Privacy Policy",
+      "lastUpdated": "Last updated: {{date}}",
+      "introduction": "We take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our services. By using our platform, you agree to the collection and use of information in accordance with this policy.",
+      "information": {
+        "title": "Information We Collect",
+        "description": "We collect various types of information to provide and improve our services, including personal information such as your name, email address, and medical history. We also collect usage data to understand how you interact with our platform."
+      },
+      "usage": {
+        "title": "How We Use Your Information",
+        "description": "We use the collected information to maintain and improve our services, enhance your user experience, communicate with you about updates and changes, and ensure the security of our platform."
+      },
+      "security": {
+        "title": "Data Security",
+        "description": "We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. Your data is encrypted and stored securely."
+      },
+      "rights": {
+        "title": "Your Rights",
+        "description": "You have the right to access, correct, or delete your personal information. You can also request a copy of your data or withdraw your consent for data processing at any time."
+      },
+      "contact": {
+        "title": "Contact Us",
+        "description": "If you have any questions about this Privacy Policy, please contact us at privacy@{{websiteName}}{{websiteTld}}"
+      }
+    },
+    "terms": {
+      "title": "Terms of Service",
+      "lastUpdated": "Last updated: {{date}}",
+      "introduction": "Welcome to {{agentName}}. By using our services, you agree to these Terms of Service. Please read these terms carefully before using our platform.",
+      "acceptance": {
+        "title": "Acceptance of Terms",
+        "description": "By using {{agentName}}, you confirm that you have read, understood, and agree to these Terms of Service."
+      },
+      "services": {
+        "title": "Service Description",
+        "description": "{{agentName}} is an AI-based medical advice platform. We provide general health information but are not a substitute for professional medical advice."
+      },
+      "userResponsibilities": {
+        "title": "User Responsibilities",
+        "description": "You agree to provide accurate information and maintain the security of your account."
+      },
+      "limitations": {
+        "title": "Service Limitations",
+        "description": "Our service is not a substitute for professional medical advice. Always consult with your doctor for serious medical conditions."
+      },
+      "intellectualProperty": {
+        "title": "Intellectual Property",
+        "description": "All platform content and functionality is the property of {{agentName}} and is protected by applicable laws."
+      },
+      "liability": {
+        "title": "Limitation of Liability",
+        "description": "{{agentName}} is not liable for any damages resulting from the use of our services."
+      },
+      "changes": {
+        "title": "Changes to Terms",
+        "description": "We reserve the right to modify these terms at any time and will notify users of any changes."
+      },
+      "contact": {
+        "title": "Contact",
+        "description": "For questions about the Terms of Service, email terms@{{domain}}."
+      }
+    },
+    "security": {
+      "title": "Security",
+      "lastUpdated": "Last updated: {{date}}",
+      "introduction": "At {{agentName}}, the security of your medical data is our top priority. This page outlines the comprehensive security measures we implement to protect your information.",
+      "dataProtection": {
+        "title": "Data Protection",
+        "description": "We employ industry-leading encryption standards to protect your medical data. All information is encrypted both in transit and at rest using advanced encryption protocols."
+      },
+      "encryption": {
+        "title": "Encryption Standards",
+        "description": "We use AES-256 encryption for data at rest and TLS 1.3 for data in transit. Your sensitive medical information is protected by the same security standards used by leading healthcare institutions."
+      },
+      "access": {
+        "title": "Access Control",
+        "description": "We implement strict access controls and authentication measures to ensure only authorized users can access their information. Multi-factor authentication is available for enhanced security."
+      },
+      "compliance": {
+        "title": "Compliance",
+        "description": "Our platform adheres to international security standards and healthcare regulations to ensure the highest level of data protection and privacy compliance."
+      },
+      "monitoring": {
+        "title": "24/7 Monitoring",
+        "description": "Our security systems are monitored around the clock to detect and prevent unauthorized access attempts and ensure continuous protection of your data."
+      },
+      "contact": {
+        "title": "Security Contact",
+        "description": "For security-related inquiries or to report security concerns, please contact our security team at security@{{domain}}."
+      }
+    },
+    "contact": {
+      "title": "Contact Us",
+      "subtitle": "Technical Support & Business Inquiries",
+      "introduction": "This contact page is for technical support, business inquiries, and advertising opportunities only. For medical advice or health-related questions, please use the chat feature on our homepage.",
+      "email": {
+        "title": "Email Us",
+        "description": "For technical support, business cooperation, or advertising inquiries, please email us at:",
+        "address": "info@azdoc.ai"
+      },
+      "support": {
+        "title": "Technical Support Hours",
+        "description": "We aim to respond to all technical and business inquiries within 24 hours."
+      },
+      "note": "For medical questions or health advice, please return to the homepage and use our AI chat service. For medical emergencies, contact your local emergency services immediately.",
+      "medicalNote": {
+        "title": "Looking for Medical Advice?",
+        "description": "Please use our AI chat service on the homepage for any health-related questions. Our AI doctor is available 24/7 to assist you with medical inquiries."
+      }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Latest Articles & Health Insights",
+      "readMore": "Read More",
+      "backToList": "Back to Blog",
+      "publishedOn": "Published on",
+      "author": "Author",
+      "readingTime": "{{minutes}} min read",
+      "tags": "Tags",
+      "relatedPosts": "Related Articles",
+      "postsTaggedWith": "Posts Tagged with",
+      "tagDescription": "{{count}} articles tagged with {{tag}}",
+      "noPostsWithTag": "No articles found with tag {{tag}}",
+      "checkOtherTags": "Please check other tags or return to the blog home page",
+      "tag": {
+        "title": "Tag: {{tag}}",
+        "description": "Browse articles about {{tag}}",
+        "empty": {
+          "title": "Tag Not Found",
+          "description": "The requested tag does not exist. Please check the URL or browse all articles."
+        },
+        "otherTags": "Other Tags",
+        "notFound": "Tag Not Found"
+      },
+      "search": {
+        "title": "Search Blog",
+        "placeholder": "Search for articles...",
+        "button": "Search",
+        "noResults": "No articles found for your search.",
+        "results": "Search Results",
+        "resultsFor": "Search results for",
+        "noResultsFor": "No results found for \"{{query}}\"",
+        "tryAgain": "Please try a different search term or browse our articles below",
+        "searching": "Searching...",
+        "foundResults": "Found {{count}} results",
+        "enterQuery": "What are you looking for?",
+        "enterQueryDescription": "Enter a search term above to find relevant articles"
+      },
+      "filter": {
+        "byTag": "Filter by Tag",
+        "allPosts": "All Articles",
+        "popular": "Popular",
+        "latest": "Latest"
+      },
+      "admin": {
+        "createPost": "Create New Post",
+        "editPost": "Edit Post",
+        "deletePost": "Delete Post",
+        "manageTags": "Manage Tags",
+        "confirmDelete": "Are you sure you want to delete this post?",
+        "form": {
+          "title": "Title",
+          "titlePlaceholder": "Enter post title",
+          "summary": "Summary",
+          "summaryPlaceholder": "Brief summary of your article",
+          "content": "Content",
+          "contentPlaceholder": "Write your article here...",
+          "featuredImage": "Featured Image URL",
+          "featuredImagePlaceholder": "https://example.com/image.jpg",
+          "tags": "Tags",
+          "tagsPlaceholder": "Add tags",
+          "newTag": "Add New Tag",
+          "published": "Published",
+          "draft": "Draft",
+          "saveAsDraft": "Save as Draft",
+          "publish": "Publish",
+          "update": "Update",
+          "cancel": "Cancel",
+          "language": "Post Language",
+          "languageOptions": {
+            "az": "Azerbaijani",
+            "en": "English",
+            "tr": "Turkish"
+          }
+        },
+        "messages": {
+          "createSuccess": "Post created successfully",
+          "updateSuccess": "Post updated successfully",
+          "deleteSuccess": "Post deleted successfully",
+          "error": "An error occurred. Please try again."
+        }
+      },
+      "empty": {
+        "title": "No articles yet",
+        "description": "We're working on adding new content. Please check back later!"
+      }
+    },
+    "admin": {
+      "title": "Admin Dashboard",
+      "dashboard": "Dashboard",
+      "posts": {
+        "title": "Blog Posts",
+        "description": "Manage and publish your blog content",
+        "create": "Create New Post",
+        "selected": "{{count}} posts selected",
+        "confirmDelete": "Delete Post?",
+        "confirmBulkDelete": "Delete {{count}} posts?",
+        "deleteWarning": "This action cannot be undone. The post will be permanently deleted.",
+        "published": "Published",
+        "draft": "Draft",
+        "noTags": "No tags",
+        "empty": "No posts found. Create your first post to get started.",
+        "table": {
+          "title": "Title",
+          "status": "Status",
+          "tags": "Tags",
+          "created": "Created",
+          "actions": "Actions"
+        },
+        "view": "View",
+        "edit": "Edit",
+        "delete": "Delete",
+        "form": {
+          "createTitle": "Create New Post",
+          "editTitle": "Edit Post",
+          "createDescription": "Add a new post to your blog",
+          "editDescription": "Update your existing post",
+          "title": "Title",
+          "slug": "Slug",
+          "generateSlug": "Generate from title",
+          "slugPlaceholder": "your-post-url",
+          "slugHelp": "URL-friendly identifier for your post. Use only lowercase letters, numbers, and hyphens.",
+          "summary": "Summary",
+          "summaryHelp": "A brief description of your post (max 500 characters)",
+          "content": "Content",
+          "featuredImage": "Featured Image URL",
+          "tags": "Tags",
+          "addTag": "Add a tag",
+          "addTagButton": "Add",
+          "availableTags": "Available tags",
+          "language": "Language",
+          "published": "Published",
+          "publishedHelp": "When checked, the post will be publicly visible on your blog",
+          "cancel": "Cancel",
+          "saveDraft": "Save as Draft",
+          "publish": "Publish",
+          "saving": "Saving...",
+          "preview": "Preview",
+          "editMode": "Edit Mode",
+          "unsavedChanges": "Unsaved Changes",
+          "unsavedChangesWarning": "You have unsaved changes that will be lost if you leave. Are you sure you want to continue?",
+          "leaveAnyway": "Leave Anyway",
+          "stayAndEdit": "Stay and Edit",
+          "createSuccess": "Post created successfully",
+          "updateSuccess": "Post updated successfully",
+          "saveError": "Failed to save post",
+          "errors": {
+            "titleRequired": "Title is required",
+            "summaryRequired": "Summary is required",
+            "summaryTooLong": "Summary must be less than 500 characters",
+            "contentRequired": "Content is required",
+            "imageRequired": "Featured image URL is required",
+            "invalidUrl": "Please enter a valid URL",
+            "imageUploadFailed": "Image upload failed. Please try again."
+          },
+          "save": "Save Post"
+        }
+      },
+      "tags": {
+        "title": "Tags",
+        "description": "Manage categories and tags for your blog posts",
+        "create": "Add New Tag",
+        "namePlaceholder": "Enter tag name",
+        "add": "Add Tag",
+        "confirmDelete": "Delete Tag?",
+        "deleteWarning": "This action cannot be undone. The tag will be permanently removed from all posts.",
+        "postsCount": "{{count}} posts",
+        "noTags": "No tags found. Create your first tag to get started.",
+        "noSearchResults": "No tags match your search",
+        "search": "Search tags",
+        "createSuccess": "Tag created successfully",
+        "updateSuccess": "Tag updated successfully",
+        "deleteSuccess": "Tag deleted successfully"
+      },
+      "users": {
+        "title": "Users",
+        "admins": "Administrators",
+        "authors": "Authors",
+        "readers": "Readers"
+      },
+      "settings": {
+        "title": "Settings",
+        "general": "General Settings",
+        "theme": "Theme",
+        "theme.light": "Light",
+        "theme.dark": "Dark",
+        "theme.system": "System"
+      },
+      "stats": {
+        "totalPosts": "Total Posts",
+        "publishedPosts": "Published",
+        "draftPosts": "Drafts",
+        "tags": "Tags",
+        "users": "Users",
+        "views": "Views"
+      },
+      "recentPosts": "Recent Posts",
+      "noPosts": "No posts found",
+      "unknownAuthor": "Unknown Author",
+      "filtersText": "Filters",
+      "filters": {
+        "all": "All",
+        "published": "Published",
+        "draft": "Drafts"
+      },
+      "search": "Search",
+      "pagination": {
+        "previous": "Previous",
+        "next": "Next",
+        "showing": "Showing {{from}} to {{to}} of {{total}} results"
+      }
+    },
+    "filters": {
+      "all": "All Consultations",
+      "upcoming": "Upcoming",
+      "completed": "Completed",
+      "past": "Past"
+    },
+    "status": {
+      "undefined": "Unknown Status"
+    },
+    "viewDetails": "View Details"
+  }

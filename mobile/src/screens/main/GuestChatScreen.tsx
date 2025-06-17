@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   Modal,
   Alert,
+  Animated,
 } from 'react-native';
 import {
   Text,
@@ -25,6 +26,7 @@ import { SafeAreaView } from 'react-native-safe-area-context';
 import { useChat } from '../../contexts/ChatContext';
 import { Drawer } from 'react-native-drawer-layout';
 import { useTheme } from '../../contexts/ThemeContext';
+import { useTranslation } from 'react-i18next';
 import { getThemeColors } from '../../constants/theme';
 import { Ionicons } from '@expo/vector-icons';
 import * as ImagePicker from 'expo-image-picker';
@@ -32,10 +34,14 @@ import * as DocumentPicker from 'expo-document-picker';
 import { FileAttachmentPreview } from '../../components/FileAttachmentPreview';
 import { fileService, validateFile, UploadedFile } from '../../services/fileService';
 import { optimizeImages, OPTIMIZATION_PRESETS } from '../../utils/imageOptimizer';
+import LanguageSwitcher from '../../components/LanguageSwitcher';
+import { getDisplayChatTitle, isNewChat } from '../../utils/chatTitleHelper';
+import Logo from '../../components/Logo';
 
 const { width: screenWidth } = Dimensions.get('window');
 
 export const GuestChatScreen: React.FC = () => {
+  const { t, i18n } = useTranslation();
   const { 
     guestSessionId,
     chats, 
@@ -59,7 +65,40 @@ export const GuestChatScreen: React.FC = () => {
   const [pendingFiles, setPendingFiles] = useState<any[]>([]);
   const [uploadedFiles, setUploadedFiles] = useState<UploadedFile[]>([]);
   const [uploading, setUploading] = useState(false);
+  const [, forceUpdate] = useState({});
   const flatListRef = useRef<FlatList>(null);
+  const slideAnim = useRef(new Animated.Value(screenWidth)).current;
+
+  // Force re-render on language change
+  useEffect(() => {
+    const handleLanguageChanged = () => {
+      forceUpdate({});
+    };
+    
+    i18n.on('languageChanged', handleLanguageChanged);
+    
+    return () => {
+      i18n.off('languageChanged', handleLanguageChanged);
+    };
+  }, [i18n]);
+
+  // Animate main menu
+  useEffect(() => {
+    if (showMainMenu) {
+      slideAnim.setValue(screenWidth); // Start from right
+      Animated.timing(slideAnim, {
+        toValue: 0,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    } else {
+      Animated.timing(slideAnim, {
+        toValue: screenWidth,
+        duration: 250,
+        useNativeDriver: true,
+      }).start();
+    }
+  }, [showMainMenu]);
 
   useEffect(() => {
     // Scroll to bottom when messages change
@@ -82,7 +121,7 @@ export const GuestChatScreen: React.FC = () => {
       setPendingFiles([]);
     } catch (error) {
       console.error('Failed to send message:', error);
-      Alert.alert('Error', 'Failed to send message. Please try again.');
+      Alert.alert(t('common.errors.generic'), t('chat.error.sendFailed', 'Failed to send message. Please try again.'));
     } finally {
       setSending(false);
     }
@@ -277,7 +316,10 @@ export const GuestChatScreen: React.FC = () => {
   const renderDrawerContent = () => (
     <SafeAreaView style={styles.drawerContent}>
       <View style={styles.drawerHeader}>
-        <Text style={styles.drawerTitle}>Messages</Text>
+        <View style={styles.drawerHeaderLeft}>
+          <Logo width={32} height={32} />
+          <Text style={styles.drawerTitle}>{t('chat.messages', 'Messages')}</Text>
+        </View>
         <IconButton
           icon="close"
           size={24}
@@ -289,6 +331,12 @@ export const GuestChatScreen: React.FC = () => {
       <Button
         mode="contained"
         onPress={async () => {
+          // Check if current chat is already a new/empty chat
+          if (currentChat && isNewChat(currentChat.title) && (!messages || messages.length === 0)) {
+            console.log('Already on a new chat, no need to create another');
+            setDrawerOpen(false);
+            return;
+          }
           console.log('Creating new chat...');
           await createNewChat();
           setDrawerOpen(false);
@@ -297,7 +345,7 @@ export const GuestChatScreen: React.FC = () => {
         icon="plus"
         buttonColor={colors.primary}
       >
-        New Chat
+        {t('chat.newChat', 'New Chat')}
       </Button>
       
       <FlatList
@@ -318,7 +366,7 @@ export const GuestChatScreen: React.FC = () => {
             >
               <View style={styles.chatItemContent}>
                 <Text style={styles.chatItemTitle} numberOfLines={1}>
-                  {item.title || 'Untitled Chat'}
+                  {getDisplayChatTitle(item.title, t)}
                 </Text>
                 <Text style={styles.chatItemTime}>
                   {(item.updatedAt || item.timestamp) ? new Date(item.updatedAt || item.timestamp).toLocaleDateString() : ''}
@@ -379,15 +427,18 @@ export const GuestChatScreen: React.FC = () => {
             numberOfLines={1}
             ellipsizeMode="tail"
           >
-            {currentChat?.title || 'Untitled Chat'}
+            {getDisplayChatTitle(currentChat?.title, t)}
           </Text>
-          <IconButton
-            icon="menu"
-            size={24}
-            onPress={() => setShowMainMenu(true)}
-            iconColor={colors.textSecondary}
-            style={styles.headerButton}
-          />
+          <View style={styles.headerRight}>
+            <LanguageSwitcher />
+            <IconButton
+              icon="menu"
+              size={24}
+              onPress={() => setShowMainMenu(true)}
+              iconColor={colors.textSecondary}
+              style={styles.headerButton}
+            />
+          </View>
         </View>
 
         <KeyboardAvoidingView
@@ -404,10 +455,10 @@ export const GuestChatScreen: React.FC = () => {
             ListEmptyComponent={
               <View style={styles.emptyContainer}>
                 <Text variant="headlineSmall" style={styles.welcomeTitle}>
-                  Your AI Doctor. Available 24/7.
+                  {t('home.hero.title')}
                 </Text>
                 <Text variant="bodyLarge" style={styles.welcomeText}>
-                  Ask a health question and get instant advice from Azdoc AI Doctor — no registration needed.
+                  {t('home.hero.subtitle')}
                 </Text>
               </View>
             }
@@ -445,7 +496,7 @@ export const GuestChatScreen: React.FC = () => {
                 style={styles.input}
                 value={inputText}
                 onChangeText={setInputText}
-                placeholder={uploadedFiles.length > 0 ? "Add a message (optional)..." : "Type your message..."}
+                placeholder={uploadedFiles.length > 0 ? t('chat.input.placeholderWithFiles', 'Add a message (optional)...') : t('chat.input.placeholder')}
                 placeholderTextColor={colors.textTertiary}
                 multiline={false}
                 disabled={sending || uploading}
@@ -479,95 +530,112 @@ export const GuestChatScreen: React.FC = () => {
           </View>
         </KeyboardAvoidingView>
 
-        <Portal>
-          <Modal
-            visible={showMainMenu}
-            animationType="slide"
-            transparent={true}
-            onRequestClose={() => setShowMainMenu(false)}
-          >
-            <TouchableOpacity
-              style={styles.modalOverlay}
-              activeOpacity={1}
-              onPress={() => setShowMainMenu(false)}
+        {showMainMenu && (
+          <>
+            <Animated.View
+              style={[
+                styles.modalOverlay,
+                {
+                  opacity: slideAnim.interpolate({
+                    inputRange: [0, screenWidth],
+                    outputRange: [1, 0],
+                  }),
+                },
+              ]}
             >
               <TouchableOpacity
-                style={styles.mainMenuContainer}
+                style={{ flex: 1 }}
                 activeOpacity={1}
-                onPress={(e) => e.stopPropagation()}
-              >
-                <SafeAreaView style={styles.mainMenuContent}>
-                  <View style={styles.mainMenuHeader}>
-                    <Text style={styles.mainMenuTitle}>Azdoc</Text>
-                    <IconButton
-                      icon="close"
-                      size={24}
-                      onPress={() => setShowMainMenu(false)}
-                      iconColor="#ffffff"
-                    />
+                onPress={() => setShowMainMenu(false)}
+              />
+            </Animated.View>
+            <Animated.View
+              style={[
+                styles.mainMenuContainer,
+                {
+                  transform: [{
+                    translateX: slideAnim
+                  }]
+                }
+              ]}
+            >
+              <SafeAreaView style={styles.mainMenuContent} edges={['top']}>
+                <View style={styles.mainMenuHeader}>
+                  <View style={styles.mainMenuHeaderLeft}>
+                    <Logo width={36} height={36} />
+                    <Text style={styles.mainMenuTitle}>
+                      AzDoc
+                      <Text style={styles.mainMenuTitleAccent}>.ai</Text>
+                    </Text>
                   </View>
-                  
-                  <View style={styles.mainMenuItems}>
-                    <View style={styles.themeSection}>
-                      <Text style={styles.themeSectionTitle}>Theme</Text>
-                      <TouchableOpacity
-                        style={[
-                          styles.themeOption,
-                          theme === 'light' && styles.themeOptionActive
-                        ]}
-                        onPress={() => setTheme('light')}
-                      >
-                        <Ionicons 
-                          name="sunny-outline" 
-                          size={20} 
-                          color={theme === 'light' ? '#4f46e5' : '#ffffff'} 
-                        />
-                        <Text style={[
-                          styles.themeOptionText,
-                          theme === 'light' && styles.themeOptionTextActive
-                        ]}>Light</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.themeOption,
-                          theme === 'dark' && styles.themeOptionActive
-                        ]}
-                        onPress={() => setTheme('dark')}
-                      >
-                        <Ionicons 
-                          name="moon-outline" 
-                          size={20} 
-                          color={theme === 'dark' ? '#4f46e5' : '#ffffff'} 
-                        />
-                        <Text style={[
-                          styles.themeOptionText,
-                          theme === 'dark' && styles.themeOptionTextActive
-                        ]}>Dark</Text>
-                      </TouchableOpacity>
-                      <TouchableOpacity
-                        style={[
-                          styles.themeOption,
-                          theme === 'system' && styles.themeOptionActive
-                        ]}
-                        onPress={() => setTheme('system')}
-                      >
-                        <Ionicons 
-                          name="phone-portrait-outline" 
-                          size={20} 
-                          color={theme === 'system' ? '#4f46e5' : '#ffffff'} 
-                        />
-                        <Text style={[
-                          styles.themeOptionText,
-                          theme === 'system' && styles.themeOptionTextActive
-                        ]}>System</Text>
-                      </TouchableOpacity>
-                    </View>
+                  <IconButton
+                    icon="close"
+                    size={24}
+                    onPress={() => setShowMainMenu(false)}
+                    iconColor={colors.textSecondary}
+                  />
+                </View>
+                
+                <View style={styles.mainMenuItems}>
+                  <View style={styles.themeSection}>
+                    <Text style={styles.themeSectionTitle}>{t('common.theme', 'Theme')}</Text>
+                    <TouchableOpacity
+                      style={[
+                        styles.themeOption,
+                        theme === 'light' && styles.themeOptionActive
+                      ]}
+                      onPress={() => setTheme('light')}
+                    >
+                      <Ionicons 
+                        name="sunny-outline" 
+                        size={20} 
+                        color={theme === 'light' ? '#4f46e5' : colors.text} 
+                      />
+                      <Text style={[
+                        styles.themeOptionText,
+                        theme === 'light' && styles.themeOptionTextActive
+                      ]}>{t('common.themeLight', 'Light')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.themeOption,
+                        theme === 'dark' && styles.themeOptionActive
+                      ]}
+                      onPress={() => setTheme('dark')}
+                    >
+                      <Ionicons 
+                        name="moon-outline" 
+                        size={20} 
+                        color={theme === 'dark' ? '#4f46e5' : colors.text} 
+                      />
+                      <Text style={[
+                        styles.themeOptionText,
+                        theme === 'dark' && styles.themeOptionTextActive
+                      ]}>{t('common.themeDark', 'Dark')}</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                      style={[
+                        styles.themeOption,
+                        theme === 'system' && styles.themeOptionActive
+                      ]}
+                      onPress={() => setTheme('system')}
+                    >
+                      <Ionicons 
+                        name="phone-portrait-outline" 
+                        size={20} 
+                        color={theme === 'system' ? '#4f46e5' : colors.text} 
+                      />
+                      <Text style={[
+                        styles.themeOptionText,
+                        theme === 'system' && styles.themeOptionTextActive
+                      ]}>{t('common.themeSystem', 'System')}</Text>
+                    </TouchableOpacity>
                   </View>
-                </SafeAreaView>
-              </TouchableOpacity>
-            </TouchableOpacity>
-          </Modal>
-        </Portal>
+                </View>
+              </SafeAreaView>
+            </Animated.View>
+          </>
+        )}
       </SafeAreaView>
     </Drawer>
   );
@@ -594,6 +662,11 @@ const createStyles = (colors: any) => StyleSheet.create({
     fontWeight: '600',
     textAlign: 'center',
     paddingHorizontal: 8,
+  },
+  headerRight: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 8,
   },
   headerButton: {
     margin: 0,
@@ -713,6 +786,11 @@ const createStyles = (colors: any) => StyleSheet.create({
     borderBottomWidth: 1,
     borderBottomColor: colors.border,
   },
+  drawerHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
+  },
   drawerTitle: {
     fontSize: 18,
     fontWeight: '600',
@@ -750,23 +828,32 @@ const createStyles = (colors: any) => StyleSheet.create({
   },
   mainMenuContent: {
     flex: 1,
-    backgroundColor: '#1f2937',
-    paddingTop: 50, // 50px padding for status bar
+    backgroundColor: colors.background,
+    paddingTop: Platform.OS === 'ios' ? 0 : 25, // Less padding, SafeAreaView handles iOS
   },
   mainMenuHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
     paddingHorizontal: 16,
-    paddingTop: Platform.OS === 'ios' ? 16 : 16, // Consistent padding since we added it to container
+    paddingTop: Platform.OS === 'ios' ? 8 : 16,
     paddingBottom: 16,
     borderBottomWidth: 1,
-    borderBottomColor: '#374151',
+    borderBottomColor: colors.border,
+  },
+  mainMenuHeaderLeft: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: 12,
   },
   mainMenuTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    color: '#ffffff',
+    color: colors.text,
+  },
+  mainMenuTitleAccent: {
+    color: '#818CF8', // indigo-400 equivalent
+    fontWeight: 'bold',
   },
   mainMenuItems: {
     paddingTop: 8,
@@ -777,7 +864,7 @@ const createStyles = (colors: any) => StyleSheet.create({
   themeSectionTitle: {
     fontSize: 14,
     fontWeight: '600',
-    color: '#9ca3af',
+    color: colors.textSecondary,
     marginBottom: 12,
     textTransform: 'uppercase',
     letterSpacing: 0.5,
@@ -796,20 +883,25 @@ const createStyles = (colors: any) => StyleSheet.create({
   themeOptionText: {
     marginLeft: 12,
     fontSize: 16,
-    color: '#ffffff',
+    color: colors.text,
   },
   themeOptionTextActive: {
     color: '#4f46e5',
     fontWeight: '600',
   },
   modalOverlay: {
-    flex: 1,
+    position: 'absolute',
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
     backgroundColor: 'rgba(0, 0, 0, 0.5)',
-    justifyContent: 'flex-end',
   },
   mainMenuContainer: {
-    width: '70%',
-    height: '100%',
-    alignSelf: 'flex-end',
+    position: 'absolute',
+    right: 0,
+    top: 0,
+    bottom: 0,
+    width: Math.min(screenWidth * 0.7, 280),
   },
 });

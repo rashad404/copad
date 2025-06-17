@@ -4,14 +4,38 @@ import { TextInput, Button, Text, HelperText } from 'react-native-paper';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useNavigation } from '@react-navigation/native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
+import { useTranslation } from 'react-i18next';
 import { useAuth } from '../../contexts/AuthContext';
 import { AuthStackParamList } from '../../navigation/AuthNavigator';
+import { TestTranslation } from '../../components/TestTranslation';
+import { TranslationTest } from '../../components/TranslationTest';
 
 type LoginScreenNavigationProp = NativeStackNavigationProp<AuthStackParamList, 'Login'>;
 
 export const LoginScreen: React.FC = () => {
   const navigation = useNavigation<LoginScreenNavigationProp>();
   const { login } = useAuth();
+  const { t, i18n, ready } = useTranslation('translation');
+  const [, forceUpdate] = useState({});
+  
+  // Force re-render when language changes
+  React.useEffect(() => {
+    const handleLanguageChange = () => {
+      console.log('Language changed in LoginScreen, forcing update');
+      forceUpdate({});
+    };
+    
+    i18n.on('languageChanged', handleLanguageChange);
+    return () => {
+      i18n.off('languageChanged', handleLanguageChange);
+    };
+  }, [i18n]);
+  
+  console.log('Current language in LoginScreen:', i18n.language);
+  console.log('i18n ready:', ready);
+  console.log('Test translation:', t('auth.login.welcome'));
+  console.log('Available languages:', Object.keys(i18n.store.data));
+  console.log('Current translations:', i18n.store.data[i18n.language]);
   
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -23,11 +47,11 @@ export const LoginScreen: React.FC = () => {
     const newErrors: typeof errors = {};
     
     if (!username.trim()) {
-      newErrors.username = 'Username is required';
+      newErrors.username = t('auth.validation.username_required');
     }
     
     if (!password) {
-      newErrors.password = 'Password is required';
+      newErrors.password = t('auth.validation.password_required');
     }
     
     setErrors(newErrors);
@@ -43,8 +67,8 @@ export const LoginScreen: React.FC = () => {
       // Navigation is handled by auth state change
     } catch (error: any) {
       Alert.alert(
-        'Login Failed',
-        error.response?.data?.message || 'Invalid username or password'
+        t('auth.login.error_title'),
+        error.response?.data?.message || t('auth.login.error_invalid_credentials')
       );
     } finally {
       setLoading(false);
@@ -52,22 +76,23 @@ export const LoginScreen: React.FC = () => {
   };
 
   return (
-    <SafeAreaView style={styles.container}>
+    <SafeAreaView style={styles.container} key={i18n.language}>
       <KeyboardAvoidingView
         behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
         style={styles.keyboardView}
       >
         <ScrollView contentContainerStyle={styles.scrollContent}>
+          <TestTranslation />
           <View style={styles.form}>
             <Text variant="headlineLarge" style={styles.title}>
-              Welcome Back
+              {t('auth.login.welcome')}
             </Text>
             <Text variant="bodyMedium" style={styles.subtitle}>
-              Sign in to continue
+              {t('auth.login.subtitle')}
             </Text>
 
             <TextInput
-              label="Username"
+              label={t('auth.username')}
               value={username}
               onChangeText={(text) => {
                 setUsername(text);
@@ -85,7 +110,7 @@ export const LoginScreen: React.FC = () => {
             </HelperText>
 
             <TextInput
-              label="Password"
+              label={t('auth.password')}
               value={password}
               onChangeText={(text) => {
                 setPassword(text);
@@ -114,7 +139,7 @@ export const LoginScreen: React.FC = () => {
               disabled={loading}
               style={styles.button}
             >
-              Sign In
+              {t('auth.login.signin_button')}
             </Button>
 
             <Button
@@ -122,7 +147,7 @@ export const LoginScreen: React.FC = () => {
               onPress={() => navigation.navigate('Register')}
               style={styles.linkButton}
             >
-              Don't have an account? Sign Up
+              {t('auth.login.no_account')} {t('auth.sign_up')}
             </Button>
           </View>
         </ScrollView>
