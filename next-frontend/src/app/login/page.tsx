@@ -46,7 +46,7 @@ export default function LoginPage() {
       try {
         // Make a direct API call instead of using the context method
         // This can help debug any issues with the login flow
-        let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+        let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
         
         // If we're in production (not localhost), use relative path
         if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {
@@ -112,7 +112,7 @@ export default function LoginPage() {
 
   const handleSocialLogin = (provider: string) => {
     // Use relative path for API calls in production
-    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+    let apiUrl = process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
     
     // If we're in production (not localhost), use relative path
     if (typeof window !== 'undefined' && !window.location.hostname.includes('localhost')) {

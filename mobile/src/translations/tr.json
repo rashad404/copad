@@ -1,0 +1,851 @@
+{
+  "common": {
+    "appName": "Azdoc",
+    "welcome": "Hoş geldiniz",
+    "login": "Giriş Yap",
+    "logout": "Çıkış Yap",
+    "settings": "Ayarlar",
+    "language": "Dil",
+    "theme": "Tema",
+    "themeLight": "Açık",
+    "themeDark": "Koyu",
+    "themeSystem": "Sistem",
+    "back_to_home": "Ana Sayfaya Dön",
+    "loading": "Yükleniyor...",
+    "loadMore": "Daha Fazla Yükle",
+    "retry": "Tekrar Dene",
+    "scrollToTop": "Yukarı çık",
+    "errors": {
+      "generic": "Bir hata oluştu. Lütfen daha sonra tekrar deneyin."
+    }
+  },
+  "navbar": {
+    "home": "Ana Sayfa",
+    "dashboard": "Kontrol Paneli",
+    "appointments": "Konsültasyonlar",
+    "pricing": "Fiyatlar",
+    "faq": "SSS",
+    "about": "Hakkımızda",
+    "contact": "İletişim",
+    "privacy": "Gizlilik Politikası",
+    "terms": "Kullanım Koşulları",
+    "security": "Güvenlik",
+    "blog": "Blog",
+    "profile": "Profil",
+    "login": "Giriş Yap",
+    "register": "Kayıt Ol",
+    "logout": "Çıkış Yap",
+    "chat": "Sohbet"
+  },
+  "auth": {
+    "email": "E-posta",
+    "email_placeholder": "sizin@eposta.com",
+    "username": "Kullanıcı Adı",
+    "password": "Şifre",
+    "password_placeholder": "••••••••",
+    "forgot_password": "Şifremi unuttum?",
+    "remember_me": "Beni hatırla",
+    "sign_up": "Kaydol",
+    "or": "veya devam et",
+    "login_with_google": "Google ile Devam Et",
+    "login_with_facebook": "Facebook ile Devam Et",
+    "validation": {
+      "username_required": "Kullanıcı adı gereklidir",
+      "password_required": "Şifre gereklidir",
+      "email_required": "E-posta gereklidir",
+      "invalid_email": "Geçersiz e-posta adresi"
+    },
+    "login": {
+      "welcome": "Tekrar hoş geldiniz",
+      "subtitle": "Devam etmek için hesabınıza giriş yapın",
+      "signing_in": "Giriş yapılıyor...",
+      "no_account": "Hesabınız yok mu?",
+      "create_account": "Hesap oluştur",
+      "secure_title": "Güvenli Tıbbi Danışmanlık",
+      "secure_description": "Sağlık verileriniz şifrelenir ve güvenli bir şekilde saklanır. {{agentName}} ile her zaman uzman tıbbi rehberliğe erişin.",
+      "access": "Erişim",
+      "secure": "Güvenli",
+      "powered": "Destekleyen",
+      "sign_in": "Giriş Yap",
+      "signin_button": "Giriş Yap",
+      "error_title": "Giriş Başarısız",
+      "error_invalid_credentials": "Geçersiz kullanıcı adı veya şifre"
+    },
+    "register": {
+      "title": "Hesap Oluştur",
+      "subtitle": "Tıbbi konsültasyonlarınıza başlamak için kaydolun",
+      "creating_account": "Hesap oluşturuluyor...",
+      "create_account": "Hesap Oluştur",
+      "have_account": "Zaten hesabınız var mı?",
+      "sign_in": "Giriş yap"
+    },
+    "errors": {
+      "invalid_credentials": "Geçersiz e-posta veya şifre",
+      "user_not_found": "Kullanıcı bulunamadı",
+      "login_failed": "Giriş başarısız. Lütfen tekrar deneyin."
+    },
+    "saveChatTitle": "Konsültasyonunuzu Kaydedin",
+    "saveChatDescription": "Bu konsültasyonu kayıtlarınıza kaydetmek için lütfen giriş yapın veya kaydolun."
+  },
+  "errors": {
+    "required": "Bu alan zorunludur",
+    "invalidEmail": "Lütfen geçerli bir e-posta adresi girin"
+  },
+  "appointments": {
+    "title": "Konsültasyonlarınız",
+    "subtitle": "Tüm tıbbi konsültasyonlarınızı yönetin ve takip edin",
+    "newAppointment": "Yeni Konsültasyon",
+    "filters": {
+      "all": "Tüm Konsültasyonlar",
+      "upcoming": "Yaklaşan",
+      "completed": "Tamamlanan",
+      "past": "Geçmiş"
+    },
+    "loading": "Konsültasyonlarınız yükleniyor...",
+    "empty": {
+      "title": "Konsültasyon bulunamadı",
+      "all": "Henüz planlanmış konsültasyonunuz yok.",
+      "filtered": "{{filter}} konsültasyonunuz yok.",
+      "schedule": "Konsültasyon planla"
+    },
+    "card": {
+      "specialty": "Uzmanlık",
+      "primaryConcern": "Ana Şikayet",
+      "date": "Tarih",
+      "time": "Saat"
+    },
+    "status": {
+      "undefined": "Bilinmeyen Durum"
+    },
+    "viewDetails": "Detayları Görüntüle"
+  },
+  "newAppointment": {
+    "title": "Yeni Konsültasyon Başlat",
+    "subtitle": "Bize neyle ilgili yardıma ihtiyacınız olduğunu söyleyin, sizi {{agentName}} ile bağlayalım",
+    "specialty": {
+      "label": "Ne tür bir bakıma ihtiyacınız var?",
+      "options": {
+        "general": "Genel Konsültasyon",
+        "pediatrics": "Pediatri",
+        "dermatology": "Dermatoloji",
+        "cardiology": "Kardiyoloji",
+        "mental health": "Ruh Sağlığı",
+        "other": "Diğer Uzmanlık"
+      }
+    },
+    "primaryConcern": {
+      "label": "Bugün sizi rahatsız eden nedir?",
+      "placeholder": "Sizi rahatsız eden durumu kısaca açıklayın (örn. baş ağrısı, cilt döküntüsü, kaygı)"
+    },
+    "duration": {
+      "label": "Bu sorun ne kadar süredir var?",
+      "placeholder": "örn. 3 gün, 2 hafta"
+    },
+    "severity": {
+      "label": "Ne kadar ciddi?",
+      "options": {
+        "mild": "Hafif - Fark edilir ancak günlük aktiviteleri etkilemez",
+        "moderate": "Orta - Bazı günlük aktiviteleri etkiler",
+        "severe": "Ciddi - Günlük aktiviteleri önemli ölçüde etkiler"
+      }
+    },
+    "symptoms": {
+      "label": "Başka semptomlar var mı? (İsteğe bağlı)",
+      "placeholder": "Yaşadığınız diğer semptomları listeleyin"
+    },
+    "treatments": {
+      "label": "Herhangi bir tedavi denediniz mi? (İsteğe bağlı)",
+      "placeholder": "örn. reçetesiz ilaçlar, ev tedavileri"
+    },
+    "notes": {
+      "label": "{{agentName}}'in bilmesi gereken başka bir şey var mı? (İsteğe bağlı)",
+      "placeholder": "örn. alerjiler, mevcut rahatsızlıklar, kullanılan ilaçlar"
+    },
+    "continue": "Devam Et",
+    "back": "Geri",
+    "submit": "Konsültasyonu Başlat",
+    "submitting": "Konsültasyon oluşturuluyor..."
+  },
+  "dashboard": {
+    "title": "Kontrol Panelinize Hoş Geldiniz",
+    "subtitle": "Sağlık araçlarınıza, konsültasyonlarınıza ve tıbbi geçmişinize her zaman erişin.",
+    "appointments": {
+      "title": "Konsültasyonlar",
+      "description": "Tıbbi konsültasyon seanslarını görüntüleyin veya oluşturun.",
+      "action": "Konsültasyonlara Git"
+    },
+    "profile": {
+      "title": "Profiliniz",
+      "description": "Sağlık bilgilerinizi, geçmişinizi ve tercihlerinizi yönetin.",
+      "action": "Profili Görüntüle"
+    },
+    "newAppointment": {
+      "title": "Yeni Konsültasyon Başlat",
+      "description": "{{agentName}} ile yeni bir AI konsültasyonu oluşturun.",
+      "action": "Şimdi Başla",
+      "recommended": "Önerilen"
+    },
+    "healthSummary": {
+      "title": "Sağlık Özetiniz",
+      "recentConsultations": "Son Konsültasyonlar",
+      "profileCompletion": "Profil Tamamlama",
+      "nextAppointment": "Sonraki Konsültasyon"
+    },
+    "security": {
+      "title": "Verileriniz güvende",
+      "description": "Şifreli, gizli ve korumalı",
+      "learnMore": "Gizlilik politikamız hakkında daha fazla bilgi →"
+    },
+    "footer": "Sağlığınız bizim için önemli. Bu platform sizin kolaylığınız için tasarlandı.",
+    "chat": {
+      "title": "AI Sohbet",
+      "description": "AI sağlık asistanımızla bir konuşma başlatın.",
+      "action": "Sohbete Git"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "AI Doktorunuz. 7/24 Hizmetinizde.",
+      "subtitle": "Bir sağlık sorusu sorun ve Copad AI Doktor'dan anında tavsiye alın — kayıt gerekmez.",
+      "createAccount": "Hesap Oluştur",
+      "login": "Giriş Yap",
+      "trustBar": {
+        "usersHelped": "10.000+ kullanıcıya yardım edildi",
+        "privateSecure": "Gizli ve Güvenli",
+        "poweredBy": "OpenAI GPT-4 ile Destekleniyor"
+      }
+    },
+    "howItWorks": {
+      "title": "Nasıl Çalışır",
+      "subtitle": "Üç kolay adımda profesyonel tıbbi rehberlik alın",
+      "step1": {
+        "title": "1. AI Doktora Danışın",
+        "description": "Sağlık endişelerinizi veya semptomlarınızı girin ve AI doktorumuzdan anında geri bildirim alın."
+      },
+      "step2": {
+        "title": "2. Kişiselleştirilmiş Rehberlik Alın",
+        "description": "Durumunuza özel, anında ve gizli tavsiyeler alın."
+      },
+      "step3": {
+        "title": "3. Takip Edin ve Yönetin",
+        "description": "Konsültasyonları yönetmek ve sağlık profilinizi güncel tutmak için kaydolun."
+      }
+    },
+    "features": {
+      "title": "Özellikler",
+      "subtitle": "Sağlığınız için ihtiyacınız olan her şey",
+      "description": "Erişilebilir, güvenilir ve kişiselleştirilmiş AI destekli tıbbi yardım.",
+      "chat": {
+        "title": "AI Doktor ile Danışın",
+        "description": "Semptomlarınızı tanımlayın ve anında uzman rehberliği alın — 7/24. Bekleme odası yok, randevu gerekmez."
+      },
+      "upload": {
+        "title": "Tıbbi Dosyaları Yükleyin",
+        "description": "Laboratuvar sonuçlarını, görüntüleri ve tıbbi geçmişi AI yardımıyla analiz edin. Açıklamaları ve içgörüleri sade bir dille alın."
+      },
+      "track": {
+        "title": "Konsültasyonları Takip Edin",
+        "description": "Sağlık yolculuğunuzu geçmiş, özetler ve AI notlarıyla organize edin. Önceki konsültasyonlarınıza her zaman erişin."
+      }
+    },
+    "testimonials": {
+      "title": "Dünya çapında kullanıcılar tarafından güveniliyor",
+      "subtitle": "Kullanıcılarımızın deneyimleri hakkında neler söylediklerini görün",
+      "testimonial1": {
+        "quote": "{{agentName}}, doktorumla randevu alamadığımda laboratuvar sonuçlarımı anlamama yardımcı oldu. Her şeyi açık ve basit terimlerle açıkladı.",
+        "author": "Sarah K.",
+        "role": "Hasta"
+      },
+      "testimonial2": {
+        "quote": "Kırsal bir bölgede yaşayan biri olarak, 7/24 tıbbi rehberliğe sahip olmak sağlık deneyimimi dönüştürdü. Cebinizde bir doktor gibi.",
+        "author": "Michael T.",
+        "role": "Hasta"
+      },
+      "testimonial3": {
+        "quote": "Semptom değerlendirmesi oldukça doğru. Birinci basamak hekimimin aylarca gözden kaçırdığı bir durumu belirlememe yardımcı oldu.",
+        "author": "Jessica W.",
+        "role": "Sağlık Çalışanı"
+      }
+    },
+    "cta": {
+      "title": "Sağlığınızın kontrolünü",
+      "subtitle": "ele almaya hazır mısınız?",
+      "description": "Bugün {{agentName}} ile yolculuğunuza başlayın ve yeni nesil sağlık hizmetini deneyimleyin. Abonelik gerekmez.",
+      "getStarted": "Ücretsiz Başla",
+      "login": "Giriş Yap",
+      "benefit1": "Tıbbi rehberliğe 7/24 erişim",
+      "benefit2": "Güvenli ve gizli konsültasyonlar",
+      "security": {
+        "title": "Sağlık Verileriniz Korunuyor",
+        "description": "Bilgilerinizi güvende tutmak için gelişmiş şifreleme kullanıyor ve sıkı gizlilik protokollerini takip ediyoruz"
+      }
+    },
+    "trust": {
+      "title": "Sağlık profesyonelleri tarafından güveniliyor"
+    },
+    "footer": {
+      "description": "Güvenilir AI sağlık arkadaşınız. Uzman tıbbi rehberlik alın, sağlığınızı takip edin ve konsültasyonları tek bir yerde yönetin.",
+      "product": "Ürün",
+      "company": "Şirket",
+      "legal": "Yasal",
+      "links": {
+        "pricing": "Fiyatlar",
+        "faq": "SSS",
+        "about": "Hakkımızda",
+        "blog": "Blog",
+        "contact": "İletişim",
+        "privacy": "Gizlilik Politikası",
+        "terms": "Kullanım Koşulları",
+        "security": "Güvenlik"
+      },
+      "copyright": "© {{year}} VirtualHekim.az. Tüm hakları saklıdır."
+    }
+  },
+  "chat": {
+    "title": "AI Sağlık Asistanı",
+    "subtitle": "Kişisel AI tıbbi asistanınız",
+    "status": {
+      "online": "Çevrimiçi",
+      "offline": "Çevrimdışı"
+    },
+    "input": {
+      "placeholder": "Mesajınızı yazın... örn. Alerjim var, ne yapmalıyım?"
+    },
+    "messagePlaceholder": "Mesajınızı yazın... örn. Alerjim var, ne yapmalıyım?",
+    "messageWithFilesPlaceholder": "Sorunuzu veya ekli dosyaları açıklayın...",
+    "send": "Gönder",
+    "sending": "Gönderiliyor...",
+    "saveChat": "Konsültasyon olarak kaydet",
+    "welcomeMessage": "Merhaba! Ben AI tıbbi asistanınızım. Bugün size nasıl yardımcı olabilirim?",
+    "empty": {
+      "title": "Bir Mesaj Başlatın",
+      "description": "Bana sağlıkla ilgili herhangi bir soru sorun ve profesyonel rehberlik sağlayacağım."
+    },
+    "error": {
+      "message": "Üzgünüm, mesajınızı işleyemedim. Lütfen tekrar deneyin.",
+      "session": "Bağlantı kesildi. Lütfen mesajınızı tekrar göndermeyi deneyin."
+    },
+    "security": {
+      "general": "Güvenli",
+      "save": "Sohbeti Kaydet"
+    },
+    "fileUpload": {
+      "buttonTitle": "Fotoğraf veya belge yükle",
+      "invalidType": "Geçersiz dosya türü. Lütfen desteklenen bir dosya yükleyin.",
+      "tooLarge": "Dosya çok büyük. Maksimum boyut {{size}}MB.",
+      "failed": "Dosya yüklenemedi. Lütfen tekrar deneyin.",
+      "remove": "Dosyayı kaldır",
+      "photoHint": "Fotoğraf yükle",
+      "documentHint": "Belge yükle",
+      "multipleFiles": "Birden Fazla Dosya Yükle",
+      "selectCategory": "Belge kategorisini seçin:",
+      "filesReady": "dosya gönderilmeye hazır",
+      "categories": {
+        "general": "Genel Tıbbi Belgeler",
+        "labResults": "Laboratuvar Sonuçları",
+        "imaging": "Tıbbi Görüntüleme",
+        "prescriptions": "Reçeteler",
+        "clinicalNotes": "Klinik Notlar"
+      }
+    },
+    "messages": "Mesajlar",
+    "newChat": "Yeni Sohbet",
+    "untitledChat": "Başlıksız Sohbet",
+    "noMessages": "Henüz mesaj yok",
+    "closeSidebar": "Kenar çubuğunu kapat",
+    "openSidebar": "Kenar çubuğunu aç",
+    "error": {
+      "initialization": "Sohbet başlatılamadı",
+      "message": "Mesaj gönderilemedi"
+    },
+    "inputPlaceholder": "Mesajınızı yazın... örn. Alerjim var, ne yapmalıyım?"
+  },
+  "profile": {
+    "title": "Profiliniz",
+    "subtitle": "Kişisel ve tıbbi bilgilerinizi yönetin",
+    "saveChanges": "Değişiklikleri Kaydet",
+    "loading": "Profiliniz yükleniyor...",
+    "saved": "Değişiklikler başarıyla kaydedildi",
+    "personalInfo": {
+      "title": "Kişisel Bilgiler",
+      "fullName": "Ad Soyad",
+      "fullNamePlaceholder": "Adınızı ve soyadınızı girin",
+      "email": "E-posta Adresi",
+      "emailPlaceholder": "E-postanızı girin",
+      "age": "Yaş",
+      "agePlaceholder": "Yaşınızı girin",
+      "gender": "Cinsiyet",
+      "genderPlaceholder": "Cinsiyet Seçin",
+      "genderOptions": {
+        "male": "Erkek",
+        "female": "Kadın"
+      }
+    },
+    "medicalInfo": {
+      "title": "Tıbbi Bilgiler",
+      "height": "Boy (cm)",
+      "heightPlaceholder": "Boyunuzu girin",
+      "weight": "Kilo (kg)",
+      "weightPlaceholder": "Kilonuzu girin",
+      "conditions": "Tıbbi Durumlar",
+      "conditionsPlaceholder": "Tıbbi durumları listeleyin",
+      "allergies": "Alerjiler",
+      "allergiesPlaceholder": "Alerjileri listeleyin",
+      "medications": "Kullanılan İlaçlar",
+      "medicationsPlaceholder": "Kullandığınız ilaçları listeleyin",
+      "lifestyle": "Yaşam Tarzı",
+      "lifestylePlaceholder": "Yaşam tarzınızı açıklayın (örn. egzersiz, sigara, alkol)"
+    }
+  },
+  "register": {
+    "title": "Hesabınızı oluşturun",
+    "subtitle": "Başlamak için bilgilerinizi doldurun",
+    "illustration": {
+      "title": "Sağlık Topluluğumuza Katılın",
+      "description": "Tek bir güvenli platformda AI destekli tıbbi konsültasyonlara ve sağlık kaynaklarına erişmek için kişisel hesabınızı oluşturun.",
+      "features": {
+        "private": {
+          "title": "Gizli ve Güvenli",
+          "description": "Sağlık verileriniz endüstri standartlarıyla şifrelenir ve korunur"
+        },
+        "access": {
+          "title": "7/24 Erişim",
+          "description": "İhtiyacınız olduğunda tıbbi konsültasyonlar alın"
+        },
+        "dashboard": {
+          "title": "Kişisel Kontrol Paneli",
+          "description": "Kişiselleştirilmiş içgörülerle sağlık yolculuğunuzu takip edin"
+        },
+        "ai": {
+          "title": "AI Destekli",
+          "description": "Tıbbi AI teknolojisindeki en son gelişmeleri deneyimleyin"
+        }
+      }
+    },
+    "form": {
+      "fullName": "Ad Soyad",
+      "fullNamePlaceholder": "Ahmet Yılmaz",
+      "email": "E-posta adresi",
+      "emailPlaceholder": "sizin@eposta.com",
+      "password": "Şifre",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "Şifre en az 8 karakter uzunluğunda olmalıdır",
+      "age": "Yaş",
+      "agePlaceholder": "30",
+      "gender": "Cinsiyet",
+      "genderPlaceholder": "Seçin",
+      "genderOptions": {
+        "male": "Erkek",
+        "female": "Kadın"
+      },
+      "terms": "Kabul ediyorum",
+      "termsLink": "Kullanım Koşulları",
+      "and": "ve",
+      "privacyLink": "Gizlilik Politikası",
+      "submit": "Hesap oluştur",
+      "submitting": "Hesap oluşturuluyor..."
+    },
+    "error": {
+      "registrationFailed": "Kayıt başarısız. Lütfen tekrar deneyin."
+    }
+  },
+  "about": {
+    "title": "Hakkımızda",
+    "introduction": "Yapay zeka aracılığıyla sağlık hizmetlerinde devrim yaratıyor, tıbbi tavsiyeleri her zamankinden daha erişilebilir ve kişiselleştirilmiş hale getiriyoruz.",
+    "mission": {
+      "title": "Misyonumuz",
+      "description": "Yapay zekanın gücüyle sağlık hizmetlerini daha erişilebilir, verimli ve kişiselleştirilmiş hale getirmeye çalışıyoruz. Platformumuz, hastaları AI ile geliştirilmiş tıbbi tavsiyelerle buluşturarak anında, güvenilir ve gizli sağlık desteği sağlar."
+    },
+    "vision": {
+      "title": "Vizyonumuz",
+      "description": "Profesyonel tıbbi tavsiyeleri herkes için, her yerde ve her zaman erişilebilir hale getirerek sağlık hizmetlerinde devrim yaratmak. Kaliteli sağlık hizmetlerinin sadece bir tık uzaklıkta olduğu bir dünya hayal ediyoruz."
+    },
+    "values": {
+      "title": "Değerlerimiz",
+      "items": {
+        "innovation": "Sağlık hizmetlerinde AI sınırlarını sürekli zorlamak",
+        "quality": "Doğru ve güvenilir tıbbi bilgi sunmak",
+        "accessibility": "Sağlık hizmetlerini herkes için erişilebilir kılmak",
+        "privacy": "Tüm tıbbi verilerin gizliliğini sağlamak"
+      }
+    },
+    "team": {
+      "title": "Ekibimiz",
+      "description": "Sağlık hizmetlerine erişimi ve sunumunu iyileştirmek için birlikte çalışan sağlık profesyonelleri, AI uzmanları ve teknoloji yenilikçilerinden oluşan çeşitli bir grup."
+    },
+    "technology": {
+      "title": "Teknolojimiz",
+      "description": "Gelişmiş AI algoritmaları ve makine öğrenimi ile çalışan platformumuz, en yüksek veri güvenliği ve gizlilik standartlarını korurken akıllı, bağlam farkında tıbbi rehberlik sağlar."
+    }
+  },
+  "faq": {
+    "title": "Sıkça Sorulan Sorular",
+    "subtitle": "Hizmetimiz hakkında sık sorulan sorulara yanıtlar bulun",
+    "questions": {
+      "0": {
+        "question": "{{agentName}} nedir?",
+        "answer": "{{agentName}}, anında ve gizli sağlık tavsiyeleri sağlayan AI destekli bir tıbbi asistandır. Platformumuz, 7/24 kişiselleştirilmiş tıbbi rehberlik sunmak için gelişmiş yapay zeka kullanır."
+      },
+      "1": {
+        "question": "{{agentName}} nasıl çalışır?",
+        "answer": "Semptomlarınızı veya sağlık endişelerinizi açıklamanız yeterli, AI doktorumuz anında profesyonel tıbbi tavsiye sağlayacaktır. Sistem girdinizi analiz eder ve tıbbi bilgi ve en iyi uygulamalara dayalı yanıtlar üretir."
+      },
+      "2": {
+        "question": "{{agentName}} gerçek doktorların yerini alır mı?",
+        "answer": "Hayır, {{agentName}} profesyonel tıbbi bakımın yerini almaz. İlk rehberlik ve bilgi sağlamak için tasarlanmıştır. Ciddi tıbbi durumlar veya acil durumlar için her zaman bir sağlık uzmanına danışın."
+      },
+      "3": {
+        "question": "Bilgilerim güvende mi?",
+        "answer": "Evet, gizliliğinizi ciddiye alıyoruz. Tüm konuşmalar şifreli ve gizlidir. Sağlık bilgilerinizin güvende kalmasını sağlamak için sıkı veri koruma protokollerini takip ediyoruz."
+      },
+      "4": {
+        "question": "Hesap oluşturmam gerekiyor mu?",
+        "answer": "Hayır, {{agentName}}'i hesap oluşturmadan kullanabilirsiniz. Ancak, hesap oluşturmak konsültasyonlarınızı kaydetmenize ve sağlık geçmişinizi takip etmenize olanak tanır."
+      },
+      "5": {
+        "question": "Ne tür tıbbi tavsiyeler alabilirim?",
+        "answer": "Semptomlar, genel sağlık endişeleri, ilaç bilgileri ve yaşam tarzı tavsiyeleri hakkında sorabilirsiniz. Ancak, {{agentName}} ciddi durumları teşhis edemez veya ilaç reçete edemez."
+      },
+      "6": {
+        "question": "Hizmet 7/24 kullanılabilir mi?",
+        "answer": "Evet, {{agentName}} 7/24 kullanılabilir. Mesai saatlerini beklemeden istediğiniz zaman tıbbi tavsiye alabilirsiniz."
+      },
+      "7": {
+        "question": "Tıbbi tavsiyeler ne kadar doğru?",
+        "answer": "{{agentName}} tıbbi bilgi ve en iyi uygulamalara dayalı bilgi sağlarken, profesyonel tıbbi tavsiyenin yerini almadığını hatırlamak önemlidir. Ciddi endişeler için her zaman bir sağlık uzmanına danışın."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Gizlilik Politikası",
+    "lastUpdated": "Son güncelleme: {{date}}",
+    "introduction": "Gizliliğinizi ciddiye alıyoruz. Bu Gizlilik Politikası, hizmetlerimizi kullandığınızda kişisel bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar. Platformumuzu kullanarak, bu politikaya uygun olarak bilgilerin toplanmasını ve kullanılmasını kabul etmiş olursunuz.",
+    "information": {
+      "title": "Topladığımız Bilgiler",
+      "description": "Hizmetlerimizi sağlamak ve geliştirmek için adınız, e-posta adresiniz ve tıbbi geçmişiniz gibi kişisel bilgiler dahil olmak üzere çeşitli türde bilgiler topluyoruz. Ayrıca platformumuzla nasıl etkileşime girdiğinizi anlamak için kullanım verilerini topluyoruz."
+    },
+    "usage": {
+      "title": "Bilgilerinizi Nasıl Kullanıyoruz",
+      "description": "Toplanan bilgileri hizmetlerimizi sürdürmek ve geliştirmek, kullanıcı deneyiminizi geliştirmek, güncellemeler ve değişiklikler hakkında sizinle iletişim kurmak ve platformumuzun güvenliğini sağlamak için kullanıyoruz."
+    },
+    "security": {
+      "title": "Veri Güvenliği",
+      "description": "Kişisel bilgilerinizi yetkisiz erişim, değişiklik, ifşa veya imhadan korumak için uygun güvenlik önlemleri uyguluyoruz. Verileriniz şifrelenir ve güvenli bir şekilde saklanır."
+    },
+    "rights": {
+      "title": "Haklarınız",
+      "description": "Kişisel bilgilerinize erişme, düzeltme veya silme hakkına sahipsiniz. Ayrıca verilerinizin bir kopyasını talep edebilir veya veri işleme için verdiğiniz onayı istediğiniz zaman geri çekebilirsiniz."
+    },
+    "contact": {
+      "title": "Bize Ulaşın",
+      "description": "Bu Gizlilik Politikası hakkında sorularınız varsa, lütfen privacy@{{websiteName}}{{websiteTld}} adresinden bize ulaşın"
+    }
+  },
+  "terms": {
+    "title": "Kullanım Koşulları",
+    "lastUpdated": "Son güncelleme: {{date}}",
+    "introduction": "{{agentName}}'e hoş geldiniz. Hizmetlerimizi kullanarak bu Kullanım Koşullarını kabul etmiş olursunuz. Platformumuzu kullanmadan önce lütfen bu koşulları dikkatlice okuyun.",
+    "acceptance": {
+      "title": "Koşulların Kabulü",
+      "description": "{{agentName}}'i kullanarak, bu Kullanım Koşullarını okuduğunuzu, anladığınızı ve kabul ettiğinizi onaylarsınız."
+    },
+    "services": {
+      "title": "Hizmet Açıklaması",
+      "description": "{{agentName}} AI tabanlı bir tıbbi tavsiye platformudur. Genel sağlık bilgileri sağlıyoruz ancak profesyonel tıbbi tavsiyenin yerini almıyoruz."
+    },
+    "userResponsibilities": {
+      "title": "Kullanıcı Sorumlulukları",
+      "description": "Doğru bilgi sağlamayı ve hesabınızın güvenliğini korumayı kabul edersiniz."
+    },
+    "limitations": {
+      "title": "Hizmet Sınırlamaları",
+      "description": "Hizmetimiz profesyonel tıbbi tavsiyenin yerini almaz. Ciddi tıbbi durumlar için her zaman doktorunuza danışın."
+    },
+    "intellectualProperty": {
+      "title": "Fikri Mülkiyet",
+      "description": "Tüm platform içeriği ve işlevselliği {{agentName}}'in mülkiyetindedir ve geçerli yasalarla korunmaktadır."
+    },
+    "liability": {
+      "title": "Sorumluluk Sınırlaması",
+      "description": "{{agentName}} hizmetlerimizin kullanımından kaynaklanan herhangi bir zarardan sorumlu değildir."
+    },
+    "changes": {
+      "title": "Koşullarda Değişiklikler",
+      "description": "Bu koşulları istediğimiz zaman değiştirme hakkını saklı tutarız ve kullanıcıları herhangi bir değişiklik konusunda bilgilendireceğiz."
+    },
+    "contact": {
+      "title": "İletişim",
+      "description": "Kullanım Koşulları hakkında sorularınız için terms@{{domain}} adresine e-posta gönderin."
+    }
+  },
+  "security": {
+    "title": "Güvenlik",
+    "lastUpdated": "Son güncelleme: {{date}}",
+    "introduction": "{{agentName}}'de tıbbi verilerinizin güvenliği en önemli önceliğimizdir. Bu sayfa, bilgilerinizi korumak için uyguladığımız kapsamlı güvenlik önlemlerini açıklar.",
+    "dataProtection": {
+      "title": "Veri Koruması",
+      "description": "Tıbbi verilerinizi korumak için endüstri lideri şifreleme standartları kullanıyoruz. Tüm bilgiler, gelişmiş şifreleme protokolleri kullanılarak hem aktarım sırasında hem de depolandığında şifrelenir."
+    },
+    "encryption": {
+      "title": "Şifreleme Standartları",
+      "description": "Depolanan veriler için AES-256 şifrelemesi ve aktarımdaki veriler için TLS 1.3 kullanıyoruz. Hassas tıbbi bilgileriniz, önde gelen sağlık kurumları tarafından kullanılan aynı güvenlik standartlarıyla korunur."
+    },
+    "access": {
+      "title": "Erişim Kontrolü",
+      "description": "Yalnızca yetkili kullanıcıların bilgilerine erişebilmesini sağlamak için sıkı erişim kontrolleri ve kimlik doğrulama önlemleri uyguluyoruz. Gelişmiş güvenlik için çok faktörlü kimlik doğrulama mevcuttur."
+    },
+    "compliance": {
+      "title": "Uyumluluk",
+      "description": "Platformumuz, en yüksek düzeyde veri koruması ve gizlilik uyumluluğu sağlamak için uluslararası güvenlik standartlarına ve sağlık düzenlemelerine uygundur."
+    },
+    "monitoring": {
+      "title": "7/24 İzleme",
+      "description": "Güvenlik sistemlerimiz, yetkisiz erişim girişimlerini tespit etmek ve önlemek ve verilerinizin sürekli korunmasını sağlamak için 7/24 izlenir."
+    },
+    "contact": {
+      "title": "Güvenlik İletişim",
+      "description": "Güvenlikle ilgili sorularınız veya güvenlik endişelerini bildirmek için lütfen güvenlik ekibimizle security@{{domain}} adresinden iletişime geçin."
+    }
+  },
+  "contact": {
+    "title": "Bize Ulaşın",
+    "subtitle": "Teknik Destek ve İş Sorguları",
+    "introduction": "Bu iletişim sayfası yalnızca teknik destek, iş sorguları ve reklam fırsatları içindir. Tıbbi tavsiye veya sağlıkla ilgili sorular için lütfen ana sayfamızdaki sohbet özelliğini kullanın.",
+    "email": {
+      "title": "Bize E-posta Gönderin",
+      "description": "Teknik destek, iş işbirliği veya reklam sorguları için lütfen bize e-posta gönderin:",
+      "address": "info@azdoc.ai"
+    },
+    "support": {
+      "title": "Teknik Destek Saatleri",
+      "description": "Tüm teknik ve iş sorgularına 24 saat içinde yanıt vermeyi hedefliyoruz."
+    },
+    "note": "Tıbbi sorular veya sağlık tavsiyeleri için lütfen ana sayfaya dönün ve AI sohbet hizmetimizi kullanın. Tıbbi acil durumlar için yerel acil servislerinizle hemen iletişime geçin.",
+    "medicalNote": {
+      "title": "Tıbbi Tavsiye mi Arıyorsunuz?",
+      "description": "Sağlıkla ilgili sorularınız için lütfen ana sayfadaki AI sohbet hizmetimizi kullanın. AI doktorumuz tıbbi sorgularınızda size yardımcı olmak için 7/24 kullanılabilir."
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Son Makaleler ve Sağlık İçgörüleri",
+    "readMore": "Devamını Oku",
+    "backToList": "Bloga Dön",
+    "publishedOn": "Yayın tarihi",
+    "author": "Yazar",
+    "readingTime": "{{minutes}} dk okuma",
+    "tags": "Etiketler",
+    "relatedPosts": "İlgili Makaleler",
+    "postsTaggedWith": "Etiketli gönderiler",
+    "tagDescription": "{{tag}} ile {{count}} makale etiketlendi",
+    "noPostsWithTag": "{{tag}} etiketli makale bulunamadı",
+    "checkOtherTags": "Lütfen diğer etiketleri kontrol edin veya blog ana sayfasına dönün",
+    "tag": {
+      "title": "Etiket: {{tag}}",
+      "description": "{{tag}} hakkında makalelere göz atın",
+      "empty": {
+        "title": "Etiket Bulunamadı",
+        "description": "İstenen etiket mevcut değil. Lütfen URL'yi kontrol edin veya tüm makalelere göz atın."
+      },
+      "otherTags": "Diğer Etiketler",
+      "notFound": "Etiket Bulunamadı"
+    },
+    "search": {
+      "title": "Blogda Ara",
+      "placeholder": "Makale ara...",
+      "button": "Ara",
+      "noResults": "Aramanız için makale bulunamadı.",
+      "results": "Arama Sonuçları",
+      "resultsFor": "Arama sonuçları",
+      "noResultsFor": "\"{{query}}\" için sonuç bulunamadı",
+      "tryAgain": "Lütfen farklı bir arama terimi deneyin veya aşağıdaki makalelerimize göz atın",
+      "searching": "Aranıyor...",
+      "foundResults": "{{count}} sonuç bulundu",
+      "enterQuery": "Ne arıyorsunuz?",
+      "enterQueryDescription": "İlgili makaleleri bulmak için yukarıya bir arama terimi girin"
+    },
+    "filter": {
+      "byTag": "Etikete Göre Filtrele",
+      "allPosts": "Tüm Makaleler",
+      "popular": "Popüler",
+      "latest": "En Yeni"
+    },
+    "admin": {
+      "createPost": "Yeni Gönderi Oluştur",
+      "editPost": "Gönderiyi Düzenle",
+      "deletePost": "Gönderiyi Sil",
+      "manageTags": "Etiketleri Yönet",
+      "confirmDelete": "Bu gönderiyi silmek istediğinizden emin misiniz?",
+      "form": {
+        "title": "Başlık",
+        "titlePlaceholder": "Gönderi başlığını girin",
+        "summary": "Özet",
+        "summaryPlaceholder": "Makalenizin kısa özeti",
+        "content": "İçerik",
+        "contentPlaceholder": "Makalenizi buraya yazın...",
+        "featuredImage": "Öne Çıkan Görsel URL'si",
+        "featuredImagePlaceholder": "https://example.com/image.jpg",
+        "tags": "Etiketler",
+        "tagsPlaceholder": "Etiket ekle",
+        "newTag": "Yeni Etiket Ekle",
+        "published": "Yayınlandı",
+        "draft": "Taslak",
+        "saveAsDraft": "Taslak Olarak Kaydet",
+        "publish": "Yayınla",
+        "update": "Güncelle",
+        "cancel": "İptal",
+        "language": "Gönderi Dili",
+        "languageOptions": {
+          "az": "Azerice",
+          "en": "İngilizce",
+          "tr": "Türkçe"
+        }
+      },
+      "messages": {
+        "createSuccess": "Gönderi başarıyla oluşturuldu",
+        "updateSuccess": "Gönderi başarıyla güncellendi",
+        "deleteSuccess": "Gönderi başarıyla silindi",
+        "error": "Bir hata oluştu. Lütfen tekrar deneyin."
+      }
+    },
+    "empty": {
+      "title": "Henüz makale yok",
+      "description": "Yeni içerik eklemeye çalışıyoruz. Lütfen daha sonra tekrar kontrol edin!"
+    }
+  },
+  "admin": {
+    "title": "Yönetici Paneli",
+    "dashboard": "Kontrol Paneli",
+    "posts": {
+      "title": "Blog Gönderileri",
+      "description": "Blog içeriğinizi yönetin ve yayınlayın",
+      "create": "Yeni Gönderi Oluştur",
+      "selected": "{{count}} gönderi seçildi",
+      "confirmDelete": "Gönderi Silinsin mi?",
+      "confirmBulkDelete": "{{count}} gönderi silinsin mi?",
+      "deleteWarning": "Bu işlem geri alınamaz. Gönderi kalıcı olarak silinecektir.",
+      "published": "Yayınlandı",
+      "draft": "Taslak",
+      "noTags": "Etiket yok",
+      "empty": "Gönderi bulunamadı. Başlamak için ilk gönderinizi oluşturun.",
+      "table": {
+        "title": "Başlık",
+        "status": "Durum",
+        "tags": "Etiketler",
+        "created": "Oluşturulma",
+        "actions": "İşlemler"
+      },
+      "view": "Görüntüle",
+      "edit": "Düzenle",
+      "delete": "Sil",
+      "form": {
+        "createTitle": "Yeni Gönderi Oluştur",
+        "editTitle": "Gönderiyi Düzenle",
+        "createDescription": "Blogunuza yeni bir gönderi ekleyin",
+        "editDescription": "Mevcut gönderinizi güncelleyin",
+        "title": "Başlık",
+        "slug": "URL Uzantısı",
+        "generateSlug": "Başlıktan oluştur",
+        "slugPlaceholder": "gonderi-url-uzantisi",
+        "slugHelp": "Gönderiniz için URL dostu tanımlayıcı. Yalnızca küçük harf, sayı ve tire kullanın.",
+        "summary": "Özet",
+        "summaryHelp": "Gönderinizin kısa açıklaması (maks. 500 karakter)",
+        "content": "İçerik",
+        "featuredImage": "Öne Çıkan Görsel URL'si",
+        "tags": "Etiketler",
+        "addTag": "Etiket ekle",
+        "addTagButton": "Ekle",
+        "availableTags": "Mevcut etiketler",
+        "language": "Dil",
+        "published": "Yayınlandı",
+        "publishedHelp": "İşaretlendiğinde, gönderi blogunuzda herkese açık olarak görünür",
+        "cancel": "İptal",
+        "saveDraft": "Taslak Olarak Kaydet",
+        "publish": "Yayınla",
+        "saving": "Kaydediliyor...",
+        "preview": "Önizleme",
+        "editMode": "Düzenleme Modu",
+        "unsavedChanges": "Kaydedilmemiş Değişiklikler",
+        "unsavedChangesWarning": "Ayrılırsanız kaybedilecek kaydedilmemiş değişiklikleriniz var. Devam etmek istediğinizden emin misiniz?",
+        "leaveAnyway": "Yine de Ayrıl",
+        "stayAndEdit": "Kal ve Düzenle",
+        "createSuccess": "Gönderi başarıyla oluşturuldu",
+        "updateSuccess": "Gönderi başarıyla güncellendi",
+        "saveError": "Gönderi kaydedilemedi",
+        "errors": {
+          "titleRequired": "Başlık gereklidir",
+          "summaryRequired": "Özet gereklidir",
+          "summaryTooLong": "Özet 500 karakterden az olmalıdır",
+          "contentRequired": "İçerik gereklidir",
+          "imageRequired": "Öne çıkan görsel URL'si gereklidir",
+          "invalidUrl": "Lütfen geçerli bir URL girin",
+          "imageUploadFailed": "Görsel yüklenemedi. Lütfen tekrar deneyin."
+        },
+        "save": "Gönderiyi Kaydet"
+      }
+    },
+    "tags": {
+      "title": "Etiketler",
+      "description": "Blog gönderileriniz için kategorileri ve etiketleri yönetin",
+      "create": "Yeni Etiket Ekle",
+      "namePlaceholder": "Etiket adını girin",
+      "add": "Etiket Ekle",
+      "confirmDelete": "Etiket Silinsin mi?",
+      "deleteWarning": "Bu işlem geri alınamaz. Etiket tüm gönderilerden kalıcı olarak kaldırılacaktır.",
+      "postsCount": "{{count}} gönderi",
+      "noTags": "Etiket bulunamadı. Başlamak için ilk etiketinizi oluşturun.",
+      "noSearchResults": "Aramanızla eşleşen etiket yok",
+      "search": "Etiket ara",
+      "createSuccess": "Etiket başarıyla oluşturuldu",
+      "updateSuccess": "Etiket başarıyla güncellendi",
+      "deleteSuccess": "Etiket başarıyla silindi"
+    },
+    "users": {
+      "title": "Kullanıcılar",
+      "admins": "Yöneticiler",
+      "authors": "Yazarlar",
+      "readers": "Okuyucular"
+    },
+    "settings": {
+      "title": "Ayarlar",
+      "general": "Genel Ayarlar",
+      "theme": "Tema",
+      "theme.light": "Açık",
+      "theme.dark": "Koyu",
+      "theme.system": "Sistem"
+    },
+    "stats": {
+      "totalPosts": "Toplam Gönderi",
+      "publishedPosts": "Yayınlanan",
+      "draftPosts": "Taslaklar",
+      "tags": "Etiketler",
+      "users": "Kullanıcılar",
+      "views": "Görüntüleme"
+    },
+    "recentPosts": "Son Gönderiler",
+    "noPosts": "Gönderi bulunamadı",
+    "unknownAuthor": "Bilinmeyen Yazar",
+    "filtersText": "Filtreler",
+    "filters": {
+      "all": "Tümü",
+      "published": "Yayınlanan",
+      "draft": "Taslaklar"
+    },
+    "search": "Ara",
+    "pagination": {
+      "previous": "Önceki",
+      "next": "Sonraki",
+      "showing": "{{total}} sonuçtan {{from}} - {{to}} arası gösteriliyor"
+    }
+  },
+  "filters": {
+    "all": "Tüm Konsültasyonlar",
+    "upcoming": "Yaklaşan",
+    "completed": "Tamamlanan",
+    "past": "Geçmiş"
+  },
+  "status": {
+    "undefined": "Bilinmeyen Durum"
+  },
+  "viewDetails": "Detayları Görüntüle"
+}

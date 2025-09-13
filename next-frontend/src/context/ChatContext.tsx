@@ -125,11 +125,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const createInitialChat = async (sid: string) => {
     if (!sid) return null;
     try {
-      const response = await createGuestChat(sid, null);
+      const response = await createGuestChat(sid, 'New Chat');
       const newChatId = response?.data?.chatId || `temp-${Date.now()}`;
       const newChat: Chat = {
         id: newChatId,
-        title: null,
+        title: 'New Chat',
         messages: [],
         timestamp: new Date().toISOString()
       };
@@ -146,11 +146,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const createNewChat = async () => {
     if (!sessionIdRef.current) return null;
     try {
-      const response = await createGuestChat(sessionIdRef.current, null);
+      const response = await createGuestChat(sessionIdRef.current, 'New Chat');
       const newChatId = response?.data?.chatId || `temp-${Date.now()}`;
       const newChat: Chat = {
         id: newChatId,
-        title: null,
+        title: 'New Chat',
         messages: [],
         timestamp: new Date().toISOString()
       };
@@ -242,7 +242,15 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
               timestamp: new Date().toISOString() 
             }
           ];
-          const title = chat.messages.length === 0 ? message.split(' ').slice(0, 3).join(' ') + '...' : chat.title;
+          const title = chat.messages.length === 0 ? message.split(' ').slice(0, 5).join(' ') + '...' : chat.title;
+          
+          // Update title on backend if this is the first message
+          if (chat.messages.length === 0 && sessionIdRef.current) {
+            updateGuestChat(sessionIdRef.current, chatId, title).catch(err => 
+              console.error('Failed to update chat title:', err)
+            );
+          }
+          
           return { ...chat, messages: newMessages, title };
         }
         return chat;

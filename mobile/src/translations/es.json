@@ -1,0 +1,851 @@
+{
+  "common": {
+    "appName": "Azdoc",
+    "welcome": "Bienvenido",
+    "login": "Iniciar sesión",
+    "logout": "Cerrar sesión",
+    "settings": "Configuración",
+    "language": "Idioma",
+    "theme": "Tema",
+    "themeLight": "Claro",
+    "themeDark": "Oscuro",
+    "themeSystem": "Sistema",
+    "back_to_home": "Volver al inicio",
+    "loading": "Cargando...",
+    "loadMore": "Cargar más",
+    "retry": "Reintentar",
+    "scrollToTop": "Volver arriba",
+    "errors": {
+      "generic": "Ocurrió un error. Por favor, inténtelo más tarde."
+    }
+  },
+  "navbar": {
+    "home": "Inicio",
+    "dashboard": "Panel de control",
+    "appointments": "Consultas",
+    "pricing": "Precios",
+    "faq": "Preguntas frecuentes",
+    "about": "Acerca de",
+    "contact": "Contacto",
+    "privacy": "Política de privacidad",
+    "terms": "Términos de servicio",
+    "security": "Seguridad",
+    "blog": "Blog",
+    "profile": "Perfil",
+    "login": "Iniciar sesión",
+    "register": "Registrarse",
+    "logout": "Cerrar sesión",
+    "chat": "Chat"
+  },
+  "auth": {
+    "email": "Correo electrónico",
+    "email_placeholder": "tu@correo.com",
+    "username": "Nombre de usuario",
+    "password": "Contraseña",
+    "password_placeholder": "••••••••",
+    "forgot_password": "¿Olvidaste tu contraseña?",
+    "remember_me": "Recordarme",
+    "sign_up": "Registrarse",
+    "or": "o continuar con",
+    "login_with_google": "Continuar con Google",
+    "login_with_facebook": "Continuar con Facebook",
+    "validation": {
+      "username_required": "El nombre de usuario es obligatorio",
+      "password_required": "La contraseña es obligatoria",
+      "email_required": "El correo electrónico es obligatorio",
+      "invalid_email": "Dirección de correo electrónico inválida"
+    },
+    "login": {
+      "welcome": "Bienvenido de nuevo",
+      "subtitle": "Inicia sesión en tu cuenta para continuar",
+      "signing_in": "Iniciando sesión...",
+      "no_account": "¿No tienes una cuenta?",
+      "create_account": "Crear una cuenta",
+      "secure_title": "Consultas médicas seguras",
+      "secure_description": "Tus datos de salud están encriptados y almacenados de forma segura. Accede a orientación médica experta en cualquier momento con {{agentName}}.",
+      "access": "Acceso",
+      "secure": "Seguro",
+      "powered": "Impulsado por",
+      "sign_in": "Iniciar sesión",
+      "signin_button": "Iniciar sesión",
+      "error_title": "Error de inicio de sesión",
+      "error_invalid_credentials": "Nombre de usuario o contraseña inválidos"
+    },
+    "register": {
+      "title": "Crear una cuenta",
+      "subtitle": "Regístrate para comenzar tus consultas médicas",
+      "creating_account": "Creando cuenta...",
+      "create_account": "Crear cuenta",
+      "have_account": "¿Ya tienes una cuenta?",
+      "sign_in": "Iniciar sesión"
+    },
+    "errors": {
+      "invalid_credentials": "Correo electrónico o contraseña inválidos",
+      "user_not_found": "Usuario no encontrado",
+      "login_failed": "Error al iniciar sesión. Por favor, inténtelo de nuevo."
+    },
+    "saveChatTitle": "Guardar tu consulta",
+    "saveChatDescription": "Por favor, inicia sesión o regístrate para guardar esta consulta en tus registros."
+  },
+  "errors": {
+    "required": "Este campo es obligatorio",
+    "invalidEmail": "Por favor, ingrese una dirección de correo electrónico válida"
+  },
+  "appointments": {
+    "title": "Tus consultas",
+    "subtitle": "Gestiona y rastrea todas tus consultas médicas",
+    "newAppointment": "Nueva consulta",
+    "filters": {
+      "all": "Todas las consultas",
+      "upcoming": "Próximas",
+      "completed": "Completadas",
+      "past": "Pasadas"
+    },
+    "loading": "Cargando tus consultas...",
+    "empty": {
+      "title": "No se encontraron consultas",
+      "all": "Aún no tienes consultas programadas.",
+      "filtered": "No tienes consultas {{filter}}.",
+      "schedule": "Programar una consulta"
+    },
+    "card": {
+      "specialty": "Especialidad",
+      "primaryConcern": "Preocupación principal",
+      "date": "Fecha",
+      "time": "Hora"
+    },
+    "status": {
+      "undefined": "Estado desconocido"
+    },
+    "viewDetails": "Ver detalles"
+  },
+  "newAppointment": {
+    "title": "Iniciar una nueva consulta",
+    "subtitle": "Cuéntanos qué necesitas y te conectaremos con {{agentName}}",
+    "specialty": {
+      "label": "¿Qué tipo de atención necesitas?",
+      "options": {
+        "general": "Consulta general",
+        "pediatrics": "Pediatría",
+        "dermatology": "Dermatología",
+        "cardiology": "Cardiología",
+        "mental health": "Salud mental",
+        "other": "Otra especialidad"
+      }
+    },
+    "primaryConcern": {
+      "label": "¿Cuál es tu principal preocupación hoy?",
+      "placeholder": "Describe brevemente lo que te molesta (ej. dolor de cabeza, erupción cutánea, ansiedad)"
+    },
+    "duration": {
+      "label": "¿Cuánto tiempo has tenido este problema?",
+      "placeholder": "ej. 3 días, 2 semanas"
+    },
+    "severity": {
+      "label": "¿Qué tan grave es?",
+      "options": {
+        "mild": "Leve - Es notable pero no afecta las actividades diarias",
+        "moderate": "Moderado - Afecta algunas actividades diarias",
+        "severe": "Grave - Afecta significativamente las actividades diarias"
+      }
+    },
+    "symptoms": {
+      "label": "¿Otros síntomas? (Opcional)",
+      "placeholder": "Lista cualquier otro síntoma que estés experimentando"
+    },
+    "treatments": {
+      "label": "¿Has probado algún tratamiento? (Opcional)",
+      "placeholder": "ej. medicamentos sin receta, remedios caseros"
+    },
+    "notes": {
+      "label": "¿Algo más que {{agentName}} deba saber? (Opcional)",
+      "placeholder": "ej. alergias, condiciones existentes, medicamentos actuales"
+    },
+    "continue": "Continuar",
+    "back": "Atrás",
+    "submit": "Iniciar consulta",
+    "submitting": "Creando consulta..."
+  },
+  "dashboard": {
+    "title": "Bienvenido a tu panel de control",
+    "subtitle": "Accede a tus herramientas de salud, consultas e historial médico en cualquier momento.",
+    "appointments": {
+      "title": "Consultas",
+      "description": "Ver o crear sesiones de consulta médica.",
+      "action": "Ir a consultas"
+    },
+    "profile": {
+      "title": "Tu perfil",
+      "description": "Gestiona tu información de salud, historial y preferencias.",
+      "action": "Ver perfil"
+    },
+    "newAppointment": {
+      "title": "Iniciar una nueva consulta",
+      "description": "Crear una nueva consulta AI con {{agentName}}.",
+      "action": "Comenzar ahora",
+      "recommended": "Recomendado"
+    },
+    "healthSummary": {
+      "title": "Tu resumen de salud",
+      "recentConsultations": "Consultas recientes",
+      "profileCompletion": "Completitud del perfil",
+      "nextAppointment": "Próxima consulta"
+    },
+    "security": {
+      "title": "Tus datos están seguros",
+      "description": "Encriptados, confidenciales y protegidos",
+      "learnMore": "Más información sobre nuestra política de privacidad →"
+    },
+    "footer": "Tu salud nos importa. Esta plataforma está diseñada para tu conveniencia.",
+    "chat": {
+      "title": "Chat AI",
+      "description": "Inicia una conversación con nuestro asistente de salud AI.",
+      "action": "Ir al chat"
+    }
+  },
+  "home": {
+    "hero": {
+      "title": "Tu doctor AI. Disponible 24/7.",
+      "subtitle": "Haz una pregunta de salud y obtén consejo instantáneo de Copad AI Doctor — no se requiere registro.",
+      "createAccount": "Crear cuenta",
+      "login": "Iniciar sesión",
+      "trustBar": {
+        "usersHelped": "Más de 10,000 usuarios ayudados",
+        "privateSecure": "Confidencial y seguro",
+        "poweredBy": "Impulsado por OpenAI GPT-4"
+      }
+    },
+    "howItWorks": {
+      "title": "Cómo funciona",
+      "subtitle": "Obtén orientación médica profesional en tres sencillos pasos",
+      "step1": {
+        "title": "1. Consulta al doctor AI",
+        "description": "Ingresa tus preocupaciones de salud o síntomas y recibe retroalimentación instantánea de nuestro médico AI."
+      },
+      "step2": {
+        "title": "2. Obtén orientación personalizada",
+        "description": "Recibe consejos inmediatos y confidenciales adaptados a tu situación."
+      },
+      "step3": {
+        "title": "3. Rastrea y gestiona",
+        "description": "Regístrate para gestionar consultas y mantener tu perfil de salud actualizado."
+      }
+    },
+    "features": {
+      "title": "Características",
+      "subtitle": "Todo lo que necesitas para tu salud",
+      "description": "Asistencia médica accesible, confiable y personalizada impulsada por AI.",
+      "chat": {
+        "title": "Consulta con un médico AI",
+        "description": "Describe tus síntomas y obtén orientación experta al instante — 24/7. Sin salas de espera, sin citas necesarias."
+      },
+      "upload": {
+        "title": "Subir archivos médicos",
+        "description": "Analiza resultados de laboratorio, imágenes e historial médico con asistencia AI. Obtén explicaciones e información en lenguaje sencillo."
+      },
+      "track": {
+        "title": "Rastrear consultas",
+        "description": "Organiza tu viaje de salud con historial, resúmenes y notas AI. Accede a tus consultas anteriores en cualquier momento."
+      }
+    },
+    "testimonials": {
+      "title": "Confiado por usuarios en todo el mundo",
+      "subtitle": "Mira lo que dicen nuestros usuarios sobre su experiencia",
+      "testimonial1": {
+        "quote": "{{agentName}} me ayudó a entender mis resultados de laboratorio cuando no pude conseguir una cita con mi médico. Explicó todo en términos claros y simples.",
+        "author": "Sarah K.",
+        "role": "Paciente"
+      },
+      "testimonial2": {
+        "quote": "Como alguien que vive en una zona rural, tener orientación médica 24/7 ha transformado mi experiencia de atención médica. Es como tener un médico en el bolsillo.",
+        "author": "Michael T.",
+        "role": "Paciente"
+      },
+      "testimonial3": {
+        "quote": "La evaluación de síntomas es notablemente precisa. Me ayudó a identificar una condición que mi médico de cabecera había pasado por alto durante meses.",
+        "author": "Jessica W.",
+        "role": "Trabajadora de la salud"
+      }
+    },
+    "cta": {
+      "title": "¿Listo para tomar el control de",
+      "subtitle": "tu bienestar?",
+      "description": "Comienza tu viaje con {{agentName}} hoy y experimenta la atención médica de próxima generación. No se necesita suscripción.",
+      "getStarted": "Comenzar gratis",
+      "login": "Iniciar sesión",
+      "benefit1": "Acceso 24/7 a orientación médica",
+      "benefit2": "Consultas seguras y confidenciales",
+      "security": {
+        "title": "Tus datos de salud están protegidos",
+        "description": "Utilizamos encriptación avanzada y seguimos estrictos protocolos de privacidad para mantener tu información segura"
+      }
+    },
+    "trust": {
+      "title": "Confiado por profesionales de la salud"
+    },
+    "footer": {
+      "description": "Tu compañero de salud AI de confianza. Obtén orientación médica experta, rastrea tu salud y gestiona consultas todo en un solo lugar.",
+      "product": "Producto",
+      "company": "Empresa",
+      "legal": "Legal",
+      "links": {
+        "pricing": "Precios",
+        "faq": "Preguntas frecuentes",
+        "about": "Acerca de",
+        "blog": "Blog",
+        "contact": "Contacto",
+        "privacy": "Política de privacidad",
+        "terms": "Términos de servicio",
+        "security": "Seguridad"
+      },
+      "copyright": "© {{year}} VirtualHekim.az. Todos los derechos reservados."
+    }
+  },
+  "chat": {
+    "title": "Asistente de salud AI",
+    "subtitle": "Tu asistente médico AI personal",
+    "status": {
+      "online": "En línea",
+      "offline": "Fuera de línea"
+    },
+    "input": {
+      "placeholder": "Escribe tu mensaje... ej. Tengo una alergia, ¿qué debo hacer?"
+    },
+    "messagePlaceholder": "Escribe tu mensaje... ej. Tengo una alergia, ¿qué debo hacer?",
+    "messageWithFilesPlaceholder": "Describe tu pregunta o los archivos adjuntos...",
+    "send": "Enviar",
+    "sending": "Enviando...",
+    "saveChat": "Guardar como consulta",
+    "welcomeMessage": "¡Hola! Soy tu asistente médico AI. ¿Cómo puedo ayudarte hoy?",
+    "empty": {
+      "title": "Iniciar un mensaje",
+      "description": "Hazme cualquier pregunta relacionada con la salud y te proporcionaré orientación profesional."
+    },
+    "error": {
+      "message": "Lo siento, no pude procesar tu mensaje. Por favor, inténtalo de nuevo.",
+      "session": "Conexión perdida. Por favor, intenta enviar tu mensaje de nuevo."
+    },
+    "security": {
+      "general": "Seguro",
+      "save": "Guardar chat"
+    },
+    "fileUpload": {
+      "buttonTitle": "Subir una foto o documento",
+      "invalidType": "Tipo de archivo inválido. Por favor, sube un archivo compatible.",
+      "tooLarge": "El archivo es demasiado grande. El tamaño máximo es {{size}}MB.",
+      "failed": "Error al subir el archivo. Por favor, inténtalo de nuevo.",
+      "remove": "Eliminar archivo",
+      "photoHint": "Subir una foto",
+      "documentHint": "Subir un documento",
+      "multipleFiles": "Subir múltiples archivos",
+      "selectCategory": "Selecciona la categoría del documento:",
+      "filesReady": "archivo(s) listos para enviar",
+      "categories": {
+        "general": "Documentos médicos generales",
+        "labResults": "Resultados de laboratorio",
+        "imaging": "Imágenes médicas",
+        "prescriptions": "Recetas",
+        "clinicalNotes": "Notas clínicas"
+      }
+    },
+    "messages": "Mensajes",
+    "newChat": "Nuevo chat",
+    "untitledChat": "Chat sin título",
+    "noMessages": "No hay mensajes aún",
+    "closeSidebar": "Cerrar barra lateral",
+    "openSidebar": "Abrir barra lateral",
+    "error": {
+      "initialization": "Error al inicializar el chat",
+      "message": "Error al enviar el mensaje"
+    },
+    "inputPlaceholder": "Escribe tu mensaje... ej. Tengo una alergia, ¿qué debo hacer?"
+  },
+  "profile": {
+    "title": "Tu perfil",
+    "subtitle": "Gestiona tu información personal y médica",
+    "saveChanges": "Guardar cambios",
+    "loading": "Cargando tu perfil...",
+    "saved": "Cambios guardados exitosamente",
+    "personalInfo": {
+      "title": "Información personal",
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Ingresa tu nombre completo",
+      "email": "Dirección de correo electrónico",
+      "emailPlaceholder": "Ingresa tu correo electrónico",
+      "age": "Edad",
+      "agePlaceholder": "Ingresa tu edad",
+      "gender": "Género",
+      "genderPlaceholder": "Seleccionar género",
+      "genderOptions": {
+        "male": "Masculino",
+        "female": "Femenino"
+      }
+    },
+    "medicalInfo": {
+      "title": "Información médica",
+      "height": "Altura (cm)",
+      "heightPlaceholder": "Ingresa tu altura",
+      "weight": "Peso (kg)",
+      "weightPlaceholder": "Ingresa tu peso",
+      "conditions": "Condiciones médicas",
+      "conditionsPlaceholder": "Lista cualquier condición médica",
+      "allergies": "Alergias",
+      "allergiesPlaceholder": "Lista cualquier alergia",
+      "medications": "Medicamentos actuales",
+      "medicationsPlaceholder": "Lista cualquier medicamento actual",
+      "lifestyle": "Estilo de vida",
+      "lifestylePlaceholder": "Describe tu estilo de vida (ej. ejercicio, fumar, alcohol)"
+    }
+  },
+  "register": {
+    "title": "Crea tu cuenta",
+    "subtitle": "Completa tus datos para comenzar",
+    "illustration": {
+      "title": "Únete a nuestra comunidad de salud",
+      "description": "Crea tu cuenta personal para acceder a consultas médicas impulsadas por AI y recursos de salud, todo en una plataforma segura.",
+      "features": {
+        "private": {
+          "title": "Confidencial y seguro",
+          "description": "Tus datos de salud están encriptados y protegidos por estándares de la industria"
+        },
+        "access": {
+          "title": "Acceso 24/7",
+          "description": "Obtén consultas médicas cuando las necesites"
+        },
+        "dashboard": {
+          "title": "Panel personal",
+          "description": "Rastrea tu viaje de salud con información personalizada"
+        },
+        "ai": {
+          "title": "Impulsado por AI",
+          "description": "Experimenta lo último en tecnología médica AI"
+        }
+      }
+    },
+    "form": {
+      "fullName": "Nombre completo",
+      "fullNamePlaceholder": "Juan Pérez",
+      "email": "Dirección de correo electrónico",
+      "emailPlaceholder": "tu@correo.com",
+      "password": "Contraseña",
+      "passwordPlaceholder": "••••••••",
+      "passwordHint": "La contraseña debe tener al menos 8 caracteres",
+      "age": "Edad",
+      "agePlaceholder": "30",
+      "gender": "Género",
+      "genderPlaceholder": "Seleccionar",
+      "genderOptions": {
+        "male": "Masculino",
+        "female": "Femenino"
+      },
+      "terms": "Acepto los",
+      "termsLink": "Términos de servicio",
+      "and": "y",
+      "privacyLink": "Política de privacidad",
+      "submit": "Crear cuenta",
+      "submitting": "Creando cuenta..."
+    },
+    "error": {
+      "registrationFailed": "El registro falló. Por favor, inténtalo de nuevo."
+    }
+  },
+  "about": {
+    "title": "Acerca de nosotros",
+    "introduction": "Estamos revolucionando la atención médica a través de la inteligencia artificial, haciendo el asesoramiento médico más accesible y personalizado que nunca.",
+    "mission": {
+      "title": "Nuestra misión",
+      "description": "Nos esforzamos por hacer que la atención médica sea más accesible, eficiente y personalizada a través del poder de la inteligencia artificial. Nuestra plataforma conecta a los pacientes con consejos médicos mejorados por AI, brindando apoyo de salud inmediato, confiable y confidencial."
+    },
+    "vision": {
+      "title": "Nuestra visión",
+      "description": "Revolucionar la atención médica haciendo que el asesoramiento médico profesional sea accesible para todos, en todas partes y en cualquier momento. Imaginamos un mundo donde la atención médica de calidad esté a solo un clic de distancia."
+    },
+    "values": {
+      "title": "Nuestros valores",
+      "items": {
+        "innovation": "Empujar continuamente los límites de la AI en la atención médica",
+        "quality": "Entregar información médica precisa y confiable",
+        "accessibility": "Hacer que la atención médica esté disponible para todos",
+        "privacy": "Garantizar la confidencialidad de todos los datos médicos"
+      }
+    },
+    "team": {
+      "title": "Nuestro equipo",
+      "description": "Un grupo diverso de profesionales de la salud, expertos en AI e innovadores tecnológicos trabajando juntos para mejorar el acceso y la prestación de atención médica."
+    },
+    "technology": {
+      "title": "Nuestra tecnología",
+      "description": "Impulsados por algoritmos avanzados de AI y aprendizaje automático, nuestra plataforma proporciona orientación médica inteligente y consciente del contexto mientras mantiene los más altos estándares de seguridad y privacidad de datos."
+    }
+  },
+  "faq": {
+    "title": "Preguntas frecuentes",
+    "subtitle": "Encuentra respuestas a preguntas comunes sobre nuestro servicio",
+    "questions": {
+      "0": {
+        "question": "¿Qué es {{agentName}}?",
+        "answer": "{{agentName}} es un asistente médico impulsado por AI que proporciona consejos de salud instantáneos y confidenciales. Nuestra plataforma utiliza inteligencia artificial avanzada para ofrecer orientación médica personalizada 24/7."
+      },
+      "1": {
+        "question": "¿Cómo funciona {{agentName}}?",
+        "answer": "Simplemente describe tus síntomas o preocupaciones de salud, y nuestro doctor AI proporcionará consejos médicos profesionales inmediatos. El sistema analiza tu entrada y genera respuestas basadas en conocimientos médicos y mejores prácticas."
+      },
+      "2": {
+        "question": "¿Es {{agentName}} un reemplazo para médicos reales?",
+        "answer": "No, {{agentName}} no es un reemplazo para la atención médica profesional. Está diseñado para proporcionar orientación e información inicial. Siempre consulta con un profesional de la salud para condiciones médicas graves o emergencias."
+      },
+      "3": {
+        "question": "¿Es segura mi información?",
+        "answer": "Sí, tomamos tu privacidad en serio. Todas las conversaciones están encriptadas y son confidenciales. Seguimos estrictos protocolos de protección de datos para garantizar que tu información de salud permanezca segura."
+      },
+      "4": {
+        "question": "¿Necesito crear una cuenta?",
+        "answer": "No, puedes usar {{agentName}} sin crear una cuenta. Sin embargo, crear una cuenta te permite guardar tus consultas y rastrear tu historial de salud."
+      },
+      "5": {
+        "question": "¿Qué tipo de consejos médicos puedo obtener?",
+        "answer": "Puedes preguntar sobre síntomas, preocupaciones generales de salud, información sobre medicamentos y consejos sobre estilo de vida. Sin embargo, {{agentName}} no puede diagnosticar condiciones graves ni recetar medicamentos."
+      },
+      "6": {
+        "question": "¿El servicio está disponible 24/7?",
+        "answer": "Sí, {{agentName}} está disponible las 24 horas del día. Puedes obtener consejos médicos cuando los necesites, sin esperar horas de oficina."
+      },
+      "7": {
+        "question": "¿Qué tan precisos son los consejos médicos?",
+        "answer": "Si bien {{agentName}} proporciona información basada en conocimientos médicos y mejores prácticas, es importante recordar que no es un sustituto del consejo médico profesional. Siempre consulta con un proveedor de atención médica para preocupaciones graves."
+      }
+    }
+  },
+  "privacy": {
+    "title": "Política de privacidad",
+    "lastUpdated": "Última actualización: {{date}}",
+    "introduction": "Tomamos tu privacidad en serio. Esta Política de privacidad explica cómo recopilamos, usamos y protegemos tu información personal cuando usas nuestros servicios. Al usar nuestra plataforma, aceptas la recopilación y el uso de información de acuerdo con esta política.",
+    "information": {
+      "title": "Información que recopilamos",
+      "description": "Recopilamos varios tipos de información para proporcionar y mejorar nuestros servicios, incluida información personal como tu nombre, dirección de correo electrónico e historial médico. También recopilamos datos de uso para comprender cómo interactúas con nuestra plataforma."
+    },
+    "usage": {
+      "title": "Cómo usamos tu información",
+      "description": "Usamos la información recopilada para mantener y mejorar nuestros servicios, mejorar tu experiencia de usuario, comunicarnos contigo sobre actualizaciones y cambios, y garantizar la seguridad de nuestra plataforma."
+    },
+    "security": {
+      "title": "Seguridad de datos",
+      "description": "Implementamos medidas de seguridad apropiadas para proteger tu información personal contra acceso no autorizado, alteración, divulgación o destrucción. Tus datos están encriptados y almacenados de forma segura."
+    },
+    "rights": {
+      "title": "Tus derechos",
+      "description": "Tienes derecho a acceder, corregir o eliminar tu información personal. También puedes solicitar una copia de tus datos o retirar tu consentimiento para el procesamiento de datos en cualquier momento."
+    },
+    "contact": {
+      "title": "Contáctanos",
+      "description": "Si tienes alguna pregunta sobre esta Política de privacidad, contáctanos en privacy@{{websiteName}}{{websiteTld}}"
+    }
+  },
+  "terms": {
+    "title": "Términos de servicio",
+    "lastUpdated": "Última actualización: {{date}}",
+    "introduction": "Bienvenido a {{agentName}}. Al usar nuestros servicios, aceptas estos Términos de servicio. Por favor, lee estos términos cuidadosamente antes de usar nuestra plataforma.",
+    "acceptance": {
+      "title": "Aceptación de términos",
+      "description": "Al usar {{agentName}}, confirmas que has leído, entendido y aceptas estos Términos de servicio."
+    },
+    "services": {
+      "title": "Descripción del servicio",
+      "description": "{{agentName}} es una plataforma de asesoramiento médico basada en AI. Proporcionamos información general de salud pero no somos un sustituto del consejo médico profesional."
+    },
+    "userResponsibilities": {
+      "title": "Responsabilidades del usuario",
+      "description": "Aceptas proporcionar información precisa y mantener la seguridad de tu cuenta."
+    },
+    "limitations": {
+      "title": "Limitaciones del servicio",
+      "description": "Nuestro servicio no es un sustituto del consejo médico profesional. Siempre consulta con tu médico para condiciones médicas graves."
+    },
+    "intellectualProperty": {
+      "title": "Propiedad intelectual",
+      "description": "Todo el contenido y funcionalidad de la plataforma es propiedad de {{agentName}} y está protegido por las leyes aplicables."
+    },
+    "liability": {
+      "title": "Limitación de responsabilidad",
+      "description": "{{agentName}} no es responsable de ningún daño resultante del uso de nuestros servicios."
+    },
+    "changes": {
+      "title": "Cambios en los términos",
+      "description": "Nos reservamos el derecho de modificar estos términos en cualquier momento y notificaremos a los usuarios sobre cualquier cambio."
+    },
+    "contact": {
+      "title": "Contacto",
+      "description": "Para preguntas sobre los Términos de servicio, envía un correo electrónico a terms@{{domain}}."
+    }
+  },
+  "security": {
+    "title": "Seguridad",
+    "lastUpdated": "Última actualización: {{date}}",
+    "introduction": "En {{agentName}}, la seguridad de tus datos médicos es nuestra máxima prioridad. Esta página describe las medidas de seguridad integrales que implementamos para proteger tu información.",
+    "dataProtection": {
+      "title": "Protección de datos",
+      "description": "Empleamos estándares de encriptación líderes en la industria para proteger tus datos médicos. Toda la información está encriptada tanto en tránsito como en reposo utilizando protocolos de encriptación avanzados."
+    },
+    "encryption": {
+      "title": "Estándares de encriptación",
+      "description": "Usamos encriptación AES-256 para datos en reposo y TLS 1.3 para datos en tránsito. Tu información médica sensible está protegida por los mismos estándares de seguridad utilizados por las principales instituciones de salud."
+    },
+    "access": {
+      "title": "Control de acceso",
+      "description": "Implementamos estrictos controles de acceso y medidas de autenticación para garantizar que solo los usuarios autorizados puedan acceder a su información. La autenticación multifactor está disponible para mayor seguridad."
+    },
+    "compliance": {
+      "title": "Cumplimiento",
+      "description": "Nuestra plataforma cumple con los estándares internacionales de seguridad y las regulaciones de salud para garantizar el más alto nivel de protección de datos y cumplimiento de privacidad."
+    },
+    "monitoring": {
+      "title": "Monitoreo 24/7",
+      "description": "Nuestros sistemas de seguridad son monitoreados las 24 horas del día para detectar y prevenir intentos de acceso no autorizado y garantizar la protección continua de tus datos."
+    },
+    "contact": {
+      "title": "Contacto de seguridad",
+      "description": "Para consultas relacionadas con la seguridad o para informar problemas de seguridad, contacta a nuestro equipo de seguridad en security@{{domain}}."
+    }
+  },
+  "contact": {
+    "title": "Contáctanos",
+    "subtitle": "Soporte técnico y consultas comerciales",
+    "introduction": "Esta página de contacto es solo para soporte técnico, consultas comerciales y oportunidades publicitarias. Para consejos médicos o preguntas relacionadas con la salud, utiliza la función de chat en nuestra página de inicio.",
+    "email": {
+      "title": "Envíanos un correo electrónico",
+      "description": "Para soporte técnico, cooperación comercial o consultas publicitarias, envíanos un correo electrónico a:",
+      "address": "info@azdoc.ai"
+    },
+    "support": {
+      "title": "Horario de soporte técnico",
+      "description": "Nuestro objetivo es responder a todas las consultas técnicas y comerciales dentro de 24 horas."
+    },
+    "note": "Para preguntas médicas o consejos de salud, regresa a la página de inicio y usa nuestro servicio de chat AI. Para emergencias médicas, contacta a tus servicios de emergencia locales de inmediato.",
+    "medicalNote": {
+      "title": "¿Buscas consejo médico?",
+      "description": "Utiliza nuestro servicio de chat AI en la página de inicio para cualquier pregunta relacionada con la salud. Nuestro doctor AI está disponible 24/7 para ayudarte con consultas médicas."
+    }
+  },
+  "blog": {
+    "title": "Blog",
+    "subtitle": "Últimos artículos e información sobre salud",
+    "readMore": "Leer más",
+    "backToList": "Volver al blog",
+    "publishedOn": "Publicado el",
+    "author": "Autor",
+    "readingTime": "{{minutes}} min de lectura",
+    "tags": "Etiquetas",
+    "relatedPosts": "Artículos relacionados",
+    "postsTaggedWith": "Publicaciones etiquetadas con",
+    "tagDescription": "{{count}} artículos etiquetados con {{tag}}",
+    "noPostsWithTag": "No se encontraron artículos con la etiqueta {{tag}}",
+    "checkOtherTags": "Por favor, revisa otras etiquetas o regresa a la página principal del blog",
+    "tag": {
+      "title": "Etiqueta: {{tag}}",
+      "description": "Explorar artículos sobre {{tag}}",
+      "empty": {
+        "title": "Etiqueta no encontrada",
+        "description": "La etiqueta solicitada no existe. Por favor, verifica la URL o navega por todos los artículos."
+      },
+      "otherTags": "Otras etiquetas",
+      "notFound": "Etiqueta no encontrada"
+    },
+    "search": {
+      "title": "Buscar en el blog",
+      "placeholder": "Buscar artículos...",
+      "button": "Buscar",
+      "noResults": "No se encontraron artículos para tu búsqueda.",
+      "results": "Resultados de búsqueda",
+      "resultsFor": "Resultados de búsqueda para",
+      "noResultsFor": "No se encontraron resultados para \"{{query}}\"",
+      "tryAgain": "Por favor, intenta un término de búsqueda diferente o navega por nuestros artículos a continuación",
+      "searching": "Buscando...",
+      "foundResults": "Se encontraron {{count}} resultados",
+      "enterQuery": "¿Qué estás buscando?",
+      "enterQueryDescription": "Ingresa un término de búsqueda arriba para encontrar artículos relevantes"
+    },
+    "filter": {
+      "byTag": "Filtrar por etiqueta",
+      "allPosts": "Todos los artículos",
+      "popular": "Popular",
+      "latest": "Más reciente"
+    },
+    "admin": {
+      "createPost": "Crear nueva publicación",
+      "editPost": "Editar publicación",
+      "deletePost": "Eliminar publicación",
+      "manageTags": "Gestionar etiquetas",
+      "confirmDelete": "¿Estás seguro de que quieres eliminar esta publicación?",
+      "form": {
+        "title": "Título",
+        "titlePlaceholder": "Ingresa el título de la publicación",
+        "summary": "Resumen",
+        "summaryPlaceholder": "Breve resumen de tu artículo",
+        "content": "Contenido",
+        "contentPlaceholder": "Escribe tu artículo aquí...",
+        "featuredImage": "URL de imagen destacada",
+        "featuredImagePlaceholder": "https://ejemplo.com/imagen.jpg",
+        "tags": "Etiquetas",
+        "tagsPlaceholder": "Agregar etiquetas",
+        "newTag": "Agregar nueva etiqueta",
+        "published": "Publicado",
+        "draft": "Borrador",
+        "saveAsDraft": "Guardar como borrador",
+        "publish": "Publicar",
+        "update": "Actualizar",
+        "cancel": "Cancelar",
+        "language": "Idioma de la publicación",
+        "languageOptions": {
+          "az": "Azerbaiyano",
+          "en": "Inglés",
+          "tr": "Turco"
+        }
+      },
+      "messages": {
+        "createSuccess": "Publicación creada exitosamente",
+        "updateSuccess": "Publicación actualizada exitosamente",
+        "deleteSuccess": "Publicación eliminada exitosamente",
+        "error": "Ocurrió un error. Por favor, inténtalo de nuevo."
+      }
+    },
+    "empty": {
+      "title": "No hay artículos aún",
+      "description": "Estamos trabajando en agregar nuevo contenido. ¡Por favor, vuelve más tarde!"
+    }
+  },
+  "admin": {
+    "title": "Panel de administración",
+    "dashboard": "Panel de control",
+    "posts": {
+      "title": "Publicaciones del blog",
+      "description": "Gestiona y publica el contenido de tu blog",
+      "create": "Crear nueva publicación",
+      "selected": "{{count}} publicaciones seleccionadas",
+      "confirmDelete": "¿Eliminar publicación?",
+      "confirmBulkDelete": "¿Eliminar {{count}} publicaciones?",
+      "deleteWarning": "Esta acción no se puede deshacer. La publicación será eliminada permanentemente.",
+      "published": "Publicado",
+      "draft": "Borrador",
+      "noTags": "Sin etiquetas",
+      "empty": "No se encontraron publicaciones. Crea tu primera publicación para comenzar.",
+      "table": {
+        "title": "Título",
+        "status": "Estado",
+        "tags": "Etiquetas",
+        "created": "Creado",
+        "actions": "Acciones"
+      },
+      "view": "Ver",
+      "edit": "Editar",
+      "delete": "Eliminar",
+      "form": {
+        "createTitle": "Crear nueva publicación",
+        "editTitle": "Editar publicación",
+        "createDescription": "Agregar una nueva publicación a tu blog",
+        "editDescription": "Actualizar tu publicación existente",
+        "title": "Título",
+        "slug": "Slug",
+        "generateSlug": "Generar desde el título",
+        "slugPlaceholder": "tu-url-de-publicacion",
+        "slugHelp": "Identificador amigable con URL para tu publicación. Usa solo letras minúsculas, números y guiones.",
+        "summary": "Resumen",
+        "summaryHelp": "Una breve descripción de tu publicación (máx. 500 caracteres)",
+        "content": "Contenido",
+        "featuredImage": "URL de imagen destacada",
+        "tags": "Etiquetas",
+        "addTag": "Agregar una etiqueta",
+        "addTagButton": "Agregar",
+        "availableTags": "Etiquetas disponibles",
+        "language": "Idioma",
+        "published": "Publicado",
+        "publishedHelp": "Cuando esté marcado, la publicación será visible públicamente en tu blog",
+        "cancel": "Cancelar",
+        "saveDraft": "Guardar como borrador",
+        "publish": "Publicar",
+        "saving": "Guardando...",
+        "preview": "Vista previa",
+        "editMode": "Modo de edición",
+        "unsavedChanges": "Cambios sin guardar",
+        "unsavedChangesWarning": "Tienes cambios sin guardar que se perderán si te vas. ¿Estás seguro de que quieres continuar?",
+        "leaveAnyway": "Salir de todos modos",
+        "stayAndEdit": "Permanecer y editar",
+        "createSuccess": "Publicación creada exitosamente",
+        "updateSuccess": "Publicación actualizada exitosamente",
+        "saveError": "Error al guardar la publicación",
+        "errors": {
+          "titleRequired": "El título es obligatorio",
+          "summaryRequired": "El resumen es obligatorio",
+          "summaryTooLong": "El resumen debe tener menos de 500 caracteres",
+          "contentRequired": "El contenido es obligatorio",
+          "imageRequired": "La URL de la imagen destacada es obligatoria",
+          "invalidUrl": "Por favor, ingresa una URL válida",
+          "imageUploadFailed": "Error al cargar la imagen. Por favor, inténtalo de nuevo."
+        },
+        "save": "Guardar publicación"
+      }
+    },
+    "tags": {
+      "title": "Etiquetas",
+      "description": "Gestiona categorías y etiquetas para tus publicaciones del blog",
+      "create": "Agregar nueva etiqueta",
+      "namePlaceholder": "Ingresa el nombre de la etiqueta",
+      "add": "Agregar etiqueta",
+      "confirmDelete": "¿Eliminar etiqueta?",
+      "deleteWarning": "Esta acción no se puede deshacer. La etiqueta será eliminada permanentemente de todas las publicaciones.",
+      "postsCount": "{{count}} publicaciones",
+      "noTags": "No se encontraron etiquetas. Crea tu primera etiqueta para comenzar.",
+      "noSearchResults": "No hay etiquetas que coincidan con tu búsqueda",
+      "search": "Buscar etiquetas",
+      "createSuccess": "Etiqueta creada exitosamente",
+      "updateSuccess": "Etiqueta actualizada exitosamente",
+      "deleteSuccess": "Etiqueta eliminada exitosamente"
+    },
+    "users": {
+      "title": "Usuarios",
+      "admins": "Administradores",
+      "authors": "Autores",
+      "readers": "Lectores"
+    },
+    "settings": {
+      "title": "Configuración",
+      "general": "Configuración general",
+      "theme": "Tema",
+      "theme.light": "Claro",
+      "theme.dark": "Oscuro",
+      "theme.system": "Sistema"
+    },
+    "stats": {
+      "totalPosts": "Total de publicaciones",
+      "publishedPosts": "Publicadas",
+      "draftPosts": "Borradores",
+      "tags": "Etiquetas",
+      "users": "Usuarios",
+      "views": "Vistas"
+    },
+    "recentPosts": "Publicaciones recientes",
+    "noPosts": "No se encontraron publicaciones",
+    "unknownAuthor": "Autor desconocido",
+    "filtersText": "Filtros",
+    "filters": {
+      "all": "Todas",
+      "published": "Publicadas",
+      "draft": "Borradores"
+    },
+    "search": "Buscar",
+    "pagination": {
+      "previous": "Anterior",
+      "next": "Siguiente",
+      "showing": "Mostrando {{from}} a {{to}} de {{total}} resultados"
+    }
+  },
+  "filters": {
+    "all": "Todas las consultas",
+    "upcoming": "Próximas",
+    "completed": "Completadas",
+    "past": "Pasadas"
+  },
+  "status": {
+    "undefined": "Estado desconocido"
+  },
+  "viewDetails": "Ver detalles"
+}
