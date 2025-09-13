@@ -3,14 +3,14 @@ import axios from 'axios';
 const getBaseUrl = () => {
   if (typeof window === 'undefined') {
     // Server-side: use environment variable or default
-    return process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+    return process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
   }
-  
+
   // Client-side: check if we're in development
   if (process.env.NODE_ENV === 'development') {
-    return 'http://localhost:8080/api';
+    return process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
   }
-  
+
   // Production: use relative URL
   return '/api';
 };

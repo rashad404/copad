@@ -15,7 +15,7 @@ const BlogDebugPage = () => {
         setLoading(true);
         
         // Make a direct fetch call to bypass any axios configuration issues
-        const response = await fetch('http://localhost:8080/api/blog?page=0&size=9&sortBy=publishedAt&direction=desc');
+        const response = await fetch('http://100.89.150.50:8002/api/blog?page=0&size=9&sortBy=publishedAt&direction=desc');
         
         if (!response.ok) {
           throw new Error(`API call failed with status: ${response.status}`);
@@ -75,7 +75,7 @@ const BlogDebugPage = () => {
         <div className="mt-8">
           <h2 className="text-xl font-bold mb-4">Raw API Request</h2>
           <div className="bg-gray-100 p-4 rounded-lg overflow-auto max-h-40">
-            <pre>GET http://localhost:8080/api/blog?page=0&size=9&sortBy=publishedAt&direction=desc</pre>
+            <pre>GET http://100.89.150.50:8002/api/blog?page=0&size=9&sortBy=publishedAt&direction=desc</pre>
           </div>
         </div>
       </div>

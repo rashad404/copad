@@ -7,7 +7,7 @@
 import { BlogPost, BlogPostListItem, Tag } from './blog';
 
 // Constants
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8080/api';
+const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
 
 /**
  * Basic fetch wrapper with error handling

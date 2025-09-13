@@ -34,10 +34,13 @@ public class SecurityConfig {
             "http://127.0.0.1:5173",
             "http://localhost:3000",
             "http://127.0.0.1:3000",
+            "http://localhost:3002",  // Production localhost access
+            "http://127.0.0.1:3002",  // Production localhost access
             "http://192.168.1.105:3000",
             "http://localhost:8081",
             "http://127.0.0.1:8081",
             "http://192.168.1.105:8081",
+            "http://100.89.150.50:3002",  // Local development with custom IP
             "https://virtualhekim.az",
             "https://azdoc.ai",
             "https://logman.az"
