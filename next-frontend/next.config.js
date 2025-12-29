@@ -1,5 +1,9 @@
+const path = require('path');
+
 /** @type {import('next').NextConfig} */
 const nextConfig = {
+  // Fix for monorepo lockfile detection
+  outputFileTracingRoot: path.join(__dirname, './'),
   images: {
     domains: [
       'example.com', 
