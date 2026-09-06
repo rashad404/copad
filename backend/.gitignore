@@ -41,6 +41,12 @@ build/
 *.db
 .DS_Store
 .env
+.env.*
+!.env.example
 application-local.yml
 backend/src/main/resources/application-local.yml
 uploads/
+
+# Local-only dev tooling (not shared)
+run-local.sh
+seed-local.sh
