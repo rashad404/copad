@@ -1,9 +1,10 @@
 import axios from 'axios';
+import { resolveApiBaseUrl } from './apiBase';
 
 const getBaseUrl = () => {
   if (typeof window === 'undefined') {
-    // Server-side: use environment variable or default
-    return process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
+    // Server-side: never the public origin, or SSR recurses into itself
+    return resolveApiBaseUrl();
   }
 
   // Client-side: check if we're in development

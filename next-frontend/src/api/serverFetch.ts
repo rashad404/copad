@@ -5,9 +5,10 @@
  */
 
 import { BlogPost, BlogPostListItem, Tag } from './blog';
+import { resolveApiBaseUrl } from './apiBase';
 
 // Constants
-const API_URL = process.env.NEXT_PUBLIC_API_URL || 'http://100.89.150.50:8002/api';
+const API_URL = resolveApiBaseUrl();
 
 /**
  * Basic fetch wrapper with error handling
