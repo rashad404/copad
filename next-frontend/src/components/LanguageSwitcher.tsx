@@ -91,9 +91,14 @@ export default function LanguageSwitcher() {
 
   const handleLanguageChange = (language: Language) => {
     setSelected(language);
-    // Save language preference to localStorage
+    // Save the preference for both renderers: localStorage for the client, and a
+    // cookie for the server. The blog's Server Components read i18nextLng from
+    // the cookie header, and localStorage is never sent with a request - without
+    // the cookie the reload below re-renders in the old language and the post
+    // list comes back empty.
     if (typeof window !== 'undefined') {
       localStorage.setItem('i18nextLng', language.code);
+      document.cookie = `i18nextLng=${language.code}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
     }
     i18n.changeLanguage(language.code);
     

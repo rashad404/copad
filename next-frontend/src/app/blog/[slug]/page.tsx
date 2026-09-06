@@ -4,6 +4,7 @@ import BlogPostClient from './client';
 import { getBlogPostBySlug, getBlogPosts } from '@/api/serverFetch'; 
 import { BlogPost, BlogPostListItem } from '@/api/blog';
 import { siteConfig } from '@/context/siteConfig';
+import { resolveBlogLanguage } from '@/utils/blogLanguage';
 
 // Types for generateMetadata props
 type Props = {
@@ -215,15 +216,9 @@ export default async function BlogPostPage({ params, searchParams }: { params: {
   const headersList = await headers();
   const userAgent = headersList.get('user-agent') || '';
   
-  // Get language from query param first, then from accept-language header, default to 'en'
-  // Query param allows for explicit language override
-  const langFromHeader = headersList.get('accept-language')?.split(',')[0]?.split('-')[0];
+  // Priority: 1. URL param, 2. the i18nextLng cookie, 3. the site default
   const cookieHeader = headersList.get('cookie') || '';
-  const i18nextLngMatch = cookieHeader.match(/i18nextLng=([^;]+)/);
-  const langFromCookie = i18nextLngMatch ? i18nextLngMatch[1] : null;
-  
-  // Priority: 1. URL param, 2. Cookie, 3. Browser header, 4. Default
-  const lang = searchParams?.lang || langFromCookie || langFromHeader || 'en';
+  const lang = resolveBlogLanguage(searchParams?.lang, cookieHeader);
   
   // Fetch data on the server
   const { post, relatedPosts, error } = await fetchBlogPost(slug);
