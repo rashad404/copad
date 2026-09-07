@@ -7,7 +7,6 @@ import { Manrope } from "next/font/google";
 import { useSearchParams } from "next/navigation";
 import { useTranslation } from "react-i18next";
 import {
-  ArrowLeft,
   ArrowUpRight,
   Eye,
   EyeOff,
@@ -17,7 +16,7 @@ import {
 } from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import SiteHeader from "@/components/navigation/SiteHeader";
 import PublicRoute from "@/components/PublicRoute";
 import api from "@/api";
 import { authCopy } from "./copy";
@@ -84,19 +83,9 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   return (
     <PublicRoute>
       <div className={`${styles.page} ${manrope.className}`} lang={language}>
-        <header className={styles.header}>
-          <Link href="/" className={styles.logo} aria-label={brand}>
-            {brand}
-            <span>•</span>
-          </Link>
-          <div className={styles.headerActions}>
-            <LanguageSwitcher />
-            <Link href="/" className={styles.back}>
-              <ArrowLeft size={15} aria-hidden="true" />
-              {copy.home}
-            </Link>
-          </div>
-        </header>
+        <div className={styles.siteHeader}>
+          <SiteHeader />
+        </div>
         <main className={styles.main}>
           <aside className={styles.story}>
             <div className={styles.orbitOne} aria-hidden="true" />
@@ -107,10 +96,8 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
             </div>
             <h2>
               {copy.lineOne}
-              <br />{" "}
-              {copy.lineTwo}
-              <br />{" "}
-              <em>{copy.lineThree}</em>
+              <br /> {copy.lineTwo}
+              <br /> <em>{copy.lineThree}</em>
             </h2>
             <p className={styles.storyText}>{copy.story}</p>
             <div className={styles.illustration}>

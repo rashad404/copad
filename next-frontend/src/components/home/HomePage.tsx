@@ -1,10 +1,10 @@
 "use client";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
-import LanguageSwitcher from "@/components/LanguageSwitcher";
+import SiteHeader from "@/components/navigation/SiteHeader";
 import { homeCopy } from "./copy";
 import "./homepage.css";
 const members = ["Leyla", "Ayan", "Rauf"];
@@ -17,16 +17,8 @@ export default function HomePage() {
   const requestedLanguage = i18n.language.split("-")[0];
   const language = requestedLanguage in homeCopy ? requestedLanguage : "en";
   const copy = (text: string) => homeCopy[language]?.[text] ?? text;
-  useEffect(() => {
-    const closeOnEscape = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMenu(false);
-    };
-    window.addEventListener("keydown", closeOnEscape);
-    return () => window.removeEventListener("keydown", closeOnEscape);
-  }, []);
   const [member, setMember] = useState("Leyla");
   const [view, setView] = useState("Nəticələr");
-  const [menu, setMenu] = useState(false);
   const [answer, setAnswer] = useState(false);
   return (
     <div
@@ -37,50 +29,7 @@ export default function HomePage() {
       <a className="skip-link" href="#main">
         {copy("Əsas məzmuna keç")}
       </a>
-      <header className="header wrap">
-        <a className="logo" href="#">
-          {brand}
-          <span className="logo-dot">•</span>
-        </a>
-        <nav
-          id="home-navigation"
-          onClick={() => setMenu(false)}
-          aria-label={copy("Əsas naviqasiya")}
-          className={menu ? "nav open" : "nav"}
-        >
-          <a href="#how">{copy("Necə işləyir")}</a>
-          <a href="#family">{copy("Ailəniz üçün")}</a>
-          <a href="#questions">{copy("Suallar")}</a>
-          <Link
-            className="mobile-account"
-            href={isAuthenticated ? "/dashboard" : "/login"}
-          >
-            {copy(isAuthenticated ? "Hesabım" : "Daxil ol")}
-          </Link>
-        </nav>
-        <div className="header-actions">
-          <LanguageSwitcher />
-          <Link
-            className="login-link"
-            href={isAuthenticated ? "/dashboard" : "/login"}
-          >
-            {copy(isAuthenticated ? "Hesabım" : "Daxil ol")}
-          </Link>
-          <Link className="header-cta" href="/chat">
-            {copy("Sual ver")}
-            <span>↗</span>
-          </Link>
-        </div>
-        <button
-          className="menu"
-          aria-label={copy("Menyu")}
-          aria-controls="home-navigation"
-          aria-expanded={menu}
-          onClick={() => setMenu(!menu)}
-        >
-          ☰
-        </button>
-      </header>
+      <SiteHeader />
       <main id="main">
         <section className="hero wrap">
           <div className="hero-copy">
