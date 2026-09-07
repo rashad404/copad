@@ -1,13 +1,13 @@
-'use client';
-
+"use client";
 import { useEffect, useState } from "react";
-import Breadcrumb from "@/components/Breadcrumb";
 import api from "@/api";
-import { Save, User, AlertCircle, Loader, CheckCircle } from "lucide-react";
 import { useTranslation } from "react-i18next";
-import MainLayout from "@/components/layouts/MainLayout";
+import { useAuth } from "@/context/AuthContext";
 import ProtectedRoute from "@/components/ProtectedRoute";
-
+import ProductLayout, {
+  PageIntro,
+  usePublicCopy,
+} from "@/components/public/ProductLayout";
 interface MedicalProfile {
   height: string;
   weight: string;
@@ -26,7 +26,7 @@ interface Profile {
 }
 
 /** The API omits optional fields entirely, so every value is treated as absent-able. */
-type RawProfile = Partial<Omit<Profile, 'medicalProfile'>> & {
+type RawProfile = Partial<Omit<Profile, "medicalProfile">> & {
   medicalProfile?: Partial<MedicalProfile>;
 };
 
@@ -43,276 +43,260 @@ const normalizeProfile = (data: RawProfile): Profile => ({
     allergies: data.medicalProfile?.allergies ?? "",
     medications: data.medicalProfile?.medications ?? "",
     lifestyle: data.medicalProfile?.lifestyle ?? "",
-  }
+  },
 });
 
 export default function ProfilePage() {
-  const { t } = useTranslation();
-  const [profile, setProfile] = useState<Profile>({
-    name: "",
-    email: "",
-    age: "",
-    gender: "",
-    medicalProfile: {
-      height: "",
-      weight: "",
-      conditions: "",
-      allergies: "",
-      medications: "",
-      lifestyle: ""
-    }
-  });
-
+  const { t, i18n } = useTranslation();
+  const c = usePublicCopy();
+  const { isAuthenticated } = useAuth();
+  const [profile, setProfile] = useState<Profile>(normalizeProfile({}));
   const [loading, setLoading] = useState(true);
+  const [saving, setSaving] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [saved, setSaved] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
+  const [error, setError] = useState("");
+  const [retry, setRetry] = useState(0);
   useEffect(() => {
-    const fetchProfile = async () => {
-      try {
-        const res = await api.get('/profile');
-        const data = res.data;
-        setProfile(normalizeProfile(data));
-      } catch (err) {
-        console.error("Profile API error", err);
-        setError(t("profile.errorLoading"));
-      } finally {
-        setLoading(false);
-      }
+    if (!isAuthenticated) return;
+    let active = true;
+    setLoading(true);
+    setError("");
+    api
+      .get("/profile")
+      .then((res) => {
+        if (active) {
+          setProfile(normalizeProfile(res.data));
+          setLoaded(true);
+        }
+      })
+      .catch(() => {
+        if (active)
+          setError(
+            t("profile.errorLoading", {
+              defaultValue: i18n.language.startsWith("az")
+                ? "Profilinizi yükləmək mümkün olmadı. Yenidən cəhd edin."
+                : "Unable to load your profile. Please try again.",
+            }),
+          );
+      })
+      .finally(() => {
+        if (active) setLoading(false);
+      });
+    return () => {
+      active = false;
     };
-
-    fetchProfile();
-  }, [t]);
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setProfile({ ...profile, [e.target.name]: e.target.value });
-  };
-
-  const handleMedicalChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
-    setProfile({
-      ...profile,
-      medicalProfile: {
-        ...profile.medicalProfile,
-        [e.target.name]: e.target.value
-      }
-    });
-  };
-
-  const handleSubmit = async (e: React.FormEvent) => {
+  }, [isAuthenticated, retry, t, i18n.language]);
+  function edit(key: keyof Omit<Profile, "medicalProfile">, value: string) {
+    setSaved(false);
+    setProfile((p) => ({ ...p, [key]: value }));
+  }
+  function editMedical(key: keyof MedicalProfile, value: string) {
+    setSaved(false);
+    setProfile((p) => ({
+      ...p,
+      medicalProfile: { ...p.medicalProfile, [key]: value },
+    }));
+  }
+  async function submit(e: React.FormEvent) {
     e.preventDefault();
+    if (saving) return;
+    setSaving(true);
+    setError("");
+    setSaved(false);
     try {
-      await api.put('/profile', profile);
+      await api.put("/profile", profile);
       setSaved(true);
-      setTimeout(() => setSaved(false), 2000);
-    } catch (err) {
-      console.error("Error saving profile", err);
-      setError(t("profile.errorSaving"));
+    } catch {
+      setError(
+        t("profile.errorSaving", {
+          defaultValue: c(
+            "Unable to save changes. Please try again.",
+            "Dəyişiklikləri saxlamaq mümkün olmadı. Yenidən cəhd edin.",
+          ),
+        }),
+      );
+    } finally {
+      setSaving(false);
     }
-  };
-
+  }
   return (
     <ProtectedRoute>
-      <MainLayout>
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-          <Breadcrumb items={[{ label: t("navbar.profile") }]} />
-        
-        <div className="bg-white dark:bg-gray-800 rounded-xl shadow-sm overflow-hidden mt-6">
-          {/* Header section */}
-          <div className="p-6 sm:p-8 bg-gradient-to-r from-indigo-600 to-violet-600 text-white">
-            <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-              <div>
-                <h1 className="text-2xl sm:text-3xl font-bold">{t("profile.title")}</h1>
-                <p className="mt-1 text-indigo-100">{t("profile.subtitle")}</p>
-              </div>
-              <button
-                type="submit"
-                form="profile-form"
-                className="flex items-center gap-2 bg-white text-indigo-600 px-4 py-2 rounded-lg font-medium shadow-sm hover:bg-indigo-50 transition-colors"
-              >
-                <Save size={18} />
-                {t("profile.saveChanges")}
-              </button>
+      <ProductLayout>
+        <div className="public-container">
+          <PageIntro
+            eyebrow={c("Your account", "Hesabınız")}
+            title={t("profile.title")}
+            description={t("profile.subtitle")}
+          />
+          <div className="public-profile-grid">
+            <aside className="public-toc">
+              <a href="#personal">
+                01 <span>{t("profile.personalInfo.title")}</span>
+              </a>
+              <a href="#medical">
+                02 <span>{t("profile.medicalInfo.title")}</span>
+              </a>
+              <p className="public-small">
+                {c(
+                  "Share only the details you’re comfortable adding. You can update them here.",
+                  "Yalnız paylaşmaq istədiyiniz məlumatları əlavə edin. Onları burada yeniləyə bilərsiniz.",
+                )}
+              </p>
+            </aside>
+            <div>
+              {error && (
+                <div className="public-error" role="alert">
+                  {error}
+                  {!loaded && (
+                    <button
+                      type="button"
+                      onClick={() => setRetry((x) => x + 1)}
+                    >
+                      {c("Try again", "Yenidən cəhd et")}
+                    </button>
+                  )}
+                </div>
+              )}
+              {loading ? (
+                <p role="status" className="public-loading">
+                  {t("profile.loading")}
+                </p>
+              ) : (
+                loaded && (
+                  <form
+                    id="profile-form"
+                    className="public-profile-form"
+                    onSubmit={submit}
+                  >
+                    <fieldset disabled={saving}>
+                      <section id="personal">
+                        <div className="public-section-heading">
+                          <span className="public-section-number">01</span>
+                          <h2>{t("profile.personalInfo.title")}</h2>
+                        </div>
+                        <div className="public-field-grid">
+                          {(["name", "email", "age"] as const).map((key) => (
+                            <label key={key} htmlFor={key}>
+                              {t(
+                                `profile.personalInfo.${key === "name" ? "fullName" : key}`,
+                              )}
+                              <input
+                                id={key}
+                                name={key}
+                                autoComplete={key === "age" ? "off" : key}
+                                type={
+                                  key === "age"
+                                    ? "number"
+                                    : key === "email"
+                                      ? "email"
+                                      : "text"
+                                }
+                                min={key === "age" ? 0 : undefined}
+                                max={key === "age" ? 130 : undefined}
+                                required={key !== "age"}
+                                value={profile[key]}
+                                onChange={(e) => edit(key, e.target.value)}
+                              />
+                            </label>
+                          ))}
+                          <label htmlFor="gender">
+                            {t("profile.personalInfo.gender")}
+                            <select
+                              id="gender"
+                              value={profile.gender}
+                              onChange={(e) => edit("gender", e.target.value)}
+                            >
+                              <option value="">
+                                {t("profile.personalInfo.genderPlaceholder")}
+                              </option>
+                              <option value="male">
+                                {t("profile.personalInfo.genderOptions.male")}
+                              </option>
+                              <option value="female">
+                                {t("profile.personalInfo.genderOptions.female")}
+                              </option>
+                            </select>
+                          </label>
+                        </div>
+                      </section>
+                      <section id="medical">
+                        <div className="public-section-heading">
+                          <span className="public-section-number">02</span>
+                          <h2>{t("profile.medicalInfo.title")}</h2>
+                        </div>
+                        <div className="public-field-grid">
+                          {(["height", "weight"] as const).map((key) => (
+                            <label key={key} htmlFor={key}>
+                              {t(`profile.medicalInfo.${key}`)}
+                              <input
+                                id={key}
+                                type="number"
+                                min="0"
+                                step="any"
+                                value={profile.medicalProfile[key]}
+                                onChange={(e) =>
+                                  editMedical(key, e.target.value)
+                                }
+                              />
+                            </label>
+                          ))}
+                          {(
+                            [
+                              "conditions",
+                              "allergies",
+                              "medications",
+                              "lifestyle",
+                            ] as const
+                          ).map((key) => (
+                            <label
+                              key={key}
+                              htmlFor={key}
+                              className="public-field-wide"
+                            >
+                              {t(`profile.medicalInfo.${key}`)}
+                              <textarea
+                                id={key}
+                                rows={3}
+                                placeholder={t(
+                                  `profile.medicalInfo.${key}Placeholder`,
+                                )}
+                                value={profile.medicalProfile[key]}
+                                onChange={(e) =>
+                                  editMedical(key, e.target.value)
+                                }
+                              />
+                            </label>
+                          ))}
+                        </div>
+                      </section>
+                    </fieldset>
+                    <div className="public-save-bar">
+                      <span role="status">
+                        {saved
+                          ? t("profile.saved")
+                          : c(
+                              "Changes are saved when you select save.",
+                              "Dəyişikliklər yadda saxlama düyməsi ilə saxlanılır.",
+                            )}
+                      </span>
+                      <button
+                        className="public-button"
+                        disabled={saving}
+                        type="submit"
+                      >
+                        {saving
+                          ? c("Saving…", "Saxlanılır…")
+                          : t("profile.saveChanges")}
+                      </button>
+                    </div>
+                  </form>
+                )
+              )}
             </div>
           </div>
-
-          {/* Content section */}
-          <div className="p-6 sm:p-8">
-            {loading ? (
-              <div className="flex justify-center items-center py-12">
-                <Loader className="w-8 h-8 text-indigo-600 animate-spin" />
-                <span className="ml-2 text-gray-600 dark:text-gray-300">{t("profile.loading")}</span>
-              </div>
-            ) : error ? (
-              <div className="flex justify-center items-center py-12">
-                <AlertCircle className="w-8 h-8 text-red-500 mr-2" />
-                <span className="text-red-600 dark:text-red-400">{error}</span>
-              </div>
-            ) : (
-              <form id="profile-form" onSubmit={handleSubmit} className="space-y-8">
-                {/* Personal Information Section */}
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-                    <User className="mr-2 text-indigo-600 dark:text-indigo-400" size={20} />
-                    {t("profile.personalInfo.title")}
-                  </h2>
-                  <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.personalInfo.fullName")}</label>
-                        <input 
-                          name="name" 
-                          value={profile.name} 
-                          onChange={handleChange} 
-                          placeholder={t("profile.personalInfo.fullNamePlaceholder")}
-                          required 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.personalInfo.email")}</label>
-                        <input 
-                          name="email" 
-                          value={profile.email} 
-                          onChange={handleChange} 
-                          placeholder={t("profile.personalInfo.emailPlaceholder")}
-                          type="email" 
-                          required 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.personalInfo.age")}</label>
-                        <input 
-                          name="age" 
-                          value={profile.age} 
-                          onChange={handleChange} 
-                          placeholder={t("profile.personalInfo.agePlaceholder")}
-                          type="number" 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.personalInfo.gender")}</label>
-                        <select 
-                          name="gender" 
-                          value={profile.gender} 
-                          onChange={handleChange} 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none bg-white dark:bg-gray-800 dark:text-white"
-                        >
-                          <option value="">{t("profile.personalInfo.genderPlaceholder")}</option>
-                          <option value="male">{t("profile.personalInfo.genderOptions.male")}</option>
-                          <option value="female">{t("profile.personalInfo.genderOptions.female")}</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Medical Information Section */}
-                <div>
-                  <h2 className="text-xl font-semibold text-gray-800 dark:text-gray-200 mb-4 flex items-center">
-                    <AlertCircle className="mr-2 text-indigo-600 dark:text-indigo-400" size={20} />
-                    {t("profile.medicalInfo.title")}
-                  </h2>
-                  <div className="bg-gray-50 dark:bg-gray-900 p-6 rounded-lg border border-gray-200 dark:border-gray-700">
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 mb-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.height")}</label>
-                        <input 
-                          name="height" 
-                          value={profile.medicalProfile.height} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.heightPlaceholder")}
-                          type="number" 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.weight")}</label>
-                        <input 
-                          name="weight" 
-                          value={profile.medicalProfile.weight} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.weightPlaceholder")}
-                          type="number" 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                    </div>
-
-                    <div className="space-y-6">
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.conditions")}</label>
-                        <textarea 
-                          name="conditions" 
-                          value={profile.medicalProfile.conditions} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.conditionsPlaceholder")}
-                          rows={2} 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.allergies")}</label>
-                        <textarea 
-                          name="allergies" 
-                          value={profile.medicalProfile.allergies} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.allergiesPlaceholder")}
-                          rows={2} 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.medications")}</label>
-                        <textarea 
-                          name="medications" 
-                          value={profile.medicalProfile.medications} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.medicationsPlaceholder")}
-                          rows={2} 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                      <div>
-                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t("profile.medicalInfo.lifestyle")}</label>
-                        <textarea 
-                          name="lifestyle" 
-                          value={profile.medicalProfile.lifestyle} 
-                          onChange={handleMedicalChange} 
-                          placeholder={t("profile.medicalInfo.lifestylePlaceholder")}
-                          rows={2} 
-                          className="w-full border border-gray-300 dark:border-gray-600 p-3 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none dark:bg-gray-800 dark:text-white" 
-                        />
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Submit button (mobile version) */}
-                <div className="sm:hidden">
-                  <button 
-                    type="submit" 
-                    className="w-full flex items-center justify-center gap-2 bg-indigo-600 text-white px-4 py-3 rounded-lg font-medium shadow-sm hover:bg-indigo-700 transition-colors"
-                  >
-                    <Save size={18} />
-                    {t("profile.saveChanges")}
-                  </button>
-                </div>
-
-                {/* Success message */}
-                {saved && (
-                  <div className="fixed bottom-4 right-4 bg-green-500 text-white px-4 py-2 rounded-lg shadow-lg flex items-center gap-2">
-                    <CheckCircle size={18} />
-                    {t("profile.saved")}
-                  </div>
-                )}
-              </form>
-            )}
-          </div>
         </div>
-      </div>
-    </MainLayout>
+      </ProductLayout>
     </ProtectedRoute>
   );
 }
