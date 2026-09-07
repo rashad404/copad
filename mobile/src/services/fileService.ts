@@ -127,8 +127,14 @@ class FileService {
       headers['X-Guest-Session-Id'] = guestSessionId;
     }
     
-    const response = await api.post('/api/upload/chat/image', formData, { headers });
-    
+    if (!guestSessionId) {
+      // The session is what the attachment belongs to and what proves the
+      // right to read it back, so there is nowhere to put a file without one.
+      throw new Error('A session is required to upload a file');
+    }
+
+    const response = await api.post(`/api/guest/upload/${guestSessionId}`, formData, { headers });
+
     return {
       fileId: response.data.fileId,
       filename: response.data.filename,
@@ -163,8 +169,12 @@ class FileService {
       headers['X-Guest-Session-Id'] = guestSessionId;
     }
     
-    const response = await api.post('/api/upload/chat/document', formData, { headers });
-    
+    if (!guestSessionId) {
+      throw new Error('A session is required to upload a file');
+    }
+
+    const response = await api.post(`/api/guest/upload/${guestSessionId}`, formData, { headers });
+
     return {
       fileId: response.data.fileId,
       filename: response.data.filename,

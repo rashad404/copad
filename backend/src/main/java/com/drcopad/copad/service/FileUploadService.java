@@ -41,13 +41,12 @@ public class FileUploadService {
     private final FileAttachmentRepository fileAttachmentRepository;
     private final BatchFileUploadRepository batchFileUploadRepository;
     private final ObjectMapper objectMapper;
+    private final AttachmentStorageService attachmentStorage;
     private final RestTemplate restTemplate = new RestTemplate();
     
     @Value("${app.chatgpt.openai.key}")
     private String openaiApiKey;
     
-    @Value("${upload.base-dir}")
-    private String uploadBaseDir;
     
     @Value("${upload.max-batch-size:10}")
     private int maxBatchSize;
@@ -58,7 +57,7 @@ public class FileUploadService {
      * Upload a single file to OpenAI
      */
     public String uploadToOpenAI(FileAttachment attachment) throws IOException {
-        Path filePath = Paths.get(uploadBaseDir, attachment.getFilePath());
+        Path filePath = attachmentStorage.pathOf(attachment);
         File file = filePath.toFile();
         
         if (!file.exists()) {
@@ -250,40 +249,21 @@ public class FileUploadService {
     }
     
     private FileAttachment saveFileLocally(MultipartFile file, String batchId) throws IOException {
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String uniqueFilename = UUID.randomUUID().toString() + extension;
-        
-        // Determine subdirectory based on file type
-        String subDir = file.getContentType().startsWith("image/") ? "uploads/images" : "uploads/documents";
-        Path uploadPath = Paths.get(uploadBaseDir, subDir);
-        
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-        
-        Path filePath = uploadPath.resolve(uniqueFilename);
-        Files.copy(file.getInputStream(), filePath);
-        
-        // Extract text if it's a document
-        String extractedText = null;
-        if (!file.getContentType().startsWith("image/")) {
-            // Text extraction logic here (using existing DocumentExtractionService)
-        }
-        
+        AttachmentStorageService.Stored stored = attachmentStorage.store(file);
+
         FileAttachment attachment = FileAttachment.builder()
                 .fileId(UUID.randomUUID().toString())
-                .filePath(subDir + "/" + uniqueFilename)
-                .originalFilename(originalFilename)
-                .fileType(file.getContentType())
-                .fileSize(file.getSize())
+                .filePath(stored.storageKey())
+                .storageKey(stored.storageKey())
+                .originalFilename(file.getOriginalFilename())
+                .fileType(stored.detectedType())
+                .fileSize(stored.size())
                 .batchId(batchId)
-                .extractedText(extractedText)
                 .build();
-        
+
         return fileAttachmentRepository.save(attachment);
     }
-    
+
     private void updateBatchStatus(String batchId, List<FileUploadResult> results) {
         batchFileUploadRepository.findByBatchId(batchId).ifPresent(batch -> {
             long successCount = results.stream().filter(FileUploadResult::isSuccess).count();

@@ -63,12 +63,9 @@ public class OpenAIResponsesService {
     private final ObjectMapper objectMapper;
     private final ChatGPTService chatGPTService;
     private final DocumentExtractionService documentExtractionService;
+    private final AttachmentStorageService attachmentStorage;
     
-    @Value("${upload.public-url:http://localhost:8080}")
-    private String publicUrl;
     
-    @Value("${upload.base-dir:../public_html}")
-    private String uploadBaseDir;
 
     public OpenAIResponsesService(WebClient webClient,
                                   @Qualifier("openAIResponsesConfig") OpenAIResponsesConfig responsesConfig,
@@ -83,7 +80,8 @@ public class OpenAIResponsesService {
                                   FileUploadService fileUploadService,
                                   ObjectMapper objectMapper,
                                   ChatGPTService chatGPTService,
-                                  DocumentExtractionService documentExtractionService) {
+                                  DocumentExtractionService documentExtractionService,
+                                  AttachmentStorageService attachmentStorage) {
         this.webClient = webClient;
         this.responsesConfig = responsesConfig;
         this.conversationManager = conversationManager;
@@ -98,6 +96,7 @@ public class OpenAIResponsesService {
         this.objectMapper = objectMapper;
         this.chatGPTService = chatGPTService;
         this.documentExtractionService = documentExtractionService;
+        this.attachmentStorage = attachmentStorage;
     }
 
     @CircuitBreaker(name = "openai-responses", fallbackMethod = "fallbackToChatGPT")
@@ -280,9 +279,8 @@ public class OpenAIResponsesService {
                 messageText.append("\n\n--- Document Content ---");
                 
                 for (FileAttachment doc : documentAttachments) {
-                    String fullPath = Paths.get(uploadBaseDir, doc.getFilePath()).toString();
                     String extractedText = documentExtractionService.extractTextFromDocument(
-                        fullPath, doc.getFileType()
+                        attachmentStorage.pathOf(doc).toString(), doc.getFileType()
                     );
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {
@@ -304,20 +302,27 @@ public class OpenAIResponsesService {
             textPart.put("text", messageText.toString());
             content.add(textPart);
             
-            // Add image parts using URLs
+            // Images are sent as data, not as links. A URL would require the
+            // file to be publicly fetchable, which is what moving attachments
+            // out of the web root removed.
             for (FileAttachment image : imageAttachments) {
-                Map<String, Object> imagePart = new HashMap<>();
-                imagePart.put("type", "input_image");
-                
-                // Use the actual URL of the image
-                String imageUrl = publicUrl + "/" + image.getFilePath();
-                imagePart.put("image_url", imageUrl);
-                content.add(imagePart);
-                
-                log.info("Added image with URL: {} for file: {}", 
-                    imageUrl, image.getOriginalFilename());
+                try {
+                    byte[] bytes = java.nio.file.Files.readAllBytes(
+                            attachmentStorage.pathOf(image));
+                    String mimeType = image.getFileType() == null || image.getFileType().isEmpty()
+                            ? "image/jpeg" : image.getFileType();
+
+                    Map<String, Object> imagePart = new HashMap<>();
+                    imagePart.put("type", "input_image");
+                    imagePart.put("image_url", "data:" + mimeType + ";base64,"
+                            + java.util.Base64.getEncoder().encodeToString(bytes));
+                    content.add(imagePart);
+                } catch (java.io.IOException e) {
+                    // One unreadable image should not lose the message.
+                    log.warn("Could not read image attachment {}", image.getId());
+                }
             }
-            
+
             userInput.put("content", content);
             inputArray.add(userInput);
             

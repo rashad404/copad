@@ -2,8 +2,6 @@ package com.drcopad.copad.service;
 
 import java.io.IOException;
 import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
@@ -42,16 +40,12 @@ public class ChatGPTService {
     private final MedicalSpecialtyRepository specialtyRepository;
     private final LanguageMappingService languageMappingService;
     private final DocumentExtractionService documentExtractionService;
+    private final AttachmentStorageService attachmentStorage;
     
     public ChatGPTConfig getChatGPTConfig() {
         return chatGPTConfig;
     }
     
-    @Value("${upload.public-url:http://localhost:8080}")
-    private String publicUrl;
-    
-    @Value("${upload.base-dir:../public_html}")
-    private String uploadBaseDir;
 
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language) {
         return getChatResponse(newUserMessage, history, specialtyCode, language, null);
@@ -183,32 +177,24 @@ public class ChatGPTService {
                             MessageContent imageContent = new MessageContent();
                             imageContent.setType("image_url");
                             
-                            if (publicUrl.contains("localhost") || publicUrl.contains("127.0.0.1")) {
-                                // For localhost, use base64 encoding since OpenAI can't access localhost URLs
-                                // Construct the full path to the image in public_html
-                                Path imagePath = Paths.get(uploadBaseDir, image.getFilePath());
-                                byte[] imageBytes = Files.readAllBytes(imagePath);
-                                String base64Image = Base64.getEncoder().encodeToString(imageBytes);
-                                
-                                // Determine MIME type
-                                String mimeType = image.getFileType();
-                                if (mimeType == null || mimeType.isEmpty()) {
-                                    mimeType = "image/jpeg"; // default
-                                }
-                                
-                                String dataUrl = "data:" + mimeType + ";base64," + base64Image;
-                                log.info("Using base64 encoded image for OpenAI (localhost environment)");
-                                imageContent.setImage_url(new MessageContent.ImageUrl(dataUrl, "high"));
-                            } else {
-                                // For production, use the actual URL
-                                String imageUrl = publicUrl + "/" + image.getFilePath();
-                                log.info("Generated image URL for OpenAI: {}", imageUrl);
-                                imageContent.setImage_url(new MessageContent.ImageUrl(imageUrl, "high"));
-                            }
-                            
+                            // Always sent as data, never as a URL. Handing
+                            // OpenAI a link to the file would mean the file had
+                            // to be publicly fetchable, which is the exposure
+                            // this storage change removes.
+                            byte[] imageBytes = Files.readAllBytes(
+                                    attachmentStorage.pathOf(image));
+                            String mimeType = image.getFileType() == null
+                                    || image.getFileType().isEmpty()
+                                    ? "image/jpeg" : image.getFileType();
+                            imageContent.setImage_url(new MessageContent.ImageUrl(
+                                    "data:" + mimeType + ";base64,"
+                                            + Base64.getEncoder().encodeToString(imageBytes),
+                                    "high"));
+
                             contentObjects.add(imageContent);
                         } catch (IOException e) {
-                            log.error("Failed to process image attachment: {}", image.getFilePath(), e);
+                            // The filename is not logged: it can carry a name.
+                            log.error("Failed to process image attachment {}", image.getId(), e);
                         }
                     });
             
@@ -231,9 +217,8 @@ public class ChatGPTService {
             for (FileAttachment doc : chatMessage.getAttachments()) {
                 if (!doc.getFileType().startsWith("image/")) {
                     // Construct the full path to the document in public_html
-                    String fullPath = Paths.get(uploadBaseDir, doc.getFilePath()).toString();
                     String extractedText = documentExtractionService.extractTextFromDocument(
-                        fullPath, doc.getFileType()
+                        attachmentStorage.pathOf(doc).toString(), doc.getFileType()
                     );
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {

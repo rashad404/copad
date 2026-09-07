@@ -10,3 +10,4 @@ pull-backups.sh
 check-azdoc.sh
 
 deploy.sh
+migrate-attachments.sh

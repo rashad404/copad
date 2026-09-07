@@ -48,6 +48,12 @@ app:
       url: https://api.openai.com/v1/chat/completions
 
 # Upload settings for production
+attachment:
+  storage:
+    # Outside the web root. Files here are served only by
+    # /api/attachments, which checks the owning session.
+    root: ${ATTACHMENT_STORAGE_ROOT:/home/copad/attachments}
+
 upload:
   base-dir: /home/copad/public_html
   public-url: https://virtualhekim.az

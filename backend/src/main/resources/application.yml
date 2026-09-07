@@ -105,6 +105,12 @@ logging:
     org.springframework.security: DEBUG
 
 
+attachment:
+  storage:
+    # Outside the web root. Files here are served only by
+    # /api/attachments, which checks the owning session.
+    root: ${ATTACHMENT_STORAGE_ROOT:${user.home}/azdoc-attachments}
+
 upload:
   base-dir: ${UPLOAD_BASE_DIR:../public_html}
   public-url: ${PUBLIC_URL:http://localhost:8080}

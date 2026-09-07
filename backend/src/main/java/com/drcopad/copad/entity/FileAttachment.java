@@ -23,8 +23,13 @@ public class FileAttachment {
     @Column(nullable = false, unique = true)
     private String fileId;
     
+    /** Legacy location inside the web root. Kept until every file is moved. */
     @Column(nullable = false)
     private String filePath;
+
+    /** Location in the private store; null on rows written before the move. */
+    @Column(name = "storage_key")
+    private String storageKey;
     
     @Column(nullable = false)
     private String originalFilename;

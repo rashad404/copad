@@ -11,7 +11,10 @@ public class PublicEndpoints {
             "/api/tags/**",
             "/api/blog/**",
             "/api/v2/messages/**", // Responses API endpoints
-            "/uploads/**", // Make uploads publicly accessible
+            // Chat attachments. Not authenticated because the people who
+            // upload them are guests; the controller checks that the request
+            // carries the session the file belongs to.
+            "/api/attachments/*",
             "/api/health",
             // The published drug registry; the allergy check under
             // /api/members/** stays authenticated.

@@ -153,102 +153,10 @@ public class FileUploadController {
         }
     }
     
-    @PostMapping("/chat/image")
-    public ResponseEntity<?> uploadChatImage(@RequestParam("file") MultipartFile file) {
-        try {
-            // Check file size
-            if (file.getSize() > MAX_FILE_SIZE) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("File size exceeds the maximum limit of 10MB.");
-            }
-            
-            // Check file content type
-            String contentType = file.getContentType();
-            if (contentType == null || 
-                !(contentType.equals("image/jpeg") || contentType.equals("image/png") || contentType.equals("image/webp"))) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Only JPG, PNG, and WEBP images are allowed.");
-            }
-
-            // Create images directory structure
-            Path imagesPath = Paths.get(uploadDir).resolve("uploads").resolve("images");
-            if (!Files.exists(imagesPath)) {
-                Files.createDirectories(imagesPath);
-            }
-
-            // Generate unique filename
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
-
-            // Save the image
-            Path filePath = imagesPath.resolve(uniqueFilename);
-            Files.copy(file.getInputStream(), filePath);
-
-            // Return the URL path and metadata
-            Map<String, String> response = new HashMap<>();
-            response.put("url", "/uploads/images/" + uniqueFilename);
-            response.put("filename", originalFilename);
-            response.put("fileType", contentType);
-            response.put("fileSize", String.valueOf(file.getSize()));
-
-            return ResponseEntity.ok(response);
-
-        } catch (IOException e) {
-            log.error("Failed to upload chat image", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload image: " + e.getMessage());
-        }
-    }
-    
-    @PostMapping("/chat/document")
-    public ResponseEntity<?> uploadChatDocument(@RequestParam("file") MultipartFile file) {
-        try {
-            // Check file size
-            if (file.getSize() > MAX_FILE_SIZE) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("File size exceeds the maximum limit of 10MB.");
-            }
-            
-            // Check file content type
-            String contentType = file.getContentType();
-            if (contentType == null || 
-                !(contentType.equals("application/pdf") || 
-                  contentType.equals("application/msword") || 
-                  contentType.equals("application/vnd.openxmlformats-officedocument.wordprocessingml.document") ||
-                  contentType.equals("text/plain"))) {
-                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                        .body("Only PDF, DOC, DOCX, and TXT files are allowed.");
-            }
-
-            // Create documents directory if it doesn't exist
-            Path documentsPath = Paths.get(uploadDir).resolve("uploads").resolve("documents");
-            if (!Files.exists(documentsPath)) {
-                Files.createDirectories(documentsPath);
-            }
-
-            // Generate unique filename
-            String originalFilename = file.getOriginalFilename();
-            String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-            String uniqueFilename = UUID.randomUUID().toString() + extension;
-
-            // Save the document
-            Path filePath = documentsPath.resolve(uniqueFilename);
-            Files.copy(file.getInputStream(), filePath);
-
-            // Return the document URL and metadata
-            Map<String, String> response = new HashMap<>();
-            response.put("url", "/uploads/documents/" + uniqueFilename);
-            response.put("filename", originalFilename);
-            response.put("fileType", contentType);
-            response.put("fileSize", String.valueOf(file.getSize()));
-
-            return ResponseEntity.ok(response);
-
-        } catch (IOException e) {
-            log.error("Failed to upload chat document", e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body("Failed to upload document: " + e.getMessage());
-        }
-    }
+    // The unauthenticated /chat/image and /chat/document endpoints were
+    // removed. They accepted a file from anyone, wrote it into the web root and
+    // returned a public URL, so the site could be used to host arbitrary
+    // content and the resulting file belonged to no session. Chat uploads go
+    // through POST /api/guest/upload/{sessionId}, which resolves the session
+    // and stores the file privately.
 }

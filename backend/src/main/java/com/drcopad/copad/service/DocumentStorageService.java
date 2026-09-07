@@ -11,7 +11,6 @@ import java.nio.file.*;
 import java.security.MessageDigest;
 import java.time.LocalDate;
 import java.util.HexFormat;
-import java.util.Locale;
 import java.util.Set;
 import java.util.UUID;
 
@@ -64,7 +63,7 @@ public class DocumentStorageService {
         }
 
         byte[] bytes = file.getBytes();
-        String detected = detectType(bytes, file.getOriginalFilename());
+        String detected = FileTypeDetector.detect(bytes, file.getOriginalFilename());
         if (!ALLOWED.contains(detected)) {
             throw new IllegalArgumentException(
                     "Files of type " + detected + " cannot be uploaded");
@@ -125,39 +124,6 @@ public class DocumentStorageService {
             throw new IllegalArgumentException("Invalid storage key");
         }
         return path;
-    }
-
-    /**
-     * Identifies a file from its leading bytes.
-     *
-     * Magic numbers, because the declared content type is attacker-controlled.
-     */
-    private String detectType(byte[] bytes, String filename) {
-        if (bytes.length >= 4) {
-            if (bytes[0] == 0x25 && bytes[1] == 0x50 && bytes[2] == 0x44 && bytes[3] == 0x46) {
-                return "application/pdf";
-            }
-            if ((bytes[0] & 0xFF) == 0xFF && (bytes[1] & 0xFF) == 0xD8) return "image/jpeg";
-            if ((bytes[0] & 0xFF) == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E) return "image/png";
-            if (bytes[0] == 0x50 && bytes[1] == 0x4B) {
-                // A zip container: docx, or something pretending to be one.
-                return "application/vnd.openxmlformats-officedocument.wordprocessingml.document";
-            }
-            if (bytes[0] == 0x49 && bytes[1] == 0x49) return "image/tiff";
-            if (bytes[0] == 0x4D && bytes[1] == 0x4D) return "image/tiff";
-        }
-        if (bytes.length >= 12) {
-            String riff = new String(bytes, 0, 4);
-            String webp = new String(bytes, 8, 4);
-            if ("RIFF".equals(riff) && "WEBP".equals(webp)) return "image/webp";
-            if ("ftyp".equals(new String(bytes, 4, 4))) return "image/heic";
-        }
-        // Fall back to the extension only for plain text, where there are no
-        // magic bytes to check.
-        if (filename != null && filename.toLowerCase(Locale.ROOT).endsWith(".txt")) {
-            return "text/plain";
-        }
-        return "application/octet-stream";
     }
 
     private String sha256(byte[] bytes) {

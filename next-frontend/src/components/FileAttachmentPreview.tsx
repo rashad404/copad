@@ -5,6 +5,7 @@ import Image from 'next/image';
 import { XMarkIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import ImageModal from './ImageModal';
+import { attachmentUrl } from '@/utils/attachmentUrl';
 
 interface FileAttachment {
   fileId: string;
@@ -52,13 +53,13 @@ const FileAttachmentPreview: React.FC<FileAttachmentPreviewProps> = ({
             readonly ? (
               <div className="relative group">
                 <Image 
-                  src={file.url} 
+                  src={attachmentUrl(file.url)} 
                   alt={file.filename}
                   width={300}
                   height={200}
                   className="rounded-lg object-cover cursor-pointer hover:opacity-95 transition-opacity"
                   style={{ maxWidth: '300px', height: 'auto' }}
-                  onClick={() => setModalImage({ url: file.url, name: file.filename })}
+                  onClick={() => setModalImage({ url: attachmentUrl(file.url), name: file.filename })}
                   unoptimized={true}
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-black bg-opacity-50 text-white text-xs p-1 rounded-b-lg">
@@ -71,7 +72,7 @@ const FileAttachmentPreview: React.FC<FileAttachmentPreviewProps> = ({
               <div className={`relative group flex items-center p-2 rounded-md border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 pr-8`}>
                 <div className="relative h-12 w-12 mr-2 overflow-hidden rounded">
                   <Image 
-                    src={file.url} 
+                    src={attachmentUrl(file.url)} 
                     alt={file.filename}
                     width={48}
                     height={48}

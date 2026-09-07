@@ -15,7 +15,6 @@ import com.drcopad.copad.util.ClientIpResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -35,9 +34,6 @@ public class GuestController {
     private final FileAttachmentService fileAttachmentService;
     private final RecordContextService recordContext;
     
-    @Value("${upload.public-url:http://localhost:8080}")
-    private String publicUrl;
-
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
         String ipAddress = ClientIpResolver.resolve(request);
@@ -145,10 +141,11 @@ public class GuestController {
             FileAttachment attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
             log.info("Successfully uploaded file: {}", attachment.getFileId());
             
-            // Convert to DTO and add the public URL for proper rendering
+            // The URL points at the authenticated endpoint and carries the
+            // session, which is what that endpoint checks.
             FileAttachmentDTO dto = new FileAttachmentDTO(
                 attachment.getFileId(),
-                publicUrl + "/" + attachment.getFilePath(),
+                "/api/attachments/" + attachment.getFileId() + "?s=" + sessionId,
                 attachment.getOriginalFilename(),
                 attachment.getFileType(),
                 attachment.getFileSize(),

@@ -8,15 +8,11 @@ import com.drcopad.copad.repository.FileAttachmentRepository;
 import com.drcopad.copad.repository.GuestSessionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -30,59 +26,32 @@ public class FileAttachmentService {
 
     private final FileAttachmentRepository fileAttachmentRepository;
     private final GuestSessionRepository guestSessionRepository;
-    
-    @Value("${upload.base-dir:../public_html}")
-    private String uploadBaseDir;
-    
-    @Value("${upload.public-url:http://localhost:8080}")
-    private String publicUrl;
-    
-    private static final String IMAGE_DIR = "uploads/images";
-    private static final String DOCUMENTS_DIR = "uploads/documents";
-    private static final long MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+    private final AttachmentStorageService storage;
     
     public FileAttachment uploadFile(MultipartFile file, String sessionId, String fileType) throws IOException {
-        // Validate file size
-        if (file.getSize() > MAX_FILE_SIZE) {
-            throw new IllegalArgumentException("File size exceeds the maximum limit of 10MB");
-        }
-        
-        // Find the guest session
+        // The session is resolved first: an upload that belongs to nobody could
+        // never be served back, and would leave an unreachable file behind.
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> new IllegalArgumentException("Invalid session ID"));
-        
-        // Determine upload directory based on file type
-        String relativeDir = fileType.startsWith("image/") ? IMAGE_DIR : DOCUMENTS_DIR;
-        Path uploadPath = Paths.get(uploadBaseDir, relativeDir);
-        
-        // Create directory if it doesn't exist
-        if (!Files.exists(uploadPath)) {
-            Files.createDirectories(uploadPath);
-        }
-        
-        // Generate unique filename
-        String originalFilename = file.getOriginalFilename();
-        String extension = originalFilename.substring(originalFilename.lastIndexOf("."));
-        String uniqueFilename = UUID.randomUUID().toString() + extension;
-        
-        // Save the file
-        Path filePath = uploadPath.resolve(uniqueFilename);
-        Files.copy(file.getInputStream(), filePath);
-        
-        // Create file attachment entity
+
+        AttachmentStorageService.Stored stored = storage.store(file);
+
         FileAttachment attachment = FileAttachment.builder()
                 .fileId(UUID.randomUUID().toString())
-                .filePath(relativeDir + "/" + uniqueFilename)
-                .originalFilename(originalFilename)
-                .fileType(file.getContentType())
-                .fileSize(file.getSize())
+                // Nothing is written to the web root any more; the legacy
+                // column records the key so old and new rows read alike.
+                .filePath(stored.storageKey())
+                .storageKey(stored.storageKey())
+                .originalFilename(file.getOriginalFilename())
+                // The detected type, not the declared one.
+                .fileType(stored.detectedType())
+                .fileSize(stored.size())
                 .guestSession(session)
                 .build();
-        
-        // Save attachment to database and return entity
+
         return fileAttachmentRepository.save(attachment);
     }
-    
+
     @Transactional
     public List<FileAttachmentDTO> getAttachmentsForMessage(ChatMessage message) {
         List<FileAttachment> attachments = fileAttachmentRepository.findByMessage(message);
@@ -115,10 +84,10 @@ public class FileAttachmentService {
     
     private FileAttachmentDTO mapToDTO(FileAttachment attachment) {
         boolean isImage = attachment.getFileType().startsWith("image/");
-        
+
         return new FileAttachmentDTO(
                 attachment.getFileId(),
-                publicUrl + "/" + attachment.getFilePath(),
+                attachmentUrl(attachment),
                 attachment.getOriginalFilename(),
                 attachment.getFileType(),
                 attachment.getFileSize(),
@@ -126,5 +95,18 @@ public class FileAttachmentService {
                 null, // thumbnailUrl
                 isImage
         );
+    }
+
+    /**
+     * Where the client fetches the file.
+     *
+     * Relative, and carrying the session: the endpoint checks it, and an <img>
+     * tag cannot send a header.
+     */
+    private String attachmentUrl(FileAttachment attachment) {
+        String session = attachment.getGuestSession() == null
+                ? null : attachment.getGuestSession().getSessionId();
+        return "/api/attachments/" + attachment.getFileId()
+                + (session == null ? "" : "?s=" + session);
     }
 }
