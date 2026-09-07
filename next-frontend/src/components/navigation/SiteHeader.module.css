@@ -55,7 +55,7 @@
   flex-shrink: 0;
   /* The wordmark has no descenders, so its optical centre sits below the line
      box centre; nudging the mark down aligns them to the eye. */
-  transform: translateY(0.06em);
+  transform: translateY(0.12em);
 }
 .desktopNav {
   display: flex;
