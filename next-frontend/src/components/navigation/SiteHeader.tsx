@@ -39,6 +39,7 @@ export default function SiteHeader() {
   }, [pathname]);
   const links = [
     ["/dermanlar", "Dərmanlar"],
+    ["/hekimler", "Həkimlər"],
     ["/#how", "Necə işləyir"],
     ["/#family", "Ailəniz üçün"],
     ["/#questions", "Suallar"],

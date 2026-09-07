@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { DOCTOR_SITEMAP_SIZE, getDoctorSitemapPage } from '@/api/doctorServer';
 import { getMedicineSitemapPage } from '@/api/medicineServer';
 import { MEDICINE_SITEMAP_PAGE_SIZE } from '@/app/dermanlar/sitemap';
 
@@ -28,6 +29,12 @@ async function medicineSitemaps(): Promise<string[]> {
   }
 }
 
+async function doctorSitemaps(): Promise<string[]> {
+  const first = await getDoctorSitemapPage(0).catch(() => null);
+  const pages = Math.max(1, Math.ceil((first?.total ?? 0) / DOCTOR_SITEMAP_SIZE));
+  return Array.from({ length: pages }, (_, id) => `${baseUrl}/hekimler/sitemap/${id}.xml`);
+}
+
 export default async function robots(): Promise<MetadataRoute.Robots> {
   return {
     rules: {
@@ -43,6 +50,6 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         '/profile',
       ],
     },
-    sitemap: [`${baseUrl}/sitemap.xml`, ...(await medicineSitemaps())],
+    sitemap: [`${baseUrl}/sitemap.xml`, ...(await medicineSitemaps()), ...(await doctorSitemaps())],
   };
 }
