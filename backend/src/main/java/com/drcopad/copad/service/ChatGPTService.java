@@ -300,7 +300,9 @@ public class ChatGPTService {
                     if (response.getChoices() != null && !response.getChoices().isEmpty()) {
                         String content = response.getChoices().get(0).getMessage().getContent();
                         if (content != null) {
-                            return content;
+                            // Asked for in the prompt, guaranteed here: models
+                            // mostly comply, which is not the same as complying.
+                            return PlainPunctuation.apply(content);
                         }
                         log.warn("Response content is null from OpenAI API");
                     }

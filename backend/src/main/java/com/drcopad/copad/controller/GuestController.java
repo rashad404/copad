@@ -8,6 +8,7 @@ import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.MedicineContextService;
+import com.drcopad.copad.service.RedFlagDetector;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.drcopad.copad.service.RateLimitPolicy;
@@ -35,6 +36,7 @@ public class GuestController {
     private final FileAttachmentService fileAttachmentService;
     private final RecordContextService recordContext;
     private final MedicineContextService medicineContext;
+    private final RedFlagDetector redFlags;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -87,9 +89,18 @@ public class GuestController {
         rateLimiterService.requireAll(RateLimitPolicy.AI_CHAT,
                 sessionId, ClientIpResolver.resolve(request));
 
+        StringBuilder context = new StringBuilder();
+
+        // Checked first and placed first: if the message describes something
+        // that may need emergency care, that has to lead the reply, ahead of
+        // anything the record or the drug registry would add.
+        String urgent = redFlags.contextFor(messageRequest.getMessage());
+        if (!urgent.isBlank()) {
+            context.append(urgent);
+        }
+
         // Grounding is opt-in and only for a signed-in caller who can reach the
         // member. An anonymous conversation is unchanged.
-        StringBuilder context = new StringBuilder();
         if (memberId != null && user != null) {
             RecordContextService.Context ctx = recordContext.forMember(memberId, user.getId());
             if (!ctx.isEmpty()) {
