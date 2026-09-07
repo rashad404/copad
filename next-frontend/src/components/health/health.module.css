@@ -1214,3 +1214,113 @@
     animation: none !important;
   }
 }
+.personActions {
+  flex-wrap: wrap;
+  align-items: start;
+}
+.summaryDownload {
+  display: flex;
+  flex-direction: column;
+  align-items: start;
+  gap: 8px;
+  max-width: 250px;
+}
+.summaryError {
+  font-size: 12px;
+  line-height: 1.6;
+  color: #8d271b;
+  max-width: 250px;
+}
+.summaryStatus {
+  font-size: 11px;
+  color: #63716d;
+}
+.summarySpinner {
+  animation: summary-spin 1s linear infinite;
+}
+@keyframes summary-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+.timelineNote {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  background: #edf0e5;
+  border-radius: 10px;
+  padding: 18px 22px;
+  margin-bottom: 30px;
+}
+.timelineNote p {
+  font-size: 13px;
+  color: #526167;
+  max-width: 680px;
+}
+.timelineList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+.timelineList > li {
+  display: grid;
+  grid-template-columns: 150px minmax(0, 1fr);
+  gap: 24px;
+  border-top: 1px solid #dce1da;
+  padding: 24px 20px;
+}
+.timelineList > li:last-child {
+  border-bottom: 1px solid #dce1da;
+}
+.timelineList > li.notableEvent {
+  background: #fff0eb;
+  border: 1px solid #e0a89c;
+  border-inline-start: 4px solid #a03227;
+  border-radius: 10px;
+  margin-bottom: 12px;
+}
+.timelineDate {
+  font-size: 12px;
+  color: #63716d;
+  padding-top: 7px;
+}
+.timelineEvent .badges {
+  margin-top: 0;
+}
+.timelineEvent .flag {
+  gap: 6px;
+}
+.timelineEvent h3 {
+  font-size: 21px;
+  font-weight: 650;
+  letter-spacing: -0.5px;
+  margin: 12px 0 6px;
+  overflow-wrap: anywhere;
+}
+.timelineEvent p {
+  font-size: 14px;
+  color: #526167;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+@media (max-width: 700px) {
+  .timelineList > li {
+    grid-template-columns: 1fr;
+    gap: 12px;
+    padding: 20px 16px;
+  }
+  .timelineDate {
+    padding: 0;
+  }
+  .timelineEvent h3 {
+    font-size: 19px;
+  }
+  .timelineNote {
+    padding: 16px;
+  }
+  .timelineNote p {
+    font-size: 12px;
+  }
+}

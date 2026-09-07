@@ -57,6 +57,62 @@ let role = "OWNER";
 let pendingCondition;
 let failVital = false;
 let submittedVital;
+let timelineFailure = false;
+let timelineEmpty = false;
+let pendingTimeline;
+let pendingPdf;
+let pdfFailure = false;
+let pdfCalls = [];
+let timelineCalls = [];
+const pdfBytes = new Blob(["%PDF-1.4 Azərbaycan: Əə Şş Ğğ İı"], {
+  type: "application/pdf",
+});
+const downloaded = [];
+const objectBlobs = [];
+const revoked = [];
+URL.createObjectURL = (blob) => {
+  objectBlobs.push(blob);
+  return "blob:test-" + objectBlobs.length;
+};
+URL.revokeObjectURL = (url) => revoked.push(url);
+const originalAnchorClick = dom.window.HTMLAnchorElement.prototype.click;
+dom.window.HTMLAnchorElement.prototype.click = function () {
+  if (this.download) {
+    downloaded.push({ href: this.href, name: this.download });
+    return;
+  }
+  return originalAnchorClick.call(this);
+};
+const events = [
+  {
+    type: "MEDICATION_STOPPED",
+    recordId: 12,
+    occurredAt: "2024-03-01T00:00:00",
+    title: "Medication event",
+    detail: "Stopped",
+    severity: null,
+    notable: false,
+  },
+  {
+    type: "ALLERGY",
+    recordId: 13,
+    occurredAt: "2024-02-01T00:00:00",
+    title: "Notable timeline allergy",
+    detail: "Severe reaction",
+    severity: "LIFE_THREATENING",
+    notable: true,
+  },
+  {
+    type: "MEDICATION_STARTED",
+    recordId: 12,
+    occurredAt: "2024-01-03T00:00:00",
+    title: "Medication event",
+    detail: "500 mg",
+    severity: null,
+    notable: false,
+  },
+];
+
 const members = [
   {
     id: 1,
@@ -117,6 +173,32 @@ const readings = [
   },
 ];
 const api = {
+  timeline: async (id, signal) => {
+    timelineCalls.push({ id, signal });
+    if (id === 1 && pendingTimeline) return pendingTimeline;
+    if (timelineFailure) throw new Error("Offline");
+    if (timelineEmpty) return [];
+    return id === 1 ? events : [{ ...events[0], title: "Second member event" }];
+  },
+  summaryPdf: async (id, signal) => {
+    pdfCalls.push({ id, signal });
+    if (pendingPdf) return pendingPdf;
+    if (pdfFailure)
+      throw new axios.AxiosError(
+        "Denied",
+        "ERR_BAD_REQUEST",
+        undefined,
+        undefined,
+        {
+          status: 403,
+          data: new Blob(
+            [JSON.stringify({ message: "Summary access denied" })],
+            { type: "application/json" },
+          ),
+        },
+      );
+    return pdfBytes;
+  },
   families: async () => [{ id: 10, name: "Test family", role, members }],
   list: async (id, kind) => {
     if (id === 1 && kind === "conditions" && pendingCondition)
@@ -229,6 +311,16 @@ async function unmount() {
   }
   pendingCondition = null;
   failVital = false;
+  timelineFailure = false;
+  timelineEmpty = false;
+  pendingTimeline = null;
+  pendingPdf = null;
+  pdfFailure = false;
+  pdfCalls = [];
+  timelineCalls = [];
+  downloaded.length = 0;
+  objectBlobs.length = 0;
+  revoked.length = 0;
 }
 const button = (text) =>
   [...document.querySelectorAll("button")].find(
@@ -343,6 +435,100 @@ test("failed vital save keeps input and shows the exact API validation message",
   assert.equal(submittedVital.body.unit, "banana");
   await click(button("Cancel"));
   await unmount();
+});
+
+test("timeline preserves clinical order, notable styling and both medication lifecycle events", async () => {
+  role = "VIEWER";
+  await mount();
+  await click(tab("Timeline"));
+  const rows = [...document.querySelectorAll(".timelineList>li")];
+  assert.equal(rows.length, 3);
+  assert.match(rows[0].textContent, /Medication stopped/);
+  assert.match(rows[0].textContent, /Mar 1, 2024/);
+  assert.match(rows[2].textContent, /Medication started/);
+  assert.match(rows[2].textContent, /500 mg/);
+  assert.ok(rows[1].classList.contains("notableEvent"));
+  assert.match(rows[1].textContent, /Life-threatening/);
+  assert.match(rows[1].textContent, /Notable event/);
+  assert.match(
+    document.body.textContent,
+    /Only abnormal vital readings appear here/,
+  );
+  assert.equal(timelineCalls[0].id, 1);
+  await click(button("View all vitals"));
+  assert.equal(tab("Vitals").getAttribute("aria-selected"), "true");
+});
+test("timeline supports empty, failure and retry states", async () => {
+  timelineFailure = true;
+  await mount();
+  await click(tab("Timeline"));
+  assert.match(document.body.textContent, /Could not load the timeline/);
+  timelineFailure = false;
+  timelineEmpty = true;
+  await click(button("Retry"));
+  assert.match(document.body.textContent, /No clinical events yet/);
+});
+test("timeline cancels the prior member request and never displays its late response", async () => {
+  let resolve;
+  pendingTimeline = new Promise((r) => (resolve = r));
+  await mount();
+  await click(tab("Timeline"));
+  const oldSignal = timelineCalls[0].signal;
+  await select(document.getElementById("health-member"), "2");
+  await click(tab("Timeline"));
+  assert.equal(oldSignal.aborted, true);
+  await flush(() => resolve(events));
+  assert.match(
+    document.querySelector(".timelineList").textContent,
+    /Second member event/,
+  );
+  assert.doesNotMatch(
+    document.querySelector(".timelineList").textContent,
+    /Notable timeline allergy/,
+  );
+});
+test("VIEWER can download the selected member PDF with unchanged Unicode bytes", async () => {
+  role = "VIEWER";
+  await mount();
+  await click(button("Download summary"));
+  assert.equal(pdfCalls[0].id, 1);
+  assert.equal(downloaded.length, 1);
+  assert.equal(downloaded[0].name, "azdoc-summary-1.pdf");
+  assert.equal(objectBlobs[0], pdfBytes);
+  assert.match(await objectBlobs[0].text(), /Azərbaycan: Əə Şş Ğğ İı/);
+  assert.match(document.body.textContent, /Download started/);
+  const url = downloaded[0].href;
+  await flush(() => root.unmount());
+  root = null;
+  assert.ok(revoked.includes(url));
+});
+test("failed PDF shows the blob API error and permits a retry", async () => {
+  pdfFailure = true;
+  await mount();
+  await click(button("Download summary"));
+  assert.match(document.body.textContent, /Summary access denied/);
+  assert.equal(downloaded.length, 0);
+  pdfFailure = false;
+  await click(button("Download summary"));
+  assert.equal(downloaded.length, 1);
+});
+test("pending summary prevents duplicate downloads and is cancelled on member change", async () => {
+  let resolve;
+  pendingPdf = new Promise((r) => (resolve = r));
+  await mount();
+  const download = button("Download summary");
+  await flush(() => {
+    download.click();
+    download.click();
+  });
+  assert.equal(pdfCalls.length, 1);
+  assert.ok(button("Preparing summary…").disabled);
+  const oldSignal = pdfCalls[0].signal;
+  await select(document.getElementById("health-member"), "2");
+  assert.equal(oldSignal.aborted, true);
+  await flush(() => resolve(pdfBytes));
+  assert.equal(downloaded.length, 0);
+  assert.ok(button("Download summary"));
 });
 
 afterEach(unmount);

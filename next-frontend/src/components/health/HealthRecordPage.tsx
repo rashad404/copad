@@ -37,9 +37,11 @@ import {
 import { useResource } from "./useResource";
 import { ClinicalForm, DeleteDialog, MemberForm } from "./RecordForms";
 import Vitals, { Flag } from "./Vitals";
+import ClinicalTimeline from "./ClinicalTimeline";
+import SummaryDownload from "./SummaryDownload";
 import styles from "./health.module.css";
 
-type Tab = "overview" | RecordKind | "vitals" | "history";
+type Tab = "overview" | RecordKind | "vitals" | "timeline" | "history";
 export default function HealthRecordPage() {
   return (
     <ProtectedRoute>
@@ -350,6 +352,7 @@ function MemberRecord({
       label: c(...definition.label),
     })),
     { key: "vitals", label: c("Vitals", "Göstəricilər") },
+    { key: "timeline", label: c("Timeline", "Xronologiya") },
     { key: "history", label: c("History", "Tarixçə") },
   ];
   function changed() {
@@ -395,26 +398,29 @@ function MemberRecord({
               )}
           </div>
         </div>
-        {write && (
-          <div className={styles.personActions}>
-            <button
-              className={styles.secondary}
-              onClick={() => setEditingMember(true)}
-            >
-              <Pencil size={16} />
-              {c("Edit member", "Üzvü redaktə et")}
-            </button>
-            {!member.self && member.relationship !== "SELF" && (
+        <div className={styles.personActions}>
+          <SummaryDownload memberId={member.id} />
+          {write && (
+            <>
               <button
-                className={styles.iconButton}
-                aria-label={c("Remove member", "Üzvü sil")}
-                onClick={() => setRemovingMember(true)}
+                className={styles.secondary}
+                onClick={() => setEditingMember(true)}
               >
-                <Trash2 size={17} />
+                <Pencil size={16} />
+                {c("Edit member", "Üzvü redaktə et")}
               </button>
-            )}
-          </div>
-        )}
+              {!member.self && member.relationship !== "SELF" && (
+                <button
+                  className={styles.iconButton}
+                  aria-label={c("Remove member", "Üzvü sil")}
+                  onClick={() => setRemovingMember(true)}
+                >
+                  <Trash2 size={17} />
+                </button>
+              )}
+            </>
+          )}
+        </div>
       </div>
       {allergies.error ? (
         <div className={styles.error} role="alert">
@@ -641,6 +647,12 @@ function MemberRecord({
             version={version}
             onChanged={changed}
             initialType={vitalType}
+          />
+        ) : tab === "timeline" ? (
+          <ClinicalTimeline
+            memberId={member.id}
+            version={version}
+            onViewVitals={() => setTab("vitals")}
           />
         ) : tab === "history" ? (
           <AuditHistory memberId={member.id} version={version} />
