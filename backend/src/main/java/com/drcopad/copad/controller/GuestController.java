@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -94,9 +95,9 @@ public class GuestController {
         // Checked first and placed first: if the message describes something
         // that may need emergency care, that has to lead the reply, ahead of
         // anything the record or the drug registry would add.
-        String urgent = redFlags.contextFor(messageRequest.getMessage());
-        if (!urgent.isBlank()) {
-            context.append(urgent);
+        List<RedFlagDetector.RedFlag> flags = redFlags.detect(messageRequest.getMessage());
+        if (!flags.isEmpty()) {
+            context.append(redFlags.contextFor(messageRequest.getMessage()));
         }
 
         // Grounding is opt-in and only for a signed-in caller who can reach the
@@ -128,7 +129,11 @@ public class GuestController {
                 messageRequest.getFileIds(),
                 context.isEmpty() ? null : context.toString()
             );
-            return ResponseEntity.ok(response);
+            // The reply body stays a plain string, so nothing that reads it
+            // today has to change. The flag travels beside it in headers,
+            // which is what lets the interface show a standing warning rather
+            // than trusting the model to have led with one.
+            return urgentResponse(flags).body(response);
         } catch (Exception e) {
             log.error("Error processing chat request", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -187,6 +192,23 @@ public class GuestController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                 .body(e.getMessage());
         }
+    }
+
+    /**
+     * Marks a reply whose message described a possible emergency.
+     *
+     * A header rather than a changed body: the interface can show a standing
+     * warning without waiting for the model to have led with one, and nothing
+     * that reads the reply today has to change.
+     */
+    private ResponseEntity.BodyBuilder urgentResponse(List<RedFlagDetector.RedFlag> flags) {
+        if (flags.isEmpty()) return ResponseEntity.ok();
+        return ResponseEntity.ok()
+                .header("X-Urgent", "true")
+                .header("X-Urgent-Categories",
+                        flags.stream().map(RedFlagDetector.RedFlag::category)
+                                .collect(java.util.stream.Collectors.joining("; ")))
+                .header("X-Emergency-Number", RedFlagDetector.EMERGENCY_NUMBERS);
     }
 
     @PostMapping("/save-email/{sessionId}")
