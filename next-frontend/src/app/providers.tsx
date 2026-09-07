@@ -4,7 +4,6 @@ import { ReactNode, useEffect, useState } from 'react';
 import { I18nextProvider } from 'react-i18next';
 import i18n from '@/i18n';
 import { AuthProvider } from '@/context/AuthContext';
-import { ChatProvider } from '@/context/ChatContext';
 import { ThemeProvider } from 'next-themes';
 import { SiteContextProvider } from '@/context/SiteContext';
 import { useTranslation } from 'react-i18next';
@@ -53,9 +52,7 @@ export function Providers({ children }: { children: ReactNode }) {
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SiteContextProvider>
             <AuthProvider>
-              <ChatProvider>
-                {children}
-              </ChatProvider>
+              {children}
             </AuthProvider>
           </SiteContextProvider>
         </ThemeProvider>
