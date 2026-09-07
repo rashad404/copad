@@ -355,21 +355,6 @@
 .tableWrap td:last-child {
   text-align: right;
 }
-:global(.dark) .page {
-  --ink: #e9efec;
-  --muted: #afbeb9;
-  --line: #3b4d49;
-  --surface: #192c2a;
-  --soft: #253c35;
-}
-:global(.dark) .hero h1 span,
-:global(.dark) .breadcrumb a,
-:global(.dark) .resultPrice > span {
-  color: #9eb5ff;
-}
-:global(.dark) .difference {
-  color: #c9e897 !important;
-}
 @media (max-width: 760px) {
   .page {
     padding: 24px 20px 55px;
@@ -441,13 +426,6 @@
   }
 }
 
-:global(.dark .public-app):has(.page) {
-  --paper: #142521;
-  --ink: #e9efec;
-  --muted: #afbeb9;
-  --line: #3b4d49;
-  color-scheme: dark;
-}
 .result > div:first-child {
   min-width: 0;
   overflow-wrap: anywhere;
