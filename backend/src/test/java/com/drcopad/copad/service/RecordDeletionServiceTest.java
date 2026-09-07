@@ -29,6 +29,7 @@ class RecordDeletionServiceTest {
     private FamilyRepository families;
     private UserRepository users;
     private DocumentRepository documents;
+    private DoctorRepository doctorRepository;
     private DocumentStorageService storage;
     private DeletionRecordRepository deletions;
     private PasswordEncoder passwordEncoder;
@@ -42,6 +43,7 @@ class RecordDeletionServiceTest {
         families = mock(FamilyRepository.class);
         users = mock(UserRepository.class);
         documents = mock(DocumentRepository.class);
+        doctorRepository = mock(DoctorRepository.class);
         storage = mock(DocumentStorageService.class);
         deletions = mock(DeletionRecordRepository.class);
         passwordEncoder = mock(PasswordEncoder.class);
@@ -51,7 +53,7 @@ class RecordDeletionServiceTest {
                 mock(MedicalConditionRepository.class), mock(AllergyRepository.class),
                 mock(MedicationRepository.class), mock(ImmunizationRepository.class),
                 mock(VitalReadingRepository.class), mock(RecordRevisionRepository.class),
-                mock(LabResultRepository.class), documents,
+                mock(LabResultRepository.class), documents, doctorRepository,
                 storage, deletions, passwordEncoder);
     }
 
@@ -153,6 +155,50 @@ class RecordDeletionServiceTest {
         verify(members).delete(member);
         verify(families).delete(family);
         verify(users).delete(leaving);
+    }
+
+    @Test
+    void aSelfRegisteredDoctorListingGoesWithTheAccount() {
+        // The person wrote it about themselves, so it is their data.
+        User leaving = user(1L, "hashed");
+        when(users.findById(1L)).thenReturn(Optional.of(leaving));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(memberships.findByUserId(1L)).thenReturn(List.of());
+
+        Doctor listing = new Doctor();
+        listing.setSource("self-registered");
+        listing.setUser(leaving);
+        when(doctorRepository.findByUserIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(listing));
+
+        service.deleteAccount(1L, "right");
+
+        assertNotNull(listing.getDeletedAt());
+        assertFalse(listing.isActive());
+    }
+
+    @Test
+    void aSeededListingReturnsToUnclaimedRatherThanBeingStranded() {
+        // We created it, so it was never theirs to take away. Leaving it owned
+        // by a deleted account would strand it: marked as claimed, with nobody
+        // able to claim it, because claiming requires an unclaimed listing.
+        User leaving = user(1L, "hashed");
+        when(users.findById(1L)).thenReturn(Optional.of(leaving));
+        when(passwordEncoder.matches(any(), any())).thenReturn(true);
+        when(memberships.findByUserId(1L)).thenReturn(List.of());
+
+        Doctor listing = new Doctor();
+        listing.setSource("public listing");
+        listing.setUser(leaving);
+        listing.setVerification(VerificationStatus.VERIFIED);
+        listing.setAcceptsBookings(true);
+        when(doctorRepository.findByUserIdAndDeletedAtIsNull(1L)).thenReturn(Optional.of(listing));
+
+        service.deleteAccount(1L, "right");
+
+        assertNull(listing.getUser());
+        assertEquals(VerificationStatus.UNCLAIMED, listing.getVerification());
+        assertFalse(listing.isAcceptsBookings(), "a released listing must not keep taking bookings");
+        assertNull(listing.getDeletedAt());
     }
 
     @Test

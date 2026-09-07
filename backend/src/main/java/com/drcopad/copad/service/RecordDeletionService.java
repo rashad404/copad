@@ -9,6 +9,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDateTime;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -45,6 +46,7 @@ public class RecordDeletionService {
     private final RecordRevisionRepository revisions;
     private final LabResultRepository labResults;
     private final DocumentRepository documents;
+    private final DoctorRepository doctorRepository;
 
     private final DocumentStorageService storage;
     private final DeletionRecordRepository deletions;
@@ -108,6 +110,32 @@ public class RecordDeletionService {
                         userId, family.getId());
             }
         }
+
+        // A doctor listing outlives the account differently depending on whose
+        // it was. One the person wrote about themselves is their data and goes
+        // with them; one we created from a public source was never theirs, so it
+        // returns to being unclaimed and can be claimed again.
+        //
+        // Without this the foreign key simply nulls the owner, leaving a listing
+        // marked "claim under review" with nobody claiming it - a state that
+        // cannot be resolved, because claiming requires an unclaimed listing.
+        doctorRepository.findByUserIdAndDeletedAtIsNull(userId).ifPresent(doctor -> {
+            if ("self-registered".equals(doctor.getSource())) {
+                doctor.setDeletedAt(LocalDateTime.now());
+                doctor.setActive(false);
+                doctor.setAcceptsBookings(false);
+                total.merge("doctorListing", 1L, (a, b) ->
+                        ((Number) a).longValue() + ((Number) b).longValue());
+            } else {
+                doctor.setUser(null);
+                doctor.setVerification(VerificationStatus.UNCLAIMED);
+                doctor.setVerifiedAt(null);
+                doctor.setAcceptsBookings(false);
+                total.merge("doctorListingReleased", 1L, (a, b) ->
+                        ((Number) a).longValue() + ((Number) b).longValue());
+            }
+            doctorRepository.save(doctor);
+        });
 
         userRepository.delete(user);
         record(DeletionRecord.SubjectType.ACCOUNT, userId, null, total);
