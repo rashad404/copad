@@ -43,8 +43,13 @@
   white-space: nowrap;
   color: #172a35 !important;
 }
-.brand > span {
-  color: #214be2;
+.brandMark {
+  display: inline-block;
+  width: 0.73em;
+  height: 0.73em;
+  width: 1cap;
+  height: 1cap;
+  vertical-align: baseline;
 }
 .desktopNav {
   display: flex;
