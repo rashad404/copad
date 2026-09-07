@@ -206,7 +206,7 @@
   "home": {
     "hero": {
       "title": "您的 AI 医生。全天候服务。",
-      "subtitle": "提出健康问题，立即从 Copad AI Doctor 获得建议 — 无需注册。",
+      "subtitle": "提出健康问题，立即从 Copad AI Doctor 获得建议 - 无需注册。",
       "createAccount": "创建账户",
       "login": "登录",
       "trustBar": {
@@ -237,7 +237,7 @@
       "description": "可访问、可靠且个性化的 AI 驱动医疗协助。",
       "chat": {
         "title": "与 AI 医生咨询",
-        "description": "描述您的症状，立即获得专家指导 — 全天候。无需等候室，无需预约。"
+        "description": "描述您的症状，立即获得专家指导 - 全天候。无需等候室，无需预约。"
       },
       "upload": {
         "title": "上传医疗文件",

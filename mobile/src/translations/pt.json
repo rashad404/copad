@@ -206,7 +206,7 @@
   "home": {
     "hero": {
       "title": "Seu Médico AI. Disponível 24/7.",
-      "subtitle": "Faça uma pergunta sobre saúde e receba conselhos instantâneos do Copad AI Doctor — sem necessidade de registro.",
+      "subtitle": "Faça uma pergunta sobre saúde e receba conselhos instantâneos do Copad AI Doctor - sem necessidade de registro.",
       "createAccount": "Criar Conta",
       "login": "Entrar",
       "trustBar": {
@@ -237,7 +237,7 @@
       "description": "Assistência médica acessível, confiável e personalizada com tecnologia AI.",
       "chat": {
         "title": "Consulte com um Médico AI",
-        "description": "Descreva seus sintomas e receba orientação especializada instantaneamente — 24/7. Sem salas de espera, sem necessidade de agendamento."
+        "description": "Descreva seus sintomas e receba orientação especializada instantaneamente - 24/7. Sem salas de espera, sem necessidade de agendamento."
       },
       "upload": {
         "title": "Carregar Arquivos Médicos",

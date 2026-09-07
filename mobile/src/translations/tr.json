@@ -206,7 +206,7 @@
   "home": {
     "hero": {
       "title": "AI Doktorunuz. 7/24 Hizmetinizde.",
-      "subtitle": "Bir sağlık sorusu sorun ve Copad AI Doktor'dan anında tavsiye alın — kayıt gerekmez.",
+      "subtitle": "Bir sağlık sorusu sorun ve Copad AI Doktor'dan anında tavsiye alın - kayıt gerekmez.",
       "createAccount": "Hesap Oluştur",
       "login": "Giriş Yap",
       "trustBar": {
@@ -237,7 +237,7 @@
       "description": "Erişilebilir, güvenilir ve kişiselleştirilmiş AI destekli tıbbi yardım.",
       "chat": {
         "title": "AI Doktor ile Danışın",
-        "description": "Semptomlarınızı tanımlayın ve anında uzman rehberliği alın — 7/24. Bekleme odası yok, randevu gerekmez."
+        "description": "Semptomlarınızı tanımlayın ve anında uzman rehberliği alın - 7/24. Bekleme odası yok, randevu gerekmez."
       },
       "upload": {
         "title": "Tıbbi Dosyaları Yükleyin",

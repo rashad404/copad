@@ -206,7 +206,7 @@
     "home": {
       "hero": {
         "title": "Your AI Doctor. Available 24/7.",
-        "subtitle": "Ask a health question and get instant advice from Copad AI Doctor — no registration needed.",
+        "subtitle": "Ask a health question and get instant advice from Copad AI Doctor - no registration needed.",
         "createAccount": "Create Account",
         "login": "Log In",
         "trustBar": {
@@ -237,7 +237,7 @@
         "description": "Accessible, reliable, and tailored AI-powered medical assistance.",
         "chat": {
           "title": "Consult with an AI Physician",
-          "description": "Describe your symptoms and get expert guidance instantly — 24/7. No waiting rooms, no appointments needed."
+          "description": "Describe your symptoms and get expert guidance instantly - 24/7. No waiting rooms, no appointments needed."
         },
         "upload": {
           "title": "Upload Medical Files",
