@@ -13,6 +13,7 @@ import {
   Tag as TagIcon,
   PlusCircle as PlusCircleIcon,
   Users as UsersIcon,
+  Stethoscope as StethoscopeIcon,
   Settings as Cog6ToothIcon,
   LogOut as ArrowLeftOnRectangleIcon,
 } from 'lucide-react';
@@ -83,6 +84,11 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       name: t('admin.users.title'),
       href: '/admin/users',
       icon: UsersIcon,
+    },
+    {
+      name: t('admin.specialties.title', 'Specialties'),
+      href: '/admin/specialties',
+      icon: StethoscopeIcon,
     },
     {
       name: t('admin.settings.title'),

@@ -166,3 +166,27 @@ export default {
   activateUser,
   deactivateUser
 };
+
+// Medical specialties -------------------------------------------------------
+// These records carry the assistant's clinical system prompts, so every write
+// goes through the ADMIN-gated /api/admin path.
+
+export interface MedicalSpecialty {
+  id: number;
+  name: string;
+  code: string;
+  systemPrompt: string;
+  description: string;
+  iconUrl: string;
+  isActive: boolean;
+}
+
+export const getSpecialties = (): Promise<AxiosResponse<MedicalSpecialty[]>> => {
+  return adminAPI.get('/admin/specialties');
+};
+
+export const createSpecialty = (
+  data: Partial<MedicalSpecialty>
+): Promise<AxiosResponse<MedicalSpecialty>> => {
+  return adminAPI.post('/admin/specialties', data);
+};
