@@ -1,0 +1,256 @@
+.header {
+  position: relative;
+  z-index: 60;
+  flex-shrink: 0;
+  width: 100%;
+  background: #fafaf6;
+  color: #172a35;
+  color-scheme: light;
+  border-bottom: 1px solid #dce1da;
+  line-height: 1.5;
+  text-align: start;
+}
+.header * {
+  box-sizing: border-box;
+}
+.header a {
+  text-decoration: none;
+}
+.header a:hover {
+  color: #214be2;
+}
+.header button:hover {
+  transform: none !important;
+}
+.header :focus-visible {
+  outline: 3px solid #214be2;
+  outline-offset: 4px;
+}
+.inner {
+  max-width: 1280px;
+  margin: auto;
+  padding: 0 52px;
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 28px;
+}
+.brand {
+  font-size: 37px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  white-space: nowrap;
+  color: #172a35 !important;
+}
+.brand > span {
+  color: #214be2;
+}
+.desktopNav {
+  display: flex;
+  gap: 32px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.login,
+.account {
+  font-size: 13px;
+  font-weight: 650;
+  white-space: nowrap;
+}
+.header .cta {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  color: white !important;
+  background: #214be2;
+  padding: 13px 18px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 650;
+  white-space: nowrap;
+  min-height: 44px;
+}
+.header .cta:hover {
+  background: #193cbd;
+}
+.toggle {
+  display: none;
+  padding: 10px;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+  color: #172a35;
+}
+.account {
+  position: relative;
+}
+.account summary {
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 0;
+}
+.account summary::-webkit-details-marker {
+  display: none;
+}
+.account nav {
+  position: absolute;
+  top: 100%;
+  inset-inline-end: 0;
+  min-width: 180px;
+  padding: 8px;
+  background: #fff;
+  border: 1px solid #dce1da;
+  border-radius: 10px;
+  box-shadow: 0 10px 25px #172a3510;
+}
+.account nav a,
+.account nav button {
+  display: block;
+  width: 100%;
+  text-align: start;
+  padding: 12px;
+  border-radius: 6px;
+  font-size: 13px;
+  background: transparent;
+  cursor: pointer;
+}
+.account nav a:hover,
+.account nav button:hover {
+  background: #edf0e5;
+  color: #214be2;
+}
+.mobileNav {
+  display: none;
+}
+.actions [aria-haspopup="listbox"] {
+  background: transparent !important;
+  box-shadow: none !important;
+  color: #172a35 !important;
+}
+.actions [aria-haspopup="listbox"] span {
+  color: #172a35 !important;
+}
+.actions [role="listbox"] {
+  background: #fff !important;
+  color: #172a35 !important;
+}
+.actions [role="option"] {
+  color: #172a35 !important;
+}
+.actions [role="option"][data-focus] {
+  background: #edf0e5 !important;
+  color: #214be2 !important;
+}
+.actions [role="option"] span {
+  color: inherit !important;
+}
+@media (max-width: 1050px) {
+  .inner {
+    gap: 20px;
+    padding: 0 28px;
+  }
+  .desktopNav {
+    gap: 20px;
+  }
+  .actions {
+    gap: 14px;
+  }
+}
+@media (max-width: 900px) {
+  .inner {
+    height: 80px;
+    padding: 0 22px;
+    gap: 12px;
+  }
+  .brand {
+    font-size: 32px;
+  }
+  .desktopNav,
+  .login,
+  .account {
+    display: none;
+  }
+  .toggle {
+    display: block;
+  }
+  .actions {
+    gap: 10px;
+  }
+  .header .cta {
+    padding: 11px 13px;
+    font-size: 11px;
+    gap: 8px;
+  }
+  .mobileNav {
+    display: block;
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    background: #fafaf6;
+    padding: 12px 22px 20px;
+    border-bottom: 1px solid #dce1da;
+    box-shadow: 0 15px 24px #172a350a;
+    max-height: calc(100dvh - 80px);
+    overflow-y: auto;
+  }
+  .mobileNav > a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 0;
+    font-size: 15px;
+    font-weight: 600;
+  }
+  .mobileAccount {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px 22px;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #dce1da;
+    font-size: 14px;
+  }
+  .mobileAccount > a,
+  .mobileAccount > button {
+    padding: 12px 0;
+    cursor: pointer;
+  }
+}
+@media (max-width: 390px) {
+  .inner {
+    padding: 0 16px;
+    gap: 8px;
+  }
+  .brand {
+    font-size: 29px;
+  }
+  .actions {
+    gap: 3px;
+  }
+  .header .cta {
+    padding: 10px;
+    font-size: 10px;
+  }
+  .cta svg {
+    display: none;
+  }
+  .toggle {
+    padding: 8px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .header * {
+    transition: none !important;
+  }
+}

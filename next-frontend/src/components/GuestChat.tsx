@@ -454,11 +454,21 @@ const GuestChat: React.FC<GuestChatProps> = ({
         {/* Message input */}
         {sessionError && (
           <div className="public-chat-error" role="alert">
-            {c(
-              "The conversation could not be updated. Please try again.",
-              "Söhbəti yeniləmək mümkün olmadı. Yenidən cəhd edin.",
-            )}
-            {!sessionId && (
+            {!selectedChatId
+              ? c(
+                  "Could not connect to your chat. Please reconnect.",
+                  "Söhbətə qoşulmaq mümkün olmadı. Yenidən qoşulun.",
+                )
+              : sessionError === "Failed to send message"
+                ? c(
+                    "Your message could not be sent. Please try again.",
+                    "Mesajınızı göndərmək mümkün olmadı. Yenidən cəhd edin.",
+                  )
+                : c(
+                    "The conversation could not be updated. Please try again.",
+                    "Söhbəti yeniləmək mümkün olmadı. Yenidən cəhd edin.",
+                  )}
+            {(!sessionId || !selectedChatId) && (
               <button onClick={() => window.location.reload()}>
                 {c("Reconnect", "Yenidən qoşul")}
               </button>
