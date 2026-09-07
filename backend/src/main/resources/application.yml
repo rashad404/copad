@@ -60,6 +60,14 @@ server:
   port: ${PORT:8080}
   forward-headers-strategy: framework
   tomcat:
+    # Read and discard an oversized upload rather than cutting the connection.
+    #
+    # When Tomcat rejects a body it stops reading, and the proxy in front sees a
+    # broken upstream and answers 502 with an HTML error page - so the readable
+    # 413 the application generated never reaches anyone. Swallowing a little
+    # more than the limit lets the real response be delivered. A genuinely huge
+    # upload is still cut off, which is the point.
+    max-swallow-size: 30MB
     remoteip:
       protocol-header: X-Forwarded-Proto
       remote-ip-header: X-Forwarded-For
