@@ -17,6 +17,47 @@ public class DocumentExtractionService {
     
     private static final int MAX_TEXT_LENGTH = 4000; // Limit text to avoid token limits
     
+    /**
+     * Extracts text from bytes already read from private storage.
+     *
+     * The path-based method below reads from disk, which the document pipeline
+     * cannot use: files live outside the web root under generated keys, and
+     * only the storage service knows how to resolve one.
+     *
+     * No truncation here. The 4000-character cap on the other method exists to
+     * fit a chat prompt; a stored document keeps its full text so lab values
+     * further down the page are not silently lost.
+     */
+    public String extractText(byte[] bytes, String contentType) {
+        if (bytes == null || bytes.length == 0 || contentType == null) return null;
+        try {
+            switch (contentType) {
+                case "application/pdf" -> {
+                    try (PDDocument document = PDDocument.load(bytes)) {
+                        return new PDFTextStripper().getText(document);
+                    }
+                }
+                case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
+                    try (XWPFDocument doc = new XWPFDocument(new java.io.ByteArrayInputStream(bytes));
+                         XWPFWordExtractor extractor = new XWPFWordExtractor(doc)) {
+                        return extractor.getText();
+                    }
+                }
+                case "text/plain" -> {
+                    return new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
+                }
+                default -> {
+                    // Images need OCR, which is not wired up yet; the document
+                    // is stored and viewable, just not searchable.
+                    return null;
+                }
+            }
+        } catch (Exception e) {
+            log.warn("Could not extract text ({}): {}", contentType, e.getClass().getSimpleName());
+            return null;
+        }
+    }
+
     public String extractTextFromDocument(String filePath, String fileType) {
         try {
             File file = new File(filePath);

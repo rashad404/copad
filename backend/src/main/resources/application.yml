@@ -172,3 +172,9 @@ medicine:
     url: ${MEDICINE_SYNC_URL:}
     username: ${MEDICINE_SYNC_USERNAME:}
     password: ${MEDICINE_SYNC_PASSWORD:}
+
+document:
+  storage:
+    # Outside the web root. Patient files are served only through an endpoint
+    # that checks family access, never by the web server directly.
+    root: ${DOCUMENT_STORAGE_ROOT:${user.home}/azdoc-documents}
