@@ -3,6 +3,10 @@ package com.drcopad.copad.controller;
 import com.drcopad.copad.dto.ClinicalRecordDTOs.*;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.ClinicalRecordService;
+import com.drcopad.copad.service.RecordExportService;
+import com.drcopad.copad.service.TimelineService;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.MediaType;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
@@ -26,6 +30,8 @@ import java.util.List;
 public class ClinicalRecordController {
 
     private final ClinicalRecordService records;
+    private final TimelineService timeline;
+    private final RecordExportService export;
 
     // --- Conditions --------------------------------------------------------
 
@@ -147,6 +153,29 @@ public class ClinicalRecordController {
                                                    @AuthenticationPrincipal User user) {
         records.deleteImmunization(id, user.getId());
         return ResponseEntity.noContent().build();
+    }
+
+    // --- Timeline and export -----------------------------------------------
+
+    /** Every record type interleaved by date, newest first. */
+    @GetMapping("/timeline")
+    public List<TimelineService.Entry> timeline(@PathVariable Long memberId,
+                                                @RequestParam(defaultValue = "100") int limit,
+                                                @AuthenticationPrincipal User user) {
+        return timeline.forMember(memberId, user.getId(), limit);
+    }
+
+    /** One-page summary to hand a doctor. */
+    @GetMapping("/summary.pdf")
+    public ResponseEntity<byte[]> summaryPdf(@PathVariable Long memberId,
+                                             @AuthenticationPrincipal User user) {
+        byte[] pdf = export.summaryPdf(memberId, user.getId());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_PDF)
+                // inline so it previews in the browser; a doctor visit is more
+                // likely to want it on screen than in a downloads folder.
+                .header(HttpHeaders.CONTENT_DISPOSITION, "inline; filename=\"health-summary.pdf\"")
+                .body(pdf);
     }
 
     // --- Audit -------------------------------------------------------------
