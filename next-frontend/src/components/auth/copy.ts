@@ -1,4 +1,41 @@
 export const authCopy = {
+  ru: {
+    eyebrow: "ЧАТ С AZDOC",
+    lineOne: "Есть вопрос",
+    lineTwo: "о вашем",
+    lineThree: "здоровье?",
+    story:
+      "Спросите о симптомах, анализах и лекарствах. К чату можно прикрепить медицинский документ.",
+    sample: "ПРИМЕР ПЕРЕПИСКИ",
+    sampleQuestion: "Можно отправить результаты анализов?",
+    sampleAnswer: "Да. Прикрепите PDF или фотографию документа к чату.",
+    note: "Отдельные записи для членов семьи.",
+    noteDetail:
+      "Сохраняйте аллергии, лекарства и измерения для каждого человека.",
+    smallPrint:
+      "Ответы готовит искусственный интеллект. azdoc не заменяет врача.",
+    loginEyebrow: "ВХОД В АККАУНТ",
+    registerEyebrow: "РЕГИСТРАЦИЯ",
+    loginTitle: "Войдите в аккаунт.",
+    registerTitle: "Создайте аккаунт.",
+    loginSubtitle: "Откройте свои чаты и медицинские записи семьи.",
+    registerSubtitle: "Сохраняйте сведения о здоровье семьи в своем аккаунте.",
+    showPassword: "Показать пароль",
+    hidePassword: "Скрыть пароль",
+    emailDivider: "или войдите по электронной почте",
+    passwordHelp: "Не менее 8 символов.",
+    privacy: "Конфиденциальность",
+    terms: "Условия использования",
+    contact: "Нужна помощь?",
+    home: "На главную",
+    registrationFailed: "Не удалось создать аккаунт. Попробуйте снова.",
+    loginFailed: "Не удалось войти. Проверьте данные и попробуйте снова.",
+    haveAccount: "Уже есть аккаунт?",
+    noAccount: "Нет аккаунта?",
+    namePlaceholder: "Ваши имя и фамилия",
+    termsIntro: "Я принимаю",
+    and: "и",
+  },
   en: {
     eyebrow: "A CLEARER PICTURE STARTS HERE",
     lineOne: "One question.",
@@ -48,9 +85,9 @@ export const authCopy = {
     sampleAnswer:
       "Bəli. PDF faylını və ya sənədin şəklini söhbətə əlavə edə bilərsiniz.",
     note: "Ailəniz üçün ayrıca qeydlər.",
-    noteDetail: "Allergiyaları, dərmanları və ölçüləri hər ailə üzvü üçün saxlayın.",
-    smallPrint:
-      "Cavabları süni intellekt hazırlayır. azdoc həkimi əvəz etmir.",
+    noteDetail:
+      "Allergiyaları, dərmanları və ölçüləri hər ailə üzvü üçün saxlayın.",
+    smallPrint: "Cavabları süni intellekt hazırlayır. azdoc həkimi əvəz etmir.",
     loginEyebrow: "HESABINIZA GİRİŞ",
     registerEyebrow: "QEYDİYYAT",
     loginTitle: "Hesabınıza daxil olun.",

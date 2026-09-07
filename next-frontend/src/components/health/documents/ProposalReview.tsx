@@ -1,4 +1,5 @@
 "use client";
+import { LabSource } from "./LabSource";
 import { documentDateLabel as dateLabel } from "./model";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -70,6 +71,7 @@ export function ProposalCard({
   return (
     <article className={styles.proposal} data-proposal-id={row.id}>
       <ProposalBadge />
+      {proposal.kind === "lab" && <LabSource row={proposal.row} />}
       <h3>
         {proposal.kind === "lab"
           ? proposal.row.analyte
@@ -226,6 +228,7 @@ export default function ProposalReview({
   return (
     <RecordDialog title={title} onClose={onClose} busy={busy}>
       <ProposalBadge />
+      {proposal.kind === "lab" && <LabSource row={proposal.row} />}
       <h3>
         {proposal.kind === "lab"
           ? proposal.row.analyte

@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydrated } from "@/utils/useHydrated";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import BrandLogo from "@/components/brand/BrandLogo";
@@ -12,15 +13,19 @@ import LanguageSwitcher from "@/components/LanguageSwitcher";
 import translations from "./translations.json";
 import styles from "./SiteHeader.module.css";
 
-const manrope = Manrope({ subsets: ["latin", "latin-ext"], display: "swap" });
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
+});
 const dictionary: Record<string, Record<string, string>> = translations;
 
 /** The same site navigation on the homepage, public pages, and account screens. */
 export default function SiteHeader() {
   const { i18n } = useTranslation();
-  const language = (i18n.resolvedLanguage || i18n.language || "en").split(
-    "-",
-  )[0];
+  const hydrated = useHydrated();
+  const language = (
+    hydrated ? i18n.resolvedLanguage || i18n.language || "en" : "en"
+  ).split("-")[0];
   const copy = (key: string) =>
     dictionary[language]?.[key] ?? dictionary.en?.[key] ?? key;
   const { isAuthenticated, logout } = useAuth();
@@ -73,7 +78,7 @@ export default function SiteHeader() {
         </nav>
         <div className={styles.actions}>
           <LanguageSwitcher />
-          {isAuthenticated ? (
+          {hydrated && isAuthenticated ? (
             <details ref={accountRef} className={styles.account}>
               <summary>
                 {copy("Hesabım")}
@@ -130,7 +135,7 @@ export default function SiteHeader() {
             </Link>
           ))}
           <div className={styles.mobileAccount}>
-            {isAuthenticated ? (
+            {hydrated && isAuthenticated ? (
               <>
                 {accountLinks.map(([href, label]) => (
                   <Link key={href} href={href} onClick={close}>

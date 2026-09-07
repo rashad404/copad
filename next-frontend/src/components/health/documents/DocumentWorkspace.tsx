@@ -19,6 +19,8 @@ import {
   extracting,
   sortedDocuments,
 } from "./model";
+import ManualLabEntry from "./ManualLabEntry";
+import { LabSource } from "./LabSource";
 import UploadDocument from "./UploadDocument";
 import DocumentViewer from "./DocumentViewer";
 import ProposalReview, { ProposalCard, type Proposal } from "./ProposalReview";
@@ -57,6 +59,7 @@ export default function DocumentWorkspace({
   } | null>(null);
   const [deleting, setDeleting] = useState<MemberDocument | null>(null),
     [notice, setNotice] = useState("");
+  const [manualLab, setManualLab] = useState(false);
   const [manual, setManual] = useState(false);
   const [analyte, setAnalyte] = useState("");
   const prior = useRef(new Map<number, string>());
@@ -130,7 +133,7 @@ export default function DocumentWorkspace({
   const analytes = [
     ...new Map(confirmed.map((r) => [r.analyteKey, r.analyte])).entries(),
   ].sort((a, b) =>
-    a[1].localeCompare(b[1], i18n.language.startsWith("az") ? "az" : "en"),
+    a[1].localeCompare(b[1], i18n.resolvedLanguage || i18n.language),
   );
   const selectedAnalyte = analytes.some(([key]) => key === analyte)
     ? analyte
@@ -218,6 +221,11 @@ export default function DocumentWorkspace({
           </span>
         )}
       </div>
+      {write && tab === "labs" && (
+        <button className={health.secondary} onClick={() => setManualLab(true)}>
+          {c("Enter a lab result", "Analiz nəticəsi əlavə et")}
+        </button>
+      )}
       {notice && (
         <p role="status" className={health.notice}>
           {notice}
@@ -324,14 +332,27 @@ export default function DocumentWorkspace({
                     {status(doc)}
                   </p>
                   {write &&
+                    doc.documentType !== "LAB_RESULT" &&
+                    (doc.extractionStatus === "SKIPPED" ||
+                      doc.extractionStatus === "FAILED") && (
+                      <button
+                        className={health.textButton}
+                        onClick={() => setManualLab(true)}
+                      >
+                        {c("Enter a lab result", "Analiz nəticəsi əlavə et")}
+                      </button>
+                    )}
+                  {write &&
                     (doc.extractionStatus === "FAILED" ||
                       doc.extractionStatus === "SKIPPED") && (
                       <button
                         className={health.textButton}
                         onClick={() =>
-                          doc.documentType === "PRESCRIPTION"
-                            ? onManual("medications")
-                            : setManual(true)
+                          doc.documentType === "LAB_RESULT"
+                            ? setManualLab(true)
+                            : doc.documentType === "PRESCRIPTION"
+                              ? onManual("medications")
+                              : setManual(true)
                         }
                       >
                         {c(
@@ -470,13 +491,18 @@ export default function DocumentWorkspace({
                           <th>{c("Result", "Nəticə")}</th>
                           <th>{c("Reference", "Norma aralığı")}</th>
                           <th>{c("Flag", "Qiymətləndirmə")}</th>
-                          <th>{c("Source", "Sənəd")}</th>
+                          <th>{c("Original document", "Sənədin əsli")}</th>
                         </tr>
                       </thead>
                       <tbody>
                         {confirmed.map((row) => (
                           <tr key={row.id}>
-                            <td>{row.analyte}</td>
+                            <td>
+                              {row.analyte}
+                              <div>
+                                <LabSource row={row} />
+                              </div>
+                            </td>
                             <td>
                               {row.displayValue ??
                                 c("Not provided", "Göstərilməyib")}
@@ -489,15 +515,13 @@ export default function DocumentWorkspace({
                               <Flag flag={row.abnormalFlag} />
                             </td>
                             <td>
-                              {row.documentId != null ? (
+                              {row.documentId != null && (
                                 <button
                                   className={health.textButton}
                                   onClick={() => openSource(row.documentId!)}
                                 >
                                   {c("Original", "Sənədin əsli")}
                                 </button>
-                              ) : (
-                                c("Not provided", "Göstərilməyib")
                               )}
                             </td>
                           </tr>
@@ -568,6 +592,25 @@ export default function DocumentWorkspace({
           }}
         />
       )}
+      {write && manualLab && (
+        <ManualLabEntry
+          key={memberId}
+          memberId={memberId}
+          onClose={() => setManualLab(false)}
+          onSaved={() => {
+            setManualLab(false);
+            setVersion((n) => n + 1);
+            setReload((n) => n + 1);
+            setNotice(
+              c(
+                "Lab result saved as a manual entry.",
+                "Analiz nəticəsi əl ilə daxil edilmiş qeyd kimi saxlanıldı.",
+              ),
+            );
+            onChanged();
+          }}
+        />
+      )}
       {write && manual && (
         <RecordDialog
           title={c("Add a health record", "Sağlamlıq qeydi əlavə et")}
@@ -575,11 +618,20 @@ export default function DocumentWorkspace({
         >
           <p className={styles.muted}>
             {c(
-              "Choose what to record. Manual lab-result entry is not available yet; keep the original report saved.",
-              "Əlavə etmək istədiyiniz qeydi seçin. Analiz nəticəsini əl ilə əlavə etmək hələ mümkün deyil; sənədin əsli saxlanır.",
+              "Choose what to record from your document.",
+              "Sənəddən hansı məlumatı əlavə etmək istəyirsiniz?",
             )}
           </p>
           <div className={styles.actions}>
+            <button
+              className={health.secondary}
+              onClick={() => {
+                setManual(false);
+                setManualLab(true);
+              }}
+            >
+              {c("Lab result", "Analiz cavabı")}
+            </button>
             {(
               [
                 ["conditions", c("Condition", "Xəstəlik")],

@@ -1,9 +1,10 @@
+import { supportedLanguage } from "./languages";
 /**
  * The language the blog falls back to when the visitor has not chosen one.
  * Every post is written in Azerbaijani, so defaulting to anything else renders
  * an empty list for first-time visitors.
  */
-export const DEFAULT_BLOG_LANGUAGE = 'az';
+export const DEFAULT_BLOG_LANGUAGE = "az";
 
 /**
  * Resolves the language the blog should be rendered in.
@@ -20,9 +21,13 @@ export const DEFAULT_BLOG_LANGUAGE = 'az';
  */
 export function resolveBlogLanguage(
   langParam: string | undefined,
-  cookieHeader: string
+  cookieHeader: string,
 ): string {
   const cookieLang = cookieHeader.match(/(?:^|;\s*)i18nextLng=([^;]+)/)?.[1];
 
-  return langParam || cookieLang || DEFAULT_BLOG_LANGUAGE;
+  return (
+    supportedLanguage(langParam) ||
+    supportedLanguage(cookieLang) ||
+    DEFAULT_BLOG_LANGUAGE
+  );
 }

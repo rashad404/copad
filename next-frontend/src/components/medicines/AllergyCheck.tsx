@@ -1,4 +1,6 @@
 "use client";
+import { useHydrated } from "@/utils/useHydrated";
+import { useMedicineCopy } from "@/components/medicines/useMedicineCopy";
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useAuth } from "@/context/AuthContext";
@@ -7,16 +9,26 @@ import { checkMedicineAllergies } from "@/api/medicines";
 import { useResource } from "@/components/health/useResource";
 import styles from "./medicines.module.css";
 export default function AllergyCheck({ medicineId }: { medicineId: number }) {
+  const { copy: mc } = useMedicineCopy();
+  const hydrated = useHydrated();
   const { user, isAuthenticated, isLoading } = useAuth();
-  if (isLoading)
-    return <p className={styles.muted}>Allergiya yoxlaması hazırlanır...</p>;
+  if (isLoading || !hydrated)
+    return (
+      <p className={styles.muted}>
+        {" "}
+        {mc("Allergiya yoxlaması hazırlanır...")}{" "}
+      </p>
+    );
   if (!isAuthenticated || !user)
     return (
       <aside className={styles.advisory}>
-        <h2>Allergiya yoxlaması</h2>
+        <h2> {mc("Allergiya yoxlaması")} </h2>
         <p>
-          Dərmanın qeydə alınmış allergiyalarla əlaqəsini
-          yoxlamaq üçün <Link href="/login">daxil olun</Link>.
+          {" "}
+          {mc(
+            "Dərmanın qeydə alınmış allergiyalarla əlaqəsini yoxlamaq üçün",
+          )}{" "}
+          <Link href="/login"> {mc("daxil olun")} </Link>.
         </p>
       </aside>
     );
@@ -29,11 +41,12 @@ function MemberCheck({
   userId: string;
   medicineId: number;
 }) {
+  const { copy: mc } = useMedicineCopy();
   const [retry, setRetry] = useState(0);
   const families = useResource(
     `medicine-families:${userId}:${retry}`,
     (signal) => healthApi.families(signal),
-    "Ailə üzvlərini yükləmək mümkün olmadı.",
+    mc("Ailə üzvlərini yükləmək mümkün olmadı."),
   );
   const [selected, setSelected] = useState("");
   const storageKey = `azdoc.member.${userId}`;
@@ -53,19 +66,23 @@ function MemberCheck({
   const member = members.find((m) => String(m.id) === selected);
   return (
     <section className={styles.allergy}>
-      <h2>Sağlamlıq qeydləri üzrə allergiya yoxlaması</h2>
+      <h2> {mc("Sağlamlıq qeydləri üzrə allergiya yoxlaması")} </h2>
       {families.loading ? (
-        <p role="status">Ailə üzvləri yüklənir...</p>
+        <p role="status"> {mc("Ailə üzvləri yüklənir...")} </p>
       ) : families.error ? (
         <div role="alert">
           <p>{families.error}</p>
           <button onClick={() => setRetry((n) => n + 1)}>
-            Yenidən cəhd et
+            {" "}
+            {mc("Yenidən cəhd et")}{" "}
           </button>
         </div>
       ) : (
         <>
-          <label htmlFor="allergy-member">Kimin üçün yoxlanılsın?</label>
+          <label htmlFor="allergy-member">
+            {" "}
+            {mc("Kimin üçün yoxlanılsın?")}{" "}
+          </label>
           <select
             id="allergy-member"
             value={member ? selected : ""}
@@ -78,7 +95,7 @@ function MemberCheck({
               }
             }}
           >
-            <option value="">Ailə üzvünü seçin</option>
+            <option value=""> {mc("Ailə üzvünü seçin")} </option>
             {families.data?.map((f) => (
               <optgroup key={f.id} label={f.name}>
                 {f.members.map((m) => (
@@ -92,7 +109,8 @@ function MemberCheck({
           {!members.length && (
             <p>
               <Link href="/health-record">
-                Sağlamlıq qeydlərində ailə üzvü əlavə edin.
+                {" "}
+                {mc("Sağlamlıq qeydlərində ailə üzvü əlavə edin.")}{" "}
               </Link>
             </p>
           )}
@@ -107,10 +125,10 @@ function MemberCheck({
         </>
       )}
       <p className={styles.disclaimer}>
-        Bu avtomatik yoxlama qeydə alınmış allergiyalarla mümkün uyğunluğu
-        göstərir. Həkim və ya əczaçı qiymətləndirməsini əvəz etmir. Dərmanı
-        qəbul etməzdən və ya dəyişməzdən əvvəl həkim və ya əczaçı ilə
-        məsləhətləşin.
+        {" "}
+        {mc(
+          "Bu avtomatik yoxlama qeydə alınmış allergiyalarla mümkün uyğunluğu göstərir. Həkim və ya əczaçı qiymətləndirməsini əvəz etmir. Dərmanı qəbul etməzdən və ya dəyişməzdən əvvəl həkim və ya əczaçı ilə məsləhətləşin.",
+        )}{" "}
       </p>
     </section>
   );
@@ -124,26 +142,38 @@ function Warnings({
   memberId: number;
   name: string;
 }) {
+  const { copy: mc } = useMedicineCopy();
   const [retry, setRetry] = useState(0);
   const result = useResource(
     `allergies:${medicineId}:${memberId}:${retry}`,
     (signal) => checkMedicineAllergies(medicineId, memberId, signal),
-    "Allergiya yoxlaması baş tutmadı.",
+    mc("Allergiya yoxlaması baş tutmadı."),
   );
   if (result.loading)
-    return <p role="status">{name} üçün allergiyalar yoxlanılır...</p>;
+    return (
+      <p role="status">
+        {name} {mc("üçün allergiyalar yoxlanılır...")}{" "}
+      </p>
+    );
   if (result.error)
     return (
       <div role="alert" className={styles.warning}>
-        <p>{result.error} Allergiya riski qiymətləndirilə bilmədi.</p>
-        <button onClick={() => setRetry((n) => n + 1)}>Yenidən cəhd et</button>
+        <p>
+          {result.error} {mc("Allergiya riski qiymətləndirilə bilmədi.")}{" "}
+        </p>
+        <button onClick={() => setRetry((n) => n + 1)}>
+          {" "}
+          {mc("Yenidən cəhd et")}{" "}
+        </button>
       </div>
     );
   if (!result.data?.length)
     return (
       <p>
-        {name}: qeydə alınmış allergiyalarla uyğunluq tapılmadı. Bu, dərmanın
-        təhlükəsizliyinə zəmanət deyil.
+        {name}{" "}
+        {mc(
+          ": qeydə alınmış allergiyalarla uyğunluq tapılmadı. Bu, dərmanın təhlükəsizliyinə zəmanət deyil.",
+        )}{" "}
       </p>
     );
   return (
@@ -153,32 +183,35 @@ function Warnings({
         result.data.some((w) => w.critical) ? styles.critical : styles.warning
       }
     >
-      <h3>{name} üçün allergiya xəbərdarlığı</h3>
+      <h3>
+        {name} {mc("üçün allergiya xəbərdarlığı")}{" "}
+      </h3>
       {[...result.data]
         .sort((a, b) => Number(b.critical) - Number(a.critical))
         .map((w, i) => (
           <div key={`${w.allergen}:${w.basis}:${i}`}>
             <strong>
               {w.critical
-                ? "Ciddi allergiya - həyati təhlükə riski"
-                : "Allergiya riski ola bilər"}
+                ? mc("Ciddi allergiya - həyati təhlükə riski")
+                : mc("Allergiya riski ola bilər")}
             </strong>
             <p>
               {w.medicineName} · {w.allergen}
             </p>
             <p>
               {w.basis === "CLASS"
-                ? "Dərman qrupuna görə mümkün allergiya riski"
-                : "Təsiredici maddənin adına görə mümkün allergiya riski"}
+                ? mc("Dərman qrupuna görə mümkün allergiya riski")
+                : mc("Təsiredici maddənin adına görə mümkün allergiya riski")}
             </p>
             <small>
-              Allergiyanın ağırlığı:{" "}
+              {" "}
+              {mc("Allergiyanın ağırlığı:")}{" "}
               {(
                 {
-                  MILD: "Yüngül",
-                  MODERATE: "Orta",
-                  SEVERE: "Ağır",
-                  LIFE_THREATENING: "Həyati təhlükəli",
+                  MILD: mc("Yüngül"),
+                  MODERATE: mc("Orta"),
+                  SEVERE: mc("Ağır"),
+                  LIFE_THREATENING: mc("Həyati təhlükəli"),
                 } as Record<string, string>
               )[w.severity] || w.severity}
             </small>

@@ -1,0 +1,378 @@
+{
+  "Dərmanlar - qiymətlər və alternativlər | AzDoc": {
+    "ru": "Лекарства - цены и аналоги | AzDoc",
+    "en": "Medicines - prices and alternatives | AzDoc"
+  },
+  "Dərmanları adına və ya təsiredici maddəsinə görə axtarın. Qablaşdırma qiymətlərinə və oxşar tərkibli dərmanlara baxın.": {
+    "ru": "Ищите лекарства по названию или действующему веществу. Сравнивайте цены упаковок и препараты с похожим составом.",
+    "en": "Search by medicine or ingredient. Compare pack prices and medicines with similar ingredients."
+  },
+  "DƏRMAN KATALOQU": {
+    "ru": "КАТАЛОГ ЛЕКАРСТВ",
+    "en": "MEDICINE CATALOGUE"
+  },
+  "Dərmanı tapın.": {
+    "ru": "Найдите лекарство.",
+    "en": "Find a medicine."
+  },
+  "Qiyməti müqayisə edin.": {
+    "ru": "Сравните цены.",
+    "en": "Compare prices."
+  },
+  "Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.": {
+    "ru": "Ищите по названию или действующему веществу. Сравнивайте цены разных упаковок и препараты с похожим составом.",
+    "en": "Search by name or active ingredient. Compare pack prices and medicines with similar ingredients."
+  },
+  "Eyni maddə.": {
+    "ru": "Одно вещество.",
+    "en": "Same ingredient."
+  },
+  "Fərqli qiymətlər.": {
+    "ru": "Разные цены.",
+    "en": "Different prices."
+  },
+  "Qiymətlə yanaşı dozanı, dərman formasını və qablaşdırmanı da müqayisə edin.": {
+    "ru": "Сравнивайте не только цену, но и дозировку, форму выпуска и упаковку.",
+    "en": "Compare the dose, form and packaging as well as the price."
+  },
+  "Axtarış müvəqqəti əlçatan deyil": {
+    "ru": "Поиск временно недоступен",
+    "en": "Search is temporarily unavailable"
+  },
+  "Bir az sonra yenidən cəhd edin.": {
+    "ru": "Попробуйте еще раз чуть позже.",
+    "en": "Please try again later."
+  },
+  "Yenidən cəhd et": {
+    "ru": "Попробовать снова",
+    "en": "Try again"
+  },
+  "&quot;": {
+    "ru": "\"",
+    "en": "\""
+  },
+  "&quot; üçün nəticələr": {
+    "ru": "\": результаты",
+    "en": "\": results"
+  },
+  "nəticə": {
+    "ru": "результатов",
+    "en": "results"
+  },
+  "Nəticə tapılmadı. Dərmanın digər adını və ya təsiredici maddəsini yoxlayın.": {
+    "ru": "Ничего не найдено. Попробуйте другое название лекарства или действующего вещества.",
+    "en": "No results. Try another medicine name or active ingredient."
+  },
+  "Axtarışa uyğunluğa görə sıralanıb. Qiymətlər qablaşdırmalara aiddir.": {
+    "ru": "Сортировка по соответствию запросу. Цены указаны за упаковку.",
+    "en": "Sorted by relevance. Prices are per pack."
+  },
+  "Təsiredici maddə qeyd edilməyib": {
+    "ru": "Действующее вещество не указано",
+    "en": "Active ingredient not recorded"
+  },
+  "qablaşdırma variantı": {
+    "ru": "вариантов упаковки",
+    "en": "pack options"
+  },
+  "ən aşağı qiymət": {
+    "ru": "минимальная цена",
+    "en": "lowest price"
+  },
+  "Daha dəqiq nəticə üçün dərmanın tam adını yazın.": {
+    "ru": "Для более точного поиска введите полное название лекарства.",
+    "en": "Enter the full medicine name for more precise results."
+  },
+  "Axtarış nümunələri": {
+    "ru": "Примеры поиска",
+    "en": "Search examples"
+  },
+  "Dərmanın ticarət adını və ya qutuda yazılan təsiredici maddəni daxil edin. Axtarış üçün ən azı 2 hərf lazımdır.": {
+    "ru": "Введите торговое название или действующее вещество с упаковки. Для поиска нужно не менее 2 букв.",
+    "en": "Enter the brand name or ingredient printed on the pack. Use at least 2 letters."
+  },
+  "İbuprofen": {
+    "ru": "İbuprofen",
+    "en": "İbuprofen"
+  },
+  "Bu kataloq məlumat üçündür. Dərman seçimi və dəyişdirilməsi barədə həkim və ya əczaçı ilə məsləhətləşin. Qiymət məlumatı aptekdə mövcudluq zəmanəti deyil.": {
+    "ru": "Каталог предназначен для информации. Обсудите выбор или замену лекарства с врачом или фармацевтом. Наличие цены не гарантирует наличия в аптеке.",
+    "en": "This catalogue is for information. Consult a doctor or pharmacist before choosing or changing a medicine. Listed prices do not guarantee pharmacy availability."
+  },
+  "Dərman tapılmadı | AzDoc": {
+    "ru": "Лекарство не найдено | AzDoc",
+    "en": "Medicine not found | AzDoc"
+  },
+  "dərman məlumatı": {
+    "ru": "информация о лекарстве",
+    "en": "medicine information"
+  },
+  "Qablaşdırma məlumatları": {
+    "ru": "Информация об упаковке",
+    "en": "Pack information"
+  },
+  "Səhifə yolu": {
+    "ru": "Навигация по страницам",
+    "en": "Breadcrumb"
+  },
+  "← Dərman kataloqu": {
+    "ru": "<- Каталог лекарств",
+    "en": "<- Medicine catalogue"
+  },
+  "DƏRMAN HAQQINDA": {
+    "ru": "О ЛЕКАРСТВЕ",
+    "en": "ABOUT THIS MEDICINE"
+  },
+  "İstehsalçı qeyd edilməyib": {
+    "ru": "Производитель не указан",
+    "en": "Manufacturer not recorded"
+  },
+  "Resept statusu qeyd edilməyib": {
+    "ru": "Условия отпуска не указаны",
+    "en": "Prescription status not recorded"
+  },
+  "Ən ucuz qablaşdırma": {
+    "ru": "Самая дешевая упаковка",
+    "en": "Lowest-priced pack"
+  },
+  "Qiymətlərə bax ↓": {
+    "ru": "Посмотреть цены",
+    "en": "View prices"
+  },
+  "DİGƏR DƏRMANLARLA MÜQAYİSƏ": {
+    "ru": "СРАВНЕНИЕ С ДРУГИМИ ЛЕКАРСТВАМИ",
+    "en": "COMPARE OTHER MEDICINES"
+  },
+  "Eyni maddəni ehtiva edən dərmanlar": {
+    "ru": "Препараты с тем же действующим веществом",
+    "en": "Medicines sharing an active ingredient"
+  },
+  "Ən ucuz qablaşdırmalar əvvəl göstərilir. Bu dərmanlarda ən azı bir təsiredici maddə eynidir, amma tam tərkib, doza və dərman forması fərqlənə bilər. Dərmanı dəyişməzdən əvvəl həkim və ya əczaçı ilə məsləhətləşin.": {
+    "ru": "Сначала показаны самые дешевые упаковки. У этих лекарств совпадает хотя бы одно действующее вещество, но полный состав, дозировка и форма выпуска могут различаться. Перед заменой лекарства посоветуйтесь с врачом или фармацевтом.",
+    "en": "Lowest-priced packs first. These medicines share at least one ingredient, but the full composition, dose and form may differ. Consult a doctor or pharmacist before switching."
+  },
+  "Ən ucuz qablaşdırmaların qiymət fərqi": {
+    "ru": "Разница цен самых дешевых упаковок",
+    "en": "Difference between lowest pack prices"
+  },
+  "Qablaşdırma qiyməti fərqidir; eyni doza üzrə hesablanmış qənaət deyil.": {
+    "ru": "Это разница цен упаковок, а не расчет экономии для одинаковой дозы.",
+    "en": "This compares pack prices, not savings for an equivalent dose."
+  },
+  "qiymət fərqi": {
+    "ru": "разница в цене",
+    "en": "price difference"
+  },
+  "Bu dərman üçün alternativ məlumatı yoxdur.": {
+    "ru": "Нет сведений об аналогах этого лекарства.",
+    "en": "No alternatives listed for this medicine."
+  },
+  "Qablaşdırma və qiymətlər": {
+    "ru": "Упаковки и цены",
+    "en": "Packs and prices"
+  },
+  "AZN · ucuzdan bahaya": {
+    "ru": "AZN - по возрастанию цены",
+    "en": "AZN - lowest price first"
+  },
+  "Qablaşdırma qiymətləri": {
+    "ru": "Цены упаковок",
+    "en": "Pack prices"
+  },
+  "Doza, forma və qablaşdırma üzrə qeyd olunmuş qiymətlər": {
+    "ru": "Цены по дозировке, форме выпуска и упаковке",
+    "en": "Listed prices by dose, form and pack"
+  },
+  "Dərman / istehsalçı": {
+    "ru": "Лекарство / производитель",
+    "en": "Medicine / manufacturer"
+  },
+  "Doza və forma": {
+    "ru": "Дозировка и форма",
+    "en": "Dose and form"
+  },
+  "Qablaşdırma": {
+    "ru": "Упаковка",
+    "en": "Pack"
+  },
+  "Qiymət": {
+    "ru": "Цена",
+    "en": "Price"
+  },
+  "Qeyd edilməyib": {
+    "ru": "Не указано",
+    "en": "Not recorded"
+  },
+  "qiymət yoxdur": {
+    "ru": "цена не указана",
+    "en": "price unavailable"
+  },
+  "Qiymətlər aptekdə mövcudluq zəmanəti deyil. Qablaşdırmadakı vahid sayı bu məlumatda təqdim olunmur; alış zamanı dəqiqləşdirin.": {
+    "ru": "Наличие цены не гарантирует наличия в аптеке. Количество единиц в упаковке здесь не указано. Уточните его при покупке.",
+    "en": "Listed prices do not guarantee availability. Unit counts are not provided; check the pack when buying."
+  },
+  "Əlavə məlumat": {
+    "ru": "Дополнительная информация",
+    "en": "Additional information"
+  },
+  "Buraxılış forması:": {
+    "ru": "Форма выпуска:",
+    "en": "Release form:"
+  },
+  "Bu səhifə məlumat üçündür və fərdi tibbi məsləhət deyil. Dərmanı qəbul etməzdən və ya dəyişməzdən əvvəl həkim və ya əczaçı ilə məsləhətləşin.": {
+    "ru": "Эта страница предназначена для информации, а не для индивидуальных медицинских рекомендаций. Перед приемом или заменой лекарства посоветуйтесь с врачом или фармацевтом.",
+    "en": "This page is for information, not individual medical advice. Consult a doctor or pharmacist before taking or changing a medicine."
+  },
+  "Məlumat yüklənmədi": {
+    "ru": "Не удалось загрузить данные",
+    "en": "Could not load data"
+  },
+  "Dərman kataloqu ilə əlaqə qurmaq mümkün olmadı.": {
+    "ru": "Не удалось подключиться к каталогу лекарств.",
+    "en": "Could not connect to the medicine catalogue."
+  },
+  "Dərman tapılmadı": {
+    "ru": "Лекарство не найдено",
+    "en": "Medicine not found"
+  },
+  "Bu ünvanda dərman məlumatı tapılmadı. Kataloqda adına görə axtara bilərsiniz.": {
+    "ru": "По этому адресу нет сведений о лекарстве. Попробуйте поиск по названию в каталоге.",
+    "en": "No medicine was found at this address. Try searching the catalogue by name."
+  },
+  "Kataloqda axtar": {
+    "ru": "Поиск в каталоге",
+    "en": "Search the catalogue"
+  },
+  "Dərman və ya təsiredici maddə": {
+    "ru": "Лекарство или действующее вещество",
+    "en": "Medicine or active ingredient"
+  },
+  "Məsələn, İbuprofen": {
+    "ru": "Например, İbuprofen",
+    "en": "For example, İbuprofen"
+  },
+  "Axtar": {
+    "ru": "Найти",
+    "en": "Search"
+  },
+  "Allergiya yoxlaması hazırlanır...": {
+    "ru": "Подготавливаем проверку аллергий...",
+    "en": "Preparing allergy check..."
+  },
+  "Allergiya yoxlaması": {
+    "ru": "Проверка аллергий",
+    "en": "Allergy check"
+  },
+  "Dərmanın qeydə alınmış allergiyalarla əlaqəsini yoxlamaq üçün": {
+    "ru": "Для проверки лекарства по вашим записям об аллергиях",
+    "en": "To check this medicine against recorded allergies,"
+  },
+  "daxil olun": {
+    "ru": "войдите в аккаунт",
+    "en": " sign in"
+  },
+  "Ailə üzvlərini yükləmək mümkün olmadı.": {
+    "ru": "Не удалось загрузить список членов семьи.",
+    "en": "Could not load family members."
+  },
+  "Sağlamlıq qeydləri üzrə allergiya yoxlaması": {
+    "ru": "Проверка по записям об аллергиях",
+    "en": "Check recorded allergies"
+  },
+  "Ailə üzvləri yüklənir...": {
+    "ru": "Загружаем список членов семьи...",
+    "en": "Loading family members..."
+  },
+  "Kimin üçün yoxlanılsın?": {
+    "ru": "Для кого выполнить проверку?",
+    "en": "Who is this check for?"
+  },
+  "Ailə üzvünü seçin": {
+    "ru": "Выберите члена семьи",
+    "en": "Select a member"
+  },
+  "Sağlamlıq qeydlərində ailə üzvü əlavə edin.": {
+    "ru": "Добавьте члена семьи в медицинских записях.",
+    "en": "Add a family member in Health records."
+  },
+  "Bu avtomatik yoxlama qeydə alınmış allergiyalarla mümkün uyğunluğu göstərir. Həkim və ya əczaçı qiymətləndirməsini əvəz etmir. Dərmanı qəbul etməzdən və ya dəyişməzdən əvvəl həkim və ya əczaçı ilə məsləhətləşin.": {
+    "ru": "Автоматическая проверка показывает возможные совпадения с записанными аллергиями. Она не заменяет оценку врача или фармацевта. Перед приемом или заменой лекарства посоветуйтесь со специалистом.",
+    "en": "This automated check identifies possible matches with recorded allergies. It does not replace a doctor or pharmacist's assessment. Consult one before taking or changing a medicine."
+  },
+  "Allergiya yoxlaması baş tutmadı.": {
+    "ru": "Не удалось выполнить проверку аллергий.",
+    "en": "Allergy check failed."
+  },
+  "üçün allergiyalar yoxlanılır...": {
+    "ru": "- проверяем аллергии...",
+    "en": "- checking allergies..."
+  },
+  "Allergiya riski qiymətləndirilə bilmədi.": {
+    "ru": "Не удалось оценить риск аллергии.",
+    "en": "Allergy risk could not be assessed."
+  },
+  ": qeydə alınmış allergiyalarla uyğunluq tapılmadı. Bu, dərmanın təhlükəsizliyinə zəmanət deyil.": {
+    "ru": ": совпадений с записанными аллергиями не найдено. Это не гарантирует безопасность лекарства.",
+    "en": ": no matches with recorded allergies. This does not guarantee the medicine is safe."
+  },
+  "üçün allergiya xəbərdarlığı": {
+    "ru": "- предупреждение об аллергии",
+    "en": "- allergy warning"
+  },
+  "Ciddi allergiya - həyati təhlükə riski": {
+    "ru": "Тяжелая аллергия - возможна угроза жизни",
+    "en": "Critical allergy - potentially life-threatening"
+  },
+  "Allergiya riski ola bilər": {
+    "ru": "Возможен риск аллергии",
+    "en": "Possible allergy risk"
+  },
+  "Dərman qrupuna görə mümkün allergiya riski": {
+    "ru": "Возможный риск аллергии по группе лекарства",
+    "en": "Possible allergy risk based on drug class"
+  },
+  "Təsiredici maddənin adına görə mümkün allergiya riski": {
+    "ru": "Возможный риск аллергии по названию действующего вещества",
+    "en": "Possible allergy risk based on ingredient name"
+  },
+  "Allergiyanın ağırlığı:": {
+    "ru": "Тяжесть аллергии:",
+    "en": "Allergy severity:"
+  },
+  "Yüngül": {
+    "ru": "Легкая",
+    "en": "Mild"
+  },
+  "Ağır": {
+    "ru": "Тяжелая",
+    "en": "Severe"
+  },
+  "Həyati təhlükəli": {
+    "ru": "Угрожает жизни",
+    "en": "Life-threatening"
+  },
+  "Orta": {
+    "ru": "Умеренная",
+    "en": "Moderate"
+  },
+  "qiymətlər və alternativlər": {
+    "en": "prices and alternatives",
+    "ru": "цены и аналоги"
+  },
+  "ən aşağı qablaşdırma qiyməti": {
+    "en": "lowest pack price",
+    "ru": "минимальная цена упаковки"
+  },
+  "istehsalçı və alternativlər": {
+    "en": "manufacturer and alternatives",
+    "ru": "производитель и аналоги"
+  },
+  "Reseptsiz": {
+    "en": "Without prescription",
+    "ru": "Без рецепта"
+  },
+  "Reseptlə": {
+    "en": "Prescription only",
+    "ru": "По рецепту"
+  }
+}

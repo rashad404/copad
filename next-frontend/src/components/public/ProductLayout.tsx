@@ -1,5 +1,6 @@
 "use client";
 
+import { useHydrated } from "@/utils/useHydrated";
 import Link from "next/link";
 import { Manrope } from "next/font/google";
 import { useTranslation } from "react-i18next";
@@ -7,12 +8,24 @@ import SiteHeader from "@/components/navigation/SiteHeader";
 import { useAuth } from "@/context/AuthContext";
 import BrandLogo from "@/components/brand/BrandLogo";
 import "./public.css";
+import russian from "@/translations/public.ru.json";
 
-const manrope = Manrope({ subsets: ["latin"], variable: "--public-font" });
+const manrope = Manrope({
+  subsets: ["latin", "cyrillic"],
+  variable: "--public-font",
+});
 export function usePublicCopy() {
   const { i18n } = useTranslation();
-  const az = (i18n.resolvedLanguage || i18n.language || "en").startsWith("az");
-  return (en: string, azerbaijani: string) => (az ? azerbaijani : en);
+  const hydrated = useHydrated();
+  const language = (
+    hydrated ? i18n.resolvedLanguage || i18n.language || "en" : "en"
+  ).split("-")[0];
+  return (en: string, azerbaijani: string, ru?: string) =>
+    language === "az"
+      ? azerbaijani
+      : language === "ru"
+        ? (ru ?? (russian as Record<string, string>)[en] ?? en)
+        : en;
 }
 
 export default function ProductLayout({
@@ -23,6 +36,7 @@ export default function ProductLayout({
   viewport?: boolean;
 }) {
   const c = usePublicCopy();
+  const hydrated = useHydrated();
   const { isAuthenticated, logout } = useAuth();
   return (
     <div
@@ -57,7 +71,7 @@ export default function ProductLayout({
                 {label}
               </Link>
             ))}
-            {isAuthenticated && (
+            {hydrated && isAuthenticated && (
               <button onClick={() => void logout()}>
                 {c("Sign out", "Çıxış")}
               </button>

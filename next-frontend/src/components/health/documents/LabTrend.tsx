@@ -1,4 +1,5 @@
 "use client";
+import { LabSource, labSourceLabel } from "./LabSource";
 import { documentDateLabel as dateLabel } from "./model";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -7,7 +8,7 @@ import { usePublicCopy } from "@/components/public/ProductLayout";
 import { useResource } from "../useResource";
 
 import { Flag } from "../Vitals";
-import { confirmedLabs, referenceBand } from "./model";
+import { confirmedLabs, labReferenceBand } from "./model";
 import styles from "./documents.module.css";
 import health from "../health.module.css";
 export function AnalyteChart({
@@ -38,10 +39,7 @@ export function AnalyteChart({
         )}
       </p>
     );
-  const all = points.flatMap((p) => [
-    p.value!,
-    ...(referenceBand(p.referenceLabel) || []),
-  ]);
+  const all = points.flatMap((p) => [p.value!, ...(labReferenceBand(p) || [])]);
   const min = Math.min(...all),
     max = Math.max(...all),
     padding = (max - min || Math.abs(max) || 1) * 0.15;
@@ -63,6 +61,7 @@ export function AnalyteChart({
         aria-label={c(
           `Confirmed lab results in ${unit || "an unspecified unit"}`,
           `Təsdiqlənmiş analiz nəticələri: ${unit || "vahid göstərilməyib"}`,
+          `Подтвержденные результаты: ${unit || "единица не указана"}`,
         )}
       >
         <title>
@@ -80,7 +79,7 @@ export function AnalyteChart({
           </g>
         ))}
         {points.map((p) => {
-          const band = referenceBand(p.referenceLabel);
+          const band = labReferenceBand(p);
           return band ? (
             <rect
               key={p.id}
@@ -100,20 +99,42 @@ export function AnalyteChart({
           stroke="#334f41"
           strokeWidth="2"
         />
-        {points.map((p) => (
-          <circle
-            key={p.id}
-            cx={x(p)}
-            cy={y(p.value!)}
-            r="4"
-            fill={p.abnormal ? "#9f3427" : "#334f41"}
-          >
-            <title>
-              {dateLabel(p.collectedAt, i18n.language)}: {p.displayValue}.{" "}
-              {p.referenceLabel}
-            </title>
-          </circle>
-        ))}
+        {points.map((p) =>
+          p.source !== "MANUAL" && p.source !== "EXTRACTED" ? (
+            <path
+              key={p.id}
+              d={`M${x(p) - 4},${y(p.value!) - 4} l8,8 m0,-8 l-8,8`}
+              stroke="#6b7280"
+              strokeWidth="2"
+            >
+              <title>
+                {dateLabel(p.collectedAt, i18n.language)}: {p.displayValue}.{" "}
+                {labSourceLabel(p, c)}
+              </title>
+            </path>
+          ) : (
+            <circle
+              key={p.id}
+              cx={x(p)}
+              cy={y(p.value!)}
+              r="4"
+              fill={
+                p.source === "MANUAL"
+                  ? "white"
+                  : p.abnormal
+                    ? "#9f3427"
+                    : "#334f41"
+              }
+              stroke={p.abnormal ? "#9f3427" : "#334f41"}
+              strokeWidth="2"
+            >
+              <title>
+                {dateLabel(p.collectedAt, i18n.language)}: {p.displayValue}.{" "}
+                {p.referenceLabel}. {labSourceLabel(p, c)}
+              </title>
+            </circle>
+          ),
+        )}
         <text x="70" y="255">
           {dateLabel(points[0].collectedAt, i18n.language)}
         </text>
@@ -121,6 +142,20 @@ export function AnalyteChart({
           {dateLabel(points[points.length - 1].collectedAt, i18n.language)}
         </text>
       </svg>
+      {points.some(
+        (p) => p.source !== "MANUAL" && p.source !== "EXTRACTED",
+      ) && (
+        <p className={styles.muted}>
+          x: {c("Source unavailable", "Mənbə göstərilməyib")}
+        </p>
+      )}
+      <p className={styles.muted}>
+        {c(
+          "Hollow points: manual entry. Filled points: read from a document. Source details are listed below.",
+          "İçi boş nöqtə: əl ilə daxil edilib. Dolu nöqtə: sənəddən oxunub. Mənbə aşağıdakı cədvəldə göstərilir.",
+        )}
+      </p>
+
       <p className={styles.muted}>
         {c(
           "Green columns show the numeric reference interval reported for each result. Text-only or missing intervals are not drawn. Different units are charted separately.",
@@ -194,6 +229,9 @@ export default function LabTrend({
                       {r.collectedAt
                         ? dateLabel(r.collectedAt, i18n.language)
                         : c("Not recorded", "Göstərilməyib")}
+                      <div>
+                        <LabSource row={r} />
+                      </div>
                     </td>
                     <td>
                       {r.displayValue ?? c("Not recorded", "Göstərilməyib")}
