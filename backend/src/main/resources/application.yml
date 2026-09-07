@@ -122,6 +122,14 @@ ai:
     # Set false to watch the meter without ever refusing a request.
     enforce: ${AI_SPEND_ENFORCE:true}
 
+ocr:
+  # Reads text off a photographed or scanned report, which has no text layer.
+  # It transcribes only; the existing parsers turn that text into values, so the
+  # rules worked out against real Azerbaijani reports still apply.
+  enabled: ${OCR_ENABLED:true}
+  # Transcription does not need the reasoning model.
+  model: ${OCR_MODEL:gpt-4o}
+
 attachment:
   storage:
     # Outside the web root. Files here are served only by

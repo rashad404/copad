@@ -2,7 +2,12 @@ package com.drcopad.copad.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.pdfbox.pdmodel.PDDocument;
+import org.apache.pdfbox.rendering.PDFRenderer;
 import org.apache.pdfbox.text.PDFTextStripper;
+
+import javax.imageio.ImageIO;
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayOutputStream;
 import org.apache.poi.xwpf.extractor.XWPFWordExtractor;
 import org.apache.poi.xwpf.usermodel.XWPFDocument;
 import org.springframework.stereotype.Service;
@@ -14,6 +19,16 @@ import java.io.IOException;
 @Slf4j
 @Service
 public class DocumentExtractionService {
+
+    /** A report's values are on its first pages, not its twentieth. */
+    private static final int MAX_OCR_PAGES = 5;
+
+    private final VisionOcrService ocr;
+
+    public DocumentExtractionService(VisionOcrService ocr) {
+        this.ocr = ocr;
+    }
+
     
     private static final int MAX_TEXT_LENGTH = 4000; // Limit text to avoid token limits
     
@@ -28,13 +43,57 @@ public class DocumentExtractionService {
      * fit a chat prompt; a stored document keeps its full text so lab values
      * further down the page are not silently lost.
      */
+    /**
+     * Renders the pages of a scanned PDF and transcribes them.
+     *
+     * Capped, because a long scan would otherwise cost a page at a time with no
+     * limit, and the values worth reading are on the first pages of a report,
+     * not the twentieth.
+     */
+    private String transcribePages(PDDocument document) {
+        int pages = Math.min(document.getNumberOfPages(), MAX_OCR_PAGES);
+        if (pages == 0) return null;
+
+        PDFRenderer renderer = new PDFRenderer(document);
+        StringBuilder text = new StringBuilder();
+
+        for (int page = 0; page < pages; page++) {
+            try {
+                // 200 DPI: enough for the small print a reference range is set
+                // in, without producing an image too large to send.
+                BufferedImage image = renderer.renderImageWithDPI(page, 200);
+                ByteArrayOutputStream out = new ByteArrayOutputStream();
+                ImageIO.write(image, "png", out);
+
+                String pageText = ocr.transcribe(out.toByteArray(), "image/png");
+                if (pageText != null && !pageText.isBlank()) {
+                    text.append(pageText).append("\n");
+                }
+            } catch (Exception e) {
+                // One unreadable page should not lose the others.
+                log.warn("Could not transcribe page {}: {}", page, e.getClass().getSimpleName());
+            }
+        }
+
+        if (document.getNumberOfPages() > MAX_OCR_PAGES) {
+            log.info("Transcribed the first {} of {} pages",
+                    MAX_OCR_PAGES, document.getNumberOfPages());
+        }
+        return text.isEmpty() ? null : text.toString();
+    }
+
     public String extractText(byte[] bytes, String contentType) {
         if (bytes == null || bytes.length == 0 || contentType == null) return null;
         try {
             switch (contentType) {
                 case "application/pdf" -> {
                     try (PDDocument document = PDDocument.load(bytes)) {
-                        return new PDFTextStripper().getText(document);
+                        String text = new PDFTextStripper().getText(document);
+                        if (text != null && !text.isBlank()) return text;
+                        // A scan saved as a PDF has no text layer, so the
+                        // stripper returns nothing. That is not an empty
+                        // document, it is a picture of one.
+                        return transcribePages(document);
                     }
                 }
                 case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
@@ -47,8 +106,11 @@ public class DocumentExtractionService {
                     return new String(bytes, java.nio.charset.StandardCharsets.UTF_8);
                 }
                 default -> {
-                    // Images need OCR, which is not wired up yet; the document
-                    // is stored and viewable, just not searchable.
+                    if (contentType.startsWith("image/")) {
+                        return ocr.transcribe(bytes, contentType);
+                    }
+                    // Nothing readable, and nothing worth paying to guess at.
+                    // The document is still stored and viewable.
                     return null;
                 }
             }
