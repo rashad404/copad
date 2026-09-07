@@ -12,7 +12,6 @@ export interface DashboardStats {
   draftPosts: number;
   totalTags: number;
   totalUsers: number;
-  totalViews: number;
 }
 
 export interface UserListItem {
@@ -108,11 +107,11 @@ export const uploadImage = (file: File): Promise<AxiosResponse<{ original: strin
 
 // Dashboard statistics
 export const getDashboardStats = (): Promise<AxiosResponse<DashboardStats>> => {
-  return adminAPI.get('/admin/dashboard/stats');
+  return adminAPI.get('/admin/blog/dashboard/stats');
 };
 
 export const getRecentPosts = (limit = 5): Promise<AxiosResponse<BlogPostListItem[]>> => {
-  return adminAPI.get(`/admin/dashboard/recent-posts?limit=${limit}`);
+  return adminAPI.get(`/admin/blog/dashboard/recent-posts?limit=${limit}`);
 };
 
 // User Management

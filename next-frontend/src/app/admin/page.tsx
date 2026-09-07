@@ -8,23 +8,21 @@ import {
   FileText,
   Tag,
   Users,
-  BarChart,
   Eye,
   PenTool
 } from 'lucide-react';
-import { getBlogPosts, getTopTags } from '@/api';
+import { getDashboardStats, getRecentPosts } from '@/api/admin';
+import type { DashboardStats } from '@/api/admin';
 import { BlogPostListItem } from '@/api/blog';
-import AuthDebug from '@/components/AuthDebug';
 
 export default function AdminDashboard() {
   const { t } = useTranslation();
-  const [stats, setStats] = useState({
+  const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     publishedPosts: 0,
     draftPosts: 0,
     totalTags: 0,
     totalUsers: 0,
-    totalViews: 0,
   });
   const [recentPosts, setRecentPosts] = useState<BlogPostListItem[]>([]);
   const [loading, setLoading] = useState(true);
@@ -34,80 +32,26 @@ export default function AdminDashboard() {
     const fetchDashboardData = async () => {
       try {
         setLoading(true);
-        
-        // Skip direct dashboard API call for now since it's not implemented yet
-        // This prevents the 404 error
-        console.log('Fetching dashboard data from individual endpoints');
-        
-        try {
-          // Fallback: Fetch posts data
-          const postsResponse = await getBlogPosts(0, 5, 'createdAt', 'desc', undefined, true);
-          let posts: BlogPostListItem[] = [];
-          let publishedCount = 0;
-          let draftCount = 0;
-          
-          if (postsResponse.data && postsResponse.data.content) {
-            posts = postsResponse.data.content;
-            publishedCount = posts.filter(post => post.published).length;
-            draftCount = posts.filter(post => !post.published).length;
-          } else if (Array.isArray(postsResponse.data)) {
-            posts = postsResponse.data;
-            publishedCount = posts.filter(post => post.published).length;
-            draftCount = posts.filter(post => !post.published).length;
-          }
-          
-          // Fetch tags data
-          const tagsResponse = await getTopTags(100);
-          const tagsCount = Array.isArray(tagsResponse.data) ? tagsResponse.data.length : 0;
-          
-          // Update stats (users would need a separate API call in a real implementation)
-          setStats({
-            totalPosts: publishedCount + draftCount,
-            publishedPosts: publishedCount,
-            draftPosts: draftCount,
-            totalTags: tagsCount,
-            totalUsers: 5, // This is a placeholder; would come from an API in production
-            totalViews: 1234, // Placeholder for view count
-          });
-        } catch (error) {
-          console.error('Could not fetch dashboard data', error);
-          // Set default stats if everything fails
-          setStats({
-            totalPosts: 0,
-            publishedPosts: 0,
-            draftPosts: 0,
-            totalTags: 0,
-            totalUsers: 0,
-            totalViews: 0,
-          });
-        }
-        
-        // Skip dedicated endpoint for recent posts since it's not implemented yet
-        console.log('Fetching recent posts from main blog API');
-        
-        try {
-          // Use regular posts endpoint directly
-          const postsResponse = await getBlogPosts(0, 5, 'createdAt', 'desc');
-          if (postsResponse.data && postsResponse.data.content) {
-            setRecentPosts(postsResponse.data.content);
-          } else if (Array.isArray(postsResponse.data)) {
-            setRecentPosts(postsResponse.data);
-          } else {
-            setRecentPosts([]);
-          }
-        } catch (error) {
-          console.error('Could not fetch any blog posts', error);
-          setRecentPosts([]);
-        }
-        
+        setError(null);
+
+        // These come from the real endpoints. The dashboard previously
+        // hardcoded totalUsers and totalViews and derived post counts from a
+        // single page of 5 results, so "total posts" could never exceed 5.
+        const [statsResponse, recentResponse] = await Promise.all([
+          getDashboardStats(),
+          getRecentPosts(5),
+        ]);
+
+        setStats(statsResponse.data);
+        setRecentPosts(Array.isArray(recentResponse.data) ? recentResponse.data : []);
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
-        setError(getErrorMessage(err) || t('common.errors.generic'));
+        setError(getErrorMessage(err, t('common.errors.generic')));
       } finally {
         setLoading(false);
       }
     };
-    
+
     fetchDashboardData();
   }, [t]);
 
@@ -216,17 +160,6 @@ export default function AdminDashboard() {
           icon={Users} 
           color="bg-blue-500"
         />
-        <StatCard 
-          title={t('admin.stats.views')} 
-          value={stats.totalViews || "1,234"} 
-          icon={BarChart} 
-          color="bg-pink-500"
-        />
-      </div>
-      
-      {/* Auth Debug Panel - Remove in production */}
-      <div className="mb-8">
-        <AuthDebug />
       </div>
       
       {/* Recent Posts */}

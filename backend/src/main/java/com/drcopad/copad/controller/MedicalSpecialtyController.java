@@ -24,8 +24,4 @@ public class MedicalSpecialtyController {
         return ResponseEntity.ok(specialtyService.getSpecialtyByName(name));
     }
 
-    @PostMapping
-    public ResponseEntity<MedicalSpecialtyDTO> createSpecialty(@RequestBody MedicalSpecialtyDTO dto) {
-        return ResponseEntity.ok(specialtyService.createSpecialty(dto));
-    }
 } 
