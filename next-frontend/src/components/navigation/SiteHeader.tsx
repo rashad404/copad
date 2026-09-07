@@ -2,13 +2,12 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
+import BrandLogo from "@/components/brand/BrandLogo";
 import { usePathname } from "next/navigation";
 import { Manrope } from "next/font/google";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
-import { useSiteContext } from "@/context/SiteContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import translations from "./translations.json";
 import styles from "./SiteHeader.module.css";
@@ -24,9 +23,6 @@ export default function SiteHeader() {
   )[0];
   const copy = (key: string) =>
     dictionary[language]?.[key] ?? dictionary.en?.[key] ?? key;
-  const { WEBSITE_NAME } = useSiteContext();
-  const brand =
-    WEBSITE_NAME === "Localhost" ? "azdoc" : WEBSITE_NAME.toLowerCase();
   const { isAuthenticated, logout } = useAuth();
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
@@ -67,15 +63,7 @@ export default function SiteHeader() {
       }}
     >
       <div className={styles.inner}>
-        <Link
-          href="/"
-          className={styles.brand}
-          aria-label={brand}
-          onClick={close}
-        >
-          <Image src="/logo.svg" alt="" width={36} height={36} className={styles.brandMark} priority />
-          {brand}
-        </Link>
+        <BrandLogo onClick={close} priority />
         <nav className={styles.desktopNav} aria-label={copy("Əsas naviqasiya")}>
           {links.map(([href, label]) => (
             <Link href={href} key={href}>

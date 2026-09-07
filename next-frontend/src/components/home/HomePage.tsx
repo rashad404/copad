@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
+import BrandLogo from "@/components/brand/BrandLogo";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import { homeCopy } from "./copy";
 import "./homepage.css";
@@ -395,10 +396,7 @@ export default function HomePage() {
         </section>
       </main>
       <footer className="wrap">
-        <a className="logo" href="#">
-          {brand}
-          <span className="logo-dot">-</span>
-        </a>
+        <BrandLogo />
         <span>{copy("Sağlamlığınızın bütöv hekayəsi.")}</span>
         <div className="footer-links">
           <Link href="/blog">{copy("Bloq")}</Link>
