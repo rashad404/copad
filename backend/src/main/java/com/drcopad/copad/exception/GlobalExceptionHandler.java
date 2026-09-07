@@ -3,6 +3,7 @@ package com.drcopad.copad.exception;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -38,6 +39,25 @@ public class GlobalExceptionHandler {
     public ResponseEntity<Map<String, Object>> handleExpired(ConversationExpiredException ex) {
         return ResponseEntity.status(HttpStatus.GONE)
                 .body(body(HttpStatus.GONE, ex.getMessage()));
+    }
+
+    /**
+     * Domain validation failures. Without this they surfaced as 500 with a Java
+     * stack trace in the response body, which tells a client nothing useful and
+     * leaks internals.
+     */
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(body(HttpStatus.BAD_REQUEST, ex.getMessage()));
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<Map<String, Object>> handleAccessDenied(AccessDeniedException ex) {
+        // No detail: whether a family exists is not something a stranger should
+        // be able to learn by comparing error messages.
+        return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                .body(body(HttpStatus.FORBIDDEN, "Access denied"));
     }
 
     private Map<String, Object> body(HttpStatus status, String message) {
