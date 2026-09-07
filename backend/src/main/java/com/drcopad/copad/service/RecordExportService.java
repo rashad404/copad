@@ -7,7 +7,8 @@ import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 import org.apache.pdfbox.pdmodel.PDPageContentStream;
 import org.apache.pdfbox.pdmodel.common.PDRectangle;
-import org.apache.pdfbox.pdmodel.font.PDType1Font;
+import org.apache.pdfbox.pdmodel.font.PDFont;
+import org.apache.pdfbox.pdmodel.font.PDType0Font;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -36,6 +37,15 @@ public class RecordExportService {
     private static final float MARGIN = 50;
     private static final float WIDTH = PDRectangle.A4.getWidth() - (MARGIN * 2);
 
+    /**
+     * DejaVu Sans is bundled rather than using PDFBox's built-in fonts, whose
+     * WinAnsi encoding cannot represent ə, ş, ğ or ı. Transliterating a
+     * patient's own name and diagnoses out of their language is not acceptable
+     * on a document they hand to a doctor.
+     */
+    private static final String FONT_REGULAR = "/fonts/DejaVuSans.ttf";
+    private static final String FONT_BOLD = "/fonts/DejaVuSans-Bold.ttf";
+
     private final FamilyService familyService;
     private final ClinicalRecordService records;
     private final VitalService vitals;
@@ -45,6 +55,9 @@ public class RecordExportService {
         PDPageContentStream stream;
         PDPage page;
         float y;
+        PDFont regular;
+        PDFont bold;
+        PDFont italic;
     }
 
     @Transactional(readOnly = true)
@@ -55,6 +68,11 @@ public class RecordExportService {
              ByteArrayOutputStream out = new ByteArrayOutputStream()) {
 
             Cursor c = new Cursor();
+            c.regular = loadFont(document, FONT_REGULAR);
+            c.bold = loadFont(document, FONT_BOLD);
+            // DejaVu ships no oblique in this package; the regular face reads
+            // fine for the two lines that used italics.
+            c.italic = c.regular;
             newPage(document, c);
 
             header(c, member);
@@ -158,7 +176,7 @@ public class RecordExportService {
     }
 
     private void header(Cursor c, FamilyMember member) throws IOException {
-        text(c, member.getFullName(), PDType1Font.HELVETICA_BOLD, 18);
+        text(c, member.getFullName(), c.bold, 18);
         c.y -= 6;
 
         StringBuilder meta = new StringBuilder();
@@ -168,37 +186,34 @@ public class RecordExportService {
         }
         if (member.getBiologicalSex() != null) meta.append("   Sex: ").append(member.getBiologicalSex());
         if (member.getBloodType() != null) meta.append("   Blood type: ").append(member.getBloodType());
-        if (!meta.isEmpty()) text(c, meta.toString(), PDType1Font.HELVETICA, 10);
+        if (!meta.isEmpty()) text(c, meta.toString(), c.regular, 10);
 
         text(c, "Summary generated " + LocalDate.now().format(DATE) + " from azdoc",
-                PDType1Font.HELVETICA_OBLIQUE, 9);
+                c.italic, 9);
         c.y -= 10;
     }
 
     private void section(Cursor c, String title) throws IOException {
         c.y -= 12;
-        text(c, title.toUpperCase(), PDType1Font.HELVETICA_BOLD, 11);
+        text(c, title.toUpperCase(), c.bold, 11);
         c.y -= 2;
     }
 
     private void line(Cursor c, String value, boolean emphasise) throws IOException {
         text(c, (emphasise ? "! " : "  ") + value,
-                emphasise ? PDType1Font.HELVETICA_BOLD : PDType1Font.HELVETICA, 10);
+                emphasise ? c.bold : c.regular, 10);
     }
 
     private void footer(Cursor c) throws IOException {
         c.y -= 20;
         text(c, "This is a self-reported record kept by the patient. It is not a clinical "
                 + "document and has not been verified by a clinician.",
-                PDType1Font.HELVETICA_OBLIQUE, 8);
+                c.italic, 8);
     }
 
-    private void text(Cursor c, String value, PDType1Font font, float size) throws IOException {
+    private void text(Cursor c, String value, PDFont font, float size) throws IOException {
         if (value == null || value.isBlank()) return;
 
-        // PDFBox's standard fonts are WinAnsi; Azerbaijani characters outside
-        // that set would throw mid-render, so they are transliterated rather
-        // than failing the export.
         String safe = sanitise(value);
 
         for (String chunk : wrap(safe, font, size)) {
@@ -211,19 +226,22 @@ public class RecordExportService {
         }
     }
 
+    /**
+     * Strips only control characters. DejaVu covers Azerbaijani, Turkish,
+     * Cyrillic and Latin, so text is written as the patient entered it.
+     */
     private String sanitise(String value) {
-        return value
-                .replace("ə", "e").replace("Ə", "E")
-                .replace("ı", "i").replace("İ", "I")
-                .replace("ğ", "g").replace("Ğ", "G")
-                .replace("ş", "s").replace("Ş", "S")
-                .replace("ç", "c").replace("Ç", "C")
-                .replace("ö", "o").replace("Ö", "O")
-                .replace("ü", "u").replace("Ü", "U")
-                .replaceAll("[^\\x20-\\x7E]", "");
+        return value.replaceAll("[\\p{Cntrl}\\uFFFE\\uFFFF]", "");
     }
 
-    private List<String> wrap(String value, PDType1Font font, float size) throws IOException {
+    private PDFont loadFont(PDDocument document, String resource) throws IOException {
+        try (var in = getClass().getResourceAsStream(resource)) {
+            if (in == null) throw new IOException("Missing bundled font: " + resource);
+            return PDType0Font.load(document, in, true);
+        }
+    }
+
+    private List<String> wrap(String value, PDFont font, float size) throws IOException {
         List<String> lines = new java.util.ArrayList<>();
         StringBuilder current = new StringBuilder();
 
