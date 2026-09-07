@@ -37,6 +37,7 @@ import java.util.concurrent.atomic.AtomicReference;
 public class AiSpendService {
 
     private final UsageMetricRepository usageMetrics;
+    private final com.drcopad.copad.repository.GuestSessionRepository guestSessions;
     private final CostCalculationService costs;
     private final OpenAIResponsesConfig responsesConfig;
 
@@ -68,9 +69,11 @@ public class AiSpendService {
     }
 
     public AiSpendService(UsageMetricRepository usageMetrics,
+                          com.drcopad.copad.repository.GuestSessionRepository guestSessions,
                           CostCalculationService costs,
                           @Qualifier("openAIResponsesConfig") OpenAIResponsesConfig responsesConfig) {
         this.usageMetrics = usageMetrics;
+        this.guestSessions = guestSessions;
         this.costs = costs;
         this.responsesConfig = responsesConfig;
     }
@@ -118,12 +121,19 @@ public class AiSpendService {
      * losing a row is an undercount, which the periodic refresh corrects.
      */
     @Transactional(propagation = Propagation.REQUIRES_NEW)
-    public void record(String model, int promptTokens, int completionTokens, String conversationId) {
+    public void record(String model, int promptTokens, int completionTokens, String sessionId) {
         try {
             UsageMetric metric = costs.calculateUsageCost(
                     model, promptTokens, completionTokens, List.of());
             metric.setApiType("chat");
-            metric.setConversationId(conversationId);
+            // Never the chat id: conversation_id carries a foreign key to the
+            // Responses API's conversations table, and a guest chat id is not a
+            // row in it. That constraint exists on production and not locally,
+            // so every chat-path usage row was rejected in production while the
+            // same code recorded happily on a developer machine.
+            if (sessionId != null) {
+                guestSessions.findBySessionId(sessionId).ifPresent(metric::setGuestSession);
+            }
             metric.setCreatedAt(LocalDateTime.now());
             usageMetrics.save(metric);
 

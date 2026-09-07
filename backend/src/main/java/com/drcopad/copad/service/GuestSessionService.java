@@ -133,7 +133,7 @@ public class GuestSessionService {
         }
 
         // Get AI response with specialty and language
-        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language, attachments, recordContext, chatId);
+        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language, attachments, recordContext, sessionId);
 
         // Create and save AI message
         ChatMessage aiMsg = new ChatMessage();

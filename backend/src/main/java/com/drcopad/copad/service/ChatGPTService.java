@@ -62,15 +62,15 @@ public class ChatGPTService {
      *                      they simply get ungrounded answers.
      */
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext) {
-        return getChatResponse(newUserMessage, history, specialtyCode, language, attachments, recordContext, null);
+        return getChatResponse(newUserMessage, history, specialtyCode, language, attachments, recordContext, (String) null);
     }
 
     /**
-     * @param conversationId what the cost is attributed to, where the caller
-     *                       knows it. Null is accepted: the spend still counts,
-     *                       it just cannot be traced to one conversation.
+     * @param sessionId what the cost is attributed to, where the caller knows
+     *                  it. Null is accepted: the spend still counts, it just
+     *                  cannot be traced to a session.
      */
-    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext, String conversationId) {
+    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext, String sessionId) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
@@ -154,7 +154,7 @@ public class ChatGPTService {
             }
         }
 
-        return getChatGPTResponse(messages, conversationId).block();
+        return getChatGPTResponse(messages, sessionId).block();
     }
     
     private void processMessageWithAttachments(List<Message> messages, ChatMessage chatMessage, String role) {
@@ -251,7 +251,7 @@ public class ChatGPTService {
         }
     }
 
-    private Mono<String> getChatGPTResponse(List<Message> messages, String conversationId) {
+    private Mono<String> getChatGPTResponse(List<Message> messages, String sessionId) {
         boolean useDummyData = chatGPTConfig.isUseDummyData();
         log.info("Injected config values - useDummyData={}, model={}, url={}", 
             chatGPTConfig.isUseDummyData(), 
@@ -315,7 +315,7 @@ public class ChatGPTService {
                         spend.record(chatGPTConfig.getOpenai().getModel(),
                                 response.getUsage().getPromptTokens(),
                                 response.getUsage().getCompletionTokens(),
-                                conversationId);
+                                sessionId);
                     }
                     if (response.getChoices() != null && !response.getChoices().isEmpty()) {
                         String content = response.getChoices().get(0).getMessage().getContent();
