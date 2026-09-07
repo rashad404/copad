@@ -8,7 +8,9 @@ import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.MedicineContextService;
+import com.drcopad.copad.entity.ConsentType;
 import com.drcopad.copad.service.AiSpendService;
+import com.drcopad.copad.service.ConsentService;
 import com.drcopad.copad.service.RedFlagDetector;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -40,6 +42,7 @@ public class GuestController {
     private final MedicineContextService medicineContext;
     private final RedFlagDetector redFlags;
     private final AiSpendService aiSpend;
+    private final ConsentService consents;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -97,6 +100,18 @@ public class GuestController {
         // this bounds the bill, which they cannot, since a session is free to
         // mint and each new one starts with a fresh allowance.
         aiSpend.requireBudget();
+
+        // A withdrawn consent has to mean something. Answering would send this
+        // message to a processor abroad, which is exactly what this person said
+        // no to. Absence of consent is not refusal - nobody has been asked yet -
+        // so only an explicit withdrawal stops here.
+        if (user != null && consents.hasRefused(user.getId(), ConsentType.CROSS_BORDER_AI)) {
+            log.info("Chat refused: user {} withdrew consent for processing abroad", user.getId());
+            return ResponseEntity.status(HttpStatus.FORBIDDEN)
+                    .body("You have withdrawn consent for your messages to be processed by "
+                            + "our AI provider outside Azerbaijan, which the assistant needs "
+                            + "in order to answer. You can restore it in your account settings.");
+        }
 
         StringBuilder context = new StringBuilder();
 
