@@ -79,7 +79,7 @@ export default function HomePage() {
               <div className="window-top">
                 <span className="small-logo">
                   {brand}
-                  <span>•</span>
+                  <span>-</span>
                 </span>
                 <span className="demo-label">{copy("DEMO")}</span>
                 <span className="profile">{member[0]}</span>
@@ -183,7 +183,7 @@ export default function HomePage() {
                     <p>{copy("Ümumi qan analizi")}</p>
                     <small>{copy("04 sentyabr 2026 · PDF · Nümunə")}</small>
                     <button onClick={() => setView("Nəticələr")}>
-                      {copy("Nəticələrə bax →")}
+                      {copy("Nəticələrə bax ->")}
                     </button>
                   </div>
                 ) : (
@@ -241,7 +241,7 @@ export default function HomePage() {
         </section>
         <section className="statement wrap">
           <span className="section-number">
-            {copy("01 — DAHA AZ QARIŞIQLIQ")}
+            {copy("01 - DAHA AZ QARIŞIQLIQ")}
           </span>
           <p>
             {copy("Ayrı-ayrı fayllar arasında itən məlumatlar.")}
@@ -397,7 +397,7 @@ export default function HomePage() {
       <footer className="wrap">
         <a className="logo" href="#">
           {brand}
-          <span className="logo-dot">•</span>
+          <span className="logo-dot">-</span>
         </a>
         <span>{copy("Sağlamlığınızın bütöv hekayəsi.")}</span>
         <div className="footer-links">

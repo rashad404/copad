@@ -11,7 +11,7 @@ export async function generateMetadata({
 }: Props): Promise<Metadata> {
   const { q } = await searchParams;
   return {
-    title: { absolute: "Dərmanlar — qiymətlər və alternativlər | AzDoc" },
+    title: { absolute: "Dərmanlar - qiymətlər və alternativlər | AzDoc" },
     description:
       "Dərmanları adı və təsiredici maddəsi ilə axtarın. Qablaşdırma qiymətlərini və ortaq təsiredici maddəli alternativləri müqayisə edin.",
     alternates: {
@@ -72,7 +72,7 @@ export default async function Catalogue({ searchParams }: Props) {
         ) : results ? (
           <section className={styles.section}>
             <div className={styles.sectionHead}>
-              <h2>“{q}” üçün nəticələr</h2>
+              <h2>&quot;{q}&quot; üçün nəticələr</h2>
               <span>
                 {results.length}
                 {results.length === 50 ? "+" : ""} nəticə

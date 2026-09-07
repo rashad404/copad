@@ -34,7 +34,7 @@ export default function DashboardPage() {
               <MessageCircle size={32} />
               <h2>
                 {c(
-                  "Let’s talk about how you feel.",
+                  "Let's talk about how you feel.",
                   "Özünüzü necə hiss etdiyinizdən danışaq.",
                 )}
               </h2>
@@ -70,7 +70,7 @@ export default function DashboardPage() {
                 )}
               </p>
               <Link href="/profile" className="public-text-link">
-                {c("Review my profile", "Profilimə bax")} →
+                {c("Review my profile", "Profilimə bax")} {'->'}
               </Link>
             </aside>
           </div>
@@ -80,7 +80,7 @@ export default function DashboardPage() {
               <div>
                 <h3>
                   {c(
-                    "Your family’s health record",
+                    "Your family's health record",
                     "Ailənizin sağlamlıq qeydləri",
                   )}
                 </h3>

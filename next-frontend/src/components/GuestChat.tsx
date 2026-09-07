@@ -301,7 +301,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
               <p className="public-eyebrow">
                 {c("A little clarity starts here", "Aydınlıq buradan başlayır")}
               </p>
-              <h2>{c("What’s on your mind?", "Sizi nə düşündürür?")}</h2>
+              <h2>{c("What's on your mind?", "Sizi nə düşündürür?")}</h2>
               <p>
                 {c(
                   "Tell me how you feel, ask a question, or share a medical document.",
@@ -316,7 +316,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                   ),
                   c("I have a health question", "Sağlamlıqla bağlı sualım var"),
                   c(
-                    "Help me prepare for a doctor’s visit",
+                    "Help me prepare for a doctor's visit",
                     "Həkim qəbuluna hazırlaşmağa kömək et",
                   ),
                 ].map((prompt) => (

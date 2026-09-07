@@ -222,7 +222,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                         required
                         value={form.password}
                         onChange={change}
-                        placeholder="••••••••"
+                        placeholder="--------"
                         aria-describedby={
                           registering ? "password-hint" : undefined
                         }

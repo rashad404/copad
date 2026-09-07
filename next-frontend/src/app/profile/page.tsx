@@ -139,7 +139,7 @@ export default function ProfilePage() {
               </a>
               <p className="public-small">
                 {c(
-                  "Share only the details you’re comfortable adding. You can update them here.",
+                  "Share only the details you're comfortable adding. You can update them here.",
                   "Yalnız paylaşmaq istədiyiniz məlumatları əlavə edin. Onları burada yeniləyə bilərsiniz.",
                 )}
               </p>
@@ -286,7 +286,7 @@ export default function ProfilePage() {
                         type="submit"
                       >
                         {saving
-                          ? c("Saving…", "Saxlanılır…")
+                          ? c("Saving...", "Saxlanılır...")
                           : t("profile.saveChanges")}
                       </button>
                     </div>

@@ -36,7 +36,7 @@ export default function BlogSearch({
         onChange={(e) => setQuery(e.target.value)}
       />
       <button type="submit" aria-label={t("blog.search.button")}>
-        <span>{t("blog.search.button")}</span> →
+        <span>{t("blog.search.button")}</span> {'->'}
       </button>
     </form>
   );

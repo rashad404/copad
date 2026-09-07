@@ -26,11 +26,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const min = lowestPrice(d);
   const description = `${d.name}: ${d.active_ingredient || "dərman məlumatı"}. ${min == null ? "Qablaşdırma məlumatları" : `${price(min)} başlayan qablaşdırma qiymətləri`}, istehsalçı və alternativlər.`;
   return {
-    title: { absolute: `${d.name} — qiymətlər və alternativlər | AzDoc` },
+    title: { absolute: `${d.name} - qiymətlər və alternativlər | AzDoc` },
     description,
     alternates: { canonical: medicineUrl(d.slug) },
     openGraph: {
-      title: `${d.name} — qiymətlər və alternativlər`,
+      title: `${d.name} - qiymətlər və alternativlər`,
       description,
       url: medicineUrl(d.slug),
       locale: "az_AZ",
@@ -105,7 +105,7 @@ export default async function MedicinePage({ params }: Props) {
                 </small>
               </div>
               <Link href={`/dermanlar/${encodeURIComponent(best.slug)}`}>
-                {best.name} →
+                {best.name} {'->'}
               </Link>
             </div>
           )}

@@ -124,7 +124,7 @@ export default function ResourceForm<T extends object>({
             aria-describedby={describedBy}
             className={inputClass}
           >
-            <option value="">Select…</option>
+            <option value="">Select...</option>
             {field.options?.map((opt) => (
               <option key={String(opt.value)} value={String(opt.value)}>
                 {opt.label}

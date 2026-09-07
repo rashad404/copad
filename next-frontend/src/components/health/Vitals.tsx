@@ -189,7 +189,7 @@ export function VitalForm({
           </button>
           <button className="public-button" disabled={busy}>
             {busy
-              ? c("Saving…", "Saxlanılır…")
+              ? c("Saving...", "Saxlanılır...")
               : c("Save measurement", "Ölçünü saxla")}
           </button>
         </div>
@@ -487,7 +487,7 @@ export default function Vitals({
         <div className={styles.trend}>
           <DirectionIcon size={24} />
           {trends.loading ? (
-            <span>{c("Loading trend…", "Tendensiya yüklənir…")}</span>
+            <span>{c("Loading trend...", "Tendensiya yüklənir...")}</span>
           ) : trend ? (
             <>
               <strong>
@@ -512,7 +512,7 @@ export default function Vitals({
       )}
       {series.loading ? (
         <p className={styles.loading} role="status">
-          {c("Loading measurements…", "Ölçülər yüklənir…")}
+          {c("Loading measurements...", "Ölçülər yüklənir...")}
         </p>
       ) : series.error ? (
         <div role="alert" className={styles.error}>
@@ -563,7 +563,7 @@ export default function Vitals({
                         <td>
                           <Flag flag={r.abnormalFlag} />
                         </td>
-                        <td>{r.notes || "—"}</td>
+                        <td>{r.notes || "-"}</td>
                       </tr>
                     ))}
                 </tbody>

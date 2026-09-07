@@ -255,7 +255,7 @@ public class ChatGPTService {
 
     private Mono<String> getChatGPTResponse(List<Message> messages) {
         boolean useDummyData = chatGPTConfig.isUseDummyData();
-        log.info("Injected config values — useDummyData={}, model={}, url={}", 
+        log.info("Injected config values - useDummyData={}, model={}, url={}", 
             chatGPTConfig.isUseDummyData(), 
             chatGPTConfig.getOpenai().getModel(), 
             chatGPTConfig.getOpenai().getUrl());

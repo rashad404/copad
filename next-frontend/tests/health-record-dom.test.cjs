@@ -522,7 +522,7 @@ test("pending summary prevents duplicate downloads and is cancelled on member ch
     download.click();
   });
   assert.equal(pdfCalls.length, 1);
-  assert.ok(button("Preparing summary…").disabled);
+  assert.ok(button("Preparing summary...").disabled);
   const oldSignal = pdfCalls[0].signal;
   await select(document.getElementById("health-member"), "2");
   assert.equal(oldSignal.aborted, true);

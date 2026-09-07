@@ -36,7 +36,7 @@
       "email": "E-poçt",
       "email_placeholder": "sizin@email.com",
       "password": "Şifrə",
-      "password_placeholder": "••••••••",
+      "password_placeholder": "--------",
       "forgot_password": "Şifrəni unutmusunuz?",
       "remember_me": "Məni xatırla",
       "sign_up": "Qeydiyyatdan keç",
@@ -179,7 +179,7 @@
       "security": {
         "title": "Məlumatlarınız təhlükəsizdir",
         "description": "Şifrələnmiş, məxfi və qorunur",
-        "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin →"
+        "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin ->"
       },
       "footer": "Sağlamlığınız bizim üçün əhəmiyyətlidir. Bu platforma sizin rahatlığınız üçün hazırlanmışdır.",
       "chat": {
@@ -191,7 +191,7 @@
     "home": {
       "hero": {
         "title": "Şəxsi AI Həkiminiz. 24/7 xidmətinizdə!",
-        "subtitle": "Sağlamlıqla bağlı sualınızı verin və dərhal professional məsləhət alın — qeydiyyatsız!",
+        "subtitle": "Sağlamlıqla bağlı sualınızı verin və dərhal professional məsləhət alın - qeydiyyatsız!",
         "createAccount": "Hesab yaradın",
         "login": "Daxil olun",
         "trustBar": {
@@ -222,7 +222,7 @@
         "description": "Əlçatan, etibarlı və fərdi AI ilə təchiz edilmiş tibbi yardım.",
         "chat": {
           "title": "AI Həkimi ilə məsləhətləşin",
-          "description": "Əlamətlərinizi təsvir edin və dərhal ekspert təlimatı alın — 24/7. Gözləmə otaqları, təyin olunmuş görüşlər lazım deyil."
+          "description": "Əlamətlərinizi təsvir edin və dərhal ekspert təlimatı alın - 24/7. Gözləmə otaqları, təyin olunmuş görüşlər lazım deyil."
         },
         "upload": {
           "title": "Tibbi Faylları Yükləyin",
@@ -412,7 +412,7 @@
         "email": "E-poçt ünvanı",
         "emailPlaceholder": "sizin@email.com",
         "password": "Şifrə",
-        "passwordPlaceholder": "••••••••",
+        "passwordPlaceholder": "--------",
         "passwordHint": "Şifrə ən azı 8 simvol uzunluğunda olmalıdır",
         "age": "Yaş",
         "agePlaceholder": "30",

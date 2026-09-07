@@ -13,7 +13,7 @@ export default function ContactPage() {
     <ProductLayout>
       <div className="public-container">
         <PageIntro
-          eyebrow={c("We’re here to help", "Kömək etməyə hazırıq")}
+          eyebrow={c("We're here to help", "Kömək etməyə hazırıq")}
           title={t("contact.title")}
           description={t("contact.subtitle")}
         />
@@ -40,7 +40,7 @@ export default function ContactPage() {
               <ArrowUpRight size={18} />
             </Link>
             <Link href="/faq" className="public-text-link">
-              {c("Browse common questions", "Tez-tez verilən suallar")} →
+              {c("Browse common questions", "Tez-tez verilən suallar")} {'->'}
             </Link>
           </aside>
         </div>

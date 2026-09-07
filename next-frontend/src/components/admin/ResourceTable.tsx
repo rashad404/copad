@@ -17,7 +17,7 @@ interface ResourceTableProps<T> {
 /** Renders a value when a field declares no custom renderer. */
 function defaultCell<T>(field: ResourceField<T>, value: unknown) {
   if (value === null || value === undefined || value === '') {
-    return <span className="text-gray-400 dark:text-gray-600">—</span>;
+    return <span className="text-gray-400 dark:text-gray-600">-</span>;
   }
 
   if (field.type === 'boolean') {
@@ -50,7 +50,7 @@ function defaultCell<T>(field: ResourceField<T>, value: unknown) {
 
   const text = String(value);
   // Long prose would otherwise stretch a column past the viewport.
-  return text.length > 90 ? `${text.slice(0, 90)}…` : text;
+  return text.length > 90 ? `${text.slice(0, 90)}...` : text;
 }
 
 export default function ResourceTable<T extends object>({
@@ -159,7 +159,7 @@ export default function ResourceTable<T extends object>({
             <Inbox className="h-8 w-8 text-gray-400" aria-hidden="true" />
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {query
-                ? `No ${config.title.toLowerCase()} match “${query}”.`
+                ? `No ${config.title.toLowerCase()} match "${query}".`
                 : config.emptyMessage ?? `No ${config.title.toLowerCase()} yet.`}
             </p>
             {!query && onCreate && (

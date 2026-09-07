@@ -106,7 +106,7 @@ export default function SummaryDownload({ memberId }: { memberId: number }) {
           <Download size={16} />
         )}
         {busy
-          ? c("Preparing summary…", "Xülasə hazırlanır…")
+          ? c("Preparing summary...", "Xülasə hazırlanır...")
           : c("Download summary", "Həkim üçün xülasə")}
       </button>
       {error && (

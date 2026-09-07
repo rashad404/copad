@@ -42,7 +42,7 @@ export default function ClinicalTimeline({
           <h2>{c("Clinical timeline", "Klinik xronologiya")}</h2>
           <p>
             {c(
-              "Newest events first, by the date they happened—not when they were entered.",
+              "Newest events first, by the date they happened-not when they were entered.",
               "Hadisələr daxil edilmə tarixinə deyil, baş verdiyi tarixə görə yenidən köhnəyə sıralanır.",
             )}
           </p>
@@ -62,7 +62,7 @@ export default function ClinicalTimeline({
       </div>
       {resource.loading ? (
         <p className={styles.loading} role="status">
-          {c("Loading timeline…", "Xronologiya yüklənir…")}
+          {c("Loading timeline...", "Xronologiya yüklənir...")}
         </p>
       ) : resource.error ? (
         <div role="alert" className={styles.error}>

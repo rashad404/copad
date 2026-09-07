@@ -43,7 +43,7 @@ export default function ProductLayout({
           <div>
             <Link href="/" className="public-footer-brand">
               {brand}
-              <span className="public-brand-dot">•</span>
+              <span className="public-brand-dot">-</span>
             </Link>
             <p>
               {c(

@@ -338,7 +338,7 @@ export function formPayload(
   );
 }
 export function dateLabel(value: string | null | undefined, locale: string) {
-  if (!value) return "—";
+  if (!value) return "-";
   const date = new Date(value.length === 10 ? value + "T12:00:00" : value);
   return Number.isNaN(date.getTime())
     ? value

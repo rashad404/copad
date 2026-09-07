@@ -149,7 +149,7 @@ export default function RichTextEditor({ value, onChange }: RichTextEditorProps)
           } rounded`}
           title={t('admin.editor.bulletList', 'Bullet List')}
         >
-          • List
+          - List
         </button>
         <button
           type="button"

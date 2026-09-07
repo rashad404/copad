@@ -1,6 +1,6 @@
 # Archived migrations
 
-`V5`–`V7` are kept for reference but are no longer on Flyway's classpath.
+`V5`-`V7` are kept for reference but are no longer on Flyway's classpath.
 
 They were never applied successfully in production. `V5` failed there on
 2025-06-15 (`flyway_schema_history.success = 0`), and rather than repairing it

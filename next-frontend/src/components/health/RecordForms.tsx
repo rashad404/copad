@@ -225,7 +225,7 @@ export function ClinicalForm({
           </button>
           <button className="public-button" disabled={busy}>
             {busy
-              ? c("Saving…", "Saxlanılır…")
+              ? c("Saving...", "Saxlanılır...")
               : c("Save record", "Qeydi saxla")}
           </button>
         </div>
@@ -399,7 +399,7 @@ export function MemberForm({
           </button>
           <button className="public-button" disabled={busy}>
             {busy
-              ? c("Saving…", "Saxlanılır…")
+              ? c("Saving...", "Saxlanılır...")
               : c("Save member", "Üzvü saxla")}
           </button>
         </div>
@@ -463,7 +463,7 @@ export function DeleteDialog({
             }
           }}
         >
-          {busy ? c("Removing…", "Silinir…") : c("Remove", "Sil")}
+          {busy ? c("Removing...", "Silinir...") : c("Remove", "Sil")}
         </button>
       </div>
     </RecordDialog>

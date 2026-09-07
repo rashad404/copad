@@ -152,7 +152,7 @@ function FamilyWorkspace() {
       <div className={styles.workspaceHeading}>
         <div>
           <p className={styles.eyebrow}>
-            {c("Your family’s health", "Ailənizin sağlamlığı")}
+            {c("Your family's health", "Ailənizin sağlamlığı")}
           </p>
           <h1>{c("Health record", "Sağlamlıq qeydləri")}</h1>
         </div>
@@ -173,7 +173,7 @@ function FamilyWorkspace() {
       )}
       {loading ? (
         <div className={styles.loading} role="status">
-          {c("Loading your family…", "Ailəniz yüklənir…")}
+          {c("Loading your family...", "Ailəniz yüklənir...")}
         </div>
       ) : (
         !error && (
@@ -454,7 +454,7 @@ function MemberRecord({
         </aside>
       ) : allergies.loading ? (
         <p className={styles.helper} role="status">
-          {c("Loading allergy information…", "Allergiya məlumatları yüklənir…")}
+          {c("Loading allergy information...", "Allergiya məlumatları yüklənir...")}
         </p>
       ) : null}
       <div
@@ -529,7 +529,7 @@ function MemberRecord({
               <ErrorBlock error={latest.error} retry={retry} />
             ) : latest.loading ? (
               <p className={styles.loading} role="status">
-                {c("Loading measurements…", "Ölçülər yüklənir…")}
+                {c("Loading measurements...", "Ölçülər yüklənir...")}
               </p>
             ) : Object.values(latest.data ?? {}).length ? (
               <div className={styles.vitalSummary}>
@@ -588,9 +588,9 @@ function MemberRecord({
                   </span>
                   <strong>
                     {resource.loading
-                      ? "…"
+                      ? "..."
                       : resource.error
-                        ? "—"
+                        ? "-"
                         : (resource.data?.length ?? 0)}
                   </strong>
                   <span>
@@ -683,7 +683,7 @@ function MemberRecord({
             </div>
             {resources[tab].loading ? (
               <p className={styles.loading} role="status">
-                {c("Loading records…", "Qeydlər yüklənir…")}
+                {c("Loading records...", "Qeydlər yüklənir...")}
               </p>
             ) : resources[tab].error ? (
               <ErrorBlock error={resources[tab].error} retry={retry} />
@@ -921,7 +921,7 @@ function AuditHistory({
       </div>
       {resource.loading ? (
         <p role="status" className={styles.loading}>
-          {c("Loading history…", "Tarixçə yüklənir…")}
+          {c("Loading history...", "Tarixçə yüklənir...")}
         </p>
       ) : resource.error ? (
         <ErrorBlock

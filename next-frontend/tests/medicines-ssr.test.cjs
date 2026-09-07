@@ -7,7 +7,7 @@ const origin=process.env.CATALOGUE_TEST_ORIGIN;
 test('public catalogue delivers indexable HTML, canonical, Drug schema, prices and true 404s',{skip:!origin},async()=>{
  const response=await fetch(`${origin}/dermanlar/ibuprofen`);assert.equal(response.status,200);
  const doc=new JSDOM(await response.text()).window.document;
- assert.equal(doc.title,'İbuprofen — qiymətlər və alternativlər | AzDoc');
+ assert.equal(doc.title,'İbuprofen - qiymətlər və alternativlər | AzDoc');
  assert.match(doc.querySelector('meta[name=description]').content,/Ibuprofen/);
  assert.match(doc.querySelector('link[rel=canonical]').href,/\/dermanlar\/ibuprofen$/);
  const schema=JSON.parse(doc.querySelector('script[type="application/ld+json"]').textContent);

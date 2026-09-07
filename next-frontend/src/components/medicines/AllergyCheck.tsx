@@ -9,7 +9,7 @@ import styles from "./medicines.module.css";
 export default function AllergyCheck({ medicineId }: { medicineId: number }) {
   const { user, isAuthenticated, isLoading } = useAuth();
   if (isLoading)
-    return <p className={styles.muted}>Allergiya yoxlaması hazırlanır…</p>;
+    return <p className={styles.muted}>Allergiya yoxlaması hazırlanır...</p>;
   if (!isAuthenticated || !user)
     return (
       <aside className={styles.advisory}>
@@ -55,7 +55,7 @@ function MemberCheck({
     <section className={styles.allergy}>
       <h2>Şəxsi allergiya yoxlaması</h2>
       {families.loading ? (
-        <p role="status">Ailə üzvləri yüklənir…</p>
+        <p role="status">Ailə üzvləri yüklənir...</p>
       ) : families.error ? (
         <div role="alert">
           <p>{families.error}</p>
@@ -131,7 +131,7 @@ function Warnings({
     "Allergiya yoxlaması baş tutmadı.",
   );
   if (result.loading)
-    return <p role="status">{name} üçün allergiyalar yoxlanılır…</p>;
+    return <p role="status">{name} üçün allergiyalar yoxlanılır...</p>;
   if (result.error)
     return (
       <div role="alert" className={styles.warning}>
@@ -160,7 +160,7 @@ function Warnings({
           <div key={`${w.allergen}:${w.basis}:${i}`}>
             <strong>
               {w.critical
-                ? "Ciddi allergiya — həyati təhlükə riski"
+                ? "Ciddi allergiya - həyati təhlükə riski"
                 : "Mümkün allergiya uyğunluğu"}
             </strong>
             <p>

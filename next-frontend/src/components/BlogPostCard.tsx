@@ -97,7 +97,7 @@ const BlogPostCard = ({ post }: BlogPostCardProps) => {
             href={`/blog/${slug}`} 
             className="text-sm font-medium text-indigo-600 dark:text-indigo-400 hover:text-indigo-700 dark:hover:text-indigo-300"
           >
-            {t('blog.readMore')} →
+            {t('blog.readMore')} {'->'}
           </Link>
         </div>
       </div>

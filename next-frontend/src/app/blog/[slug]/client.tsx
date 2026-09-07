@@ -149,7 +149,7 @@ const BlogPostClient = ({
                       {post.publishedAt &&
                       !Number.isNaN(new Date(post.publishedAt).getTime())
                         ? format(new Date(post.publishedAt), "MMM d, yyyy")
-                        : "—"}
+                        : "-"}
                     </span>
                   </div>
                   <div className="flex items-center">
@@ -159,7 +159,7 @@ const BlogPostClient = ({
                         ? t("blog.readingTime", {
                             minutes: post.readingTimeMinutes,
                           })
-                        : "—"}
+                        : "-"}
                     </span>
                   </div>
                 </div>

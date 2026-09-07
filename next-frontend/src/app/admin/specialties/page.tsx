@@ -76,7 +76,7 @@ const config: ResourceConfig<MedicalSpecialty> = {
       label: 'Icon URL',
       type: 'text',
       inTable: false,
-      placeholder: 'https://…',
+      placeholder: 'https://...',
     },
   ],
 };
