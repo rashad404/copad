@@ -134,6 +134,14 @@ public class ClinicalRecordController {
         return ImmunizationDTO.from(records.addImmunization(memberId, user.getId(), body.toEntity()));
     }
 
+    @PutMapping("/immunizations/{id}")
+    public ImmunizationDTO updateImmunization(@PathVariable Long memberId, @PathVariable Long id,
+                                               @RequestBody ImmunizationDTO body,
+                                               @AuthenticationPrincipal User user) {
+        return ImmunizationDTO.from(records.updateImmunization(
+                memberId, id, user.getId(), body.toEntity()));
+    }
+
     @DeleteMapping("/immunizations/{id}")
     public ResponseEntity<Void> deleteImmunization(@PathVariable Long memberId, @PathVariable Long id,
                                                    @AuthenticationPrincipal User user) {

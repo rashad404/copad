@@ -18,6 +18,7 @@ export function middleware(request: NextRequest) {
   // Protected routes
   const protectedRoutes = [
     '/dashboard',
+    '/health-record',
     '/appointments',
     '/profile',
   ];
