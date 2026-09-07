@@ -3,3 +3,7 @@
 public_html
 **/.claude/settings.local.json
 node_modules
+docs
+# Local-only ops tooling
+restart.sh
+pull-backups.sh
