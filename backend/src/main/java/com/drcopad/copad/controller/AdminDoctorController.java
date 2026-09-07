@@ -42,7 +42,7 @@ public class AdminDoctorController {
         private Integer yearsExperience;
         private String bio;
         private String photoUrl;
-        private String languages;
+        private List<String> languages;
         private BigDecimal consultationFee;
         private boolean acceptsBookings;
         private boolean active;
@@ -59,7 +59,7 @@ public class AdminDoctorController {
                     .id(d.getId()).fullName(d.getFullName()).slug(d.getSlug())
                     .specialtyCode(d.getSpecialtyCode()).qualifications(d.getQualifications())
                     .licenseNumber(d.getLicenseNumber()).yearsExperience(d.getYearsExperience())
-                    .bio(d.getBio()).photoUrl(d.getPhotoUrl()).languages(d.getLanguages())
+                    .bio(d.getBio()).photoUrl(d.getPhotoUrl()).languages(splitLanguages(d.getLanguages()))
                     .consultationFee(d.getConsultationFee())
                     .acceptsBookings(d.isAcceptsBookings()).active(d.isActive())
                     .clinicIds(d.getClinics().stream().map(Clinic::getId).toList())
@@ -78,7 +78,8 @@ public class AdminDoctorController {
             d.setYearsExperience(yearsExperience);
             d.setBio(bio);
             d.setPhotoUrl(photoUrl);
-            d.setLanguages(languages);
+            d.setLanguages(languages == null || languages.isEmpty()
+                    ? null : String.join(",", languages));
             d.setConsultationFee(consultationFee);
             d.setAcceptsBookings(acceptsBookings);
             d.setActive(active);
@@ -137,13 +138,13 @@ public class AdminDoctorController {
     // --- Doctors ---------------------------------------------------------
 
     @GetMapping("/doctors")
-    public Map<String, Object> doctors(@RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "25") int size,
-                                       @RequestParam(required = false) String specialty,
-                                       @RequestParam(required = false) VerificationStatus verification) {
-        Page<Doctor> found = directory.list(specialty, verification,
-                PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)));
-        return page(found.map(DoctorDTO::from));
+    public Page<DoctorDTO> doctors(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "25") int size,
+                                   @RequestParam(required = false) String specialty,
+                                   @RequestParam(required = false) VerificationStatus verification) {
+        return directory.list(specialty, verification,
+                        PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)))
+                .map(DoctorDTO::from);
     }
 
     @PostMapping("/doctors")
@@ -180,11 +181,11 @@ public class AdminDoctorController {
     // --- Clinics ---------------------------------------------------------
 
     @GetMapping("/clinics")
-    public Map<String, Object> clinics(@RequestParam(defaultValue = "0") int page,
-                                       @RequestParam(defaultValue = "25") int size) {
-        return page(directory.listClinics(
-                PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)))
-                .map(ClinicDTO::from));
+    public Page<ClinicDTO> clinics(@RequestParam(defaultValue = "0") int page,
+                                   @RequestParam(defaultValue = "25") int size) {
+        return directory.listClinics(
+                        PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)))
+                .map(ClinicDTO::from);
     }
 
     @PostMapping("/clinics")
@@ -204,13 +205,10 @@ public class AdminDoctorController {
         return ResponseEntity.noContent().build();
     }
 
-    /** The shape the admin resource layer already reads. */
-    private Map<String, Object> page(Page<?> found) {
-        return Map.of(
-                "content", found.getContent(),
-                "page", found.getNumber(),
-                "size", found.getSize(),
-                "totalElements", found.getTotalElements(),
-                "totalPages", found.getTotalPages());
+    /** Stored comma-separated, exposed as a list. */
+    private static List<String> splitLanguages(String value) {
+        if (value == null || value.isBlank()) return List.of();
+        return java.util.Arrays.stream(value.split(","))
+                .map(String::trim).filter(v -> !v.isEmpty()).toList();
     }
 }
