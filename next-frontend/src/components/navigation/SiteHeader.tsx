@@ -47,6 +47,7 @@ export default function SiteHeader() {
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/dashboard", "Hesabım"],
     ["/profile", "Profilim"],
+    ["/profile/privacy", "Məxfilik və razılıqlar"],
   ];
   function close() {
     setOpen(false);

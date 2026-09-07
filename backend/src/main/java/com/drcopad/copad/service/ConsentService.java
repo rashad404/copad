@@ -72,8 +72,29 @@ public class ConsentService {
      */
     @Transactional
     public boolean withdraw(Long userId, ConsentType type) {
-        var existing = consents.findFirstByUserIdAndConsentTypeAndWithdrawnAtIsNull(userId, type);
-        if (existing.isEmpty()) return false;
+        return withdraw(userId, type, null);
+    }
+
+    @Transactional
+    public boolean withdraw(Long userId, ConsentType type, Long familyMemberId) {
+        if (type == ConsentType.GUARDIAN && familyMemberId == null) {
+            throw new IllegalArgumentException("A family member is required for a guardian declaration");
+        }
+        var existing = type == ConsentType.GUARDIAN
+                ? consents.findFirstByUserIdAndConsentTypeAndFamilyMemberIdAndWithdrawnAtIsNull(userId, type, familyMemberId)
+                : consents.findFirstByUserIdAndConsentTypeAndWithdrawnAtIsNull(userId, type);
+        if (existing.isEmpty()) {
+            // DELETE also records an initial refusal. A grant followed by a
+            // withdrawal would falsely claim the person once agreed.
+            if (type == ConsentType.GUARDIAN || hasRefused(userId, type)) return false;
+            Consent refusal = new Consent();
+            refusal.setUserId(userId);
+            refusal.setConsentType(type);
+            refusal.setPolicyVersion(policyVersion);
+            refusal.setWithdrawnAt(LocalDateTime.now());
+            consents.save(refusal);
+            return true;
+        }
 
         Consent consent = existing.get();
         consent.setWithdrawnAt(LocalDateTime.now());

@@ -3,6 +3,7 @@
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { track } from '@/utils/analytics';
 import { isAxiosError } from 'axios';
+import { readableError } from '@/components/health/model';
 import { resolveGuestSession } from '@/utils/resolveGuestSession';
 import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
@@ -299,8 +300,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       return response;
     } catch (err) {
       console.error('sendMessage error:', err);
-      setError('Failed to send message');
-      return t('chat.error.message');
+      const message = readableError(err, t('chat.error.message'));
+      setError(message);
+      return message;
     }
   };
 

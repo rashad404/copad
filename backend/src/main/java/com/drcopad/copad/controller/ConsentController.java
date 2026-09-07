@@ -56,8 +56,9 @@ public class ConsentController {
      */
     @DeleteMapping("/{type}")
     public ResponseEntity<Map<String, Object>> withdraw(@PathVariable ConsentType type,
+                                                        @RequestParam(required = false) Long familyMemberId,
                                                         @AuthenticationPrincipal User user) {
-        consents.withdraw(user.getId(), type);
+        consents.withdraw(user.getId(), type, familyMemberId);
         return ResponseEntity.ok(consents.summary(user.getId()));
     }
 }

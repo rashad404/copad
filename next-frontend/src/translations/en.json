@@ -503,28 +503,43 @@
       }
     },
     "privacy": {
-      "title": "Privacy Policy",
-      "lastUpdated": "Last updated: {{date}}",
-      "introduction": "We take your privacy seriously. This Privacy Policy explains how we collect, use, and protect your personal information when you use our services. By using our platform, you agree to the collection and use of information in accordance with this policy.",
+      "title": "Privacy policy",
+      "introduction": "This page explains what azdoc stores, why we use it and how to change your choices. Last updated: 7 September 2026.",
+      "owner": {
+        "title": "Who holds your data",
+        "description": "The azdoc service holds your information and uses it to provide the service. Contact info@azdoc.ai about your account, health records or personal information."
+      },
       "information": {
-        "title": "Information We Collect",
-        "description": "We collect various types of information to provide and improve our services, including personal information such as your name, email address, and medical history. We also collect usage data to understand how you interact with our platform."
+        "title": "Information we collect",
+        "description": "When you register, we store your name, email address and a hash used to verify your password. Health records include family member names, dates of birth and other profile details, conditions, allergies, medications, immunizations, measurements, lab results and documents you add. We also store messages, replies, attachments, consent choices and their dates. Technical information such as IP addresses, request times, device information and usage may be processed to operate and secure the service."
       },
       "usage": {
-        "title": "How We Use Your Information",
-        "description": "We use the collected information to maintain and improve our services, enhance your user experience, communicate with you about updates and changes, and ensure the security of our platform."
+        "title": "Why we use it",
+        "description": "We use information to provide account access, store and display family records, read documents, present lab results and generate replies to your questions. The selected member's health records may inform a reply. Technical information helps investigate faults, limit unauthorized access and abuse, and measure service usage and costs."
+      },
+      "transfer": {
+        "title": "Content sent to the United States",
+        "description": "We use OpenAI to generate AI replies and read documents automatically. Message and document content, and relevant health records for the selected person, are sent outside Azerbaijan to OpenAI in the United States for processing. Storing a health record with azdoc and processing its content abroad are separate consent choices. You can create an account without agreeing to processing abroad. Withdrawing that consent stops the assistant from answering your messages. It does not recall information already sent."
+      },
+      "recipients": {
+        "title": "Who can receive or access information",
+        "description": "Accounts with access to your family can view its records according to their roles. OpenAI receives the content sent for replies and document processing. Technical suppliers providing hosting and storage, and authorized personnel responsible for support and security, may access information needed for those tasks. Information may also be disclosed to competent authorities when required by law."
+      },
+      "retention": {
+        "title": "Retention and deletion",
+        "description": "Anonymous conversations that are not linked to an account are deleted after 90 days of inactivity. Account records and documents are kept until you delete them or delete your account. Permanent deletion in privacy settings removes records and document files from the active system. A content-free record of deletion, including its date and counts, is retained. Deleting your account does not delete families also held by other accounts. Backup copies and copies held by external providers may not disappear at the same time; their retention is governed separately. Contact us about a specific request."
       },
       "security": {
-        "title": "Data Security",
-        "description": "We implement appropriate security measures to protect your personal information from unauthorized access, alteration, disclosure, or destruction. Your data is encrypted and stored securely."
+        "title": "How we protect information",
+        "description": "Private document access is checked against account and family permissions. Stored document files are encrypted, and website traffic uses HTTPS. No system is risk-free. Do not share your password. Downloaded archives contain health information, and you control how they are stored and shared."
       },
       "rights": {
-        "title": "Your Rights",
-        "description": "You have the right to access, correct, or delete your personal information. You can also request a copy of your data or withdraw your consent for data processing at any time."
+        "title": "Access your data and manage your choices",
+        "description": "Use Health records to view each family member's records and correct them where you have permission. Open Privacy and consent from your profile to review consent history, give or withdraw consent, and download a member's complete record and documents as a ZIP archive. Deleting a member's record requires write access. Deleting your account requires your password. Read-only members may download records but cannot delete them. Withdrawing consent does not automatically erase existing records; permanent deletion is a separate action."
       },
       "contact": {
-        "title": "Contact Us",
-        "description": "If you have any questions about this Privacy Policy, please contact us at privacy@{{websiteName}}{{websiteTld}}"
+        "title": "Contact and requests",
+        "description": "For access, correction, deletion, consent or questions about this policy, email info@azdoc.ai. We may ask for information to verify that the request concerns you. Do not include medical documents or your password in your first email."
       }
     },
     "terms": {

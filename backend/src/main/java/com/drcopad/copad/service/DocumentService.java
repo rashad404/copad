@@ -41,6 +41,7 @@ public class DocumentService {
     private final FamilyService familyService;
     private final DocumentStorageService storage;
     private final DocumentExtractionService extraction;
+    private final ConsentService consents;
     private final LabReportParser labParser;
     private final PrescriptionParser prescriptionParser;
     private final MedicationRepository medicationRepository;
@@ -121,14 +122,17 @@ public class DocumentService {
         documentRepository.save(document);
 
         try {
+            boolean allowExternal = document.getUploadedBy() != null
+                    && !consents.hasRefused(document.getUploadedBy().getId(), ConsentType.CROSS_BORDER_AI);
             String text = extraction.extractText(
                     storage.readAllBytes(document.getStorageKey()),
-                    document.getContentType());
+                    document.getContentType(), allowExternal);
 
             if (text == null || text.isBlank()) {
                 // An image with no text layer is not a failure; there is simply
                 // nothing to read without OCR.
                 document.setExtractionStatus(ExtractionStatus.SKIPPED);
+                if (!allowExternal) document.setExtractionError("AI_PROCESSING_DECLINED");
                 documentRepository.save(document);
                 return;
             }

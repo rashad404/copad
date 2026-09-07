@@ -25,7 +25,7 @@ interface AuthContextType {
   isLoading: boolean;
   isAdmin: boolean;
   login: (email: string, password: string) => Promise<void>;
-  logout: () => Promise<void>;
+  logout: (localOnly?: boolean) => Promise<void>;
   register: (email: string, password: string, name: string) => Promise<void>;
 }
 
@@ -204,11 +204,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     }
   };
 
-  const logout = async () => {
+  const logout = async (localOnly = false) => {
     console.log('AuthProvider: Logging out');
     try {
       // Try to call logout API
-      await api.post('/auth/logout');
+      if (!localOnly) await api.post('/auth/logout');
       console.log('AuthProvider: Logout API call successful');
     } catch (error) {
       console.error('AuthProvider: Logout API call failed', error);
@@ -217,6 +217,11 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       // Clear token and user data
       removeTokenFromLocalStorage();
       clearAuthCookie();
+      sessionStorage.removeItem('auth_verified');
+      if (localOnly) {
+        if (user?.id) localStorage.removeItem(`azdoc.member.${user.id}`);
+        localStorage.removeItem('guestSessionId190190');
+      }
       setUser(null);
       setIsAdmin(false);
       console.log('AuthProvider: Logged out');

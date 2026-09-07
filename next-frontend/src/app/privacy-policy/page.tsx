@@ -3,7 +3,17 @@ export default function Page() {
   return (
     <DocumentPage
       namespace="privacy"
-      sections={["information", "usage", "security", "rights", "contact"]}
+      sections={[
+        "owner",
+        "information",
+        "usage",
+        "transfer",
+        "recipients",
+        "retention",
+        "security",
+        "rights",
+        "contact",
+      ]}
     />
   );
 }

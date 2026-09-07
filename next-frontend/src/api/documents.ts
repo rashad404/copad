@@ -19,6 +19,7 @@ export interface MemberDocument {
   sizeBytes: number | null;
   extractionStatus:
     "PENDING" | "PROCESSING" | "COMPLETED" | "SKIPPED" | "FAILED";
+  extractionError?: string | null;
   hasText: boolean;
   notes: string | null;
   createdAt: string;

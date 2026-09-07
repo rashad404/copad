@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { usePrivacyCopy } from "@/components/privacy/usePrivacyCopy";
 import { useTranslation } from "react-i18next";
 import { useSiteContext } from "@/context/SiteContext";
 import ProductLayout, { PageIntro, usePublicCopy } from "./ProductLayout";
@@ -10,6 +12,7 @@ export default function DocumentPage({
   sections: string[];
 }) {
   const { t } = useTranslation();
+  const { p } = usePrivacyCopy();
   const site = useSiteContext();
   const c = usePublicCopy();
   const options = { agentName: site.AGENT_NAME };
@@ -42,6 +45,23 @@ export default function DocumentPage({
                 </span>
                 <h2>{t(`${namespace}.${key}.title`)}</h2>
                 <p>{t(`${namespace}.${key}.description`, options)}</p>
+                {namespace === "privacy" && key === "rights" && (
+                  <Link className="public-button" href="/profile/privacy">
+                    {p.title}
+                  </Link>
+                )}
+                {namespace === "privacy" && key === "contact" && (
+                  <a href="mailto:info@azdoc.ai">info@azdoc.ai</a>
+                )}
+                {namespace === "privacy" && key === "transfer" && (
+                  <a
+                    href="https://openai.com/business-data/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    OpenAI
+                  </a>
+                )}
               </section>
             ))}
           </div>
