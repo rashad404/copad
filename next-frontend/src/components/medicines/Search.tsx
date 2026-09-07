@@ -15,7 +15,7 @@ export default function Search({ q = "" }: { q?: string }) {
           type="search"
         />
         <button type="submit">
-          Axtar <span aria-hidden="true">↗</span>
+          Axtar <span aria-hidden="true">^</span>
         </button>
       </div>
     </form>

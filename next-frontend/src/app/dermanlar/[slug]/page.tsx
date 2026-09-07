@@ -134,7 +134,7 @@ export default async function MedicinePage({ params }: Props) {
                         {price(saving(min, a.lowestPrice))} qiymət fərqi
                       </small>
                     )}
-                    <span aria-hidden="true">↗</span>
+                    <span aria-hidden="true">^</span>
                   </div>
                 </Link>
               ))}

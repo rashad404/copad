@@ -52,7 +52,7 @@ export default function HomePage() {
             <div className="hero-actions">
               <Link className="button blue" href="/chat">
                 {copy("Söhbətə başla")}
-                <span>↗</span>
+                <span>^</span>
               </Link>
               <a className="text-link" href="#how">
                 {copy("azdoc ilə tanış ol")}
@@ -71,7 +71,7 @@ export default function HomePage() {
           <div className="hero-stage" id="demo">
             <div className="stage-top">
               <span>{copy("GƏLƏCƏK MƏHSULDAN BİR DEMO")}</span>
-              <span aria-hidden="true">↗</span>
+              <span aria-hidden="true">^</span>
             </div>
             <div className="orbit orbit-one" />
             <div className="orbit orbit-two" />
@@ -210,7 +210,7 @@ export default function HomePage() {
                   aria-expanded={answer}
                 >
                   <span>✳</span> {copy("Bu nəticəni anlamağa kömək et")}
-                  <span>↗</span>
+                  <span>^</span>
                 </button>
                 {answer && (
                   <div className="demo-answer">
@@ -235,7 +235,7 @@ export default function HomePage() {
             </p>
             <div className="stage-bottom">
               <span>{copy("ÖZÜNÜZÜ DAHA YAXŞI TANIYIN.")}</span>
-              <span className="stage-arrow">↗</span>
+              <span className="stage-arrow">^</span>
             </div>
           </div>
         </section>
@@ -274,7 +274,7 @@ export default function HomePage() {
                   )}
                 </p>
               </div>
-              <span className="step-symbol">↗</span>
+              <span className="step-symbol">^</span>
             </article>
             <article>
               <span className="step-number">02</span>
@@ -337,7 +337,7 @@ export default function HomePage() {
               </p>
               <a className="text-link" href="#demo">
                 {copy("Ailə nümunəsini araşdır")}
-                <span>↗</span>
+                <span>^</span>
               </a>
             </div>
           </div>
@@ -389,7 +389,7 @@ export default function HomePage() {
             href={isAuthenticated ? "/chat" : "/register"}
           >
             {copy(isAuthenticated ? "Söhbətə davam et" : "Hesab yarat")}{" "}
-            <span>↗</span>
+            <span>^</span>
           </Link>
           <span className="closing-star">✳</span>
         </section>

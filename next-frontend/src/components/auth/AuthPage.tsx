@@ -303,7 +303,7 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                       ? "auth.login.sign_in"
                       : "auth.register.create_account",
                   )}{" "}
-                  <span aria-hidden="true">↗</span>
+                  <span aria-hidden="true">^</span>
                 </Link>
               </p>
               <Link href="/contact" className={styles.help}>

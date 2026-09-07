@@ -48,7 +48,7 @@ export default async function Catalogue({ searchParams }: Props) {
             </p>
           </div>
           <aside className={styles.note}>
-            <span aria-hidden="true">↗</span>
+            <span aria-hidden="true">^</span>
             <h2>
               Eyni maddə.
               <br />
@@ -109,7 +109,7 @@ export default async function Catalogue({ searchParams }: Props) {
                         {m.lowestPrice != null && (
                           <small>başlayan qiymət</small>
                         )}
-                        <span aria-hidden="true">↗</span>
+                        <span aria-hidden="true">^</span>
                       </div>
                     </Link>
                   ))}
@@ -133,7 +133,7 @@ export default async function Catalogue({ searchParams }: Props) {
                   key={name}
                   href={`/dermanlar?q=${encodeURIComponent(name)}`}
                 >
-                  {name} ↗
+                  {name} ^
                 </Link>
               ))}
             </div>

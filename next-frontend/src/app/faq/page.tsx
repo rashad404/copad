@@ -71,7 +71,7 @@ export default function FAQPage() {
               )}
             </p>
             <Link href="/contact" className="public-text-link">
-              {c("Still have a question?", "Başqa sualınız var?")} ↗
+              {c("Still have a question?", "Başqa sualınız var?")} ^
             </Link>
           </aside>
           <div className="public-faq-list">
