@@ -13,6 +13,8 @@ interface ResourceFormProps<T> {
   onCancel: () => void;
   inline?: boolean;
   pending?: boolean;
+  title?: string;
+  submitLabel?: string;
 }
 
 const inputClass =
@@ -25,6 +27,8 @@ export default function ResourceForm<T extends object>({
   onCancel,
   inline = false,
   pending = false,
+  title,
+  submitLabel,
 }: ResourceFormProps<T>) {
   const [values, setValues] = useState<Partial<T>>(initial);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -66,12 +70,14 @@ export default function ResourceForm<T extends object>({
     const found: Record<string, string> = {};
 
     for (const field of editable) {
+      if (field.readOnly) continue;
       const value = (values as Record<string, unknown>)[field.key];
 
       if (
         field.required &&
         (value === undefined ||
           value === null ||
+          (Array.isArray(value) && value.length === 0) ||
           (typeof value === "string" && !value.trim()))
       ) {
         found[field.key] = `${field.label} is required`;
@@ -80,6 +86,7 @@ export default function ResourceForm<T extends object>({
       if (
         field.type === "number" &&
         value !== undefined &&
+        value !== null &&
         value !== "" &&
         (typeof value !== "number" || !Number.isFinite(value))
       ) {
@@ -129,12 +136,26 @@ export default function ResourceForm<T extends object>({
             checked={Boolean(value)}
             onChange={(e) => setValue(field.key, e.target.checked)}
             disabled={busy}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
             className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
           />
           <span className="text-sm text-gray-700 dark:text-gray-300">
             {field.label}
+            {invalid && (
+              <span
+                id={`${id}-error`}
+                role="alert"
+                className="mt-1 block text-sm text-red-600 dark:text-red-400"
+              >
+                {errors[field.key]}
+              </span>
+            )}
             {field.helpText && (
-              <span className="mt-1 block text-xs text-gray-500 dark:text-gray-400">
+              <span
+                id={`${id}-help`}
+                className="mt-1 block text-xs text-gray-500 dark:text-gray-400"
+              >
                 {field.helpText}
               </span>
             )}
@@ -157,7 +178,57 @@ export default function ResourceForm<T extends object>({
           )}
         </label>
 
-        {field.renderInput ? (
+        {field.readOnly ? (
+          <div
+            id={id}
+            className="rounded-lg bg-gray-50 px-3 py-2 text-sm text-gray-700 dark:bg-gray-900 dark:text-gray-200"
+          >
+            {field.render
+              ? field.render(value, values as T)
+              : String(value ?? "") || field.placeholder || "Not recorded"}
+          </div>
+        ) : field.type === "multiselect" ? (
+          <select
+            id={id}
+            multiple
+            size={Math.min(6, Math.max(3, field.options?.length || 3))}
+            value={Array.isArray(value) ? value.map(String) : []}
+            onChange={(e) =>
+              setValue(
+                field.key,
+                Array.from(
+                  e.target.selectedOptions,
+                  (option) =>
+                    field.options?.find(
+                      (item) => String(item.value) === option.value,
+                    )?.value ?? option.value,
+                ),
+              )
+            }
+            disabled={busy}
+            aria-invalid={invalid}
+            aria-describedby={describedBy}
+            className={inputClass}
+          >
+            {field.options?.map((option) => (
+              <option key={String(option.value)} value={String(option.value)}>
+                {option.label}
+              </option>
+            ))}
+            {(Array.isArray(value) ? value : [])
+              .filter(
+                (item) =>
+                  !field.options?.some(
+                    (option) => String(option.value) === String(item),
+                  ),
+              )
+              .map((item) => (
+                <option key={String(item)} value={String(item)}>
+                  {String(item)} (not in available options)
+                </option>
+              ))}
+          </select>
+        ) : field.renderInput ? (
           field.renderInput({
             id,
             value,
@@ -190,6 +261,15 @@ export default function ResourceForm<T extends object>({
             className={inputClass}
           >
             <option value="">Select...</option>
+            {value != null &&
+              value !== "" &&
+              !field.options?.some(
+                (option) => String(option.value) === String(value),
+              ) && (
+                <option value={String(value)}>
+                  {String(value)} (not in available options)
+                </option>
+              )}
             {field.options?.map((opt) => (
               <option key={String(opt.value)} value={String(opt.value)}>
                 {opt.label}
@@ -206,6 +286,9 @@ export default function ResourceForm<T extends object>({
                   ? "date"
                   : "text"
             }
+            min={field.min}
+            max={field.max}
+            step={field.type === "number" ? (field.step ?? "any") : undefined}
             value={String(value ?? "")}
             placeholder={field.placeholder}
             onChange={(e) =>
@@ -248,7 +331,8 @@ export default function ResourceForm<T extends object>({
     >
       <div className="flex items-center justify-between border-b border-gray-200 px-6 py-4 dark:border-gray-700">
         <h2 className="text-lg font-semibold text-gray-900 dark:text-white">
-          {isEdit ? `Edit ${config.singular}` : `New ${config.singular}`}
+          {title ??
+            (isEdit ? `Edit ${config.singular}` : `New ${config.singular}`)}
         </h2>
         <button
           type="button"
@@ -294,7 +378,8 @@ export default function ResourceForm<T extends object>({
             {submitting && (
               <Loader2 className="h-4 w-4 animate-spin" aria-hidden="true" />
             )}
-            {isEdit ? "Save changes" : `Create ${config.singular}`}
+            {submitLabel ??
+              (isEdit ? "Save changes" : `Create ${config.singular}`)}
           </button>
         </div>
       </form>
@@ -306,7 +391,9 @@ export default function ResourceForm<T extends object>({
       open
       onClose={cancel}
       className="relative z-50"
-      aria-label={isEdit ? `Edit ${config.singular}` : `New ${config.singular}`}
+      aria-label={
+        title ?? (isEdit ? `Edit ${config.singular}` : `New ${config.singular}`)
+      }
     >
       <div className="fixed inset-0 bg-black/40" aria-hidden="true" />
       <div className="fixed inset-0 overflow-y-auto p-4 sm:p-8">

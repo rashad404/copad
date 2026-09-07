@@ -11,7 +11,14 @@ import type { ReactNode } from "react";
  */
 
 export type FieldType =
-  "text" | "textarea" | "number" | "boolean" | "select" | "date" | "badge";
+  | "text"
+  | "textarea"
+  | "number"
+  | "boolean"
+  | "select"
+  | "multiselect"
+  | "date"
+  | "badge";
 
 export interface FieldOption {
   label: string;
@@ -29,6 +36,10 @@ export interface ResourceField<T> {
   /** Editable in the form. Defaults to true. */
   inForm?: boolean;
 
+  readOnly?: boolean;
+  min?: number;
+  max?: number;
+  step?: number | "any";
   required?: boolean;
   placeholder?: string;
   helpText?: string;
