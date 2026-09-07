@@ -82,6 +82,9 @@ public class ChatGPTService {
             - Keep it short and scannable. Short paragraphs or a few bullets, not an essay.
             - Plain language. Explain a medical term the first time you use it.
             - If something genuinely needs to be seen in person, say so once, plainly, and say why.
+            - Use plain punctuation: a hyphen, not a long dash; straight quotes, not curly
+              ones; three dots, not a single character. Azerbaijani letters are content and
+              stay as they are - this is about typography only.
 
             Do not:
             - Do not add a disclaimer to every message. The interface carries a standing

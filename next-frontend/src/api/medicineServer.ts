@@ -25,3 +25,31 @@ export const searchMedicines = (q: string) =>
   get<MedicineSummary[]>(
     `/medicines?${new URLSearchParams({ q: q.trim(), limit: "50" })}`,
   );
+
+export type MedicineSitemapPage = {
+  total: number;
+  page: number;
+  size: number;
+  entries: { slug: string; lastModified: string | null }[];
+};
+
+/**
+ * One page of drug slugs for the sitemap.
+ *
+ * Cached for a day: the catalogue is synced monthly, and this is read by
+ * crawlers rather than by people.
+ */
+export async function getMedicineSitemapPage(
+  page: number,
+  size: number,
+): Promise<MedicineSitemapPage | null> {
+  const response = await fetch(
+    `${resolveApiBaseUrl()}/medicines/sitemap?${new URLSearchParams({
+      page: String(page),
+      size: String(size),
+    })}`,
+    { next: { revalidate: 86400 }, signal: AbortSignal.timeout(20000) },
+  );
+  if (!response.ok) return null;
+  return response.json();
+}

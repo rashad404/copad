@@ -46,6 +46,22 @@ public class MedicineController {
         return medicines.alternatives(id, limit);
     }
 
+    /**
+     * Slugs for the sitemap.
+     *
+     * Public, and deliberately cheap: it is read by a crawler-facing route that
+     * regenerates on a schedule, not by a person.
+     */
+    @GetMapping("/sitemap")
+    public Map<String, Object> sitemap(@RequestParam(defaultValue = "0") int page,
+                                       @RequestParam(defaultValue = "5000") int size) {
+        return Map.of(
+                "total", medicines.count(),
+                "page", page,
+                "size", size,
+                "entries", medicines.sitemapEntries(page, size));
+    }
+
     /** Advisory only: candidates for a human to judge, not a prescribing check. */
     @GetMapping("/{id}/allergy-check")
     public List<MedicineService.AllergyWarning> allergyCheck(

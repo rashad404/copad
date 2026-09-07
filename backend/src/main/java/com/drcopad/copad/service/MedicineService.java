@@ -35,6 +35,10 @@ public class MedicineService {
                                   BigDecimal lowestPrice, Integer priceCount) {
     }
 
+    /** Just enough to build a sitemap entry. */
+    public record SitemapEntry(String slug, java.time.LocalDate lastModified) {
+    }
+
     public record PriceOption(String tradeName, String dosage, String form, String packaging,
                               String manufacturer, BigDecimal retailPrice) {
     }
@@ -146,6 +150,43 @@ public class MedicineService {
      * record "penicillin" without picking a category, and treating an
      * uncategorised entry as irrelevant would drop exactly the ones that matter.
      */
+    /**
+     * Slugs for the sitemap, one page at a time.
+     *
+     * Over ten thousand drug pages, and none of them are discoverable today.
+     * A sitemap file may hold fifty thousand URLs, but the response still has
+     * to be a sane size, so the caller pages through and writes a sitemap
+     * index.
+     *
+     * Ordered by id, not by name: the order has to stay stable across the pages
+     * of one crawl, and a name can change under the monthly sync.
+     */
+    @Transactional(readOnly = true)
+    public List<SitemapEntry> sitemapEntries(int page, int size) {
+        int limit = Math.min(Math.max(size, 1), 20000);
+        int offset = Math.max(page, 0) * limit;
+
+        return jdbcTemplate.query("""
+                SELECT slug, updated_at
+                FROM medicine
+                ORDER BY id
+                LIMIT ? OFFSET ?
+                """,
+                (rs, rowNum) -> new SitemapEntry(
+                        rs.getString("slug"),
+                        rs.getTimestamp("updated_at") == null
+                                ? null
+                                : rs.getTimestamp("updated_at").toLocalDateTime().toLocalDate()),
+                limit, offset);
+    }
+
+    /** How many pages the sitemap index needs. */
+    @Transactional(readOnly = true)
+    public long count() {
+        Long total = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM medicine", Long.class);
+        return total == null ? 0 : total;
+    }
+
     @Transactional(readOnly = true)
     public List<AllergyWarning> checkAllergies(Long memberId, Long userId, Long medicineId) {
         List<Allergy> allergies = records.allergies(memberId, userId).stream()

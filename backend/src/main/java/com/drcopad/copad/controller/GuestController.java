@@ -7,6 +7,7 @@ import com.drcopad.copad.entity.FileAttachment;
 import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.entity.User;
+import com.drcopad.copad.service.MedicineContextService;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.drcopad.copad.service.RateLimitPolicy;
@@ -33,6 +34,7 @@ public class GuestController {
     private final RateLimiterService rateLimiterService;
     private final FileAttachmentService fileAttachmentService;
     private final RecordContextService recordContext;
+    private final MedicineContextService medicineContext;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -87,13 +89,23 @@ public class GuestController {
 
         // Grounding is opt-in and only for a signed-in caller who can reach the
         // member. An anonymous conversation is unchanged.
-        String context = null;
+        StringBuilder context = new StringBuilder();
         if (memberId != null && user != null) {
             RecordContextService.Context ctx = recordContext.forMember(memberId, user.getId());
             if (!ctx.isEmpty()) {
-                context = ctx.prompt();
+                context.append(ctx.prompt());
                 log.info("Chat grounded in member {} record ({})", memberId, ctx.summary());
             }
+        }
+
+        // Local drug prices, for anyone. This is the part a general assistant
+        // cannot answer: what a drug actually costs in Azerbaijan, and whether
+        // something with the same ingredient costs less. Empty unless the
+        // message names a product we carry.
+        String drugs = medicineContext.contextFor(messageRequest.getMessage());
+        if (!drugs.isBlank()) {
+            context.append(drugs);
+            log.info("Chat grounded in the drug registry");
         }
         try {
             String response = guestSessionService.processChat(
@@ -103,7 +115,7 @@ public class GuestController {
                 messageRequest.getLanguage(),
                 chatId,
                 messageRequest.getFileIds(),
-                context
+                context.isEmpty() ? null : context.toString()
             );
             return ResponseEntity.ok(response);
         } catch (Exception e) {
