@@ -204,6 +204,18 @@ medicine:
     username: ${MEDICINE_SYNC_USERNAME:}
     password: ${MEDICINE_SYNC_PASSWORD:}
 
+retention:
+  # Nothing expired before this existed. Anonymous conversations accumulated
+  # from the first day the product ran, because no one decided otherwise -
+  # which is a decision by default, and the wrong one for medical content.
+  enabled: ${RETENTION_ENABLED:true}
+  # Long enough that someone returning after a season still finds their
+  # history, short enough that a health question asked once does not sit here
+  # for years. Judged on last activity, never on when it was created.
+  guest-session-days: ${RETENTION_GUEST_SESSION_DAYS:90}
+  # Nightly, away from the backup window.
+  cron: ${RETENTION_CRON:0 30 4 * * *}
+
 document:
   encryption:
     # Patient files are encrypted before they reach the disk.

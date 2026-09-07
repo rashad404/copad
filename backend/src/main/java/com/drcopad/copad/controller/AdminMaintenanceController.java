@@ -1,6 +1,7 @@
 package com.drcopad.copad.controller;
 
 import com.drcopad.copad.service.FileEncryptionService;
+import com.drcopad.copad.service.GuestSessionRetentionService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -27,12 +28,26 @@ import java.util.stream.Stream;
 public class AdminMaintenanceController {
 
     private final FileEncryptionService encryption;
+    private final GuestSessionRetentionService retention;
 
     @Value("${attachment.storage.root:${user.home}/azdoc-attachments}")
     private String attachmentRoot;
 
     @Value("${document.storage.root:${user.home}/azdoc-documents}")
     private String documentRoot;
+
+    /**
+     * Removes anonymous conversations past the retention period.
+     *
+     * Runs nightly on its own; this is here so it can be inspected and run
+     * deliberately, and because the first run against a year of accumulated
+     * data is worth watching rather than discovering in a log.
+     */
+    @PostMapping("/purge-expired-sessions")
+    public Map<String, Object> purgeExpiredSessions(
+            @RequestParam(defaultValue = "true") boolean dryRun) {
+        return retention.purgeExpiredGuestSessions(dryRun);
+    }
 
     /**
      * Encrypts stored files that are still plaintext.
