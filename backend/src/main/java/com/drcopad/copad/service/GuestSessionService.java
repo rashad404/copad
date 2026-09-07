@@ -75,8 +75,9 @@ public class GuestSessionService {
 
     @Transactional
     public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds) {
-        log.info("Processing chat message for session: {} - Chat: {} - Message: {} - Specialty: {} - Language: {} - FileIds: {}", 
-                sessionId, chatId, message, specialty, language, fileIds);
+        // Message content is the patient's medical complaint and is never logged.
+        log.info("Processing chat message for session: {} - Chat: {} - Specialty: {} - Language: {} - Attachments: {}",
+                sessionId, chatId, specialty, language, fileIds == null ? 0 : fileIds.size());
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {
@@ -171,7 +172,7 @@ public class GuestSessionService {
 
     @Transactional
     public void saveEmail(String sessionId, String email) {
-        log.info("Saving email for session: {} - Email: {}", sessionId, email);
+        log.info("Saving email for session: {}", sessionId);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {
@@ -278,7 +279,8 @@ public class GuestSessionService {
 
     @Transactional
     public Map<String, String> createChat(String sessionId, String title) {
-        log.info("Creating new chat for session: {} with title: {}", sessionId, title);
+        // Titles are derived from the first message, so they are not logged.
+        log.info("Creating new chat for session: {}", sessionId);
         
         GuestSession session = guestSessionRepository.findBySessionId(sessionId)
                 .orElseThrow(() -> {

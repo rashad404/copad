@@ -19,6 +19,10 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import com.drcopad.copad.service.RateLimitPolicy;
+import com.drcopad.copad.service.RateLimiterService;
+import com.drcopad.copad.util.ClientIpResolver;
+import jakarta.servlet.http.HttpServletRequest;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -43,6 +47,7 @@ public class ResponsesMessageController {
     private final OpenAIResponsesService responsesService;
     private final ChatGPTService chatGPTService;
     private final ConversationManager conversationManager;
+    private final RateLimiterService rateLimiterService;
     private final FileUploadService fileUploadService;
     private final CostCalculationService costCalculationService;
     private final BatchFileUploadRepository batchFileUploadRepository;
@@ -55,6 +60,7 @@ public class ResponsesMessageController {
                                     OpenAIResponsesService responsesService,
                                     ChatGPTService chatGPTService,
                                     ConversationManager conversationManager,
+                                    RateLimiterService rateLimiterService,
                                     FileUploadService fileUploadService,
                                     CostCalculationService costCalculationService,
                                     BatchFileUploadRepository batchFileUploadRepository,
@@ -66,6 +72,7 @@ public class ResponsesMessageController {
         this.responsesService = responsesService;
         this.chatGPTService = chatGPTService;
         this.conversationManager = conversationManager;
+        this.rateLimiterService = rateLimiterService;
         this.fileUploadService = fileUploadService;
         this.costCalculationService = costCalculationService;
         this.batchFileUploadRepository = batchFileUploadRepository;
@@ -80,8 +87,17 @@ public class ResponsesMessageController {
             @PathVariable String chatId,
             @RequestBody MessageRequest messageRequest,
             @AuthenticationPrincipal User user,
-            @RequestHeader(value = "X-Guest-Session-Id", required = false) String guestSessionId) {
-        
+            @RequestHeader(value = "X-Guest-Session-Id", required = false) String guestSessionId,
+            HttpServletRequest request) {
+
+        // This endpoint is public and calls OpenAI on every request, so it is
+        // budgeted per caller identity and per IP.
+        String identity = user != null ? "user:" + user.getId()
+                : guestSessionId != null ? "guest:" + guestSessionId
+                : null;
+        rateLimiterService.requireAll(RateLimitPolicy.AI_CHAT,
+                identity, ClientIpResolver.resolve(request));
+
         try {
             // Get chat
             Chat chat = chatRepository.findByChatId(chatId)
@@ -197,8 +213,15 @@ public class ResponsesMessageController {
             @RequestParam(value = "category", defaultValue = "general") String category,
             @RequestParam(value = "conversationId", required = false) String conversationId,
             @AuthenticationPrincipal User user,
-            @RequestHeader(value = "X-Guest-Session-Id", required = false) String guestSessionId) {
-        
+            @RequestHeader(value = "X-Guest-Session-Id", required = false) String guestSessionId,
+            HttpServletRequest request) {
+
+        String identity = user != null ? "user:" + user.getId()
+                : guestSessionId != null ? "guest:" + guestSessionId
+                : null;
+        rateLimiterService.requireAll(RateLimitPolicy.FILE_UPLOAD,
+                identity, ClientIpResolver.resolve(request));
+
         try {
             // Validate chat exists
             Chat chat = chatRepository.findByChatId(chatId)

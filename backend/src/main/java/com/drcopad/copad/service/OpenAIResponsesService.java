@@ -506,7 +506,8 @@ public class OpenAIResponsesService {
         
         // Ensure we have content to return
         if (textContent == null || textContent.isEmpty()) {
-            log.error("No text content in OpenAI response: {}", response);
+            // Response body omitted: it can contain patient medical content.
+            log.error("No text content in OpenAI response");
             textContent = "I apologize, but I couldn't generate a response. Please try again.";
         }
         

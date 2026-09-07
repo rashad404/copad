@@ -4,10 +4,11 @@ import com.drcopad.copad.dto.FileAttachmentDTO;
 import com.drcopad.copad.dto.GuestSessionDTO;
 import com.drcopad.copad.dto.MessageRequest;
 import com.drcopad.copad.entity.FileAttachment;
-import com.drcopad.copad.exception.RateLimitExceededException;
 import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
+import com.drcopad.copad.service.RateLimitPolicy;
 import com.drcopad.copad.service.RateLimiterService;
+import com.drcopad.copad.util.ClientIpResolver;
 import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -35,13 +36,10 @@ public class GuestController {
 
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
-        String ipAddress = request.getRemoteAddr();
-        log.info("Starting new guest session from IP: {}", ipAddress);
-        
-        if (!rateLimiterService.isAllowed(ipAddress)) {
-            log.warn("Rate limit exceeded for IP: {}", ipAddress);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        String ipAddress = ClientIpResolver.resolve(request);
+        log.info("Starting new guest session");
+
+        rateLimiterService.require(RateLimitPolicy.SESSION_CREATE, ipAddress);
         
         try {
             GuestSessionDTO session = guestSessionService.createSession(request);
@@ -56,10 +54,7 @@ public class GuestController {
 
     @GetMapping("/session/{sessionId}")
     public ResponseEntity<?> getSession(@PathVariable String sessionId) {
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        rateLimiterService.require(RateLimitPolicy.GENERAL, sessionId);
         
         try {
             GuestSessionDTO session = guestSessionService.getSession(sessionId);
@@ -76,9 +71,17 @@ public class GuestController {
             @PathVariable String sessionId,
             @PathVariable String chatId,
             @RequestBody MessageRequest messageRequest,
-            @RequestParam(defaultValue = "general") String specialty) {
-        log.info("Received chat request for session {} and chat {} with message: {}, specialty: {}, language: {}, and fileIds: {}", 
-                 sessionId, chatId, messageRequest.getMessage(), specialty, messageRequest.getLanguage(), messageRequest.getFileIds());
+            @RequestParam(defaultValue = "general") String specialty,
+            HttpServletRequest request) {
+        // Never log message content: it is the patient's medical complaint.
+        log.info("Chat request for session {} chat {} (specialty: {}, language: {}, attachments: {})",
+                 sessionId, chatId, specialty, messageRequest.getLanguage(),
+                 messageRequest.getFileIds() == null ? 0 : messageRequest.getFileIds().size());
+
+        // The only endpoint that spends money per call, and it is unauthenticated.
+        // Limited by session and by IP, because sessions are free to mint.
+        rateLimiterService.requireAll(RateLimitPolicy.AI_CHAT,
+                sessionId, ClientIpResolver.resolve(request));
         try {
             String response = guestSessionService.processChat(
                 sessionId, 
@@ -114,13 +117,11 @@ public class GuestController {
     public ResponseEntity<?> uploadFile(
             @PathVariable String sessionId,
             @RequestParam("file") MultipartFile file) {
-        log.info("Uploading file for session {}: {}, size: {}, type: {}", 
-                sessionId, file.getOriginalFilename(), file.getSize(), file.getContentType());
-        
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        // The filename can identify the patient, so it is not logged.
+        log.info("Uploading file for session {} (size: {}, type: {})",
+                sessionId, file.getSize(), file.getContentType());
+
+        rateLimiterService.require(RateLimitPolicy.FILE_UPLOAD, sessionId);
         
         try {
             FileAttachment attachment = fileAttachmentService.uploadFile(file, sessionId, file.getContentType());
@@ -154,12 +155,9 @@ public class GuestController {
     public ResponseEntity<?> saveEmail(
             @PathVariable String sessionId,
             @RequestBody String email) {
-        log.info("Saving email for session: {} - Email: {}", sessionId, email);
+        log.info("Saving email for session: {}", sessionId);
         
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        rateLimiterService.require(RateLimitPolicy.GENERAL, sessionId);
         
         try {
             guestSessionService.saveEmail(sessionId, email);
@@ -177,12 +175,10 @@ public class GuestController {
     public ResponseEntity<?> createChat(
             @PathVariable String sessionId,
             @RequestBody Map<String, String> request) {
-        log.info("Creating new chat for session: {} with title: {}", sessionId, request.get("title"));
+        // The title is derived from the first message, so it is not logged.
+        log.info("Creating new chat for session: {}", sessionId);
         
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        rateLimiterService.require(RateLimitPolicy.GENERAL, sessionId);
         
         try {
             Map<String, String> result = guestSessionService.createChat(sessionId, request.get("title"));
@@ -201,10 +197,7 @@ public class GuestController {
             @RequestBody Map<String, String> request) {
         log.info("Updating chat {} for session: {} with title: {}", chatId, sessionId, request.get("title"));
         
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        rateLimiterService.require(RateLimitPolicy.GENERAL, sessionId);
         
         try {
             guestSessionService.updateChatTitle(sessionId, chatId, request.get("title"));
@@ -222,10 +215,7 @@ public class GuestController {
             @PathVariable String chatId) {
         log.info("Deleting chat {} for session: {}", chatId, sessionId);
         
-        if (!rateLimiterService.isAllowed(sessionId)) {
-            log.warn("Rate limit exceeded for session: {}", sessionId);
-            throw new RateLimitExceededException("Rate limit exceeded. Please try again later.");
-        }
+        rateLimiterService.require(RateLimitPolicy.GENERAL, sessionId);
         
         try {
             guestSessionService.deleteChat(sessionId, chatId);
@@ -235,12 +225,5 @@ public class GuestController {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body("Chat or session not found.");
         }
-    }
-
-    @ExceptionHandler(RateLimitExceededException.class)
-    public ResponseEntity<String> handleRateLimitExceeded(RateLimitExceededException ex) {
-        log.warn("Rate limit exceeded: {}", ex.getMessage());
-        return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
-                .body(ex.getMessage());
     }
 }

@@ -244,15 +244,17 @@ public class ChatGPTService {
 
         try {
             String requestJson = objectMapper.writeValueAsString(request);
-            log.info("Sending request to ChatGPT API: {}", requestJson);
+            // The serialised request contains the full conversation, so only
+            // its size is logged.
+            log.info("Sending request to ChatGPT API ({} bytes)", requestJson.length());
             // Log the first 1000 characters of each message content to debug
             request.getMessages().forEach(msg -> {
                 if (msg.getContentForJson() instanceof List) {
                     log.info("Message role: {}, content type: List with {} items", msg.getRole(), ((List<?>) msg.getContentForJson()).size());
                 } else if (msg.getContentForJson() instanceof String) {
                     String content = (String) msg.getContentForJson();
-                    log.info("Message role: {}, content: {}", msg.getRole(), 
-                        content.length() > 100 ? content.substring(0, 100) + "..." : content);
+                    // Length only: the content is patient medical data.
+                    log.info("Message role: {}, content length: {}", msg.getRole(), content.length());
                 }
             });
         } catch (Exception e) {
@@ -268,12 +270,14 @@ public class ChatGPTService {
                 .onStatus(status -> !status.is2xxSuccessful(),
                     response -> response.bodyToMono(String.class)
                         .flatMap(body -> {
-                            log.error("OpenAI API error response: Status={}, Body={}", response.statusCode(), body);
+                            // The error body echoes the prompt, so only the status is logged.
+                            log.error("OpenAI API error response: Status={}", response.statusCode());
                             return Mono.error(new RuntimeException("OpenAI API error: " + response.statusCode() + " - " + body));
                         }))
                 .bodyToMono(ChatGPTResponse.class)
                 .map(response -> {
-                    log.info("Received response from ChatGPT API: {}", response);
+                    // The response is medical advice about the patient; log shape only.
+                    log.info("Received response from ChatGPT API");
                     if (response.getChoices() != null && !response.getChoices().isEmpty()) {
                         String content = response.getChoices().get(0).getMessage().getContent();
                         if (content != null) {
@@ -291,7 +295,7 @@ public class ChatGPTService {
                         if (e instanceof org.springframework.web.reactive.function.client.WebClientResponseException) {
                             org.springframework.web.reactive.function.client.WebClientResponseException responseException = 
                                 (org.springframework.web.reactive.function.client.WebClientResponseException) e;
-                            log.error("Response body: {}", responseException.getResponseBodyAsString());
+                            // Body omitted: it echoes the request, including patient content.
                             log.error("Status code: {}", responseException.getStatusCode());
                         }
                     }
@@ -300,7 +304,7 @@ public class ChatGPTService {
     }
 
     private Mono<String> getDummyResponse(List<Message> messages) {
-        log.info("Using dummy response for messages: {}", messages);
+        log.info("Using dummy response for {} messages", messages == null ? 0 : messages.size());
         
         // Get the last user message
         String lastUserMessage = messages.stream()
