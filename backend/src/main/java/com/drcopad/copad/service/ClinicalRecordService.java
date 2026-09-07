@@ -141,7 +141,8 @@ public class ClinicalRecordService {
     @Transactional(readOnly = true)
     public List<Medication> medications(Long memberId, Long userId) {
         familyService.requireMemberAccess(memberId, userId, false);
-        return medicationRepository.findByFamilyMemberIdAndDeletedAtIsNullOrderByIdDesc(memberId);
+        return medicationRepository.findByFamilyMemberIdAndDeletedAtIsNullOrderByIdDesc(memberId).stream()
+                .filter(Medication::isConfirmed).toList();
     }
 
     @Transactional

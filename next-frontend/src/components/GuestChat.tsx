@@ -11,6 +11,7 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import ChatSidebar from "./ChatSidebar";
+import EmergencyNotice from "./EmergencyNotice";
 import MemberSelect from "./health/MemberSelect";
 import { useChatMember } from "./health/useChatMember";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
@@ -358,6 +359,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
             )}
           </p>
         )}
+        <EmergencyNotice urgency={chats.find(chat => chat.id === selectedChatId)?.urgency} />
         <div className="public-chat-thread">
           <p className="public-composer-note">
             {c(

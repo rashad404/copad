@@ -40,9 +40,10 @@ import { ClinicalForm, DeleteDialog, MemberForm } from "./RecordForms";
 import Vitals, { Flag } from "./Vitals";
 import ClinicalTimeline from "./ClinicalTimeline";
 import SummaryDownload from "./SummaryDownload";
+import DocumentWorkspace, { type DocumentTab } from "./documents/DocumentWorkspace";
 import styles from "./health.module.css";
 
-type Tab = "overview" | RecordKind | "vitals" | "timeline" | "history";
+type Tab = "overview" | RecordKind | DocumentTab | "vitals" | "timeline" | "history";
 export default function HealthRecordPage() {
   return (
     <ProtectedRoute>
@@ -319,7 +320,7 @@ function MemberRecord({
   );
   const medications = useResource(
     `${member.id}.medications.${version}`,
-    (signal) => healthApi.list(member.id, "medications", signal),
+    (signal) => healthApi.list(member.id, "medications", signal).then(rows => rows.filter(row => row.confirmed !== false)),
     fallback,
   );
   const immunizations = useResource(
@@ -340,6 +341,9 @@ function MemberRecord({
       key: key as RecordKind,
       label: c(...definition.label),
     })),
+    { key: "documents", label: c("Documents", "Sənədlər") },
+    { key: "labs", label: c("Lab results", "Analiz nəticələri") },
+    { key: "prescription-review", label: c("Prescription review", "Reseptin yoxlanması") },
     { key: "vitals", label: c("Vitals", "Göstəricilər") },
     { key: "timeline", label: c("Timeline", "Xronologiya") },
     { key: "history", label: c("History", "Tarixçə") },
@@ -643,6 +647,8 @@ function MemberRecord({
             version={version}
             onViewVitals={() => setTab("vitals")}
           />
+        ) : tab === "documents" || tab === "labs" || tab === "prescription-review" ? (
+          <DocumentWorkspace key={member.id} memberId={member.id} tab={tab} write={write} onChanged={() => setVersion(n => n + 1)} onManual={kind => { if (write) setRecordForm({ kind }); }} />
         ) : tab === "history" ? (
           <AuditHistory memberId={member.id} version={version} />
         ) : (
