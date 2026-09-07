@@ -51,8 +51,11 @@ export const metadata: Metadata = {
     canonical: process.env.NEXT_PUBLIC_APP_URL
   },
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon.ico',
+    icon: [
+      { url: '/logo.svg', type: 'image/svg+xml' },
+      { url: '/logo.png', type: 'image/png', sizes: '1024x1024' },
+    ],
+    shortcut: '/logo.svg',
     apple: '/apple-touch-icon.png',
   },
   verification: {

@@ -2,6 +2,7 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Manrope } from "next/font/google";
 import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
@@ -72,7 +73,7 @@ export default function SiteHeader() {
           onClick={close}
         >
           {brand}
-          <span>•</span>
+          <Image src="/logo.svg" alt="" width={27} height={27} className={styles.brandMark} />
         </Link>
         <nav className={styles.desktopNav} aria-label={copy("Əsas naviqasiya")}>
           {links.map(([href, label]) => (
