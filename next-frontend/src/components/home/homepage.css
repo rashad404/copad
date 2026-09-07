@@ -1314,3 +1314,78 @@
     letter-spacing: -2px;
   }
 }
+
+/* Homepage content follows the visitor's questions, with examples beside chat
+   and the record illustration beside the family-record explanation. */
+.azdoc-home .home-question-examples {
+  background: #edf0e6;
+  border-radius: 20px;
+  padding: 36px;
+}
+.azdoc-home .home-question-examples h2 {
+  font-size: 24px;
+  letter-spacing: -0.6px;
+  margin: 0 0 24px;
+}
+.azdoc-home .home-question-examples ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.azdoc-home .home-question-examples li {
+  background: #fff;
+  border-radius: 12px 12px 3px 12px;
+  padding: 20px;
+  font-size: 17px;
+  line-height: 1.6;
+  margin: 14px 0 0;
+}
+.azdoc-home .home-account-note {
+  font-size: 12px;
+  color: var(--muted);
+  margin-top: 16px;
+}
+.azdoc-home .how {
+  border-top: 1px solid #dde0d6;
+}
+.azdoc-home .home-inline-link {
+  display: inline-block;
+  margin-top: 14px;
+}
+.azdoc-home .home-family-records {
+  gap: 60px;
+}
+.azdoc-home .home-record-example {
+  min-width: 0;
+}
+.azdoc-home .home-record-example .record-window {
+  transform: none;
+  width: 100%;
+  margin: 0;
+}
+.azdoc-home .home-record-example .record-heading h3 {
+  font-size: 24px;
+  font-weight: 650;
+  margin: 0 0 18px;
+}
+.azdoc-home .home-record-values {
+  min-height: 155px;
+}
+.azdoc-home .home-record-values .result-line {
+  gap: 12px;
+}
+.azdoc-home .home-record-values .result-line strong {
+  font-size: 15px;
+}
+@media (max-width: 760px) {
+  .azdoc-home .home-question-examples {
+    padding: 24px;
+  }
+  .azdoc-home .home-question-examples li {
+    font-size: 15px;
+    padding: 16px;
+  }
+  .azdoc-home .home-family-records {
+    gap: 32px;
+  }
+}
