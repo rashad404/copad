@@ -1,6 +1,8 @@
 spring:
-  flyway:
-    enabled: false
+  # Flyway settings come from application.yml. This profile used to disable it
+  # because a V5 migration failed here on 2025-06-15 and Flyway refuses to run
+  # with a failed migration recorded; the history has since been reset and the
+  # schema baselined at V7, so it can own migrations again.
   datasource:
     url: ${DATABASE_URL}
     username: ${DATABASE_USERNAME}
@@ -8,7 +10,8 @@ spring:
     driver-class-name: com.mysql.cj.jdbc.Driver
   jpa:
     hibernate:
-      ddl-auto: update
+      # Flyway owns the schema; ddl-auto must not silently alter production.
+      ddl-auto: none
     show-sql: false
     database-platform: org.hibernate.dialect.MariaDBDialect
     properties:
