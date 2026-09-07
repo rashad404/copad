@@ -13,6 +13,11 @@ public class PublicEndpoints {
             "/api/v2/messages/**", // Responses API endpoints
             "/uploads/**", // Make uploads publicly accessible
             "/api/health",
+            // The published drug registry; the allergy check under
+            // /api/members/** stays authenticated.
+            "/api/medicines",
+            "/api/medicines/*",
+            "/api/medicines/*/alternatives",
             "/custom-error"
     );
 }

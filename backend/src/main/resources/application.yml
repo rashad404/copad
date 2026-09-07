@@ -164,3 +164,11 @@ management:
     export:
       prometheus:
         enabled: true
+
+medicine:
+  sync:
+    # Direct read of the bugun.az catalogue. Empty where there is no access,
+    # which disables the sync rather than failing at startup.
+    url: ${MEDICINE_SYNC_URL:}
+    username: ${MEDICINE_SYNC_USERNAME:}
+    password: ${MEDICINE_SYNC_PASSWORD:}
