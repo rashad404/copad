@@ -133,6 +133,19 @@ public class LabReportParser {
         return AbnormalFlag.NORMAL;
     }
 
+    /**
+     * The key a label charts under, aliases applied.
+     *
+     * Manually entered results have to land on the same key as extracted ones,
+     * or a person who types "Hemoglobin" gets a second series beside the "HGB"
+     * read off their reports, and the trend that matters is split in two.
+     */
+    public String canonicalKey(String label) {
+        if (label == null || label.isBlank()) return "";
+        String key = normaliseKey(label);
+        return ALIASES.getOrDefault(key, key);
+    }
+
     /** Lowercase, accent-folded, punctuation-stripped, so aliases can match. */
     String normaliseKey(String label) {
         String s = label.toLowerCase(Locale.ROOT)

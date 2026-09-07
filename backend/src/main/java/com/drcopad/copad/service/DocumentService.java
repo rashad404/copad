@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -251,6 +252,68 @@ public class DocumentService {
         familyService.requireMemberAccess(medication.getFamilyMember().getId(), userId, true);
         medication.setDeletedAt(LocalDateTime.now());
         medicationRepository.save(medication);
+    }
+
+    /**
+     * A lab value typed in by a person.
+     *
+     * The reason this exists: a photographed report has no text layer, so
+     * extraction reads nothing from it, and most reports here arrive as phone
+     * photos. Without this the whole feature is unavailable to the people who
+     * need it most.
+     *
+     * Confirmed on creation, because a person typed it deliberately - there is
+     * no machine reading to review. It is marked MANUAL so the record can still
+     * say where the number came from.
+     */
+    @Transactional
+    public LabResult addManualResult(Long memberId, Long userId, LabResult input) {
+        FamilyMember member = familyService.requireMemberAccess(memberId, userId, true);
+
+        if (input.getAnalyte() == null || input.getAnalyte().isBlank()) {
+            throw new IllegalArgumentException("The test name is required");
+        }
+        if (input.getValueNumeric() == null
+                && (input.getValueText() == null || input.getValueText().isBlank())) {
+            throw new IllegalArgumentException("A result value is required");
+        }
+
+        LabResult result = new LabResult();
+        result.setFamilyMember(member);
+        result.setAnalyte(input.getAnalyte().trim());
+        // The same key extraction would produce, so a typed Hemoglobin charts
+        // with an HGB read off a report rather than beside it.
+        result.setAnalyteKey(labParser.canonicalKey(input.getAnalyte()));
+        result.setValueNumeric(input.getValueNumeric());
+        result.setValueText(input.getValueText());
+        result.setUnit(input.getUnit());
+        result.setReferenceLow(input.getReferenceLow());
+        result.setReferenceHigh(input.getReferenceHigh());
+        result.setReferenceText(input.getReferenceText());
+        // Flagged only against a range the person actually supplied. Ranges
+        // differ by laboratory and method, and inventing one would produce a
+        // confident wrong verdict.
+        result.setAbnormalFlag(flagFor(input.getValueNumeric(),
+                input.getReferenceLow(), input.getReferenceHigh()));
+        result.setCollectedAt(input.getCollectedAt() == null
+                ? LocalDateTime.now() : input.getCollectedAt());
+
+        result.setSource(LabResultSource.MANUAL);
+        result.setConfirmed(true);
+        result.setConfirmedBy(userId == null ? null : userRepository.findById(userId).orElse(null));
+        result.setConfirmedAt(LocalDateTime.now());
+
+        LabResult saved = labResultRepository.save(result);
+        // The analyte is not logged: a test name can disclose a condition.
+        log.info("Manual lab result {} recorded for member {}", saved.getId(), memberId);
+        return saved;
+    }
+
+    private AbnormalFlag flagFor(BigDecimal value, BigDecimal low, BigDecimal high) {
+        if (value == null || low == null || high == null) return null;
+        if (value.compareTo(low) < 0) return AbnormalFlag.LOW;
+        if (value.compareTo(high) > 0) return AbnormalFlag.HIGH;
+        return AbnormalFlag.NORMAL;
     }
 
     @Transactional(readOnly = true)

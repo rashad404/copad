@@ -75,6 +75,11 @@ public class LabResult {
     @Column(nullable = false)
     private boolean confirmed = false;
 
+    /** Read from a document, or typed by a person. */
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false, length = 16)
+    private LabResultSource source = LabResultSource.EXTRACTED;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "confirmed_by_user_id")
     private User confirmedBy;

@@ -81,6 +81,10 @@ public class DocumentController {
         private LocalDateTime collectedAt;
         /** False means extracted but not yet accepted by a person. */
         private boolean confirmed;
+        /** EXTRACTED or MANUAL - the record has to be able to say which. */
+        private LabResultSource source;
+        private BigDecimal referenceLow;
+        private BigDecimal referenceHigh;
 
         static LabResultDTO from(LabResult r) {
             return LabResultDTO.builder()
@@ -92,6 +96,8 @@ public class DocumentController {
                     .abnormalFlag(r.getAbnormalFlag())
                     .abnormal(r.getAbnormalFlag() != null && r.getAbnormalFlag().isAbnormal())
                     .collectedAt(r.getCollectedAt()).confirmed(r.isConfirmed())
+                    .source(r.getSource())
+                    .referenceLow(r.getReferenceLow()).referenceHigh(r.getReferenceHigh())
                     .build();
         }
     }
@@ -192,6 +198,31 @@ public class DocumentController {
                                          @AuthenticationPrincipal User user) {
         return documents.labResults(memberId, user.getId()).stream()
                 .map(LabResultDTO::from).toList();
+    }
+
+    /**
+     * A result typed in by a person.
+     *
+     * For a report nothing could be read from - a photograph, usually, which is
+     * how most reports arrive here. Stored confirmed, because a person entered
+     * it deliberately, and marked MANUAL so it is never mistaken for a value a
+     * machine read and somebody checked.
+     */
+    @PostMapping("/lab-results")
+    @ResponseStatus(HttpStatus.CREATED)
+    public LabResultDTO addManualResult(@PathVariable Long memberId,
+                                        @RequestBody LabResultDTO input,
+                                        @AuthenticationPrincipal User user) {
+        LabResult entry = new LabResult();
+        entry.setAnalyte(input.getAnalyte());
+        entry.setValueNumeric(input.getValue());
+        entry.setValueText(input.getValueText());
+        entry.setUnit(input.getUnit());
+        entry.setReferenceLow(input.getReferenceLow());
+        entry.setReferenceHigh(input.getReferenceHigh());
+        entry.setReferenceText(input.getReferenceLabel());
+        entry.setCollectedAt(input.getCollectedAt());
+        return LabResultDTO.from(documents.addManualResult(memberId, user.getId(), entry));
     }
 
     /** One analyte over time. */
