@@ -195,3 +195,63 @@ test("uses member-scoped series, trend window and audit endpoints", async () => 
   await healthApi.history(42);
   assert.equal(requests.at(-1).url, "/members/42/history");
 });
+
+test("timeline requests the selected member and explicit 100-event limit", async () => {
+  const controller = new AbortController();
+  await healthApi.timeline(42, controller.signal);
+  assert.equal(requests.at(-1).url, "/members/42/timeline");
+  assert.deepEqual(requests.at(-1).params, { limit: 100 });
+  assert.equal(requests.at(-1).signal, controller.signal);
+});
+test("summary uses the API client with blob response type and a cancellation signal", async () => {
+  const controller = new AbortController();
+  await healthApi.summaryPdf(42, controller.signal);
+  assert.equal(requests.at(-1).url, "/members/42/summary.pdf");
+  assert.equal(requests.at(-1).responseType, "blob");
+  assert.equal(requests.at(-1).headers.Accept, "application/pdf");
+  assert.equal(requests.at(-1).signal, controller.signal);
+});
+
+test("PDF request carries the stored JWT through the real shared Axios interceptor", async () => {
+  const originalWindow = globalThis.window;
+  const originalStorage = globalThis.localStorage;
+  const originalApi = globalThis.__healthRecordTestApi;
+  try {
+    globalThis.window = {};
+    globalThis.localStorage = {
+      getItem: (key) => (key === "token" ? "synthetic-test-jwt" : null),
+    };
+    const baseStub = dataModule(
+      'export const resolveApiBaseUrl=()=>"http://unused.test/api";',
+    );
+    const clientSource = compile("../src/api/axios.ts")
+      .replace(/from ['"]axios['"]/g, `from '${axiosUrl}'`)
+      .replace(/from ['"]\.\/apiBase['"]/g, `from '${baseStub}'`);
+    const { default: client } = await import(dataModule(clientSource));
+    let captured;
+    client.defaults.adapter = async (config) => {
+      captured = config;
+      return {
+        status: 200,
+        statusText: "OK",
+        headers: {},
+        config,
+        data: new Blob(["%PDF"], { type: "application/pdf" }),
+      };
+    };
+    globalThis.__healthRecordTestApi = client;
+    const { healthApi: authenticatedApi } = await import(
+      dataModule(apiSource + "\n// authenticated client test")
+    );
+    await authenticatedApi.summaryPdf(42);
+    assert.equal(captured.headers.Authorization, "Bearer synthetic-test-jwt");
+    assert.equal(captured.headers.Accept, "application/pdf");
+    assert.equal(captured.responseType, "blob");
+    assert.equal(captured.url, "/members/42/summary.pdf");
+  } finally {
+    globalThis.window = originalWindow;
+    if (originalStorage === undefined) delete globalThis.localStorage;
+    else globalThis.localStorage = originalStorage;
+    globalThis.__healthRecordTestApi = originalApi;
+  }
+});

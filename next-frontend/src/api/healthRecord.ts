@@ -34,6 +34,22 @@ export interface ClinicalEntry {
   id: number;
   [key: string]: RecordValue;
 }
+export type TimelineType =
+  | "CONDITION"
+  | "ALLERGY"
+  | "MEDICATION_STARTED"
+  | "MEDICATION_STOPPED"
+  | "IMMUNIZATION"
+  | "VITAL";
+export interface TimelineEntry {
+  type: TimelineType;
+  recordId: number;
+  occurredAt: string | null;
+  title: string;
+  detail: string | null;
+  severity: string | null;
+  notable: boolean;
+}
 export interface Revision {
   id: number;
   recordType: string;
@@ -92,6 +108,20 @@ export interface VitalInput {
   notes?: string;
 }
 export const healthApi = {
+  timeline: (id: number, signal?: AbortSignal) =>
+    api
+      .get<
+        TimelineEntry[]
+      >(`/members/${id}/timeline`, { params: { limit: 100 }, signal })
+      .then((r) => r.data),
+  summaryPdf: (id: number, signal?: AbortSignal) =>
+    api
+      .get<Blob>(`/members/${id}/summary.pdf`, {
+        responseType: "blob",
+        headers: { Accept: "application/pdf" },
+        signal,
+      })
+      .then((r) => r.data),
   families: (signal?: AbortSignal) =>
     api.get<Family[]>("/families", { signal }).then((r) => r.data),
   addMember: (familyId: number, body: Record<string, RecordValue>) =>
