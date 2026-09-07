@@ -1,4 +1,4 @@
-import type { ReactNode } from 'react';
+import type { ReactNode } from "react";
 
 /**
  * Declarative description of an admin resource.
@@ -11,13 +11,7 @@ import type { ReactNode } from 'react';
  */
 
 export type FieldType =
-  | 'text'
-  | 'textarea'
-  | 'number'
-  | 'boolean'
-  | 'select'
-  | 'date'
-  | 'badge';
+  "text" | "textarea" | "number" | "boolean" | "select" | "date" | "badge";
 
 export interface FieldOption {
   label: string;
@@ -46,13 +40,24 @@ export interface ResourceField<T> {
   /** Custom cell rendering; falls back to a type-appropriate default. */
   render?: (value: unknown, record: T) => ReactNode;
 
+  renderInput?: (props: {
+    id: string;
+    value: unknown;
+    values: Partial<T>;
+    onChange: (value: unknown) => void;
+    disabled: boolean;
+    invalid: boolean;
+    describedBy?: string;
+  }) => ReactNode;
+
   /** Returns an error message, or null when valid. */
   validate?: (value: unknown, record: Partial<T>) => string | null;
 }
 
 export interface RowAction<T> {
   label: string;
-  onClick: (record: T) => void;
+  onClick: (record: T) => void | Promise<void>;
+  confirmation?: (record: T) => string;
   /** Styles the action as destructive and asks for confirmation. */
   destructive?: boolean;
   /** Hide the action for records where it does not apply. */
