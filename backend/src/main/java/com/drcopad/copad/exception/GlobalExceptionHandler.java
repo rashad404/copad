@@ -46,6 +46,24 @@ public class GlobalExceptionHandler {
      * stack trace in the response body, which tells a client nothing useful and
      * leaks internals.
      */
+    /**
+     * The day's AI budget is gone.
+     *
+     * 503 with a Retry-After to the next midnight: the service is genuinely
+     * unavailable rather than the request being wrong, and a client that retries
+     * in a second only burns the same wall it just hit.
+     */
+    @ExceptionHandler(com.drcopad.copad.service.AiSpendService.BudgetExhaustedException.class)
+    public ResponseEntity<Map<String, Object>> handleBudgetExhausted(
+            com.drcopad.copad.service.AiSpendService.BudgetExhaustedException ex) {
+        long secondsToMidnight = java.time.Duration.between(
+                java.time.LocalDateTime.now(),
+                java.time.LocalDate.now().plusDays(1).atStartOfDay()).getSeconds();
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
+                .header(HttpHeaders.RETRY_AFTER, String.valueOf(Math.max(secondsToMidnight, 60)))
+                .body(body(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)

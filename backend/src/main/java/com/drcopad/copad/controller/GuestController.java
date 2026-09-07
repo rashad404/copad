@@ -8,6 +8,7 @@ import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.MedicineContextService;
+import com.drcopad.copad.service.AiSpendService;
 import com.drcopad.copad.service.RedFlagDetector;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -38,6 +39,7 @@ public class GuestController {
     private final RecordContextService recordContext;
     private final MedicineContextService medicineContext;
     private final RedFlagDetector redFlags;
+    private final AiSpendService aiSpend;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -89,6 +91,12 @@ public class GuestController {
         // Limited by session and by IP, because sessions are free to mint.
         rateLimiterService.requireAll(RateLimitPolicy.AI_CHAT,
                 sessionId, ClientIpResolver.resolve(request));
+
+        // Checked before the call, not after: the point of a ceiling is not to
+        // learn what was spent. Rate limits bound how fast one caller goes;
+        // this bounds the bill, which they cannot, since a session is free to
+        // mint and each new one starts with a fresh allowance.
+        aiSpend.requireBudget();
 
         StringBuilder context = new StringBuilder();
 

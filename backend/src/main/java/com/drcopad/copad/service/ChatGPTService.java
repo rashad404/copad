@@ -41,6 +41,7 @@ public class ChatGPTService {
     private final LanguageMappingService languageMappingService;
     private final DocumentExtractionService documentExtractionService;
     private final AttachmentStorageService attachmentStorage;
+    private final AiSpendService spend;
     
     public ChatGPTConfig getChatGPTConfig() {
         return chatGPTConfig;
@@ -61,6 +62,15 @@ public class ChatGPTService {
      *                      they simply get ungrounded answers.
      */
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext) {
+        return getChatResponse(newUserMessage, history, specialtyCode, language, attachments, recordContext, null);
+    }
+
+    /**
+     * @param conversationId what the cost is attributed to, where the caller
+     *                       knows it. Null is accepted: the spend still counts,
+     *                       it just cannot be traced to one conversation.
+     */
+    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext, String conversationId) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
@@ -144,7 +154,7 @@ public class ChatGPTService {
             }
         }
 
-        return getChatGPTResponse(messages).block();
+        return getChatGPTResponse(messages, conversationId).block();
     }
     
     private void processMessageWithAttachments(List<Message> messages, ChatMessage chatMessage, String role) {
@@ -241,7 +251,7 @@ public class ChatGPTService {
         }
     }
 
-    private Mono<String> getChatGPTResponse(List<Message> messages) {
+    private Mono<String> getChatGPTResponse(List<Message> messages, String conversationId) {
         boolean useDummyData = chatGPTConfig.isUseDummyData();
         log.info("Injected config values - useDummyData={}, model={}, url={}", 
             chatGPTConfig.isUseDummyData(), 
@@ -297,6 +307,16 @@ public class ChatGPTService {
                 .map(response -> {
                     // The response is medical advice about the patient; log shape only.
                     log.info("Received response from ChatGPT API");
+                    // Recorded here because this is the only place the token
+                    // counts exist. Until now this path recorded nothing, so
+                    // the endpoint that spends the money was the one endpoint
+                    // with no accounting.
+                    if (response.getUsage() != null) {
+                        spend.record(chatGPTConfig.getOpenai().getModel(),
+                                response.getUsage().getPromptTokens(),
+                                response.getUsage().getCompletionTokens(),
+                                conversationId);
+                    }
                     if (response.getChoices() != null && !response.getChoices().isEmpty()) {
                         String content = response.getChoices().get(0).getMessage().getContent();
                         if (content != null) {

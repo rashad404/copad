@@ -28,6 +28,16 @@ public interface UsageMetricRepository extends JpaRepository<UsageMetric, Long> 
     @Query("SELECT SUM(u.totalTokens) FROM UsageMetric u WHERE u.guestSession.id = :sessionId AND u.createdAt >= :startDate")
     Long getTotalTokensForGuest(@Param("sessionId") Long sessionId, @Param("startDate") LocalDateTime startDate);
     
+    /**
+     * What the platform has spent since a moment, across everyone.
+     *
+     * The per-user and per-session totals cannot bound the bill: a session
+     * costs nothing to mint, so a thousand fresh ones each stay under their own
+     * limit while the total runs away.
+     */
+    @Query("SELECT COALESCE(SUM(u.totalCost), 0) FROM UsageMetric u WHERE u.createdAt >= :startDate")
+    BigDecimal getTotalCostSince(@Param("startDate") LocalDateTime startDate);
+
     @Query("SELECT u.model, COUNT(u), SUM(u.totalTokens), SUM(u.totalCost) FROM UsageMetric u " +
            "WHERE u.createdAt >= :startDate GROUP BY u.model")
     List<Object[]> getUsageStatsByModel(@Param("startDate") LocalDateTime startDate);

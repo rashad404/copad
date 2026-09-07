@@ -105,6 +105,15 @@ logging:
     org.springframework.security: DEBUG
 
 
+ai:
+  spend:
+    # A ceiling on the bill, not on any one caller. The per-user and
+    # per-session limits cannot bound the total, because a session costs
+    # nothing to mint and each new one starts with a fresh allowance.
+    daily-limit-usd: ${AI_DAILY_LIMIT_USD:25.00}
+    # Set false to watch the meter without ever refusing a request.
+    enforce: ${AI_SPEND_ENFORCE:true}
+
 attachment:
   storage:
     # Outside the web root. Files here are served only by
