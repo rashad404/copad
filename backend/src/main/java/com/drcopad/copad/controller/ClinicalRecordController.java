@@ -3,6 +3,7 @@ package com.drcopad.copad.controller;
 import com.drcopad.copad.dto.ClinicalRecordDTOs.*;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.ClinicalRecordService;
+import com.drcopad.copad.service.RecordDataExportService;
 import com.drcopad.copad.service.RecordExportService;
 import com.drcopad.copad.service.TimelineService;
 import org.springframework.http.HttpHeaders;
@@ -32,6 +33,7 @@ public class ClinicalRecordController {
     private final ClinicalRecordService records;
     private final TimelineService timeline;
     private final RecordExportService export;
+    private final RecordDataExportService dataExport;
 
     // --- Conditions --------------------------------------------------------
 
@@ -166,6 +168,26 @@ public class ClinicalRecordController {
     }
 
     /** One-page summary to hand a doctor. */
+    /**
+     * Everything held about this person, as an archive they can keep.
+     *
+     * The PDF above is a summary for a consultation. This is the record itself:
+     * the values as data, and the documents as files, so the copy is still
+     * useful once it leaves here.
+     */
+    @GetMapping("/export.zip")
+    public ResponseEntity<byte[]> export(@PathVariable Long memberId,
+                                         @AuthenticationPrincipal User user) {
+        byte[] archive = dataExport.export(memberId, user.getId());
+        return ResponseEntity.ok()
+                .contentType(MediaType.APPLICATION_OCTET_STREAM)
+                .header(HttpHeaders.CONTENT_DISPOSITION,
+                        "attachment; filename=\"azdoc-record.zip\"")
+                // The person's whole record; never in a shared cache.
+                .header(HttpHeaders.CACHE_CONTROL, "private, no-store")
+                .body(archive);
+    }
+
     @GetMapping("/summary.pdf")
     public ResponseEntity<byte[]> summaryPdf(@PathVariable Long memberId,
                                              @AuthenticationPrincipal User user) {
