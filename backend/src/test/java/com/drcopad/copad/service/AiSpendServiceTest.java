@@ -24,16 +24,19 @@ import static org.mockito.Mockito.*;
 class AiSpendServiceTest {
 
     private UsageMetricRepository usageMetrics;
+    private com.drcopad.copad.repository.GuestSessionRepository guestSessions;
     private CostCalculationService costs;
     private AiSpendService spend;
 
     @BeforeEach
     void setUp() {
         usageMetrics = mock(UsageMetricRepository.class);
+        guestSessions = mock(com.drcopad.copad.repository.GuestSessionRepository.class);
+        when(guestSessions.findBySessionId(any())).thenReturn(java.util.Optional.empty());
         costs = mock(CostCalculationService.class);
         OpenAIResponsesConfig config = new OpenAIResponsesConfig();
 
-        spend = new AiSpendService(usageMetrics, costs, config);
+        spend = new AiSpendService(usageMetrics, guestSessions, costs, config);
         ReflectionTestUtils.setField(spend, "dailyLimit", new BigDecimal("10.00"));
         ReflectionTestUtils.setField(spend, "enforce", true);
     }
@@ -100,7 +103,7 @@ class AiSpendServiceTest {
         when(costs.calculateUsageCost(any(), anyInt(), anyInt(), any())).thenReturn(metric);
         when(usageMetrics.save(any())).thenReturn(metric);
 
-        spend.record("o3", 100, 100, "chat-1");
+        spend.record("o3", 100, 100, "session-1");
 
         // Read from the running total, not by summing the table again.
         assertEquals(0, spend.spentToday().compareTo(new BigDecimal("4.00")));
