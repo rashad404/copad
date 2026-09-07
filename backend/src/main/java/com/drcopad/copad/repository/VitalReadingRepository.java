@@ -22,4 +22,7 @@ public interface VitalReadingRepository extends JpaRepository<VitalReading, Long
             Long memberId, VitalType type);
 
     Optional<VitalReading> findByIdAndDeletedAtIsNull(Long id);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

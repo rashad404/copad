@@ -10,4 +10,7 @@ public interface RecordRevisionRepository extends JpaRepository<RecordRevision, 
     List<RecordRevision> findByFamilyMemberIdOrderByCreatedAtDesc(Long familyMemberId);
 
     List<RecordRevision> findByRecordTypeAndRecordIdOrderByCreatedAtDesc(String recordType, Long recordId);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

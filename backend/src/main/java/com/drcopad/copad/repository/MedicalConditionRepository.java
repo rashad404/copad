@@ -11,4 +11,7 @@ public interface MedicalConditionRepository extends JpaRepository<MedicalConditi
     List<MedicalCondition> findByFamilyMemberIdAndDeletedAtIsNullOrderByIdDesc(Long familyMemberId);
 
     Optional<MedicalCondition> findByIdAndDeletedAtIsNull(Long id);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

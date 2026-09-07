@@ -23,4 +23,7 @@ public interface LabResultRepository extends JpaRepository<LabResult, Long> {
             Long memberId);
 
     Optional<LabResult> findByIdAndDeletedAtIsNull(Long id);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

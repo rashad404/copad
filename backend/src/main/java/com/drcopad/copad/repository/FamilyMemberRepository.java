@@ -17,4 +17,13 @@ public interface FamilyMemberRepository extends JpaRepository<FamilyMember, Long
             Long familyId, Relationship relationship);
 
     Optional<FamilyMember> findFirstByUserIdAndDeletedAtIsNull(Long userId);
+
+    /**
+     * Every member, including ones already soft-deleted.
+     *
+     * Deletion has to reach those too: a soft-deleted member still holds
+     * their clinical rows, and leaving them behind would mean the data
+     * somebody already tried to remove is the data that survives.
+     */
+    java.util.List<FamilyMember> findByFamilyId(Long familyId);
 }

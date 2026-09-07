@@ -15,4 +15,7 @@ public interface MedicationRepository extends JpaRepository<Medication, Long> {
     /** Read out of a prescription and not yet accepted by a person. */
     List<Medication> findByFamilyMemberIdAndConfirmedFalseAndDeletedAtIsNullOrderByIdDesc(
             Long familyMemberId);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

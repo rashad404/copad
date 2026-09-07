@@ -11,4 +11,7 @@ public interface AllergyRepository extends JpaRepository<Allergy, Long> {
     List<Allergy> findByFamilyMemberIdAndDeletedAtIsNullOrderByIdDesc(Long familyMemberId);
 
     Optional<Allergy> findByIdAndDeletedAtIsNull(Long id);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
 }

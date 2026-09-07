@@ -18,4 +18,10 @@ public interface DocumentRepository extends JpaRepository<Document, Long> {
     /** Same file uploaded twice for the same person. */
     Optional<Document> findFirstByFamilyMemberIdAndChecksumSha256AndDeletedAtIsNull(
             Long memberId, String checksum);
+
+    /** Real deletion, for a person who asked to be removed. */
+    long deleteByFamilyMemberId(Long familyMemberId);
+
+    /** Every document, soft-deleted ones included, so no file is orphaned. */
+    java.util.List<Document> findByFamilyMemberId(Long familyMemberId);
 }

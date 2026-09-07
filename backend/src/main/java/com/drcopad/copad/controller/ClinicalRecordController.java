@@ -4,6 +4,7 @@ import com.drcopad.copad.dto.ClinicalRecordDTOs.*;
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.ClinicalRecordService;
 import com.drcopad.copad.service.RecordDataExportService;
+import com.drcopad.copad.service.RecordDeletionService;
 import com.drcopad.copad.service.RecordExportService;
 import com.drcopad.copad.service.TimelineService;
 import org.springframework.http.HttpHeaders;
@@ -16,6 +17,7 @@ import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * A family member's clinical record.
@@ -34,6 +36,7 @@ public class ClinicalRecordController {
     private final TimelineService timeline;
     private final RecordExportService export;
     private final RecordDataExportService dataExport;
+    private final RecordDeletionService deletion;
 
     // --- Conditions --------------------------------------------------------
 
@@ -175,6 +178,20 @@ public class ClinicalRecordController {
      * the values as data, and the documents as files, so the copy is still
      * useful once it leaves here.
      */
+    /**
+     * Removes this person's record permanently.
+     *
+     * Not the soft delete used everywhere else. Rows and files both go, and only
+     * a content-free note that a deletion happened is kept. Irreversible, so the
+     * interface must say so before calling it.
+     */
+    @DeleteMapping("/data")
+    public Map<String, Object> deleteMemberData(@PathVariable Long memberId,
+                                                @AuthenticationPrincipal User user) {
+        return Map.of("deleted", true,
+                "removed", deletion.deleteMember(memberId, user.getId()));
+    }
+
     @GetMapping("/export.zip")
     public ResponseEntity<byte[]> export(@PathVariable Long memberId,
                                          @AuthenticationPrincipal User user) {
