@@ -6,6 +6,8 @@ import { isAxiosError } from 'axios';
 import { resolveGuestSession } from '@/utils/resolveGuestSession';
 import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
+import { postChatMessage } from '@/api/chatMessage';
+import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
 
@@ -71,7 +73,8 @@ interface ChatContextType {
     chatId: string | null,
     message: string,
     additionalFileIds?: string[],
-    additionalFiles?: FileAttachment[]
+    additionalFiles?: FileAttachment[],
+    memberId?: number
   ) => Promise<string>;
   setSelectedChatId: (chatId: string) => void;
   uploadFile: (file: File) => Promise<FileAttachment>;
@@ -83,6 +86,7 @@ const ChatContext = createContext<ChatContextType | undefined>(undefined);
 
 export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const { t } = useTranslation();
+  const { user, isAuthenticated, isLoading: authLoading } = useAuth();
   const [sessionId, setSessionId] = useState<string | null>(null);
   const [chats, setChats] = useState<Chat[]>([]);
   const [selectedChatId, setSelectedChatId] = useState<string | null>(null);
@@ -133,19 +137,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       }
     });
   };
-  const sendGuestMessage = async (sid: string, message: string, chatId: string | null, fileIds: string[] = []) => {
-    console.log('API POST', `/v2/messages/chat/${chatId}`, { message, language: i18n.language, fileIds });
-    const res = await api.post(`/v2/messages/chat/${chatId}`, { 
-      message, 
-      language: i18n.language, 
-      fileIds,
-      specialty: 'GENERAL' // Default specialty for general medical questions
-    }, {
-      headers: {
-        'X-Guest-Session-Id': sid
-      }
-    });
-    console.log('API RESPONSE', res.data);
+  const sendGuestMessage = async (sid: string, message: string, chatId: string, fileIds: string[] = [], memberId?: number) => {
+    const res = await postChatMessage(sid, chatId, message, i18n.language, fileIds,
+      !authLoading && isAuthenticated && user ? memberId : undefined);
     return typeof res.data === 'string'
       ? res.data
       : res.data.response || res.data.message || t('chat.error.message');
@@ -246,7 +240,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   };
 
   // Send message
-  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[], additionalFiles?: FileAttachment[]) => {
+  const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[], additionalFiles?: FileAttachment[], memberId?: number) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
     setError(null);
     try {
@@ -255,7 +249,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const fileIds = [...uploadedFileIds, ...(additionalFileIds || [])];
       
       // Send message with file IDs
-      const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds);
+      const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds, memberId);
       
       // Update chats state
       setChats(prev => prev.map(chat => {

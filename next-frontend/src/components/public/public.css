@@ -1350,13 +1350,60 @@
 .public-chat-composer form > button[type="submit"]:not(:disabled) {
   background: var(--blue);
 }
-.public-composer-note {
-  font-size: 10px;
-  text-align: center;
-  line-height: 1.5 !important;
-  color: var(--muted);
-  margin: 10px 0 0;
+.public-chat-thread {
+  position: relative;
+  display: flex;
+  flex: 1;
+  min-height: 0;
+  flex-direction: column;
 }
+.public-composer-note {
+  position: absolute;
+  z-index: 1;
+  inset: 3px 8px auto;
+  margin: 0;
+  font-size: 10px;
+  line-height: 14px !important;
+  text-align: center;
+  color: var(--muted);
+  background: white;
+  white-space: nowrap;
+}
+.public-chat-heading h1 {
+  flex: 1;
+  min-width: 0;
+}
+.public-chat-member {
+  margin-left: auto;
+  min-width: 0;
+  width: min(260px, 48%);
+}
+.public-chat-member label {
+  display: block;
+  font-size: 10px;
+  color: var(--muted);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.public-chat-member select {
+  width: 100%;
+  padding: 3px 20px 3px 0;
+  font-size: 12px;
+  border: 0;
+  background-color: transparent;
+  color: var(--ink);
+  text-overflow: ellipsis;
+}
+.public-chat-member button {
+  font-size: 12px;
+  text-decoration: underline;
+}
+.public-chat-member select:focus-visible {
+  outline: 2px solid var(--blue);
+  outline-offset: 2px;
+}
+
 .public-chat-error {
   font-size: 12px;
   color: #912d27;
@@ -1474,8 +1521,10 @@
     padding: 8px 12px max(8px, env(safe-area-inset-bottom));
   }
   .public-composer-note {
-    font-size: 9px;
-    padding: 0 6px;
+    font-size: 10px;
+  }
+  .public-chat-member {
+    width: 52%;
   }
   .public-message {
     font-size: 14px;

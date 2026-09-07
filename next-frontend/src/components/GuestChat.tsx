@@ -11,6 +11,8 @@ import {
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import ChatSidebar from "./ChatSidebar";
+import MemberSelect from "./health/MemberSelect";
+import { useChatMember } from "./health/useChatMember";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
 import { usePublicCopy } from "./public/ProductLayout";
 import { Plus } from "lucide-react";
@@ -41,6 +43,9 @@ const GuestChat: React.FC<GuestChatProps> = ({
 }) => {
   const { t } = useTranslation();
   const c = usePublicCopy();
+  const memberSelection = useChatMember();
+  const [changingMember, setChangingMember] = useState(false);
+  const [memberChangeError, setMemberChangeError] = useState(false);
   const inputRef = useRef<HTMLTextAreaElement>(null);
   const {
     sessionId,
@@ -53,6 +58,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
     sendMessage,
     setSelectedChatId,
     removeUploadedFile,
+    clearUploadedFiles,
   } = useChat();
   const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState("");
@@ -152,7 +158,14 @@ const GuestChat: React.FC<GuestChatProps> = ({
     )
       return;
 
-    if (isInitializing || !sessionId || !selectedChatId) return;
+    if (
+      isInitializing ||
+      changingMember ||
+      memberSelection.loading ||
+      !sessionId ||
+      !selectedChatId
+    )
+      return;
     const messageToSend = newMessage.trim();
     setNewMessage("");
 
@@ -185,6 +198,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
         messageToSend,
         pendingFileIds,
         currentPendingFiles,
+        memberSelection.member?.id,
       );
       track("ai_response_received", { ms: Date.now() - startedAt });
       const assistantMessage: Message = {
@@ -204,6 +218,30 @@ const GuestChat: React.FC<GuestChatProps> = ({
       setMessages((prev) => [...prev, errorMessage]);
     } finally {
       setLoading(false);
+    }
+  };
+
+  const changeMember = async (id: number | null) => {
+    if (
+      loading ||
+      changingMember ||
+      id === (memberSelection.member?.id ?? null)
+    )
+      return;
+    setChangingMember(true);
+    setMemberChangeError(false);
+    try {
+      if (messages.length && !(await createNewChat()))
+        throw new Error("Chat not created");
+      setPendingFiles([]);
+      setPendingFileIds([]);
+      setNewMessage("");
+      clearUploadedFiles();
+      memberSelection.select(id);
+    } catch {
+      setMemberChangeError(true);
+    } finally {
+      setChangingMember(false);
     }
   };
 
@@ -251,7 +289,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
   return (
     <div className={`public-chat-workspace ${containerClassName}`}>
       <ChatSidebar
-        disabled={loading || isInitializing}
+        disabled={loading || changingMember || isInitializing}
         messages={chats}
         onNewChat={handleNewChat}
         onSelectChat={handleSelectChat}
@@ -280,108 +318,160 @@ const GuestChat: React.FC<GuestChatProps> = ({
             {chats.find((chat) => chat.id === selectedChatId)?.title ||
               t("chat.untitledChat")}
           </h1>
+          {memberSelection.signedIn && (
+            <div className="public-chat-member">
+              <label htmlFor="chat-member">
+                {memberSelection.member
+                  ? c(
+                      `About ${memberSelection.member.fullName}`,
+                      `${memberSelection.member.fullName} haqqında`,
+                    )
+                  : c("Who is this about?", "Söhbət kim haqqındadır?")}
+              </label>
+              {memberSelection.error ? (
+                <button onClick={memberSelection.retry}>
+                  {c("Reload members", "Üzvləri yenilə")}
+                </button>
+              ) : (
+                <MemberSelect
+                  id="chat-member"
+                  families={memberSelection.families}
+                  value={memberSelection.member?.id ?? null}
+                  onChange={(id) => void changeMember(id)}
+                  allowAnonymous
+                  disabled={
+                    loading ||
+                    changingMember ||
+                    memberSelection.loading ||
+                    isInitializing
+                  }
+                />
+              )}
+            </div>
+          )}
         </div>
-        {/* Chat messages */}
-        <div
-          ref={messagesContainerRef}
-          className={`public-chat-messages ${messagesClassName}`}
-          role="log"
-          aria-label={c("Conversation", "Söhbət")}
-          aria-relevant="additions"
-        >
-          {isInitializing ? (
-            <div className="flex justify-center items-center h-full">
-              <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 "></div>
-            </div>
-          ) : messages.length === 0 ? (
-            <div className="public-chat-welcome">
-              <span className="public-chat-mark">
-                <Plus size={30} strokeWidth={2.5} />
-              </span>
-              <p className="public-eyebrow">
-                {c("A little clarity starts here", "Aydınlıq buradan başlayır")}
-              </p>
-              <h2>{c("What’s on your mind?", "Sizi nə düşündürür?")}</h2>
-              <p>
-                {c(
-                  "Tell me how you feel, ask a question, or share a medical document.",
-                  "Özünüzü necə hiss etdiyinizi yazın, sual verin və ya tibbi sənəd paylaşın.",
-                )}
-              </p>
-              <div className="public-chat-prompts">
-                {[
-                  c(
-                    "Help me understand a lab result",
-                    "Analiz nəticəsini anlamağa kömək et",
-                  ),
-                  c("I have a health question", "Sağlamlıqla bağlı sualım var"),
-                  c(
-                    "Help me prepare for a doctor’s visit",
-                    "Həkim qəbuluna hazırlaşmağa kömək et",
-                  ),
-                ].map((prompt) => (
-                  <button
-                    key={prompt}
-                    disabled={!sessionId || !selectedChatId}
-                    onClick={() => {
-                      setNewMessage(prompt);
-                      inputRef.current?.focus();
-                    }}
-                  >
-                    {prompt}
-                    <span aria-hidden="true">↗</span>
-                  </button>
-                ))}
+        {memberChangeError && (
+          <p role="alert" className="public-chat-error">
+            {c(
+              "Could not start a new chat. Member unchanged. Please try again.",
+              "Yeni söhbət başlatmaq mümkün olmadı. Üzv dəyişdirilmədi. Yenidən cəhd edin.",
+            )}
+          </p>
+        )}
+        <div className="public-chat-thread">
+          <p className="public-composer-note">
+            {c(
+              "azdoc doesn't replace a doctor. Emergency: 103.",
+              "azdoc tibbi məsləhət vermir. Təcili hallarda 103.",
+            )}
+          </p>
+          {/* Chat messages */}
+          <div
+            ref={messagesContainerRef}
+            className={`public-chat-messages ${messagesClassName}`}
+            role="log"
+            aria-label={c("Conversation", "Söhbət")}
+            aria-relevant="additions"
+          >
+            {isInitializing ? (
+              <div className="flex justify-center items-center h-full">
+                <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-indigo-600 "></div>
               </div>
-            </div>
-          ) : (
-            messages.map((message, index) => (
-              <div
-                key={index}
-                className={`public-message flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-4`}
-              >
-                <div
-                  className={`public-message-content ${
-                    message.role === "user"
-                      ? "public-message-user"
-                      : "text-gray-800"
-                  }`}
-                >
-                  {formatMessage(message.content)}
-
-                  {/* Show file attachments if any */}
-                  {message.attachments && message.attachments.length > 0 && (
-                    <div className="mt-2">
-                      <FileAttachmentPreview
-                        files={message.attachments}
-                        readonly={true}
-                      />
-                    </div>
+            ) : messages.length === 0 ? (
+              <div className="public-chat-welcome">
+                <span className="public-chat-mark">
+                  <Plus size={30} strokeWidth={2.5} />
+                </span>
+                <p className="public-eyebrow">
+                  {c(
+                    "A little clarity starts here",
+                    "Aydınlıq buradan başlayır",
                   )}
+                </p>
+                <h2>{c("What’s on your mind?", "Sizi nə düşündürür?")}</h2>
+                <p>
+                  {c(
+                    "Tell me how you feel, ask a question, or share a medical document.",
+                    "Özünüzü necə hiss etdiyinizi yazın, sual verin və ya tibbi sənəd paylaşın.",
+                  )}
+                </p>
+                <div className="public-chat-prompts">
+                  {[
+                    c(
+                      "Help me understand a lab result",
+                      "Analiz nəticəsini anlamağa kömək et",
+                    ),
+                    c(
+                      "I have a health question",
+                      "Sağlamlıqla bağlı sualım var",
+                    ),
+                    c(
+                      "Help me prepare for a doctor’s visit",
+                      "Həkim qəbuluna hazırlaşmağa kömək et",
+                    ),
+                  ].map((prompt) => (
+                    <button
+                      key={prompt}
+                      disabled={!sessionId || !selectedChatId}
+                      onClick={() => {
+                        setNewMessage(prompt);
+                        inputRef.current?.focus();
+                      }}
+                    >
+                      {prompt}
+                      <span aria-hidden="true">↗</span>
+                    </button>
+                  ))}
                 </div>
               </div>
-            ))
-          )}
-          {loading && (
-            <div className="flex justify-start mb-4">
-              <div className="flex space-x-2">
+            ) : (
+              messages.map((message, index) => (
                 <div
-                  className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
-                  style={{ animationDelay: "0ms" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
-                  style={{ animationDelay: "200ms" }}
-                ></div>
-                <div
-                  className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
-                  style={{ animationDelay: "400ms" }}
-                ></div>
-              </div>
-            </div>
-          )}
-        </div>
+                  key={index}
+                  className={`public-message flex ${message.role === "user" ? "justify-end" : "justify-start"} mb-4`}
+                >
+                  <div
+                    className={`public-message-content ${
+                      message.role === "user"
+                        ? "public-message-user"
+                        : "text-gray-800"
+                    }`}
+                  >
+                    {formatMessage(message.content)}
 
+                    {/* Show file attachments if any */}
+                    {message.attachments && message.attachments.length > 0 && (
+                      <div className="mt-2">
+                        <FileAttachmentPreview
+                          files={message.attachments}
+                          readonly={true}
+                        />
+                      </div>
+                    )}
+                  </div>
+                </div>
+              ))
+            )}
+            {loading && (
+              <div className="flex justify-start mb-4">
+                <div className="flex space-x-2">
+                  <div
+                    className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
+                    style={{ animationDelay: "0ms" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
+                    style={{ animationDelay: "200ms" }}
+                  ></div>
+                  <div
+                    className="w-2 h-2 bg-gray-500  rounded-full animate-bounce"
+                    style={{ animationDelay: "400ms" }}
+                  ></div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
         {/* Multi-file upload modal */}
         {showMultiFileUpload && (
           <Dialog
@@ -513,7 +603,12 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 type="button"
                 onClick={() => setShowMultiFileUpload(true)}
                 disabled={
-                  loading || isInitializing || !selectedChatId || !sessionId
+                  loading ||
+                  changingMember ||
+                  memberSelection.loading ||
+                  isInitializing ||
+                  !selectedChatId ||
+                  !sessionId
                 }
                 className="p-2 text-gray-500 hover:text-gray-700   disabled:opacity-50 disabled:cursor-not-allowed"
                 title={t("chat.fileUpload.multipleFiles")}
@@ -544,7 +639,12 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 }
                 className="flex-1 min-w-0 rounded-lg border border-gray-300  px-4 py-2 focus:outline-none focus:ring-2 focus:ring-indigo-500   "
                 disabled={
-                  loading || isInitializing || !selectedChatId || !sessionId
+                  loading ||
+                  changingMember ||
+                  memberSelection.loading ||
+                  isInitializing ||
+                  !selectedChatId ||
+                  !sessionId
                 }
               />
 
@@ -556,6 +656,8 @@ const GuestChat: React.FC<GuestChatProps> = ({
                   (!newMessage.trim() &&
                     uploadedFiles.length === 0 &&
                     pendingFiles.length === 0) ||
+                  changingMember ||
+                  memberSelection.loading ||
                   isInitializing ||
                   !selectedChatId ||
                   !sessionId
@@ -565,6 +667,8 @@ const GuestChat: React.FC<GuestChatProps> = ({
                   (!newMessage.trim() &&
                     uploadedFiles.length === 0 &&
                     pendingFiles.length === 0) ||
+                  changingMember ||
+                  memberSelection.loading ||
                   isInitializing ||
                   !selectedChatId ||
                   !sessionId
@@ -592,12 +696,6 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 )}
               </button>
             </form>
-            <p className="public-composer-note">
-              {c(
-                "AI guidance · Not a substitute for a doctor. For emergencies, contact local emergency services.",
-                "Süni intellekt məlumatları · Həkimi əvəz etmir. Təcili hallarda yerli təcili yardım xidmətinə müraciət edin.",
-              )}
-            </p>
           </div>
         </div>
       </div>

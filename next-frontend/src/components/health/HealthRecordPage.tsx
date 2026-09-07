@@ -1,4 +1,5 @@
 "use client";
+import MemberSelect from "./MemberSelect";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -87,6 +88,9 @@ function FamilyWorkspace() {
           data.flatMap((f) => f.members).find((m) => m.self) ??
           data.flatMap((f) => f.members)[0];
         setSelectedId(chosen?.id ?? null);
+        try {
+          if (chosen) localStorage.setItem(storageKey, String(chosen.id));
+        } catch {}
         setFamilyId(chosen?.familyId ?? data[0]?.id ?? null);
       })
       .catch((err) => {
@@ -187,30 +191,15 @@ function FamilyWorkspace() {
                   "Whose record are you viewing?",
                   "Kimin qeydlərinə baxırsınız?",
                 )}
-                <select
+                <MemberSelect
                   id="health-member"
-                  value={selectedId ?? ""}
-                  onChange={(e) => select(Number(e.target.value))}
+                  families={families}
+                  value={selectedId}
+                  onChange={(id) => {
+                    if (id !== null) select(id);
+                  }}
                   disabled={!families.some((f) => f.members.length)}
-                >
-                  {!selectedId && (
-                    <option value="">
-                      {c("Select a member", "Üzv seçin")}
-                    </option>
-                  )}
-                  {families.map((f) => (
-                    <optgroup
-                      key={f.id}
-                      label={`${f.name} · ${enumLabel(f.role, c)}`}
-                    >
-                      {f.members.map((m) => (
-                        <option value={m.id} key={m.id}>
-                          {m.fullName} · {enumLabel(m.relationship, c)}
-                        </option>
-                      ))}
-                    </optgroup>
-                  ))}
-                </select>
+                />
               </label>
               <span className={styles.role}>{enumLabel(family?.role, c)}</span>
               {writable && (
