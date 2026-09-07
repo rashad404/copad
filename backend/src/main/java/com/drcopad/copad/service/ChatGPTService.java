@@ -42,6 +42,7 @@ public class ChatGPTService {
     private final DocumentExtractionService documentExtractionService;
     private final AttachmentStorageService attachmentStorage;
     private final AiSpendService spend;
+    private final Deidentifier deidentifier;
     
     public ChatGPTConfig getChatGPTConfig() {
         return chatGPTConfig;
@@ -228,6 +229,9 @@ public class ChatGPTService {
             }
             
             enhancedMessage.append("--- Document Content ---\n");
+            // Numbered rather than named. A filename routinely carries the
+            // patient's name and told the model nothing it could use.
+            int attachmentIndex = 0;
             
             for (FileAttachment doc : chatMessage.getAttachments()) {
                 if (!doc.getFileType().startsWith("image/")) {
@@ -242,11 +246,14 @@ public class ChatGPTService {
                     }
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {
-                        enhancedMessage.append("\nFile: ").append(doc.getOriginalFilename()).append("\n");
-                        enhancedMessage.append(extractedText).append("\n");
+                        enhancedMessage.append("\n").append(
+                                deidentifier.labelFor(doc.getFileType(), ++attachmentIndex))
+                                .append(":\n");
+                        enhancedMessage.append(deidentifier.clean(extractedText)).append("\n");
                     } else {
-                        enhancedMessage.append("\nFile: ").append(doc.getOriginalFilename())
-                            .append(" (Could not extract text)\n");
+                        enhancedMessage.append("\n").append(
+                                deidentifier.labelFor(doc.getFileType(), ++attachmentIndex))
+                                .append(" (could not be read)\n");
                     }
                 }
             }

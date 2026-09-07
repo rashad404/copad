@@ -65,6 +65,7 @@ public class OpenAIResponsesService {
     private final ChatGPTService chatGPTService;
     private final DocumentExtractionService documentExtractionService;
     private final AttachmentStorageService attachmentStorage;
+    private final Deidentifier deidentifier;
     
     
 
@@ -82,7 +83,8 @@ public class OpenAIResponsesService {
                                   ObjectMapper objectMapper,
                                   ChatGPTService chatGPTService,
                                   DocumentExtractionService documentExtractionService,
-                                  AttachmentStorageService attachmentStorage) {
+                                  AttachmentStorageService attachmentStorage,
+                                  Deidentifier deidentifier) {
         this.webClient = webClient;
         this.responsesConfig = responsesConfig;
         this.conversationManager = conversationManager;
@@ -98,6 +100,7 @@ public class OpenAIResponsesService {
         this.chatGPTService = chatGPTService;
         this.documentExtractionService = documentExtractionService;
         this.attachmentStorage = attachmentStorage;
+        this.deidentifier = deidentifier;
     }
 
     @CircuitBreaker(name = "openai-responses", fallbackMethod = "fallbackToChatGPT")
@@ -244,7 +247,7 @@ public class OpenAIResponsesService {
             // Separate images and documents
             for (FileAttachment att : attachments) {
                 log.debug("Processing attachment: {} (type: {}, openaiFileId: {})", 
-                    att.getOriginalFilename(), att.getFileType(), att.getOpenaiFileId());
+                    att.getId(), att.getFileType(), att.getOpenaiFileId());
                     
                 if (att.getFileType() != null && att.getFileType().startsWith("image/")) {
                     imageAttachments.add(att);
@@ -278,6 +281,8 @@ public class OpenAIResponsesService {
             // Extract text from documents and append to message
             if (!documentAttachments.isEmpty()) {
                 messageText.append("\n\n--- Document Content ---");
+                // Numbered rather than named, for the same reason.
+                int attachmentIndex = 0;
                 
                 for (FileAttachment doc : documentAttachments) {
                     String extractedText;
@@ -290,14 +295,16 @@ public class OpenAIResponsesService {
                     }
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {
-                        messageText.append("\n\nFile: ").append(doc.getOriginalFilename()).append("\n");
-                        messageText.append(extractedText);
-                        log.info("Extracted text from document: {} ({} characters)", 
-                            doc.getOriginalFilename(), extractedText.length());
+                        messageText.append("\n\n").append(
+                                deidentifier.labelFor(doc.getFileType(), ++attachmentIndex))
+                                .append(":\n");
+                        messageText.append(deidentifier.clean(extractedText));
+                        log.info("Extracted {} characters from an attachment", extractedText.length());
                     } else {
-                        messageText.append("\n\nFile: ").append(doc.getOriginalFilename())
-                            .append(" (Could not extract text)");
-                        log.warn("Could not extract text from document: {}", doc.getOriginalFilename());
+                        messageText.append("\n\n").append(
+                                deidentifier.labelFor(doc.getFileType(), ++attachmentIndex))
+                                .append(" (could not be read)");
+                        log.warn("Could not extract text from attachment {}", doc.getId());
                     }
                 }
             }
@@ -369,7 +376,7 @@ public class OpenAIResponsesService {
             try {
                 // Skip image files - they will be handled with direct URLs
                 if (attachment.getFileType() != null && attachment.getFileType().startsWith("image/")) {
-                    log.info("Skipping OpenAI upload for image: {} - will use direct URL", attachment.getOriginalFilename());
+                    log.info("Skipping OpenAI upload for image attachment {}", attachment.getId());
                     continue;
                 }
                 
@@ -389,7 +396,7 @@ public class OpenAIResponsesService {
                 conversationFileRepository.save(convFile);
                 openaiFileIds.add(openaiFileId);
             } catch (Exception e) {
-                log.error("Failed to process file attachment: {}", attachment.getOriginalFilename(), e);
+                log.error("Failed to process attachment {}", attachment.getId(), e);
             }
         }
         return openaiFileIds;
