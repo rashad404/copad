@@ -32,8 +32,11 @@ public class TagController {
         return ResponseEntity.ok(tagService.getTagBySlug(slug));
     }
     
-    @PostMapping
-    public ResponseEntity<TagDTO> createTag(@RequestParam String name) {
-        return ResponseEntity.ok(tagService.createTag(name));
-    }
+    // Tag creation lives at POST /api/admin/blog/tags.
+    //
+    // It used to be here, where /api/tags/** is public and nothing checked the
+    // caller, so any visitor could write a tag onto the blog - which is how
+    // "test" and "sdfdsf" came to be in production. Same shape as the
+    // specialties hole: a write endpoint outside /api/admin is reachable by
+    // anyone, because that prefix is the only thing the security config gates.
 }

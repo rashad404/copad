@@ -45,4 +45,26 @@ public interface UsageMetricRepository extends JpaRepository<UsageMetric, Long> 
     @Query("SELECT DATE(u.createdAt), SUM(u.totalTokens), SUM(u.totalCost) FROM UsageMetric u " +
            "WHERE u.createdAt >= :startDate GROUP BY DATE(u.createdAt)")
     List<Object[]> getDailyUsageStats(@Param("startDate") LocalDateTime startDate);
+
+    /** Per day, with the call count the dashboard needs, oldest first. */
+    @Query("SELECT DATE(u.createdAt), COUNT(u), COALESCE(SUM(u.totalTokens), 0), " +
+           "COALESCE(SUM(u.totalCost), 0) FROM UsageMetric u " +
+           "WHERE u.createdAt >= :startDate GROUP BY DATE(u.createdAt) ORDER BY DATE(u.createdAt)")
+    List<Object[]> getDailyUsage(@Param("startDate") LocalDateTime startDate);
+
+    /** Per model, over the same window. */
+    @Query("SELECT u.model, COUNT(u), COALESCE(SUM(u.totalTokens), 0), " +
+           "COALESCE(SUM(u.totalCost), 0) FROM UsageMetric u " +
+           "WHERE u.createdAt >= :startDate GROUP BY u.model ORDER BY SUM(u.totalCost) DESC")
+    List<Object[]> getUsageByModel(@Param("startDate") LocalDateTime startDate);
+
+    /**
+     * Totals over the window.
+     *
+     * Returned as a list because a single-row aggregate arrives wrapped, and
+     * the wrapping differs by provider - taking the first row is unambiguous.
+     */
+    @Query("SELECT COUNT(u), COALESCE(SUM(u.totalTokens), 0), COALESCE(SUM(u.totalCost), 0) " +
+           "FROM UsageMetric u WHERE u.createdAt >= :startDate")
+    List<Object[]> getTotalsSince(@Param("startDate") LocalDateTime startDate);
 }
