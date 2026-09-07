@@ -30,6 +30,7 @@ export function middleware(request: NextRequest) {
 
   // Public routes that should bypass auth checks
   const publicRoutes = [
+    '/dermanlar',
     '/chat', // Guest chat previously served on the public homepage.
     '/',
     '/login',
