@@ -1,22 +1,16 @@
-'use client';
+"use client";
 
-import { useState, useEffect } from 'react';
-import { getErrorMessage } from '@/utils/errors';
-import Link from 'next/link';
-import { useTranslation } from 'react-i18next';
-import { 
-  FileText,
-  Tag,
-  Users,
-  Eye,
-  PenTool
-} from 'lucide-react';
-import { getDashboardStats, getRecentPosts } from '@/api/admin';
-import type { DashboardStats } from '@/api/admin';
-import { BlogPostListItem } from '@/api/blog';
+import { useState, useEffect } from "react";
+import { getErrorMessage } from "@/utils/errors";
+import Link from "next/link";
+import { useTranslation } from "react-i18next";
+import { FileText, Tag, Users, Eye, PenTool } from "lucide-react";
+import { getDashboardStats, getRecentPosts } from "@/api/admin";
+import type { DashboardStats } from "@/api/admin";
+import { BlogPostListItem } from "@/api/blog";
 
 export default function AdminDashboard() {
-  const { t } = useTranslation();
+  const { t } = useTranslation(undefined, { lng: "en" });
   const [stats, setStats] = useState<DashboardStats>({
     totalPosts: 0,
     publishedPosts: 0,
@@ -43,10 +37,12 @@ export default function AdminDashboard() {
         ]);
 
         setStats(statsResponse.data);
-        setRecentPosts(Array.isArray(recentResponse.data) ? recentResponse.data : []);
+        setRecentPosts(
+          Array.isArray(recentResponse.data) ? recentResponse.data : [],
+        );
       } catch (err) {
-        console.error('Error fetching dashboard data:', err);
-        setError(getErrorMessage(err, t('common.errors.generic')));
+        console.error("Error fetching dashboard data:", err);
+        setError(getErrorMessage(err, t("common.errors.generic")));
       } finally {
         setLoading(false);
       }
@@ -55,7 +51,12 @@ export default function AdminDashboard() {
     fetchDashboardData();
   }, [t]);
 
-  const StatCard = ({ title, value, icon: Icon, color }: {
+  const StatCard = ({
+    title,
+    value,
+    icon: Icon,
+    color,
+  }: {
     title: string;
     value: number | string;
     icon: React.ElementType;
@@ -69,9 +70,13 @@ export default function AdminDashboard() {
           </div>
           <div className="ml-5 w-0 flex-1">
             <dl>
-              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">{title}</dt>
+              <dt className="text-sm font-medium text-gray-500 dark:text-gray-400 truncate">
+                {title}
+              </dt>
               <dd>
-                <div className="text-lg font-medium text-gray-900 dark:text-white">{value}</div>
+                <div className="text-lg font-medium text-gray-900 dark:text-white">
+                  {value}
+                </div>
               </dd>
             </dl>
           </div>
@@ -86,7 +91,10 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-5 bg-gray-200 dark:bg-gray-700 h-8 w-48 rounded"></h1>
         <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
           {[...Array(3)].map((_, i) => (
-            <div key={i} className="bg-gray-200 dark:bg-gray-700 h-24 rounded-lg"></div>
+            <div
+              key={i}
+              className="bg-gray-200 dark:bg-gray-700 h-24 rounded-lg"
+            ></div>
           ))}
         </div>
         <h2 className="text-lg font-medium text-gray-900 dark:text-white mt-8 mb-4 bg-gray-200 dark:bg-gray-700 h-6 w-32 rounded"></h2>
@@ -100,12 +108,24 @@ export default function AdminDashboard() {
       <div className="rounded-md bg-red-50 dark:bg-red-900 p-4">
         <div className="flex">
           <div className="flex-shrink-0">
-            <svg className="h-5 w-5 text-red-400" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" aria-hidden="true">
-              <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
+            <svg
+              className="h-5 w-5 text-red-400"
+              xmlns="http://www.w3.org/2000/svg"
+              viewBox="0 0 20 20"
+              fill="currentColor"
+              aria-hidden="true"
+            >
+              <path
+                fillRule="evenodd"
+                d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                clipRule="evenodd"
+              />
             </svg>
           </div>
           <div className="ml-3">
-            <h3 className="text-sm font-medium text-red-800 dark:text-red-200">{t('common.error')}</h3>
+            <h3 className="text-sm font-medium text-red-800 dark:text-red-200">
+              {t("common.error")}
+            </h3>
             <div className="mt-2 text-sm text-red-700 dark:text-red-300">
               <p>{error}</p>
             </div>
@@ -115,7 +135,7 @@ export default function AdminDashboard() {
                 onClick={() => window.location.reload()}
                 className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md shadow-sm text-white bg-red-600 hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
               >
-                {t('common.retry')}
+                {t("common.retry")}
               </button>
             </div>
           </div>
@@ -126,69 +146,89 @@ export default function AdminDashboard() {
 
   return (
     <div>
-      <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-5">{t('admin.dashboard')}</h1>
-      
+      <h1 className="text-2xl font-semibold text-gray-900 dark:text-white mb-5">
+        {t("admin.dashboard")}
+      </h1>
+
       {/* Stats Cards */}
       <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        <StatCard 
-          title={t('admin.stats.totalPosts')} 
-          value={stats.totalPosts} 
-          icon={FileText} 
+        <StatCard
+          title={t("admin.stats.totalPosts")}
+          value={stats.totalPosts}
+          icon={FileText}
           color="bg-indigo-500"
         />
-        <StatCard 
-          title={t('admin.stats.publishedPosts')} 
-          value={stats.publishedPosts} 
-          icon={Eye} 
+        <StatCard
+          title={t("admin.stats.publishedPosts")}
+          value={stats.publishedPosts}
+          icon={Eye}
           color="bg-green-500"
         />
-        <StatCard 
-          title={t('admin.stats.draftPosts')} 
-          value={stats.draftPosts} 
-          icon={PenTool} 
+        <StatCard
+          title={t("admin.stats.draftPosts")}
+          value={stats.draftPosts}
+          icon={PenTool}
           color="bg-yellow-500"
         />
-        <StatCard 
-          title={t('admin.stats.tags')} 
-          value={stats.totalTags} 
-          icon={Tag} 
+        <StatCard
+          title={t("admin.stats.tags")}
+          value={stats.totalTags}
+          icon={Tag}
           color="bg-purple-500"
         />
-        <StatCard 
-          title={t('admin.stats.users')} 
-          value={stats.totalUsers} 
-          icon={Users} 
+        <StatCard
+          title={t("admin.stats.users")}
+          value={stats.totalUsers}
+          icon={Users}
           color="bg-blue-500"
         />
       </div>
-      
+
       {/* Recent Posts */}
-      <h2 className="text-lg font-medium text-gray-900 dark:text-white mt-8 mb-4">{t('admin.recentPosts')}</h2>
+      <h2 className="text-lg font-medium text-gray-900 dark:text-white mt-8 mb-4">
+        {t("admin.recentPosts")}
+      </h2>
       <div className="bg-white dark:bg-gray-800 shadow overflow-hidden sm:rounded-md">
-        <ul role="list" className="divide-y divide-gray-200 dark:divide-gray-700">
+        <ul
+          role="list"
+          className="divide-y divide-gray-200 dark:divide-gray-700"
+        >
           {recentPosts.length > 0 ? (
             recentPosts.map((post) => (
               <li key={post.id}>
-                <Link href={`/admin/posts/edit/${post.id}`} className="block hover:bg-gray-50 dark:hover:bg-gray-700">
+                <Link
+                  href={`/admin/posts/edit/${post.id}`}
+                  className="block hover:bg-gray-50 dark:hover:bg-gray-700"
+                >
                   <div className="px-4 py-4 sm:px-6">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center">
                         <p className="text-sm font-medium text-indigo-600 dark:text-indigo-400 truncate">
                           {post.title}
                         </p>
-                        <div className={`ml-2 flex-shrink-0 flex ${post.published ? 'text-green-400' : 'text-yellow-400'}`}>
-                          <span className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
-                            post.published 
-                              ? 'bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200' 
-                              : 'bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200'
-                          }`}>
-                            {post.published ? t('admin.posts.published') : t('admin.posts.draft')}
+                        <div
+                          className={`ml-2 flex-shrink-0 flex ${post.published ? "text-green-400" : "text-yellow-400"}`}
+                        >
+                          <span
+                            className={`px-2 inline-flex text-xs leading-5 font-semibold rounded-full ${
+                              post.published
+                                ? "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-200"
+                                : "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-200"
+                            }`}
+                          >
+                            {post.published
+                              ? t("admin.posts.published")
+                              : t("admin.posts.draft")}
                           </span>
                         </div>
                       </div>
                       <div className="ml-2 flex-shrink-0 flex">
                         <p className="text-sm text-gray-500 dark:text-gray-400">
-                          {new Date(post.publishedAt || "").toLocaleDateString()}
+                          {post.publishedAt || post.createdAt
+                            ? new Date(
+                                post.publishedAt || post.createdAt!,
+                              ).toLocaleDateString("en-US")
+                            : "-"}
                         </p>
                       </div>
                     </div>
@@ -196,15 +236,23 @@ export default function AdminDashboard() {
                       <div className="sm:flex sm:flex-col">
                         {post.tags && post.tags.length > 0 && (
                           <div className="flex items-center text-sm text-gray-500 dark:text-gray-400">
-                            <Tag className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" aria-hidden="true" />
-                            {post.tags.map(tag => tag.name).join(', ')}
+                            <Tag
+                              className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500"
+                              aria-hidden="true"
+                            />
+                            {post.tags.map((tag) => tag.name).join(", ")}
                           </div>
                         )}
                       </div>
                       <div className="mt-2 flex items-center text-sm text-gray-500 dark:text-gray-400 sm:mt-0">
-                        <Users className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500" aria-hidden="true" />
+                        <Users
+                          className="flex-shrink-0 mr-1.5 h-4 w-4 text-gray-400 dark:text-gray-500"
+                          aria-hidden="true"
+                        />
                         <p>
-                          {post.author ? post.author.name : t('admin.unknownAuthor')}
+                          {post.author
+                            ? post.author.name
+                            : t("admin.unknownAuthor")}
                         </p>
                       </div>
                     </div>
@@ -214,12 +262,12 @@ export default function AdminDashboard() {
             ))
           ) : (
             <li className="px-4 py-6 text-center text-gray-500 dark:text-gray-400">
-              <p>{t('admin.noPosts')}</p>
-              <Link 
-                href="/admin/posts/create" 
+              <p>{t("admin.noPosts")}</p>
+              <Link
+                href="/admin/posts/create"
                 className="mt-3 inline-flex items-center px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
               >
-                {t('admin.posts.create')}
+                {t("admin.posts.create")}
               </Link>
             </li>
           )}

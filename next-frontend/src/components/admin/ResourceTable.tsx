@@ -1,8 +1,9 @@
-'use client';
+"use client";
 
-import { useMemo, useState } from 'react';
-import { Search, Plus, AlertCircle, Inbox } from 'lucide-react';
-import type { ResourceConfig, ResourceField, RowAction } from './types';
+import { useMemo, useState } from "react";
+import { getErrorMessage } from "@/utils/errors";
+import { Search, Plus, AlertCircle, Inbox } from "lucide-react";
+import type { ResourceConfig, ResourceField, RowAction } from "./types";
 
 interface ResourceTableProps<T> {
   config: ResourceConfig<T>;
@@ -12,30 +13,38 @@ interface ResourceTableProps<T> {
   actions?: RowAction<T>[];
   onCreate?: () => void;
   onRetry?: () => void;
+  showCount?: boolean;
+  headingLevel?: 1 | 2;
+  pagination?: {
+    page: number;
+    totalPages: number;
+    totalElements: number;
+    onChange: (page: number) => void;
+  };
 }
 
 /** Renders a value when a field declares no custom renderer. */
 function defaultCell<T>(field: ResourceField<T>, value: unknown) {
-  if (value === null || value === undefined || value === '') {
+  if (value === null || value === undefined || value === "") {
     return <span className="text-gray-400 dark:text-gray-600">-</span>;
   }
 
-  if (field.type === 'boolean') {
+  if (field.type === "boolean") {
     const on = Boolean(value);
     return (
       <span
         className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${
           on
-            ? 'bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300'
-            : 'bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300'
+            ? "bg-emerald-50 text-emerald-700 dark:bg-emerald-900/40 dark:text-emerald-300"
+            : "bg-gray-100 text-gray-600 dark:bg-gray-700 dark:text-gray-300"
         }`}
       >
-        {on ? 'Yes' : 'No'}
+        {on ? "Yes" : "No"}
       </span>
     );
   }
 
-  if (field.type === 'badge') {
+  if (field.type === "badge") {
     return (
       <span className="inline-flex items-center rounded-md bg-indigo-50 px-2 py-0.5 text-xs font-medium text-indigo-700 dark:bg-indigo-900/40 dark:text-indigo-300">
         {String(value)}
@@ -43,9 +52,11 @@ function defaultCell<T>(field: ResourceField<T>, value: unknown) {
     );
   }
 
-  if (field.type === 'date') {
+  if (field.type === "date") {
     const date = new Date(String(value));
-    return isNaN(date.getTime()) ? String(value) : date.toLocaleDateString();
+    return isNaN(date.getTime())
+      ? String(value)
+      : date.toLocaleDateString("en-US");
   }
 
   const text = String(value);
@@ -61,12 +72,18 @@ export default function ResourceTable<T extends object>({
   actions = [],
   onCreate,
   onRetry,
+  pagination,
+  showCount = true,
+  headingLevel = 1,
 }: ResourceTableProps<T>) {
-  const [query, setQuery] = useState('');
+  const Heading = headingLevel === 1 ? "h1" : "h2";
+  const [query, setQuery] = useState("");
+  const [busy, setBusy] = useState(false);
+  const [actionError, setActionError] = useState<string | null>(null);
 
   const columns = useMemo(
     () => config.fields.filter((f) => f.inTable !== false),
-    [config.fields]
+    [config.fields],
   );
 
   const visible = useMemo(() => {
@@ -74,8 +91,10 @@ export default function ResourceTable<T extends object>({
     const needle = query.trim().toLowerCase();
     return records.filter((record) =>
       config.searchKeys!.some((key) =>
-        String((record as Record<string, unknown>)[key] ?? '').toLowerCase().includes(needle)
-      )
+        String((record as Record<string, unknown>)[key] ?? "")
+          .toLowerCase()
+          .includes(needle),
+      ),
     );
   }, [records, query, config.searchKeys]);
 
@@ -83,17 +102,20 @@ export default function ResourceTable<T extends object>({
     <section>
       <header className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-semibold text-gray-900 dark:text-white">
+          <Heading className="text-2xl font-semibold text-gray-900 dark:text-white">
             {config.title}
-          </h1>
-          {!loading && !error && (
+          </Heading>
+          {showCount && !loading && !error && (
             <p className="mt-1 text-sm text-gray-500 dark:text-gray-400">
-              {records.length} {records.length === 1 ? config.singular : config.title.toLowerCase()}
+              {records.length}{" "}
+              {records.length === 1
+                ? config.singular
+                : config.title.toLowerCase()}
             </p>
           )}
         </div>
 
-        <div className="flex items-center gap-3">
+        <div className="flex flex-wrap items-center gap-3">
           {config.searchKeys?.length ? (
             <div className="relative">
               <Search
@@ -104,7 +126,11 @@ export default function ResourceTable<T extends object>({
                 type="search"
                 value={query}
                 onChange={(e) => setQuery(e.target.value)}
-                placeholder={`Search ${config.title.toLowerCase()}`}
+                placeholder={
+                  pagination
+                    ? "Search this page"
+                    : `Search ${config.title.toLowerCase()}`
+                }
                 aria-label={`Search ${config.title.toLowerCase()}`}
                 className="w-56 rounded-lg border border-gray-300 bg-white py-2 pl-9 pr-3 text-sm text-gray-900 placeholder-gray-400 focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 dark:border-gray-600 dark:bg-gray-800 dark:text-white"
               />
@@ -124,6 +150,20 @@ export default function ResourceTable<T extends object>({
         </div>
       </header>
 
+      {actionError && (
+        <p
+          role="alert"
+          className="mb-4 rounded-lg bg-red-50 p-3 text-sm text-red-700 dark:bg-red-900/30 dark:text-red-300"
+        >
+          {actionError}
+        </p>
+      )}
+      {pagination && (
+        <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
+          {pagination.totalElements} total. Search and filters apply to this
+          page.
+        </p>
+      )}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
         {error ? (
           <div className="flex flex-col items-center gap-3 p-12 text-center">
@@ -142,15 +182,21 @@ export default function ResourceTable<T extends object>({
         ) : loading ? (
           // Skeleton rows rather than a spinner, so the layout does not jump
           // once data arrives.
-          <div className="divide-y divide-gray-200 dark:divide-gray-700">
+          <div
+            role="status"
+            aria-label={`Loading ${config.title.toLowerCase()}`}
+            className="divide-y divide-gray-200 dark:divide-gray-700"
+          >
             {[0, 1, 2, 3].map((row) => (
               <div key={row} className="flex gap-4 p-4">
-                {columns.map((col) => (
-                  <div
-                    key={String(col.key)}
-                    className="h-4 flex-1 animate-pulse rounded bg-gray-200 dark:bg-gray-700"
-                  />
-                ))}
+                {(columns.length ? columns : [{ key: "loading" }]).map(
+                  (col) => (
+                    <div
+                      key={String(col.key)}
+                      className="h-4 flex-1 animate-pulse rounded bg-gray-200 dark:bg-gray-700"
+                    />
+                  ),
+                )}
               </div>
             ))}
           </div>
@@ -160,7 +206,8 @@ export default function ResourceTable<T extends object>({
             <p className="text-sm text-gray-600 dark:text-gray-400">
               {query
                 ? `No ${config.title.toLowerCase()} match "${query}".`
-                : config.emptyMessage ?? `No ${config.title.toLowerCase()} yet.`}
+                : (config.emptyMessage ??
+                  `No ${config.title.toLowerCase()} yet.`)}
             </p>
             {!query && onCreate && (
               <button
@@ -181,13 +228,16 @@ export default function ResourceTable<T extends object>({
                     <th
                       key={String(col.key)}
                       scope="col"
-                      className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 ${col.className ?? ''}`}
+                      className={`px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400 ${col.className ?? ""}`}
                     >
                       {col.label}
                     </th>
                   ))}
                   {actions.length > 0 && (
-                    <th scope="col" className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400">
+                    <th
+                      scope="col"
+                      className="px-4 py-3 text-right text-xs font-medium uppercase tracking-wide text-gray-500 dark:text-gray-400"
+                    >
                       Actions
                     </th>
                   )}
@@ -196,7 +246,10 @@ export default function ResourceTable<T extends object>({
               <tbody className="divide-y divide-gray-200 dark:divide-gray-700">
                 {visible.map((record, index) => (
                   <tr
-                    key={String((record as Record<string, unknown>)[config.idKey] ?? index)}
+                    key={String(
+                      (record as Record<string, unknown>)[config.idKey] ??
+                        index,
+                    )}
                     className="transition-colors hover:bg-gray-50 dark:hover:bg-gray-700/40"
                   >
                     {columns.map((col) => (
@@ -205,8 +258,12 @@ export default function ResourceTable<T extends object>({
                         className="px-4 py-3 text-sm text-gray-900 dark:text-gray-100"
                       >
                         {(() => {
-                          const cell = (record as Record<string, unknown>)[col.key];
-                          return col.render ? col.render(cell, record) : defaultCell(col, cell);
+                          const cell = (record as Record<string, unknown>)[
+                            col.key
+                          ];
+                          return col.render
+                            ? col.render(cell, record)
+                            : defaultCell(col, cell);
                         })()}
                       </td>
                     ))}
@@ -214,26 +271,43 @@ export default function ResourceTable<T extends object>({
                       <td className="whitespace-nowrap px-4 py-3 text-right text-sm">
                         <div className="flex justify-end gap-3">
                           {actions
-                            .filter((a) => !a.isAvailable || a.isAvailable(record))
+                            .filter(
+                              (a) => !a.isAvailable || a.isAvailable(record),
+                            )
                             .map((action) => (
                               <button
                                 key={action.label}
                                 type="button"
-                                onClick={() => {
+                                disabled={busy || loading}
+                                onClick={async () => {
                                   if (
                                     action.destructive &&
                                     !window.confirm(
-                                      `${action.label} this ${config.singular}? This cannot be undone.`
+                                      action.confirmation?.(record) ??
+                                        `${action.label} this ${config.singular}? This cannot be undone.`,
                                     )
                                   ) {
                                     return;
                                   }
-                                  action.onClick(record);
+                                  setBusy(true);
+                                  setActionError(null);
+                                  try {
+                                    await action.onClick(record);
+                                  } catch (err) {
+                                    setActionError(
+                                      getErrorMessage(
+                                        err,
+                                        "The action failed. Please try again.",
+                                      ),
+                                    );
+                                  } finally {
+                                    setBusy(false);
+                                  }
                                 }}
-                                className={`font-medium hover:underline ${
+                                className={`font-medium hover:underline disabled:opacity-50 ${
                                   action.destructive
-                                    ? 'text-red-600 dark:text-red-400'
-                                    : 'text-indigo-600 dark:text-indigo-400'
+                                    ? "text-red-600 dark:text-red-400"
+                                    : "text-indigo-600 dark:text-indigo-400"
                                 }`}
                               >
                                 {action.label}
@@ -249,6 +323,34 @@ export default function ResourceTable<T extends object>({
           </div>
         )}
       </div>
+      {pagination && !error && (
+        <nav
+          aria-label={`${config.title} pages`}
+          className="mt-4 flex flex-wrap items-center justify-between gap-3 text-sm text-gray-700 dark:text-gray-300"
+        >
+          <button
+            type="button"
+            disabled={loading || busy || pagination.page === 0}
+            onClick={() => pagination.onChange(pagination.page - 1)}
+            className="rounded-lg border px-3 py-2 disabled:opacity-40"
+          >
+            Previous
+          </button>
+          <span>
+            Page {pagination.page + 1} of {Math.max(1, pagination.totalPages)}
+          </span>
+          <button
+            type="button"
+            disabled={
+              loading || busy || pagination.page + 1 >= pagination.totalPages
+            }
+            onClick={() => pagination.onChange(pagination.page + 1)}
+            className="rounded-lg border px-3 py-2 disabled:opacity-40"
+          >
+            Next
+          </button>
+        </nav>
+      )}
     </section>
   );
 }
