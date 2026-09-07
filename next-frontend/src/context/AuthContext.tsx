@@ -1,6 +1,7 @@
 'use client';
 
 import { createContext, useContext, useState, useEffect, ReactNode } from 'react';
+import axios from 'axios';
 import api from '@/api';
 import { 
   getTokenFromLocalStorage, 
@@ -99,7 +100,15 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           sessionStorage.setItem('auth_verified', 'true');
         }
       } catch (error) {
-        console.error('AuthProvider: Error fetching user', error);
+        // A 401 here is an expired or revoked session, which is ordinary and
+        // already handled below by signing the user out. Logging it as an
+        // error made a normal expiry look like a fault in the console.
+        const status = axios.isAxiosError(error) ? error.response?.status : undefined;
+        if (status === 401) {
+          console.info('AuthProvider: stored session expired, signing out');
+        } else {
+          console.error('AuthProvider: Error fetching user', error);
+        }
         // Invalid token or other error
         if (isMounted) {
           setUser(null);
