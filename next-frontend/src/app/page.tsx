@@ -9,18 +9,18 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "azdoc - Sağlamlığınızın bütöv hekayəsi",
+  title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
   description:
-    "Sağlamlıq haqqında suallar verin, söhbətə sənədlər əlavə edin və məlumatlarınızı daha yaxşı anlayın.",
+    "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
   openGraph: {
-    title: "azdoc - Sağlamlığınızın bütöv hekayəsi",
-    description: "Sağlamlıq haqqında daha aydın söhbət.",
+    title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
+    description: "Sağlamlıq sualları və ailə qeydləri.",
     locale: "az_AZ",
     images: [],
   },
   twitter: {
     card: "summary",
-    title: "azdoc - Sağlamlığınızın bütöv hekayəsi",
+    title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
     images: [],
   },
 };

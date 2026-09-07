@@ -378,11 +378,11 @@ export default function HomePage() {
         </section>
         <section className="closing wrap">
           <div>
-            <div className="eyebrow">{copy("DAHA AYDIN BİR BAŞLANĞIC")}</div>
+            <div className="eyebrow">{copy(isAuthenticated ? "SUALLARINIZI AZDOC-A VERİN" : "DAHA AYDIN BİR BAŞLANĞIC")}</div>
             <h2>
-              {copy("Sağlamlığınıza")}
+              {copy(isAuthenticated ? "Söhbətə" : "Sağlamlığınıza")}
               <br />
-              {copy("bütöv baxın.")}
+              {copy(isAuthenticated ? "davam edin." : "bütöv baxın.")}
             </h2>
           </div>
           <Link
