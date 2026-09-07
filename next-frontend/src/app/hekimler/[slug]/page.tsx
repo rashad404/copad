@@ -1,0 +1,187 @@
+import type { Metadata } from "next";
+import Link from "next/link";
+import { notFound } from "next/navigation";
+import ProductLayout from "@/components/public/ProductLayout";
+import { directoryCopy, getDoctor, getSlots } from "@/api/doctorServer";
+import {
+  profileUrl,
+  doctorSchema,
+  safeJsonLd,
+  slotWindow,
+  phoneHref,
+} from "@/components/doctors/model";
+import { specialtyName, experienceYears } from "@/components/doctors/copy";
+import {
+  ClinicContact,
+  Portrait,
+  Verification,
+  spokenLanguages,
+  formatFee,
+} from "@/components/doctors/DoctorParts";
+import styles from "@/components/doctors/directory.module.css";
+type Props = { params: Promise<{ slug: string }> };
+export async function generateMetadata({ params }: Props): Promise<Metadata> {
+  const { language, c } = await directoryCopy();
+  const { slug } = await params;
+  const doctor = await getDoctor(slug);
+  if (!doctor) notFound();
+  const title = `${doctor.fullName} - ${specialtyName(doctor.specialtyCode, language)} | azdoc`;
+  const description = [
+    doctor.fullName,
+    specialtyName(doctor.specialtyCode, language),
+    doctor.clinics.map((clinic) => clinic.name).join(", "),
+    c[
+      doctor.verification === "VERIFIED"
+        ? "VERIFIED"
+        : doctor.verification === "PENDING"
+          ? "PENDING"
+          : "UNCLAIMED"
+    ],
+  ]
+    .filter(Boolean)
+    .join(". ")
+    .slice(0, 300);
+  return {
+    title: { absolute: title },
+    description,
+    alternates: { canonical: profileUrl(doctor.slug) },
+    openGraph: {
+      title,
+      description,
+      url: profileUrl(doctor.slug),
+      type: "profile",
+    },
+  };
+}
+export default async function DoctorProfile({ params }: Props) {
+  const { language, c } = await directoryCopy();
+  const doctor = await getDoctor((await params).slug);
+  if (!doctor) notFound();
+  const specialty = specialtyName(doctor.specialtyCode, language);
+  const window = slotWindow();
+  const slots =
+    doctor.acceptsBookings && doctor.id != null
+      ? await getSlots(doctor.id, window.from, window.to).catch(() => null)
+      : null;
+  const locale =
+    language === "az" ? "az-AZ" : language === "ru" ? "ru-RU" : "en-GB";
+  const time = (value: string) =>
+    new Intl.DateTimeFormat(locale, {
+      dateStyle: "medium",
+      timeStyle: "short",
+      timeZone: "Asia/Baku",
+    }).format(
+      new Date(/[Zz]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}+04:00`),
+    );
+  return (
+    <ProductLayout>
+      <div className={styles.page} lang={language}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: safeJsonLd(doctorSchema(doctor, specialty)),
+          }}
+        />
+        <Link className={styles.clear} href="/hekimler">
+          {c.back}
+        </Link>
+        <header className={styles.profileTop}>
+          <Portrait doctor={doctor} />
+          <div>
+            <h1>{doctor.fullName}</h1>
+            <p>{specialty}</p>
+          </div>
+        </header>
+        <div className={styles.profile}>
+          <div>
+            <dl className={styles.facts}>
+              {doctor.yearsExperience != null && (
+                <div>
+                  <dt>{c.years}</dt>
+                  <dd>{experienceYears(doctor.yearsExperience, language)}</dd>
+                </div>
+              )}
+              {doctor.languages.length > 0 && (
+                <div>
+                  <dt>{c.languages}</dt>
+                  <dd>{spokenLanguages(doctor.languages, language)}</dd>
+                </div>
+              )}
+              {doctor.consultationFee != null && (
+                <div>
+                  <dt>{c.fee}</dt>
+                  <dd>{formatFee(doctor.consultationFee, language)}</dd>
+                </div>
+              )}
+            </dl>
+            <Verification
+              state={doctor.verification}
+              language={language}
+              expanded
+              name={doctor.fullName}
+            />
+            {doctor.bio && (
+              <section className={styles.section}>
+                <h2>{c.about}</h2>
+                <p className={styles.prose}>{doctor.bio}</p>
+              </section>
+            )}
+            {doctor.qualifications && (
+              <section className={styles.section}>
+                <h2>{c.qualifications}</h2>
+                <p className={styles.prose}>{doctor.qualifications}</p>
+              </section>
+            )}
+            {doctor.clinics.length > 0 && (
+              <section className={styles.section}>
+                <h2>{c.clinics}</h2>
+                {doctor.clinics.map((clinic) => (
+                  <ClinicContact key={clinic.slug} clinic={clinic} />
+                ))}
+              </section>
+            )}
+          </div>
+          <aside className={styles.sidebar}>
+            <h2>{doctor.acceptsBookings ? c.slots : c.contact}</h2>
+            {doctor.acceptsBookings && (
+              <>
+                <p className={styles.muted}>{c.slotsNote}</p>
+                {slots === null ? (
+                  <p role="status">{c.slotsFailed}</p>
+                ) : slots.length === 0 ? (
+                  <p>{c.noSlots}</p>
+                ) : (
+                  <ul className={styles.slots}>
+                    {slots.map((slot, index) => (
+                      <li key={`${slot.startsAt}-${slot.clinicId}-${index}`}>
+                        <time
+                          dateTime={`${slot.startsAt}${/[Zz]|[+-]\d\d:\d\d$/.test(slot.startsAt) ? "" : "+04:00"}`}
+                        >
+                          {time(slot.startsAt)}
+                        </time>
+                        <div className={styles.muted}>
+                          {doctor.clinics.find(
+                            (clinic) =>
+                              clinic.id != null && clinic.id === slot.clinicId,
+                          )?.name || c.slotClinic}
+                        </div>
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </>
+            )}
+            {doctor.clinics
+              .filter((clinic) => phoneHref(clinic.phone))
+              .map((clinic) => (
+                <ClinicContact key={clinic.slug} clinic={clinic} />
+              ))}
+            {!doctor.clinics.some((clinic) => phoneHref(clinic.phone)) && (
+              <p className={styles.muted}>{c.noPhone}</p>
+            )}
+          </aside>
+        </div>
+      </div>
+    </ProductLayout>
+  );
+}

@@ -12,7 +12,8 @@
     "Çıxış": "Çıxış",
     "Sağlamlıq qeydləri": "Sağlamlıq qeydləri",
     "Dərmanlar": "Dərmanlar",
-    "Məxfilik və razılıqlar": "Məxfilik və razılıqlar"
+    "Məxfilik və razılıqlar": "Məxfilik və razılıqlar",
+    "Həkimlər": "Həkimlər"
   },
   "en": {
     "Necə işləyir": "How it works",
@@ -27,7 +28,8 @@
     "Çıxış": "Sign out",
     "Sağlamlıq qeydləri": "Health record",
     "Dərmanlar": "Medicines",
-    "Məxfilik və razılıqlar": "Privacy and consent"
+    "Məxfilik və razılıqlar": "Privacy and consent",
+    "Həkimlər": "Doctors"
   },
   "ru": {
     "Necə işləyir": "Как это работает",
@@ -42,6 +44,7 @@
     "Çıxış": "Выйти",
     "Sağlamlıq qeydləri": "Медицинские записи",
     "Dərmanlar": "Лекарства",
-    "Məxfilik və razılıqlar": "Данные и согласия"
+    "Məxfilik və razılıqlar": "Данные и согласия",
+    "Həkimlər": "Врачи"
   }
 }

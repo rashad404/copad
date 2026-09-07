@@ -15,8 +15,12 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
   const pathname = usePathname();
   // Keep public catalogue content in initial HTML for indexing.
+  const doctorDirectory =
+    pathname === "/hekimler" || pathname.startsWith("/hekimler/");
   const catalogue =
-    pathname === "/dermanlar" || pathname.startsWith("/dermanlar/");
+    pathname === "/dermanlar" ||
+    pathname.startsWith("/dermanlar/") ||
+    doctorDirectory;
 
   useEffect(() => {
     // Detect language from localStorage, cookie, or browser
@@ -31,7 +35,8 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
       supportedLanguage(storedLang) || supportedLanguage(cookieLang);
     const lang =
       chosenLang ||
-      (typeof navigator !== "undefined" &&
+      (!doctorDirectory &&
+        typeof navigator !== "undefined" &&
         supportedLanguage(navigator.language)) ||
       DEFAULT_SITE_LANGUAGE;
     // Retired choices must not keep driving a different server-side locale.
@@ -59,7 +64,7 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
     } else {
       setReady(true);
     }
-  }, [i18n]);
+  }, [i18n, doctorDirectory]);
 
   useEffect(() => {
     document.documentElement.lang =
