@@ -29,15 +29,15 @@ export default function MemberSelect({
       {(allowAnonymous || !value) && (
         <option value="">
           {allowAnonymous
-            ? c("No member · general chat", "Üzv seçilməyib · ümumi söhbət")
+            ? c("No member - general chat", "Üzv seçilməyib - ümumi söhbət")
             : c("Select a member", "Üzv seçin")}
         </option>
       )}
       {families.map((f) => (
-        <optgroup key={f.id} label={`${f.name} · ${enumLabel(f.role, c)}`}>
+        <optgroup key={f.id} label={`${f.name} - ${enumLabel(f.role, c)}`}>
           {f.members.map((m) => (
             <option key={m.id} value={m.id}>
-              {m.fullName} · {enumLabel(m.relationship, c)}
+              {m.fullName} - {enumLabel(m.relationship, c)}
             </option>
           ))}
         </optgroup>
