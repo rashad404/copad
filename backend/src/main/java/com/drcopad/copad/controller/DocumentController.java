@@ -96,6 +96,37 @@ public class DocumentController {
         }
     }
 
+    /** A medication read from a prescription, awaiting review. */
+    @Data
+    @NoArgsConstructor
+    @AllArgsConstructor
+    @Builder
+    public static class ProposedMedicationDTO {
+        private Long id;
+        private Long sourceDocumentId;
+        private String name;
+        private BigDecimal doseAmount;
+        private String doseUnit;
+        private String doseLabel;
+        private String frequency;
+        private MedicationRoute route;
+        private LocalDate startedOn;
+        private LocalDate endedOn;
+        private String prescriber;
+        /** False means read from a document and not yet accepted by a person. */
+        private boolean confirmed;
+
+        static ProposedMedicationDTO from(Medication m) {
+            return ProposedMedicationDTO.builder()
+                    .id(m.getId()).sourceDocumentId(m.getSourceDocumentId())
+                    .name(m.getName()).doseAmount(m.getDoseAmount()).doseUnit(m.getDoseUnit())
+                    .doseLabel(m.getDoseLabel()).frequency(m.getFrequency()).route(m.getRoute())
+                    .startedOn(m.getStartedOn()).endedOn(m.getEndedOn())
+                    .prescriber(m.getPrescriber()).confirmed(m.isConfirmed())
+                    .build();
+        }
+    }
+
     @GetMapping
     public List<DocumentDTO> list(@PathVariable Long memberId,
                                   @AuthenticationPrincipal User user) {
@@ -201,6 +232,48 @@ public class DocumentController {
                                        @PathVariable Long resultId,
                                        @AuthenticationPrincipal User user) {
         documents.rejectResult(resultId, user.getId());
+        return ResponseEntity.noContent().build();
+    }
+
+    // --- Medications read from a prescription ---------------------------------
+
+    /** Proposals from an uploaded prescription, which the review screen shows. */
+    @GetMapping("/medications/pending")
+    public List<ProposedMedicationDTO> pendingMedications(@PathVariable Long memberId,
+                                                          @AuthenticationPrincipal User user) {
+        return documents.pendingMedications(memberId, user.getId()).stream()
+                .map(ProposedMedicationDTO::from).toList();
+    }
+
+    @PostMapping("/medications/{medicationId}/confirm")
+    public ProposedMedicationDTO confirmMedication(
+            @PathVariable Long memberId,
+            @PathVariable Long medicationId,
+            @RequestBody(required = false) ProposedMedicationDTO corrections,
+            @AuthenticationPrincipal User user) {
+
+        Medication patch = null;
+        if (corrections != null) {
+            // A person correcting a misread dose is the point of the review
+            // step, so corrections arrive with the confirmation.
+            patch = new Medication();
+            patch.setName(corrections.getName());
+            patch.setDoseAmount(corrections.getDoseAmount());
+            patch.setDoseUnit(corrections.getDoseUnit());
+            patch.setFrequency(corrections.getFrequency());
+            patch.setRoute(corrections.getRoute());
+            patch.setStartedOn(corrections.getStartedOn());
+            patch.setEndedOn(corrections.getEndedOn());
+        }
+        return ProposedMedicationDTO.from(
+                documents.confirmMedication(medicationId, user.getId(), patch));
+    }
+
+    @DeleteMapping("/medications/{medicationId}")
+    public ResponseEntity<Void> rejectMedication(@PathVariable Long memberId,
+                                                 @PathVariable Long medicationId,
+                                                 @AuthenticationPrincipal User user) {
+        documents.rejectMedication(medicationId, user.getId());
         return ResponseEntity.noContent().build();
     }
 

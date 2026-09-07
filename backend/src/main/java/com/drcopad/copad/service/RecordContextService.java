@@ -134,8 +134,14 @@ public class RecordContextService {
                    .append(allergies.size() == 1 ? "" : "s");
         }
 
+        // Confirmed only. A medication read out of a prescription is a
+        // proposal until somebody checks it, and telling the model that a
+        // person is on a drug they may not be on is worse than telling it
+        // nothing.
         List<Medication> medications = records.medications(memberId, userId).stream()
-                .filter(Medication::isActive).limit(MAX_MEDICATIONS).toList();
+                .filter(Medication::isActive)
+                .filter(Medication::isConfirmed)
+                .limit(MAX_MEDICATIONS).toList();
         if (!medications.isEmpty()) {
             sb.append("\nCURRENT MEDICATIONS (check any suggestion against these):\n");
             for (Medication m : medications) {

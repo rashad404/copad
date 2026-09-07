@@ -53,6 +53,27 @@ public class Medication extends ClinicalRecordBase {
     @Column(nullable = false)
     private boolean active = true;
 
+    /**
+     * False only while a row read out of a prescription awaits review.
+     *
+     * A medication entered by hand is confirmed as it is written; one parsed
+     * from a document is not, because a misread dose is indistinguishable from
+     * a real one until somebody looks.
+     */
+    @Column(nullable = false)
+    private boolean confirmed = true;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "confirmed_by_user_id")
+    private User confirmedBy;
+
+    @Column(name = "confirmed_at")
+    private java.time.LocalDateTime confirmedAt;
+
+    /** The prescription this was read from, so a reviewer can open it. */
+    @Column(name = "source_document_id")
+    private Long sourceDocumentId;
+
     private String prescriber;
 
     @Column(length = 512)

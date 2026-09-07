@@ -3,6 +3,7 @@ package com.drcopad.copad.service;
 import com.drcopad.copad.entity.*;
 import com.drcopad.copad.repository.DocumentRepository;
 import com.drcopad.copad.repository.LabResultRepository;
+import com.drcopad.copad.repository.MedicationRepository;
 import com.drcopad.copad.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -40,6 +41,8 @@ public class DocumentService {
     private final DocumentStorageService storage;
     private final DocumentExtractionService extraction;
     private final LabReportParser labParser;
+    private final PrescriptionParser prescriptionParser;
+    private final MedicationRepository medicationRepository;
 
     @Transactional(readOnly = true)
     public List<Document> list(Long memberId, Long userId) {
@@ -132,10 +135,13 @@ public class DocumentService {
             document.setExtractedText(text);
             document.setExtractionStatus(ExtractionStatus.COMPLETED);
 
-            // Only for reports; parsing a prescription as a lab table would
-            // produce nonsense values.
+            // Each document type is read by the parser built for it. Running a
+            // lab table parser over a prescription would produce nonsense
+            // values, and nonsense in a medical record is worse than a gap.
             if (document.getDocumentType() == DocumentType.LAB_RESULT) {
                 storeCandidates(document, text);
+            } else if (document.getDocumentType() == DocumentType.PRESCRIPTION) {
+                storePrescribedMedications(document, text);
             }
             documentRepository.save(document);
 
@@ -169,6 +175,82 @@ public class DocumentService {
             labResultRepository.save(result);
         }
         log.info("Document {} produced {} candidate values", document.getId(), parsed.size());
+    }
+
+    /**
+     * Medications read from a prescription, stored for review.
+     *
+     * Unconfirmed, and deliberately not marked active: an unreviewed row must
+     * not reach the assistant or a medication list as though the person were
+     * taking it.
+     */
+    private void storePrescribedMedications(Document document, String text) {
+        List<PrescriptionParser.ParsedMedication> parsed = prescriptionParser.parse(text);
+
+        for (PrescriptionParser.ParsedMedication p : parsed) {
+            Medication medication = new Medication();
+            medication.setFamilyMember(document.getFamilyMember());
+            medication.setSourceDocumentId(document.getId());
+            medication.setName(p.name());
+            medication.setDoseAmount(p.doseAmount());
+            medication.setDoseUnit(p.doseUnit());
+            medication.setFrequency(p.frequency());
+            medication.setRoute(p.route());
+            medication.setPrescriber(document.getProvider());
+            medication.setStartedOn(document.getDocumentDate());
+            if (p.durationDays() != null && document.getDocumentDate() != null) {
+                medication.setEndedOn(document.getDocumentDate().plusDays(p.durationDays()));
+            }
+            medication.setActive(false);
+            medication.setConfirmed(false);
+            medicationRepository.save(medication);
+        }
+        log.info("Document {} produced {} candidate medications", document.getId(), parsed.size());
+    }
+
+    @Transactional(readOnly = true)
+    public List<Medication> pendingMedications(Long memberId, Long userId) {
+        familyService.requireMemberAccess(memberId, userId, false);
+        return medicationRepository
+                .findByFamilyMemberIdAndConfirmedFalseAndDeletedAtIsNullOrderByIdDesc(memberId);
+    }
+
+    /**
+     * Accepts a proposed medication, with any corrections.
+     *
+     * Confirming is also what makes it active: until a person says so, we do
+     * not know the course was actually started.
+     */
+    @Transactional
+    public Medication confirmMedication(Long medicationId, Long userId, Medication corrections) {
+        Medication medication = medicationRepository.findByIdAndDeletedAtIsNull(medicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Medication not found"));
+        familyService.requireMemberAccess(medication.getFamilyMember().getId(), userId, true);
+
+        if (corrections != null) {
+            if (corrections.getName() != null) medication.setName(corrections.getName());
+            if (corrections.getDoseAmount() != null) medication.setDoseAmount(corrections.getDoseAmount());
+            if (corrections.getDoseUnit() != null) medication.setDoseUnit(corrections.getDoseUnit());
+            if (corrections.getFrequency() != null) medication.setFrequency(corrections.getFrequency());
+            if (corrections.getRoute() != null) medication.setRoute(corrections.getRoute());
+            if (corrections.getStartedOn() != null) medication.setStartedOn(corrections.getStartedOn());
+            if (corrections.getEndedOn() != null) medication.setEndedOn(corrections.getEndedOn());
+        }
+
+        medication.setConfirmed(true);
+        medication.setActive(true);
+        medication.setConfirmedBy(userId == null ? null : userRepository.findById(userId).orElse(null));
+        medication.setConfirmedAt(LocalDateTime.now());
+        return medicationRepository.save(medication);
+    }
+
+    @Transactional
+    public void rejectMedication(Long medicationId, Long userId) {
+        Medication medication = medicationRepository.findByIdAndDeletedAtIsNull(medicationId)
+                .orElseThrow(() -> new IllegalArgumentException("Medication not found"));
+        familyService.requireMemberAccess(medication.getFamilyMember().getId(), userId, true);
+        medication.setDeletedAt(LocalDateTime.now());
+        medicationRepository.save(medication);
     }
 
     @Transactional(readOnly = true)
