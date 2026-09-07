@@ -76,6 +76,7 @@ public class TimelineService {
 
         for (Medication m : medicationRepository
                 .findByFamilyMemberIdAndDeletedAtIsNullOrderByIdDesc(memberId)) {
+            if (!m.isConfirmed()) continue;
             entries.add(new Entry(EntryType.MEDICATION_STARTED, m.getId(),
                     at(m.getStartedOn(), m.getCreatedAt()),
                     m.getName(), m.getDoseLabel(), null, false));

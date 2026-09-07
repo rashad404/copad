@@ -17,6 +17,7 @@ for (const k of [
   "Node",
   "Event",
   "localStorage",
+  "sessionStorage",
   "MutationObserver",
 ])
   global[k] = dom.window[k];
@@ -33,6 +34,7 @@ let auth = { user: { id: "73" }, isAuthenticated: true, isLoading: false },
   requests = [],
   familyFailure = false,
   newChatFails = false;
+let responseHeaders = {};
 const families = [
   {
     id: 1,
@@ -132,7 +134,7 @@ api.defaults.adapter = async (config) => {
     data: "Test answer",
     status: 200,
     statusText: "OK",
-    headers: {},
+    headers: responseHeaders,
     config,
   };
 };
@@ -177,6 +179,8 @@ afterEach(async () => {
   if (root) await flush(() => root.unmount());
   root = null;
   localStorage.clear();
+  sessionStorage.clear();
+  responseHeaders = {};
   requests = [];
   familyFailure = false;
   newChatFails = false;
@@ -297,4 +301,28 @@ test("clearing the member starts an ungrounded conversation", async () => {
   await submit("General question");
   assert.ok(!("memberId" in requests[1].params));
   assert.equal(localStorage.getItem("azdoc.member.73"), "");
+});
+
+test("urgent response shows a persistent banner across ordinary replies and reloads, scoped to chat", async () => {
+  responseHeaders = { "X-Urgent": "true", "X-Urgent-Categories": "possible heart attack; trouble breathing", "X-Emergency-Number": "112" };
+  await mount(); await submit("Urgent message");
+  assert.equal(document.querySelector('.public-emergency-notice a').getAttribute('href'), 'tel:112');
+  assert.equal(document.querySelectorAll('.public-emergency-notice').length, 1);
+  responseHeaders = {}; await submit("Follow-up");
+  assert.ok(document.querySelector('.public-emergency-notice'));
+  await flush(() => root.unmount()); root = null; await mount();
+  assert.ok(document.querySelector('.public-emergency-notice'));
+  await flush(() => chat.createNewChat());
+  assert.equal(document.querySelector('.public-emergency-notice'), null);
+  await flush(() => chat.setSelectedChatId('chat'));
+  assert.ok(document.querySelector('.public-emergency-notice'));
+});
+test("ordinary responses have no emergency banner; urgent AZ response shows supplied number", async () => {
+  language = 'az'; await mount(); await submit('Ordinary message');
+  assert.equal(document.querySelector('.public-emergency-notice'), null);
+  responseHeaders = { 'x-urgent': 'true', 'x-emergency-number': '103', 'x-urgent-categories': 'trouble breathing' };
+  await submit('Urgent message');
+  assert.match(document.querySelector('.public-emergency-notice').textContent, /Təcili tibbi yardım/);
+  assert.equal(document.querySelector('.public-emergency-notice a').getAttribute('href'), 'tel:103');
+  assert.equal(document.querySelector('.public-emergency-notice button'), null);
 });

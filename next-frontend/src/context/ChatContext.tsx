@@ -7,6 +7,7 @@ import { resolveGuestSession } from '@/utils/resolveGuestSession';
 import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
 import { postChatMessage } from '@/api/chatMessage';
+import { urgencyFromHeaders, saveUrgency, readUrgency, type ChatUrgency } from '@/api/chatUrgency';
 import { useAuth } from '@/context/AuthContext';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
@@ -52,6 +53,7 @@ export interface Message {
 }
 
 export interface Chat {
+  urgency?: ChatUrgency;
   id: string;
   title?: string;
   messages: Message[];
@@ -114,7 +116,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           title: chat.title || t('chat.untitledChat'),
           messages: formattedMessages,
           timestamp: chat.timestamp,
-          lastMessage: chat.lastMessage
+          lastMessage: chat.lastMessage,
+          urgency: readUrgency(sessionIdRef.current, chat.id)
         };
       });
       return formattedChats.sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime());
@@ -140,6 +143,11 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const sendGuestMessage = async (sid: string, message: string, chatId: string, fileIds: string[] = [], memberId?: number) => {
     const res = await postChatMessage(sid, chatId, message, i18n.language, fileIds,
       !authLoading && isAuthenticated && user ? memberId : undefined);
+    const urgency = urgencyFromHeaders(res.headers);
+    if (urgency) {
+      saveUrgency(sid, chatId, urgency);
+      setChats(previous => previous.map(chat => chat.id === chatId ? { ...chat, urgency } : chat));
+    }
     return typeof res.data === 'string'
       ? res.data
       : res.data.response || res.data.message || t('chat.error.message');
