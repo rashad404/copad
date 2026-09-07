@@ -14,6 +14,7 @@ import {
   Users as UsersIcon,
   Stethoscope as StethoscopeIcon,
   BarChart3 as UsageIcon,
+  Building2 as ClinicIcon,
   LogOut as ArrowLeftOnRectangleIcon,
 } from "lucide-react";
 
@@ -87,6 +88,8 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
       href: "/admin/specialties",
       icon: StethoscopeIcon,
     },
+    { name: "Clinics", href: "/admin/clinics", icon: ClinicIcon },
+    { name: "Doctors", href: "/admin/doctors", icon: StethoscopeIcon },
     {
       name: "Cost and usage",
       href: "/admin/usage",

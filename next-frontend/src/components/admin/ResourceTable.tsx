@@ -160,8 +160,7 @@ export default function ResourceTable<T extends object>({
       )}
       {pagination && (
         <p className="mb-3 text-sm text-gray-500 dark:text-gray-400">
-          {pagination.totalElements} total. Search and filters apply to this
-          page.
+          {pagination.totalElements} total. Table search applies to this page.
         </p>
       )}
       <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm dark:border-gray-700 dark:bg-gray-800">
