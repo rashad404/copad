@@ -37,6 +37,7 @@ export default function SiteHeader() {
     if (accountRef.current) accountRef.current.open = false;
   }, [pathname]);
   const links = [
+    ["/dermanlar", "Dərmanlar"],
     ["/#how", "Necə işləyir"],
     ["/#family", "Ailəniz üçün"],
     ["/#questions", "Suallar"],
