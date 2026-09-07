@@ -47,3 +47,20 @@ export function documentDateLabel(value: string | null, locale: string) {
   }
   return dateLabel(value, locale);
 }
+
+/** Prefer the laboratory's explicit bounds. Never derive abnormal flags here. */
+export function labReferenceBand(
+  row: Pick<LabResult, "referenceLow" | "referenceHigh" | "referenceLabel">,
+): [number, number] | null {
+  const low = row.referenceLow,
+    high = row.referenceHigh;
+  if (low != null || high != null)
+    return low != null &&
+      high != null &&
+      Number.isFinite(low) &&
+      Number.isFinite(high) &&
+      low < high
+      ? [low, high]
+      : null;
+  return referenceBand(row.referenceLabel);
+}

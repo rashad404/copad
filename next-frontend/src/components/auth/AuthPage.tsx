@@ -19,16 +19,21 @@ import { useSiteContext } from "@/context/SiteContext";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import PublicRoute from "@/components/PublicRoute";
 import api from "@/api";
+import { supportedLanguage } from "@/utils/languages";
 import { authCopy } from "./copy";
 import { authDestination } from "./redirect";
 import styles from "./auth.module.css";
 
-const manrope = Manrope({ subsets: ["latin", "latin-ext"], display: "swap" });
+const manrope = Manrope({
+  subsets: ["latin", "latin-ext", "cyrillic"],
+  display: "swap",
+});
 
 export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const registering = mode === "register";
   const { t, i18n } = useTranslation();
-  const language = i18n.language.startsWith("az") ? "az" : "en";
+  const language =
+    supportedLanguage(i18n.resolvedLanguage || i18n.language) || "en";
   const copy = authCopy[language];
   const { WEBSITE_NAME } = useSiteContext();
   const brand =

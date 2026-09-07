@@ -102,6 +102,7 @@ let root,
   language = "en",
   fail = false,
   pendingContent,
+  pendingManual,
   saved = 0,
   timer;
 const blobs = [],
@@ -123,6 +124,9 @@ const doc = {
   createdAt: "2026-01-02",
 };
 const lab = {
+  source: "EXTRACTED",
+  referenceLow: 10,
+  referenceHigh: 100,
   id: 11,
   documentId: 8,
   analyte: "Ferritin proposal",
@@ -165,6 +169,24 @@ api.defaults.adapter = async (config) => {
   if (config.url.endsWith("/content")) {
     if (pendingContent) return pendingContent(config);
     data = new Blob(["%PDF-1.4 original"], { type: "application/pdf" });
+  } else if (config.method === "post" && config.url.endsWith("/lab-results")) {
+    if (pendingManual) await pendingManual;
+    if (fail)
+      throw {
+        isAxiosError: true,
+        response: {
+          status: 400,
+          data: { message: "Please check the laboratory value." },
+        },
+      };
+    data = {
+      ...confirmed,
+      ...JSON.parse(config.data),
+      id: 33,
+      source: "MANUAL",
+      confirmed: true,
+      abnormalFlag: null,
+    };
   } else if (config.method === "post" && config.url.endsWith("/confirm")) {
     if (fail)
       throw {
@@ -229,6 +251,7 @@ afterEach(async () => {
   language = "en";
   fail = false;
   pendingContent = null;
+  pendingManual = null;
   saved = 0;
   documents = [doc];
   localStorage.clear();
@@ -355,6 +378,7 @@ test("viewer fetches blob with JWT and revokes URLs; late member response cannot
   );
   const old = requests[0];
   pendingContent = null;
+  pendingManual = null;
   await flush(() =>
     root.render(
       React.createElement(Viewer, {
@@ -542,4 +566,212 @@ test("AZ proposals retain the unconfirmed label and explicit missing dose", asyn
     document.querySelector("[data-proposal-id]").textContent,
     /DozaGöstərilməyib/,
   );
+});
+
+const ManualLabEntry =
+  require("../src/components/health/documents/ManualLabEntry.tsx").default;
+const {
+  LabSource,
+} = require("../src/components/health/documents/LabSource.tsx");
+const {
+  labReferenceBand,
+} = require("../src/components/health/documents/model.ts");
+async function controlledInput(name, value) {
+  await flush(() => {
+    const el = document.querySelector(`[name="${name}"]`);
+    Object.getOwnPropertyDescriptor(
+      HTMLInputElement.prototype,
+      "value",
+    ).set.call(el, value);
+    el.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+}
+async function manualMount(memberId = 1) {
+  await mount(
+    React.createElement(ManualLabEntry, {
+      memberId,
+      onClose: () => {},
+      onSaved: () => saved++,
+    }),
+  );
+}
+test("manual numeric zero is saved with JWT, no invented range or flag, and no confirmation request", async () => {
+  localStorage.setItem("token", "manual-token");
+  await manualMount();
+  await controlledInput("analyte", "Hemoglobin");
+  await controlledInput("value", "0");
+  await submit();
+  const request = requests.find((r) => r.method === "post");
+  assert.equal(request.url, "/members/1/documents/lab-results");
+  assert.equal(request.headers.Authorization, "Bearer manual-token");
+  const body = JSON.parse(request.data);
+  assert.equal(body.value, 0);
+  assert.equal(body.valueText, null);
+  assert.equal(body.referenceLow, null);
+  assert.equal(body.referenceHigh, null);
+  assert.equal(body.referenceLabel, null);
+  assert.equal(body.collectedAt, null);
+  assert.ok(!("abnormalFlag" in body));
+  assert.ok(!("confirmed" in body));
+  assert.equal(saved, 1);
+  assert.ok(!requests.some((r) => r.url.endsWith("/confirm")));
+});
+test("manual qualitative value and original units/date are preserved", async () => {
+  await manualMount();
+  await controlledInput("analyte", "Urine protein");
+  await flush(() => {
+    const select = document.querySelector("select");
+    Object.getOwnPropertyDescriptor(
+      HTMLSelectElement.prototype,
+      "value",
+    ).set.call(select, "text");
+    select.dispatchEvent(new Event("change", { bubbles: true }));
+  });
+  await controlledInput("valueText", "trace");
+  await controlledInput("unit", "mg/dL");
+  await controlledInput("collectedAt", "2026-09-01T09:00");
+  await submit();
+  const body = JSON.parse(requests.find((r) => r.method === "post").data);
+  assert.equal(body.value, null);
+  assert.equal(body.valueText, "trace");
+  assert.equal(body.unit, "mg/dL");
+  assert.equal(body.collectedAt, "2026-09-01T09:00:00");
+});
+test("manual required fields validate and readable 400 preserves the entry for correction", async () => {
+  await manualMount();
+  await submit();
+  assert.match(document.body.textContent, /Enter the test name/);
+  assert.equal(requests.length, 0);
+  await controlledInput("analyte", "Hemoglobin");
+  await submit();
+  assert.match(document.body.textContent, /Enter a numeric or text result/);
+  assert.equal(requests.length, 0);
+  await controlledInput("value", "9.4");
+  await controlledInput("referenceLow", "12");
+  await controlledInput("referenceHigh", "16");
+  fail = true;
+  await submit();
+  assert.match(document.body.textContent, /Please check the laboratory value/);
+  assert.equal(document.querySelector("[name=value]").value, "9.4");
+  assert.equal(saved, 0);
+  fail = false;
+  await submit();
+  assert.equal(saved, 1);
+  const body = JSON.parse(requests.at(-1).data);
+  assert.equal(body.referenceLow, 12);
+  assert.equal(body.referenceHigh, 16);
+  assert.ok(!("abnormalFlag" in body));
+});
+test("manual entry opens from unreadable documents and the general labs screen; VIEWER has neither", async () => {
+  documents = [{ ...doc, extractionStatus: "SKIPPED" }];
+  await mount(React.createElement(Workspace, { ...props, tab: "documents" }));
+  await click("Add a record manually");
+  assert.ok(document.querySelector("[name=analyte]"));
+  await flush(() => root.unmount());
+  root = null;
+  await mount(React.createElement(Workspace, props));
+  await click("Enter a lab result");
+  assert.ok(document.querySelector("[name=analyte]"));
+  await flush(() => root.unmount());
+  root = null;
+  await mount(React.createElement(Workspace, { ...props, write: false }));
+  assert.ok(
+    ![...document.querySelectorAll("button")].some(
+      (b) => b.textContent === "Enter a lab result",
+    ),
+  );
+});
+test("switching members during a pending manual save cannot update the next member UI", async () => {
+  let finish;
+  pendingManual = new Promise((resolve) => (finish = resolve));
+  await manualMount();
+  await controlledInput("analyte", "Hemoglobin");
+  await controlledInput("value", "9.4");
+  await submit();
+  await flush(() =>
+    root.render(
+      React.createElement(ManualLabEntry, {
+        key: 2,
+        memberId: 2,
+        onClose: () => {},
+        onSaved: () => saved++,
+      }),
+    ),
+  );
+  await flush(() => finish());
+  assert.equal(saved, 0);
+  assert.equal(document.querySelector("[name=analyte]").value, "");
+});
+test("source labels distinguish manual, extracted confirmed, pending and unknown provenance", async () => {
+  await mount(
+    React.createElement(
+      "div",
+      null,
+      ...[
+        { source: "MANUAL", confirmed: true },
+        { source: "EXTRACTED", confirmed: true },
+        { source: "EXTRACTED", confirmed: false },
+        { source: undefined, confirmed: true },
+      ].map((row, index) =>
+        React.createElement(LabSource, { key: index, row }),
+      ),
+    ),
+  );
+  for (const text of [
+    "Manually entered",
+    "Read from document, confirmed",
+    "Read from document, unconfirmed",
+    "Source unavailable",
+  ])
+    assert.match(document.body.textContent, new RegExp(text));
+});
+test("lab chart sources and explicit laboratory bounds survive without an invented interval", async () => {
+  assert.deepEqual(
+    labReferenceBand({
+      referenceLow: 12,
+      referenceHigh: 16,
+      referenceLabel: "Adult range",
+    }),
+    [12, 16],
+  );
+  assert.equal(
+    labReferenceBand({
+      referenceLow: null,
+      referenceHigh: null,
+      referenceLabel: null,
+    }),
+    null,
+  );
+  assert.equal(
+    labReferenceBand({
+      referenceLow: 12,
+      referenceHigh: null,
+      referenceLabel: "12 - 16",
+    }),
+    null,
+  );
+  await mount(
+    React.createElement(AnalyteChart, {
+      unit: "ng/mL",
+      rows: [
+        { ...confirmed, source: "MANUAL" },
+        {
+          ...confirmed,
+          id: 13,
+          source: "EXTRACTED",
+          collectedAt: "2024-02-02",
+        },
+      ],
+    }),
+  );
+  const points = [...document.querySelectorAll("circle")];
+  assert.equal(points.length, 2);
+  const manualPoint = points.find((p) =>
+      p.textContent.includes("Manually entered"),
+    ),
+    extractedPoint = points.find((p) =>
+      p.textContent.includes("Read from document, confirmed"),
+    );
+  assert.equal(manualPoint.getAttribute("fill"), "white");
+  assert.notEqual(extractedPoint.getAttribute("fill"), "white");
 });

@@ -21,6 +21,7 @@ export default function DashboardPage() {
                 ? c(
                     `Hello, ${user.name.split(" ")[0]}.`,
                     `Salam, ${user.name.split(" ")[0]}.`,
+                    `Здравствуйте, ${user.name.split(" ")[0]}.`,
                   )
                 : c("Welcome back.", "Xoş gəlmisiniz.")
             }
@@ -70,7 +71,7 @@ export default function DashboardPage() {
                 )}
               </p>
               <Link href="/profile" className="public-text-link">
-                {c("Review my profile", "Profilimə bax")} {'->'}
+                {c("Review my profile", "Profilimə bax")} {"->"}
               </Link>
             </aside>
           </div>
@@ -99,7 +100,9 @@ export default function DashboardPage() {
             <Link className="public-resource-row" href="/blog">
               <BookOpen />
               <div>
-                <h3>{c("Explore the journal", "Sağlamlıq haqqında məqalələr")}</h3>
+                <h3>
+                  {c("Explore the journal", "Sağlamlıq haqqında məqalələr")}
+                </h3>
                 <p>
                   {c(
                     "Read articles and explore health topics at your own pace.",
@@ -112,12 +115,7 @@ export default function DashboardPage() {
             <Link className="public-resource-row" href="/privacy-policy">
               <UserRound />
               <div>
-                <h3>
-                  {c(
-                    "Understand your privacy",
-                    "Məxfilik siyasəti",
-                  )}
-                </h3>
+                <h3>{c("Understand your privacy", "Məxfilik siyasəti")}</h3>
                 <p>
                   {c(
                     "Learn how your information is handled.",

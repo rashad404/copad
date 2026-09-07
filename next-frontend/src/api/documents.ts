@@ -24,6 +24,9 @@ export interface MemberDocument {
   createdAt: string;
 }
 export interface LabResult {
+  source: "EXTRACTED" | "MANUAL";
+  referenceLow: number | null;
+  referenceHigh: number | null;
   id: number;
   documentId: number | null;
   analyte: string;
@@ -51,6 +54,16 @@ export interface ProposedMedication {
   endedOn: string | null;
   prescriber: string | null;
   confirmed: boolean;
+}
+export interface ManualLabInput {
+  analyte: string;
+  value: number | null;
+  valueText: string | null;
+  unit: string | null;
+  referenceLow: number | null;
+  referenceHigh: number | null;
+  referenceLabel: string | null;
+  collectedAt: string | null;
 }
 export type LabCorrections = Partial<
   Pick<LabResult, "value" | "unit" | "analyte" | "collectedAt">
@@ -97,6 +110,10 @@ export const documentsApi = {
   labs: (member: number, signal?: AbortSignal) =>
     api
       .get<LabResult[]>(`${base(member)}/lab-results`, { signal })
+      .then((r) => r.data),
+  createLab: (member: number, body: ManualLabInput, signal?: AbortSignal) =>
+    api
+      .post<LabResult>(`${base(member)}/lab-results`, body, { signal })
       .then((r) => r.data),
   pendingLabs: (member: number, signal?: AbortSignal) =>
     api

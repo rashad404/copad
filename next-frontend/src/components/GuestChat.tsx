@@ -326,6 +326,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                   ? c(
                       `About ${memberSelection.member.fullName}`,
                       `${memberSelection.member.fullName} haqqında`,
+                      `О ком: ${memberSelection.member.fullName}`,
                     )
                   : c("Who is this about?", "Söhbət kim haqqındadır?")}
               </label>
@@ -359,7 +360,9 @@ const GuestChat: React.FC<GuestChatProps> = ({
             )}
           </p>
         )}
-        <EmergencyNotice urgency={chats.find(chat => chat.id === selectedChatId)?.urgency} />
+        <EmergencyNotice
+          urgency={chats.find((chat) => chat.id === selectedChatId)?.urgency}
+        />
         <div className="public-chat-thread">
           <p className="public-composer-note">
             {c(
@@ -390,7 +393,9 @@ const GuestChat: React.FC<GuestChatProps> = ({
                     "SAĞLAMLIQ HAQQINDA SÖHBƏT",
                   )}
                 </p>
-                <h2>{c("What's on your mind?", "Nə soruşmaq istəyirsiniz?")}</h2>
+                <h2>
+                  {c("What's on your mind?", "Nə soruşmaq istəyirsiniz?")}
+                </h2>
                 <p>
                   {c(
                     "Tell me how you feel, ask a question, or share a medical document.",
@@ -489,7 +494,10 @@ const GuestChat: React.FC<GuestChatProps> = ({
                     {t("chat.fileUpload.multipleFiles")}
                   </DialogTitle>
                   <button
-                    aria-label={c("Close upload", "Fayl əlavə etmə pəncərəsini bağla")}
+                    aria-label={c(
+                      "Close upload",
+                      "Fayl əlavə etmə pəncərəsini bağla",
+                    )}
                     onClick={() => setShowMultiFileUpload(false)}
                     className="text-gray-500 hover:text-gray-700  "
                   >

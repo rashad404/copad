@@ -1,3 +1,4 @@
+import { medicineServerCopy } from "@/components/medicines/serverCopy";
 import type { Metadata } from "next";
 import Link from "next/link";
 import ProductLayout from "@/components/public/ProductLayout";
@@ -9,11 +10,13 @@ type Props = { searchParams: Promise<{ q?: string | string[] }> };
 export async function generateMetadata({
   searchParams,
 }: Props): Promise<Metadata> {
+  const { copy: mc } = await medicineServerCopy();
   const { q } = await searchParams;
   return {
-    title: { absolute: "Dərmanlar - qiymətlər və alternativlər | AzDoc" },
-    description:
+    title: { absolute: mc("Dərmanlar - qiymətlər və alternativlər | AzDoc") },
+    description: mc(
       "Dərmanları adına və ya təsiredici maddəsinə görə axtarın. Qablaşdırma qiymətlərinə və oxşar tərkibli dərmanlara baxın.",
+    ),
     alternates: {
       canonical: `${process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai"}/dermanlar`,
     },
@@ -21,6 +24,9 @@ export async function generateMetadata({
   };
 }
 export default async function Catalogue({ searchParams }: Props) {
+  const { language, copy: mc } = await medicineServerCopy();
+  const mp = (value: number | null) =>
+    value == null ? mc("qiymət yoxdur") : price(value);
   const params = await searchParams;
   const q = (typeof params.q === "string" ? params.q : "").trim().slice(0, 120);
   let failed = false;
@@ -33,61 +39,72 @@ export default async function Catalogue({ searchParams }: Props) {
       : null;
   return (
     <ProductLayout>
-      <div className={styles.page} lang="az">
+      <div className={styles.page} lang={language}>
         <header className={styles.hero}>
           <div>
-            <p className={styles.eyebrow}>DƏRMAN KATALOQU</p>
+            <p className={styles.eyebrow}> {mc("DƏRMAN KATALOQU")} </p>
             <h1>
-              Dərmanı tapın.
-              <br />
-              <span>Qiyməti müqayisə edin.</span>
+              {" "}
+              {mc("Dərmanı tapın.")} <br />
+              <span> {mc("Qiyməti müqayisə edin.")} </span>
             </h1>
             <p>
-              Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif
-              qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.
+              {" "}
+              {mc(
+                "Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.",
+              )}{" "}
             </p>
           </div>
           <aside className={styles.note}>
             <span aria-hidden="true">^</span>
             <h2>
-              Eyni maddə.
-              <br />
-              Fərqli qiymətlər.
+              {" "}
+              {mc("Eyni maddə.")} <br /> {mc("Fərqli qiymətlər.")}{" "}
             </h2>
             <p>
-              Qiymətlə yanaşı dozanı, dərman formasını və qablaşdırmanı da
-              müqayisə edin.
+              {" "}
+              {mc(
+                "Qiymətlə yanaşı dozanı, dərman formasını və qablaşdırmanı da müqayisə edin.",
+              )}{" "}
             </p>
           </aside>
         </header>
-        <Search q={q} />
+        <Search language={language} q={q} />
         {failed ? (
           <section className={styles.section} role="alert">
-            <h2>Axtarış müvəqqəti əlçatan deyil</h2>
-            <p>Bir az sonra yenidən cəhd edin.</p>
+            <h2> {mc("Axtarış müvəqqəti əlçatan deyil")} </h2>
+            <p> {mc("Bir az sonra yenidən cəhd edin.")} </p>
             <a href={`/dermanlar?q=${encodeURIComponent(q)}`}>
-              Yenidən cəhd et
+              {" "}
+              {mc("Yenidən cəhd et")}{" "}
             </a>
           </section>
         ) : results ? (
           <section className={styles.section}>
             <div className={styles.sectionHead}>
-              <h2>&quot;{q}&quot; üçün nəticələr</h2>
+              <h2>
+                {" "}
+                {mc("&quot;")} {q} {mc("&quot; üçün nəticələr")}{" "}
+              </h2>
               <span>
                 {results.length}
-                {results.length === 50 ? "+" : ""} nəticə
+                {results.length === 50 ? "+" : ""} {mc("nəticə")}{" "}
               </span>
             </div>
             {results.length === 0 ? (
               <p>
-                Nəticə tapılmadı. Dərmanın digər adını və ya təsiredici
-                maddəsini yoxlayın.
+                {" "}
+                {mc(
+                  "Nəticə tapılmadı. Dərmanın digər adını və ya təsiredici maddəsini yoxlayın.",
+                )}{" "}
               </p>
             ) : (
               <>
                 <p className={styles.muted}>
-                  Axtarışa uyğunluğa görə sıralanıb. Qiymətlər qablaşdırmalara
-                  aiddir.
+                  {" "}
+                  {mc(
+                    "Axtarışa uyğunluğa görə sıralanıb. Qiymətlər qablaşdırmalara aiddir.",
+                  )}{" "}
                 </p>
                 <div className={styles.results}>
                   {results.map((m) => (
@@ -100,14 +117,16 @@ export default async function Catalogue({ searchParams }: Props) {
                         <h3>{m.name}</h3>
                         <p>
                           {m.activeIngredient ||
-                            "Təsiredici maddə qeyd edilməyib"}
+                            mc("Təsiredici maddə qeyd edilməyib")}
                         </p>
-                        <small>{m.priceCount} qablaşdırma variantı</small>
+                        <small>
+                          {m.priceCount} {mc("qablaşdırma variantı")}{" "}
+                        </small>
                       </div>
                       <div className={styles.resultPrice}>
-                        <strong>{price(m.lowestPrice)}</strong>
+                        <strong>{mp(m.lowestPrice)}</strong>
                         {m.lowestPrice != null && (
-                          <small>ən aşağı qiymət</small>
+                          <small> {mc("ən aşağı qiymət")} </small>
                         )}
                         <span aria-hidden="true">^</span>
                       </div>
@@ -115,17 +134,24 @@ export default async function Catalogue({ searchParams }: Props) {
                   ))}
                 </div>
                 {results.length === 50 && (
-                  <p>Daha dəqiq nəticə üçün dərmanın tam adını yazın.</p>
+                  <p>
+                    {" "}
+                    {mc(
+                      "Daha dəqiq nəticə üçün dərmanın tam adını yazın.",
+                    )}{" "}
+                  </p>
                 )}
               </>
             )}
           </section>
         ) : (
           <section className={styles.section}>
-            <h2>Axtarış nümunələri</h2>
+            <h2> {mc("Axtarış nümunələri")} </h2>
             <p>
-              Dərmanın ticarət adını və ya qutuda yazılan təsiredici maddəni
-              daxil edin. Axtarış üçün ən azı 2 hərf lazımdır.
+              {" "}
+              {mc(
+                "Dərmanın ticarət adını və ya qutuda yazılan təsiredici maddəni daxil edin. Axtarış üçün ən azı 2 hərf lazımdır.",
+              )}{" "}
             </p>
             <div className={styles.examples}>
               {["İbuprofen", "Parasetamol", "Amoksisillin"].map((name) => (
@@ -140,9 +166,10 @@ export default async function Catalogue({ searchParams }: Props) {
           </section>
         )}
         <p className={styles.disclaimer}>
-          Bu kataloq məlumat üçündür. Dərman seçimi və dəyişdirilməsi barədə
-          həkim və ya əczaçı ilə məsləhətləşin. Qiymət məlumatı aptekdə
-          mövcudluq zəmanəti deyil.
+          {" "}
+          {mc(
+            "Bu kataloq məlumat üçündür. Dərman seçimi və dəyişdirilməsi barədə həkim və ya əczaçı ilə məsləhətləşin. Qiymət məlumatı aptekdə mövcudluq zəmanəti deyil.",
+          )}{" "}
         </p>
       </div>
     </ProductLayout>
