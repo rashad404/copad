@@ -1,5 +1,6 @@
 package com.drcopad.copad.service;
 
+import java.io.IOException;
 import java.nio.file.Paths;
 import java.time.Duration;
 import java.time.Instant;
@@ -279,9 +280,14 @@ public class OpenAIResponsesService {
                 messageText.append("\n\n--- Document Content ---");
                 
                 for (FileAttachment doc : documentAttachments) {
-                    String extractedText = documentExtractionService.extractTextFromDocument(
-                        attachmentStorage.pathOf(doc).toString(), doc.getFileType()
-                    );
+                    String extractedText;
+                    try {
+                        extractedText = documentExtractionService.extractText(
+                                attachmentStorage.readAllBytes(doc), doc.getFileType());
+                    } catch (IOException e) {
+                        log.warn("Could not read attachment {}", doc.getId());
+                        extractedText = null;
+                    }
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {
                         messageText.append("\n\nFile: ").append(doc.getOriginalFilename()).append("\n");
@@ -307,8 +313,9 @@ public class OpenAIResponsesService {
             // out of the web root removed.
             for (FileAttachment image : imageAttachments) {
                 try {
-                    byte[] bytes = java.nio.file.Files.readAllBytes(
-                            attachmentStorage.pathOf(image));
+                    // Decrypted through the storage service; the bytes on disk
+                    // are ciphertext.
+                    byte[] bytes = attachmentStorage.readAllBytes(image);
                     String mimeType = image.getFileType() == null || image.getFileType().isEmpty()
                             ? "image/jpeg" : image.getFileType();
 

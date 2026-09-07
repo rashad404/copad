@@ -57,48 +57,36 @@ public class FileUploadService {
      * Upload a single file to OpenAI
      */
     public String uploadToOpenAI(FileAttachment attachment) throws IOException {
-        Path filePath = attachmentStorage.pathOf(attachment);
-        File file = filePath.toFile();
-        
-        if (!file.exists()) {
-            throw new IOException("File not found: " + filePath);
+        // Read through the storage service: the file on disk is encrypted, and
+        // handing OpenAI the raw file would upload ciphertext.
+        byte[] content = attachmentStorage.readAllBytes(attachment);
+
+        if (content == null || content.length == 0) {
+            throw new IOException("File is empty");
         }
-        
-        // Log file details
-        log.info("Uploading file to OpenAI: name={}, size={} bytes, type={}, path={}", 
-            attachment.getOriginalFilename(), 
-            file.length(), 
-            attachment.getFileType(),
-            filePath);
-            
-        // Validate file is not empty
-        if (file.length() == 0) {
-            throw new IOException("File is empty: " + attachment.getOriginalFilename());
+        // The filename is not logged: it commonly carries the patient's name.
+        log.info("Uploading attachment {} to OpenAI ({} bytes, {})",
+                attachment.getId(), content.length, attachment.getFileType());
+
+        if ("application/pdf".equals(attachment.getFileType())
+                && (content.length < 4 || !new String(content, 0, 4).startsWith("%PDF"))) {
+            log.warn("Attachment {} is declared a PDF but does not begin like one",
+                    attachment.getId());
         }
-        
-        // For PDFs, check if it's a valid PDF file
-        if ("application/pdf".equals(attachment.getFileType())) {
-            try {
-                byte[] header = Files.readAllBytes(filePath);
-                if (header.length >= 4) {
-                    String pdfHeader = new String(header, 0, Math.min(4, header.length));
-                    log.info("PDF file header: {}", pdfHeader);
-                    if (!pdfHeader.startsWith("%PDF")) {
-                        log.warn("File {} does not appear to be a valid PDF (header: {})", 
-                            attachment.getOriginalFilename(), pdfHeader);
-                    }
-                }
-            } catch (Exception e) {
-                log.error("Error checking PDF validity", e);
-            }
-        }
-        
+
         HttpHeaders headers = new HttpHeaders();
         headers.setBearerAuth(openaiApiKey);
         headers.setContentType(MediaType.MULTIPART_FORM_DATA);
         
         MultiValueMap<String, Object> body = new LinkedMultiValueMap<>();
-        body.add("file", new FileSystemResource(file));
+        // A byte array with a filename, since the decrypted content only
+        // exists in memory.
+        body.add("file", new org.springframework.core.io.ByteArrayResource(content) {
+            @Override
+            public String getFilename() {
+                return "attachment-" + attachment.getId();
+            }
+        });
         body.add("purpose", "assistants"); // Files for Responses API use assistants purpose
         
         HttpEntity<MultiValueMap<String, Object>> requestEntity = new HttpEntity<>(body, headers);

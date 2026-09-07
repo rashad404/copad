@@ -194,8 +194,10 @@ public class ChatGPTService {
                             // OpenAI a link to the file would mean the file had
                             // to be publicly fetchable, which is the exposure
                             // this storage change removes.
-                            byte[] imageBytes = Files.readAllBytes(
-                                    attachmentStorage.pathOf(image));
+                            // Through the storage service, not off the disk:
+                            // the file is encrypted at rest, and raw bytes
+                            // would be sent to OpenAI as ciphertext.
+                            byte[] imageBytes = attachmentStorage.readAllBytes(image);
                             String mimeType = image.getFileType() == null
                                     || image.getFileType().isEmpty()
                                     ? "image/jpeg" : image.getFileType();
@@ -229,10 +231,15 @@ public class ChatGPTService {
             
             for (FileAttachment doc : chatMessage.getAttachments()) {
                 if (!doc.getFileType().startsWith("image/")) {
-                    // Construct the full path to the document in public_html
-                    String extractedText = documentExtractionService.extractTextFromDocument(
-                        attachmentStorage.pathOf(doc).toString(), doc.getFileType()
-                    );
+                    String extractedText;
+                    try {
+                        extractedText = documentExtractionService.extractText(
+                                attachmentStorage.readAllBytes(doc), doc.getFileType());
+                    } catch (IOException e) {
+                        // One unreadable attachment should not lose the message.
+                        log.warn("Could not read attachment {}", doc.getId());
+                        extractedText = null;
+                    }
                     
                     if (extractedText != null && !extractedText.trim().isEmpty()) {
                         enhancedMessage.append("\nFile: ").append(doc.getOriginalFilename()).append("\n");

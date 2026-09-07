@@ -25,6 +25,13 @@ import java.util.UUID;
 @Service
 public class DocumentStorageService {
 
+    private final FileEncryptionService encryption;
+
+    public DocumentStorageService(FileEncryptionService encryption) {
+        this.encryption = encryption;
+    }
+
+
     /**
      * What a person can upload.
      *
@@ -75,7 +82,10 @@ public class DocumentStorageService {
 
         Path target = resolve(key);
         Files.createDirectories(target.getParent());
-        Files.write(target, bytes, StandardOpenOption.CREATE_NEW);
+        // Encrypted on the way to disk. The checksum below is of the original
+        // bytes, so duplicate detection still works and does not depend on the
+        // key or the random IV.
+        Files.write(target, encryption.encrypt(bytes), StandardOpenOption.CREATE_NEW);
 
         // Owner-only. On a shared host other accounts must not be able to read
         // patient files off the filesystem.
@@ -90,15 +100,16 @@ public class DocumentStorageService {
     }
 
     public InputStream read(String storageKey) throws IOException {
+        return new java.io.ByteArrayInputStream(readAllBytes(storageKey));
+    }
+
+    /** Decrypted, and passing through a file written before encryption existed. */
+    public byte[] readAllBytes(String storageKey) throws IOException {
         Path path = resolve(storageKey);
         if (!Files.exists(path)) {
             throw new IOException("Stored file is missing");
         }
-        return Files.newInputStream(path);
-    }
-
-    public byte[] readAllBytes(String storageKey) throws IOException {
-        return Files.readAllBytes(resolve(storageKey));
+        return encryption.decrypt(Files.readAllBytes(path));
     }
 
     public void delete(String storageKey) {

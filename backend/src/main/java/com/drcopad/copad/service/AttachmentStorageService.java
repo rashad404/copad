@@ -29,6 +29,13 @@ import java.util.UUID;
 @Service
 public class AttachmentStorageService {
 
+    private final FileEncryptionService encryption;
+
+    public AttachmentStorageService(FileEncryptionService encryption) {
+        this.encryption = encryption;
+    }
+
+
     /** Checked against the bytes, never the declared type. */
     private static final Set<String> ALLOWED = Set.of(
             "application/pdf", "image/jpeg", "image/png", "image/webp", "image/heic",
@@ -75,7 +82,7 @@ public class AttachmentStorageService {
 
         Path target = resolve(key);
         Files.createDirectories(target.getParent());
-        Files.write(target, bytes, StandardOpenOption.CREATE_NEW);
+        Files.write(target, encryption.encrypt(bytes), StandardOpenOption.CREATE_NEW);
         restrictPermissions(target);
 
         return new Stored(key, bytes.length, detected);
@@ -90,12 +97,19 @@ public class AttachmentStorageService {
                         .resolve(sanitiseLegacy(attachment.getFilePath())).normalize();
     }
 
+    /** Decrypted, and passing through a file written before encryption existed. */
     public InputStream read(FileAttachment attachment) throws IOException {
         Path path = pathOf(attachment);
         if (!Files.isRegularFile(path)) {
             throw new IOException("Stored file is missing");
         }
-        return Files.newInputStream(path);
+        return new java.io.ByteArrayInputStream(
+                encryption.decrypt(Files.readAllBytes(path)));
+    }
+
+    /** The decrypted bytes, for callers that need them whole. */
+    public byte[] readAllBytes(FileAttachment attachment) throws IOException {
+        return encryption.decrypt(Files.readAllBytes(pathOf(attachment)));
     }
 
     public void delete(String storageKey) {

@@ -205,6 +205,18 @@ medicine:
     password: ${MEDICINE_SYNC_PASSWORD:}
 
 document:
+  encryption:
+    # Patient files are encrypted before they reach the disk.
+    #
+    # This protects a leaked backup, another account on this shared host, and a
+    # disk that leaves the building. It does not protect against someone who is
+    # already root on the running server, because the key is in this process's
+    # environment - claiming otherwise would justify decisions it does not
+    # support.
+    enabled: ${DOCUMENT_ENCRYPTION_ENABLED:true}
+    # Base64, 32 bytes. Never in the repository. The application refuses to
+    # start without it rather than quietly writing plaintext.
+    key: ${DOCUMENT_ENCRYPTION_KEY:}
   storage:
     # Outside the web root. Patient files are served only through an endpoint
     # that checks family access, never by the web server directly.
