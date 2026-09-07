@@ -55,11 +55,9 @@ export const metadata: Metadata = {
     apple: '/apple-touch-icon.png',
   },
   verification: {
-    // Add verification strings for search engines if you have them
-    google: 'google-site-verification-code',
-    yandex: 'yandex-verification-code',
-    bing: 'bing-verification-code',
-    // Remove or replace with actual codes when you have them
+    // Search-engine verification codes go here once they are issued.
+    // Placeholders were removed: emitting fake verification meta tags is
+    // worse than emitting none.
   },
 };
 

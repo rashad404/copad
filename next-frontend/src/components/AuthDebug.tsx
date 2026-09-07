@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { JwtPayload } from '@/types/jwt';
 import { useAuth } from '@/context/AuthContext';
 
 /**
@@ -9,7 +10,7 @@ import { useAuth } from '@/context/AuthContext';
  */
 export default function AuthDebug() {
   const { user, isAuthenticated, isAdmin, isLoading } = useAuth();
-  const [jwtContent, setJwtContent] = useState<any>(null);
+  const [jwtContent, setJwtContent] = useState<JwtPayload | null>(null);
   
   useEffect(() => {
     // Get the token from localStorage

@@ -1,12 +1,15 @@
 import { Metadata } from 'next';
 import { headers } from 'next/headers';
+import { BlogPostListItem } from '@/api/blog';
+import { resolveBlogLanguage } from '@/utils/blogLanguage';
 import { searchBlogPosts } from '@/api/serverFetch';
 import BlogSearchClient from './client';
 import { siteConfig } from '@/context/siteConfig';
 
 // Add metadata generation for SEO
-export async function generateMetadata({ searchParams }: { searchParams: { q?: string } }): Promise<Metadata> {
-  const query = searchParams.q || '';
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ q?: string }> }): Promise<Metadata> {
+  const { q } = await searchParams;
+  const query = q || '';
   
   // Get site info for proper branding
   const siteInfo = siteConfig.getDefaultSiteInfo();
@@ -19,18 +22,24 @@ export async function generateMetadata({ searchParams }: { searchParams: { q?: s
     description: query 
       ? `Search results for "${query}" in ${AGENT_NAME}'s healthcare and medical blog.` 
       : `Search healthcare and medical articles in the ${AGENT_NAME} blog.`,
-    noindex: true, // Don't index search result pages
+    // Search result pages must stay out of the index.
+    robots: { index: false, follow: true },
   };
 }
 
 // Server component to fetch initial search results
-export default async function SearchPage({ searchParams }: { searchParams: { q?: string } }) {
-  const query = searchParams.q || '';
-  const headersList = headers();
-  const lang = headersList.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
+export default async function SearchPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ q?: string; lang?: string }>;
+}) {
+  const { q, lang: langParam } = await searchParams;
+  const query = q || '';
+  const headersList = await headers();
+  const lang = resolveBlogLanguage(langParam, headersList.get('cookie') || '');
   
   // Fetch initial search results if we have a query
-  let posts = [];
+  let posts: BlogPostListItem[] = [];
   if (query) {
     try {
       posts = await searchBlogPosts(query, 0, 9);

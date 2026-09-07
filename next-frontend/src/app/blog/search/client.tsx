@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
@@ -11,6 +12,7 @@ import BlogSearch from '@/components/BlogSearch';
 import Breadcrumb from '@/components/Breadcrumb';
 import MainLayout from '@/components/layouts/MainLayout';
 import type { BlogPostListItem } from '@/api/blog';
+import { normalizePostPage } from '@/api/blog';
 
 interface BlogSearchClientProps {
   initialPosts: BlogPostListItem[];
@@ -66,9 +68,9 @@ const BlogSearchClient = ({ initialPosts, initialQuery, lang }: BlogSearchClient
         }
         
         setPage(0);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error searching blog posts:', err);
-        setError(err.message || t('common.errors.generic'));
+        setError(getErrorMessage(err) || t('common.errors.generic'));
       } finally {
         setLoading(false);
       }
@@ -95,20 +97,16 @@ const BlogSearchClient = ({ initialPosts, initialQuery, lang }: BlogSearchClient
       const nextPage = page + 1;
       const response = await searchBlogPosts(query, nextPage, 9);
       
-      if (response.data && response.data.content && response.data.content.length > 0) {
-        setPosts(prev => [...prev, ...response.data.content]);
+      const { posts: newPosts, hasMore: more } = normalizePostPage(response.data, 9);
+
+      if (newPosts.length > 0) {
+        setPosts(prev => [...prev, ...newPosts]);
         setPage(nextPage);
-        setHasMore(posts.length + response.data.content.length < response.data.totalElements);
-      } else if (Array.isArray(response.data) && response.data.length > 0) {
-        setPosts(prev => [...prev, ...response.data]);
-        setPage(nextPage);
-        setHasMore(false);
-      } else {
-        setHasMore(false);
       }
-    } catch (err: any) {
+      setHasMore(newPosts.length > 0 && more);
+    } catch (err) {
       console.error('Error loading more search results:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -148,7 +146,7 @@ const BlogSearchClient = ({ initialPosts, initialQuery, lang }: BlogSearchClient
         
         <div className="mb-8 mt-6">
           <h1 className="text-3xl font-bold text-gray-900 dark:text-white mb-4">
-            {t('blog.search.resultsFor')} "{query}"
+            {t('blog.search.resultsFor')} &ldquo;{query}&rdquo;
           </h1>
           
           <div className="w-full max-w-2xl">

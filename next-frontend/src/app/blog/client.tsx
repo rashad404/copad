@@ -1,6 +1,7 @@
 'use client';
 
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { PencilIcon, PlusIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
@@ -10,9 +11,9 @@ import TagList from '@/components/TagList';
 import BlogSearch from '@/components/BlogSearch';
 import Breadcrumb from '@/components/Breadcrumb';
 import { useAuth } from '@/context/AuthContext';
-import { useSiteContext } from '@/context/SiteContext';
 import MainLayout from '@/components/layouts/MainLayout';
 import type { BlogPostListItem, Tag } from '@/api/blog';
+import { normalizePostPage } from '@/api/blog';
 
 interface BlogClientProps {
   initialPosts: BlogPostListItem[];
@@ -30,7 +31,7 @@ interface BlogClientProps {
 
 const BlogClient = ({ initialPosts, initialTags, pagination, lang }: BlogClientProps) => {
   const [posts, setPosts] = useState<BlogPostListItem[]>(initialPosts);
-  const [tags, setTags] = useState<Tag[]>(initialTags);
+  const [tags] = useState<Tag[]>(initialTags);
   const [postsLoading, setPostsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [page, setPage] = useState(pagination?.currentPage || 0);
@@ -65,29 +66,16 @@ const BlogClient = ({ initialPosts, initialTags, pagination, lang }: BlogClientP
       const nextPage = page + 1;
       const response = await getBlogPosts(nextPage, 9, 'publishedAt', 'desc', i18n.resolvedLanguage);
       
-      // Handle Spring Data format (common in Spring Boot apps)
-      if (response.data && response.data.content && Array.isArray(response.data.content)) {
-        setPosts(prev => [...prev, ...response.data.content]);
+      const { posts: newPosts, hasMore: more } = normalizePostPage(response.data, 9);
+
+      if (newPosts.length > 0) {
+        setPosts(prev => [...prev, ...newPosts]);
         setPage(nextPage);
-        setHasMore(response.data.number < response.data.totalPages - 1);
-      } 
-      // Handle simple array format
-      else if (Array.isArray(response.data)) {
-        setPosts(prev => [...prev, ...response.data]);
-        setPage(nextPage);
-        setHasMore(response.data.length >= 9); // If we got a full page, assume there might be more
       }
-      // Handle direct content field 
-      else if (response.data && Array.isArray(response.data)) {
-        setPosts(prev => [...prev, ...response.data]);
-        setPage(nextPage);
-        setHasMore(response.data.length >= 9);
-      } else {
-        setHasMore(false);
-      }
-    } catch (err: any) {
+      setHasMore(newPosts.length > 0 && more);
+    } catch (err) {
       console.error('Error loading more posts:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setPostsLoading(false);
     }

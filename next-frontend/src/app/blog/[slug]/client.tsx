@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Image from 'next/image';
@@ -12,7 +13,6 @@ import Breadcrumb from '@/components/Breadcrumb';
 import TagList from '@/components/TagList';
 import BlogPostCard from '@/components/BlogPostCard';
 import { useAuth } from '@/context/AuthContext';
-import { useSiteContext } from '@/context/SiteContext';
 import DOMPurify from 'dompurify';
 import MainLayout from '@/components/layouts/MainLayout';
 import type { BlogPost, BlogPostListItem } from '@/api/blog';
@@ -29,11 +29,10 @@ const BlogPostClient = ({
   initialPost, 
   initialRelatedPosts, 
   initialError,
-  slug,
   lang
 }: BlogPostClientProps) => {
-  const [post, setPost] = useState<BlogPost | null>(initialPost);
-  const [relatedPosts, setRelatedPosts] = useState<BlogPostListItem[]>(initialRelatedPosts);
+  const [post] = useState<BlogPost | null>(initialPost);
+  const [relatedPosts] = useState<BlogPostListItem[]>(initialRelatedPosts);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(initialError || null);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
@@ -60,9 +59,9 @@ const BlogPostClient = ({
         await deleteBlogPost(post.id);
         router.push('/blog');
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting post:', err);
-      setError(err.message || t('blog.admin.messages.error'));
+      setError(getErrorMessage(err) || t('blog.admin.messages.error'));
     } finally {
       setLoading(false);
     }

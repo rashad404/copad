@@ -1,7 +1,7 @@
 'use client';
 
 import { useAuth } from '@/context/AuthContext';
-import { usePathname, useRouter, useSearchParams } from 'next/navigation';
+import { usePathname, useSearchParams } from 'next/navigation';
 import { ReactNode, useEffect, useState } from 'react';
 import { Loader } from 'lucide-react';
 
@@ -19,7 +19,6 @@ interface ProtectedRouteProps {
  */
 const ProtectedRoute = ({ children, fallback }: ProtectedRouteProps) => {
   const { isAuthenticated, isLoading } = useAuth();
-  const router = useRouter();
   const pathname = usePathname();
   const searchParams = useSearchParams();
   const [redirected, setRedirected] = useState(false);

@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useTranslation } from 'react-i18next';
 import { 
   Trash2, 
@@ -11,8 +12,6 @@ import {
   Shield, 
   Eye, 
   EyeOff,
-  UserX,
-  UserCheck
 } from 'lucide-react';
 import { getAllUsers, updateUserRole, deleteUser, activateUser, deactivateUser } from '@/api/admin';
 import { UserListItem } from '@/api/admin';
@@ -24,9 +23,9 @@ export default function AdminUserManagement() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
-  const [page, setPage] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
-  const [totalPages, setTotalPages] = useState(0);
+  const [page] = useState(0);
+  const [pageSize] = useState(10);
+  const [, setTotalPages] = useState(0);
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [userToDelete, setUserToDelete] = useState<UserListItem | null>(null);
   const [successMessage, setSuccessMessage] = useState<string | null>(null);
@@ -53,9 +52,9 @@ export default function AdminUserManagement() {
         // Estimate total pages if not provided
         setTotalPages(Math.ceil(response.data.length / pageSize));
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching users:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -138,9 +137,9 @@ export default function AdminUserManagement() {
       // Show success message
       setSuccessMessage(t('admin.users.roleUpdateSuccess'));
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating user role:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsUpdating(false);
     }
@@ -168,9 +167,9 @@ export default function AdminUserManagement() {
           : t('admin.users.activateSuccess')
       );
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error toggling user status:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsUpdating(false);
     }
@@ -199,9 +198,9 @@ export default function AdminUserManagement() {
       // Show success message
       setSuccessMessage(t('admin.users.deleteSuccess'));
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting user:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsDeleting(false);
     }

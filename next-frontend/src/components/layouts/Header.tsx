@@ -1,14 +1,13 @@
 'use client';
 
-import { useState, useEffect, useContext } from 'react';
+import { useState, useEffect } from 'react';
 import Link from 'next/link';
-import { usePathname, useRouter } from 'next/navigation';
+import { usePathname } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import {
   HomeIcon,
   CalendarIcon,
   UserIcon,
-  ChatBubbleLeftRightIcon,
   DocumentTextIcon,
   InformationCircleIcon,
   QuestionMarkCircleIcon,
@@ -23,7 +22,6 @@ import DarkModeToggle from '../DarkModeToggle';
 import Logo from '../Logo';
 // TODO: Replace with your Next.js AuthContext or next-auth
 import { useAuth } from '@/context/AuthContext';
-import { logout } from '@/api';
 import { useSiteContext } from '@/context/SiteContext';
 
 function useIsClient() {
@@ -48,12 +46,11 @@ export default function Header({
   className = ''
 }: HeaderProps = {}) {
   const [isMobile, setIsMobile] = useState(false);
-  const { isAuthenticated, logout: contextLogout } = useAuth();
+  const { isAuthenticated } = useAuth();
   const [hasToken, setHasToken] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(initialSidebarOpen);
   const { t } = useTranslation();
   const pathname = usePathname();
-  const router = useRouter();
   const { WEBSITE_NAME, WEBSITE_TLD } = useSiteContext();
   const isClient = useIsClient();
   
@@ -99,30 +96,6 @@ export default function Header({
     }
   }, [externalSidebarOpen, isSidebarOpen, isMobile]);
 
-  const handleLogout = () => {
-    // Use direct DOM manipulation and location change to prevent React from re-rendering
-    
-    // Create and append an invisible overlay to prevent clicks during navigation
-    const overlay = document.createElement('div');
-    overlay.style.position = 'fixed';
-    overlay.style.top = '0';
-    overlay.style.left = '0';
-    overlay.style.width = '100%';
-    overlay.style.height = '100%';
-    overlay.style.backgroundColor = 'transparent';
-    overlay.style.zIndex = '9999';
-    document.body.appendChild(overlay);
-    
-    // Clear tokens now - before the navigation happens
-    localStorage.removeItem('token');
-    document.cookie = 'auth_token=; path=/; max-age=0; SameSite=Lax';
-    
-    // Navigate directly to login page - this won't give React a chance to re-render
-    window.location.replace('/login');
-    
-    // Try to call the API in the background
-    contextLogout().catch(() => {});
-  };
 
   const toggleSidebar = () => {
     setIsSidebarOpen(!isSidebarOpen);

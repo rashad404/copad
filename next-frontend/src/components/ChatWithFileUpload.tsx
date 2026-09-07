@@ -1,4 +1,6 @@
 import React, { useState } from 'react';
+import type { MedicalFileCategory } from '@/utils/fileCategories';
+import type { FileUploadResult } from '@/components/MultiFileUpload';
 import { MultiFileUpload } from './MultiFileUpload';
 import { Paperclip, Send } from 'lucide-react';
 
@@ -31,7 +33,7 @@ export const ChatWithFileUpload: React.FC<ChatWithFileUploadProps> = ({
     console.log('Files selected:', files);
   };
 
-  const handleUploadComplete = (results: any[]) => {
+  const handleUploadComplete = (results: FileUploadResult[]) => {
     // Extract file IDs from results
     const fileIds = results
       .filter(r => r.success)
@@ -55,7 +57,7 @@ export const ChatWithFileUpload: React.FC<ChatWithFileUploadProps> = ({
             </label>
             <select
               value={selectedCategory}
-              onChange={(e) => setSelectedCategory(e.target.value as any)}
+              onChange={(e) => setSelectedCategory(e.target.value as MedicalFileCategory)}
               className="w-full p-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
             >
               <option value="general">General Medical Documents</option>

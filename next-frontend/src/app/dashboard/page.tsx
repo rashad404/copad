@@ -3,7 +3,7 @@
 import Breadcrumb from "@/components/Breadcrumb";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { useState, useEffect } from "react";
+import { useEffect } from "react";
 import MainLayout from "@/components/layouts/MainLayout";
 import ProtectedRoute from "@/components/ProtectedRoute";
 import { useAuth } from "@/context/AuthContext";
@@ -11,7 +11,6 @@ import { useAuth } from "@/context/AuthContext";
 export default function DashboardPage() {
   const { t } = useTranslation();
   const { isAuthenticated, isLoading, user } = useAuth();
-  const [debugVisible, setDebugVisible] = useState(false);
 
   useEffect(() => {
     console.log('Dashboard: Component mounted, auth state:', { 
@@ -22,25 +21,6 @@ export default function DashboardPage() {
       hasCookie: typeof document !== 'undefined' ? document.cookie.includes('auth_token=') : false
     });
   }, [isAuthenticated, isLoading, user]);
-
-  const toggleDebug = () => {
-    setDebugVisible(!debugVisible);
-  };
-
-  // Helper function to check localStorage and cookies
-  const getDebugInfo = () => {
-    if (typeof window === 'undefined') return {};
-    
-    const token = localStorage.getItem('token');
-    const cookie = document.cookie.split(';').find(c => c.trim().startsWith('auth_token='));
-    
-    return {
-      hasLocalStorageToken: !!token, 
-      tokenFirstChars: token ? token.substring(0, 10) + '...' : 'none',
-      hasCookie: !!cookie,
-      cookieValue: cookie ? 'exists' : 'none'
-    };
-  };
 
   return (
     <ProtectedRoute

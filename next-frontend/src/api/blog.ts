@@ -36,6 +36,10 @@ export interface BlogPostListItem {
   tags: Tag[];
   published: boolean;
   publishedAt: string | null;
+  // BlogPostDTO returns both; they were missing here, so the sitemap could not
+  // read a real last-modified date.
+  createdAt?: string | null;
+  updatedAt?: string | null;
   featuredImage: string | null;
   readingTimeMinutes: number;
   language: string;
@@ -184,3 +188,30 @@ export const unpublishBlogPost = (
 ): Promise<AxiosResponse<BlogPost>> => {
   return api.put(`/admin/blog/posts/${id}/unpublish`);
 };
+/**
+ * Normalises a blog list response into posts plus a hasMore flag.
+ *
+ * The paged endpoints return a Spring `Page` ({ content, totalPages, ... }),
+ * but callers previously each hand-rolled a chain of shape checks - including
+ * an unreachable `Array.isArray` branch on a value already typed as a Page,
+ * which is what made these call sites fail to typecheck. Keeping the array
+ * fallback here means one place understands the wire format.
+ */
+export function normalizePostPage(
+  data: BlogPostsResponse | BlogPostListItem[] | null | undefined,
+  pageSize: number
+): { posts: BlogPostListItem[]; hasMore: boolean } {
+  if (Array.isArray(data)) {
+    return { posts: data, hasMore: data.length >= pageSize };
+  }
+
+  if (data && Array.isArray(data.content)) {
+    const hasMore =
+      typeof data.hasNext === 'boolean'
+        ? data.hasNext
+        : data.number < data.totalPages - 1;
+    return { posts: data.content, hasMore };
+  }
+
+  return { posts: [], hasMore: false };
+}

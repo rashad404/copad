@@ -2,13 +2,12 @@ import { NextResponse } from 'next/server';
 import type { NextRequest } from 'next/server';
 import { 
   isAuthenticatedFromRequest, 
-  redirectIfUnauthenticated,
   redirectIfNotAdmin 
 } from '@/utils/serverAuth';
 
 export function middleware(request: NextRequest) {
   const url = request.nextUrl;
-  let { pathname } = url;
+  const { pathname } = url;
   
   // Extract the base path without any query parameters or fragments
   const basePath = pathname.split(/[?#]/)[0];

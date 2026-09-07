@@ -53,11 +53,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let blogPosts: MetadataRoute.Sitemap = [];
   try {
-    const apiResponse = await getBlogPosts(0, 100);
-    const posts = Array.isArray(apiResponse) ? apiResponse : apiResponse?.content || apiResponse?.posts || [];
+    // getBlogPosts returns { posts, pagination }; posts is either the array
+    // itself or a Spring page wrapper depending on the endpoint.
+    const { posts: rawPosts } = await getBlogPosts(0, 100);
+    const posts = Array.isArray(rawPosts) ? rawPosts : rawPosts?.content ?? [];
 
     if (Array.isArray(posts)) {
-      blogPosts = posts.map(post => ({
+      blogPosts = posts.map((post) => ({
         url: `${baseUrl}/blog/${post.slug}`,
         lastModified: new Date(post.updatedAt || post.publishedAt || new Date()),
         changeFrequency: 'weekly' as const,
@@ -70,8 +72,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
   let tagPages: MetadataRoute.Sitemap = [];
   try {
-    const apiResponse = await getTopTags(50);
-    const tags = Array.isArray(apiResponse) ? apiResponse : apiResponse?.content || apiResponse?.tags || [];
+    const tags = await getTopTags(50);
 
     if (Array.isArray(tags)) {
       tagPages = tags.map(tag => ({

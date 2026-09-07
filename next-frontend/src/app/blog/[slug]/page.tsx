@@ -8,7 +8,7 @@ import { resolveBlogLanguage } from '@/utils/blogLanguage';
 
 // Types for generateMetadata props
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 // Server-side data fetching
@@ -63,7 +63,7 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   
   // Fetch the blog post data
   const { post } = await fetchBlogPost(slug);
@@ -123,8 +123,8 @@ export async function generateMetadata(
       ] : previousImages,
       locale: postLanguage,
       type: 'article',
-      publishedTime: post.publishedAt,
-      modifiedTime: post.updatedAt,
+      publishedTime: post.publishedAt ?? undefined,
+      modifiedTime: post.updatedAt ?? undefined,
       authors: post.author ? [post.author.name] : undefined,
       tags: post.tags?.map(tag => tag.name),
     },
@@ -211,14 +211,20 @@ function generateJsonLd(post: BlogPost) {
 }
 
 // The main page component
-export default async function BlogPostPage({ params, searchParams }: { params: { slug: string }, searchParams: { lang?: string } }) {
-  const { slug } = params;
+export default async function BlogPostPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const { slug } = await params;
+  const { lang: langParam } = await searchParams;
   const headersList = await headers();
-  const userAgent = headersList.get('user-agent') || '';
   
   // Priority: 1. URL param, 2. the i18nextLng cookie, 3. the site default
   const cookieHeader = headersList.get('cookie') || '';
-  const lang = resolveBlogLanguage(searchParams?.lang, cookieHeader);
+  const lang = resolveBlogLanguage(langParam, cookieHeader);
   
   // Fetch data on the server
   const { post, relatedPosts, error } = await fetchBlogPost(slug);

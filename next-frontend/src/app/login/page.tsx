@@ -1,22 +1,19 @@
 'use client';
 
 import { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import Link from "next/link";
 import Image from "next/image";
 import { useTranslation } from 'react-i18next';
 import { useAuth } from "@/context/AuthContext";
 import PublicRoute from "@/components/PublicRoute";
 import MainLayout from "@/components/layouts/MainLayout";
-import { handleLogin } from "@/utils/auth";
 
 export default function LoginPage() {
   const { t } = useTranslation();
   const [form, setForm] = useState({ email: "", password: "" });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
-  const { login, isAuthenticated, isLoading } = useAuth();
+  const { isAuthenticated, isLoading } = useAuth();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setForm({ ...form, [e.target.name]: e.target.value });

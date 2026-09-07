@@ -1,13 +1,13 @@
 'use client';
 
-import { useState, use } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState } from "react";
+import { getErrorMessage } from '@/utils/errors';
+import { useSearchParams } from "next/navigation";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import PublicRoute from "@/components/PublicRoute";
 import MainLayout from "@/components/layouts/MainLayout";
-import api from "@/api";
 import { handleLogin } from "@/utils/auth";
 
 export default function RegisterPage() {
@@ -21,7 +21,6 @@ export default function RegisterPage() {
   });
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
   const searchParams = useSearchParams();
   const { register } = useAuth();
 
@@ -43,14 +42,14 @@ export default function RegisterPage() {
         handleLogin(token);
       }
       
-      // Get redirect path - use React.use() to unwrap params
-      const params = use(searchParams);
-      const redirectPath = params.get('redirect') || "/";
+      // useSearchParams() already returns the params; use() is a hook and
+      // cannot be called here.
+      const redirectPath = searchParams.get('redirect') || "/";
       
       // Force a full page reload to ensure auth state is fresh
       window.location.href = redirectPath;
-    } catch (err: any) {
-      setError(err.response?.data?.message || t('auth.errors.registration_failed'));
+    } catch (err) {
+      setError(getErrorMessage(err, t('auth.errors.registration_failed')));
     } finally {
       setLoading(false);
     }

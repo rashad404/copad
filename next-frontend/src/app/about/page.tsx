@@ -1,7 +1,6 @@
 'use client';
 
 import { useTranslation } from 'react-i18next';
-import { HeartIcon, ShieldCheckIcon, LightBulbIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import MainLayout from '@/components/layouts/MainLayout';
 import PublicRoute from '@/components/PublicRoute';
 

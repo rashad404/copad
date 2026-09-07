@@ -10,11 +10,8 @@ import CTASection from '@/components/sections/CTASection';
 import GuestChat from '@/components/GuestChat';
 import MobileUnifiedHeader from '@/components/MobileUnifiedHeader';
 import PublicRoute from '@/components/PublicRoute';
-import { siteConfig } from '@/context/siteConfig';
 
 // Get site info for proper branding
-const siteInfo = siteConfig.getDefaultSiteInfo();
-const AGENT_NAME = siteInfo.AGENT_NAME;
 
 export default function Home() {
   const [chatTitle, setChatTitle] = useState('');

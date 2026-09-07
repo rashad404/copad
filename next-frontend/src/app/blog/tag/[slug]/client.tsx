@@ -1,10 +1,12 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { ArrowLeftIcon, ArrowUpIcon } from '@heroicons/react/24/outline';
 import { getPostsByTag } from '@/api';
+import { normalizePostPage } from '@/api/blog';
 import BlogPostCard from '@/components/BlogPostCard';
 import TagList from '@/components/TagList';
 import Breadcrumb from '@/components/Breadcrumb';
@@ -61,31 +63,16 @@ const TagPageClient = ({
       const nextPage = page + 1;
       const response = await getPostsByTag(slug, nextPage, 9);
       
-      // Handle different response formats
-      if (response && response.data) {
-        // Check if it's a Spring page response
-        if (response.data.content && Array.isArray(response.data.content)) {
-          setPosts(prev => [...prev, ...response.data.content]);
-          setPage(nextPage);
-          setHasMore(response.data.content.length > 0 && response.data.hasNext);
-        } 
-        // Check if it's a direct array response
-        else if (Array.isArray(response.data)) {
-          setPosts(prev => [...prev, ...response.data]);
-          setPage(nextPage);
-          // Assume there's more if we got a full page
-          setHasMore(response.data.length >= 9);
-        } 
-        // Handle empty or unknown response
-        else {
-          setHasMore(false);
-        }
-      } else {
-        setHasMore(false);
+      const { posts: newPosts, hasMore: more } = normalizePostPage(response?.data, 9);
+
+      if (newPosts.length > 0) {
+        setPosts(prev => [...prev, ...newPosts]);
+        setPage(nextPage);
       }
-    } catch (err: any) {
+      setHasMore(newPosts.length > 0 && more);
+    } catch (err) {
       console.error('Error loading more posts:', err);
-      setError(err.message || t('common.errors.generic', { defaultValue: 'An error occurred' }));
+      setError(getErrorMessage(err) || t('common.errors.generic', { defaultValue: 'An error occurred' }));
     } finally {
       setLoading(false);
     }

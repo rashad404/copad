@@ -2,7 +2,7 @@
 
 import React, { useState } from 'react';
 import Image from 'next/image';
-import { XMarkIcon, DocumentIcon, PhotoIcon } from '@heroicons/react/24/outline';
+import { XMarkIcon, DocumentIcon } from '@heroicons/react/24/outline';
 import { useTranslation } from 'react-i18next';
 import ImageModal from './ImageModal';
 

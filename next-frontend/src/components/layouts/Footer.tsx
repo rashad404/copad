@@ -7,7 +7,7 @@ import { useSiteContext } from '@/context/SiteContext';
 
 export default function Footer() {
   const { t } = useTranslation();
-  const { WEBSITE_NAME, WEBSITE_TLD, logo } = useSiteContext();
+  const { WEBSITE_NAME, WEBSITE_TLD } = useSiteContext();
 
   return (
     <footer className="bg-white dark:bg-gray-900 border-t border-gray-200 dark:border-gray-700 py-12 px-4">

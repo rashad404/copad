@@ -3,12 +3,14 @@ import { headers } from 'next/headers';
 import BlogClient from './client';
 import { getBlogPosts, getTopTags } from '@/api/serverFetch';
 import { siteConfig } from '@/context/siteConfig';
+import type { BlogPostListItem } from '@/api/blog';
 import { resolveBlogLanguage } from '@/utils/blogLanguage';
 
 // Generate SEO metadata
-export async function generateMetadata({ searchParams }: { searchParams: { page?: string } }): Promise<Metadata> {
+export async function generateMetadata({ searchParams }: { searchParams: Promise<{ page?: string }> }): Promise<Metadata> {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
-  const currentPage = searchParams?.page ? parseInt(searchParams.page) - 1 : 0;
+  const { page: pageParam } = await searchParams;
+  const currentPage = pageParam ? parseInt(pageParam) - 1 : 0;
   
   // Get site info for proper branding using the server-safe function
   const siteInfo = siteConfig.getSiteInfoByHostname('localhost');
@@ -76,7 +78,7 @@ export async function generateMetadata({ searchParams }: { searchParams: { page?
 }
 
 // Generate JSON-LD structured data for the blog listing
-function generateJsonLd(posts: any[]) {
+function generateJsonLd(posts: BlogPostListItem[]) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   
   // Get site info for proper branding using the server-safe function
@@ -136,16 +138,16 @@ function generateJsonLd(posts: any[]) {
 }
 
 // The main page component
-export default async function BlogPage({ searchParams }: { searchParams: { page?: string, lang?: string } }) {
+export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string; lang?: string }> }) {
+  const { page: pageParam, lang: langParam } = await searchParams;
   const headersList = await headers();
-  const userAgent = headersList.get('user-agent') || '';
   
   // Priority: 1. URL param, 2. the i18nextLng cookie, 3. the site default
   const cookieHeader = headersList.get('cookie') || '';
-  const lang = resolveBlogLanguage(searchParams?.lang, cookieHeader);
+  const lang = resolveBlogLanguage(langParam, cookieHeader);
   
   // Get the current page from query params, default to 0
-  const currentPage = searchParams?.page ? parseInt(searchParams.page) - 1 : 0;
+  const currentPage = pageParam ? parseInt(pageParam) - 1 : 0;
   const pageSize = 9;
   
   // Fetch initial data server-side with explicit language parameter
@@ -153,13 +155,11 @@ export default async function BlogPage({ searchParams }: { searchParams: { page?
   const tags = await getTopTags(10);
   
   // Generate structured data - Handle different response formats from API
-  let postsList = [];
+  let postsList: BlogPostListItem[] = [];
   if (Array.isArray(posts)) {
     postsList = posts;
   } else if (posts && Array.isArray(posts.content)) {
     postsList = posts.content;
-  } else if (posts && Array.isArray(posts.posts)) {
-    postsList = posts.posts;
   }
   
   const jsonLdSchemas = generateJsonLd(postsList);

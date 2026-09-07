@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -11,7 +12,6 @@ import {
   Eye,
   PenTool
 } from 'lucide-react';
-import { getDashboardStats, getRecentPosts } from '@/api/admin';
 import { getBlogPosts, getTopTags } from '@/api';
 import { BlogPostListItem } from '@/api/blog';
 import AuthDebug from '@/components/AuthDebug';
@@ -100,9 +100,9 @@ export default function AdminDashboard() {
           setRecentPosts([]);
         }
         
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error fetching dashboard data:', err);
-        setError(err.message || t('common.errors.generic'));
+        setError(getErrorMessage(err) || t('common.errors.generic'));
       } finally {
         setLoading(false);
       }

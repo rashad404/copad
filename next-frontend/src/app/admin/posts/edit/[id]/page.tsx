@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect, use } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { 
-  Save, 
   ArrowLeft, 
   X, 
   Plus, 
@@ -16,13 +16,13 @@ import {
 } from 'lucide-react';
 import { getPostById, updatePost, uploadImage, deletePost } from '@/api/admin';
 import { getAllTags } from '@/api';
-import { Tag, BlogPost } from '@/api/blog';
+import { Tag } from '@/api/blog';
 import RichTextEditor from '@/components/admin/RichTextEditor';
 
 interface EditPostPageProps {
-  params: {
+  params: Promise<{
     id: string;
-  };
+  }>;
 }
 
 export default function EditPostPage({ params }: EditPostPageProps) {
@@ -96,9 +96,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
         
         // Reset unsaved changes flag since we just loaded the data
         setUnsavedChanges(false);
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error loading post data:', err);
-        setError(err.message || t('common.errors.generic'));
+        setError(getErrorMessage(err) || t('common.errors.generic'));
       } finally {
         setLoading(false);
       }
@@ -210,7 +210,7 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       console.log('Full image URL:', imageUrl);
       setFeaturedImage(imageUrl);
       setErrors({ ...errors, featuredImage: '' });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error uploading image:', err);
       setErrors({
         ...errors,
@@ -290,9 +290,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       // Show success message or redirect
       router.push('/admin/posts');
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating post:', err);
-      setError(err.message || t('admin.posts.form.saveError'));
+      setError(getErrorMessage(err) || t('admin.posts.form.saveError'));
     } finally {
       setSaving(false);
     }
@@ -311,9 +311,9 @@ export default function EditPostPage({ params }: EditPostPageProps) {
       // Redirect after successful deletion
       router.push('/admin/posts');
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting post:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setSaving(false);
       setShowDeleteModal(false);

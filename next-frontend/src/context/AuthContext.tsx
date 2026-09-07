@@ -8,7 +8,6 @@ import {
   removeTokenFromLocalStorage,
   setAuthCookie,
   clearAuthCookie,
-  isAuthenticated as checkAuth
 } from '@/utils/auth';
 
 interface User {
@@ -34,7 +33,7 @@ const AuthContext = createContext<AuthContextType | undefined>(undefined);
 export function AuthProvider({ children }: { children: ReactNode }) {
   const [user, setUser] = useState<User | null>(null);
   const [isLoading, setIsLoading] = useState(true);
-  const [isTokenChecked, setIsTokenChecked] = useState(false);
+  const [, setIsTokenChecked] = useState(false);
   const [isAdmin, setIsAdmin] = useState(false);
 
   // On initial load, check if we have a token and fetch user if we do

@@ -15,7 +15,6 @@ const MobileUnifiedHeader: React.FC<MobileUnifiedHeaderProps> = ({
   chatTitle, 
   onChatMenuClick,
   onMainMenuClick,
-  isChatSidebarOpen 
 }) => {
   const { t } = useTranslation();
   const [isMobile, setIsMobile] = useState(false);

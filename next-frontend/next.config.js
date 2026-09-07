@@ -22,14 +22,14 @@ const nextConfig = {
     ],
     unoptimized: true,
   },
-  // Disable TypeScript type checking for build
+  // Type errors and lint errors fail the build. They were both suppressed,
+  // which let 64 type errors accumulate - including real runtime bugs.
   typescript: {
-    ignoreBuildErrors: true,
+    ignoreBuildErrors: false,
   },
-  
-  // Disable ESLint during build
+
   eslint: {
-    ignoreDuringBuilds: true,
+    ignoreDuringBuilds: false,
   },
   
   // No trailing slash for better compatibility

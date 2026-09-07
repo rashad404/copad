@@ -1,13 +1,14 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import type { JwtPayload } from '@/types/jwt';
 import { useAuth } from '@/context/AuthContext';
 import AuthDebug from '@/components/AuthDebug';
 
 export default function AdminTestPage() {
   const { user, isAdmin, isAuthenticated, isLoading } = useAuth();
   const [token, setToken] = useState<string | null>(null);
-  const [decodedToken, setDecodedToken] = useState<any>(null);
+  const [decodedToken, setDecodedToken] = useState<JwtPayload | null>(null);
 
   useEffect(() => {
     // Get token from localStorage
@@ -59,7 +60,7 @@ export default function AdminTestPage() {
                   <>
                     <li><span className="font-medium">Subject:</span> {decodedToken.sub}</li>
                     <li><span className="font-medium">Roles:</span> {JSON.stringify(decodedToken.roles)}</li>
-                    <li><span className="font-medium">Expiration:</span> {new Date(decodedToken.exp * 1000).toLocaleString()}</li>
+                    <li><span className="font-medium">Expiration:</span> {decodedToken.exp ? new Date(decodedToken.exp * 1000).toLocaleString() : '-'}</li>
                     <li>
                       <span className="font-medium">Full Payload:</span>
                       <pre className="mt-1 text-xs bg-gray-100 dark:bg-gray-800 p-2 rounded overflow-auto">

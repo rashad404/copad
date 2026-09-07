@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useTranslation } from 'react-i18next';
 import { 
   PlusCircle, 
@@ -46,9 +47,9 @@ export default function AdminTagManagement() {
         setTags([]);
         setFilteredTags([]);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching tags:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -112,9 +113,9 @@ export default function AdminTagManagement() {
       
       // Clear any error
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error creating tag:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsCreating(false);
     }
@@ -163,9 +164,9 @@ export default function AdminTagManagement() {
       
       // Clear any error
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error updating tag:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsEditing(false);
     }
@@ -196,9 +197,9 @@ export default function AdminTagManagement() {
       
       // Clear any error
       setError(null);
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error deleting tag:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setIsDeleting(false);
     }

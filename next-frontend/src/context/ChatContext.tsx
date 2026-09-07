@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
 import { useTranslation } from 'react-i18next';
 import i18n from '@/i18n';
@@ -16,14 +17,36 @@ interface FileAttachment {
   isImage: boolean;
 }
 
-interface Message {
+/** Raw guest-session payload as returned by GET /guest/session/{id}. */
+interface ApiChatMessage {
+  sender: 'USER' | 'AI';
+  message: string;
+  timestamp: string;
+  attachments?: FileAttachment[];
+}
+
+interface ApiChat {
+  id: string;
+  title?: string;
+  messages?: ApiChatMessage[];
+  timestamp: string;
+  lastMessage?: string;
+}
+
+interface GuestSessionResponse {
+  data: { chats?: ApiChat[] };
+}
+
+export interface Message {
   role: 'user' | 'assistant';
   content: string;
   timestamp: string | Date;
   attachments?: FileAttachment[];
+  /** Ids of files sent alongside the message, used to render attachments. */
+  fileIds?: string[];
 }
 
-interface Chat {
+export interface Chat {
   id: string;
   title?: string;
   messages: Message[];
@@ -41,7 +64,12 @@ interface ChatContextType {
   createNewChat: () => Promise<string | null>;
   updateChatTitle: (chatId: string, title: string) => Promise<void>;
   deleteChat: (chatId: string) => Promise<void>;
-  sendMessage: (chatId: string | null, message: string, additionalFileIds?: string[]) => Promise<string>;
+  sendMessage: (
+    chatId: string | null,
+    message: string,
+    additionalFileIds?: string[],
+    additionalFiles?: FileAttachment[]
+  ) => Promise<string>;
   setSelectedChatId: (chatId: string) => void;
   uploadFile: (file: File) => Promise<FileAttachment>;
   clearUploadedFiles: () => void;
@@ -62,12 +90,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   const sessionIdRef = useRef<string | null>(null);
 
   // Helper to process session data
-  const processSessionData = (sessionResponse: any) => {
+  const processSessionData = (sessionResponse: GuestSessionResponse): Chat[] => {
     const responseChats = sessionResponse.data.chats;
     if (responseChats && Array.isArray(responseChats) && responseChats.length > 0) {
-      const formattedChats = responseChats.map((chat: any) => {
+      const formattedChats: Chat[] = responseChats.map((chat: ApiChat) => {
         const formattedMessages = Array.isArray(chat.messages)
-          ? chat.messages.map((msg: any) => ({
+          ? chat.messages.map((msg: ApiChatMessage): Message => ({
               role: msg.sender === 'USER' ? 'user' : 'assistant',
               content: msg.message,
               timestamp: msg.timestamp,
@@ -119,7 +147,6 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       ? res.data
       : res.data.response || res.data.message || t('chat.error.message');
   };
-  const getChatHistory = async (sid: string, chatId: string) => api.get(`/guest/chat/${sid}/${chatId}/history`);
 
   // Create initial chat
   const createInitialChat = async (sid: string) => {
@@ -136,7 +163,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setChats(prev => [newChat, ...prev]);
       setSelectedChatId(newChatId);
       return newChatId;
-    } catch (err) {
+    } catch {
       setError('Failed to create initial chat');
       return null;
     }
@@ -157,7 +184,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setChats(prev => [newChat, ...prev]);
       setSelectedChatId(newChatId);
       return newChatId;
-    } catch (err) {
+    } catch {
       setError('Failed to create chat');
       return null;
     }
@@ -169,7 +196,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     setChats(prev => prev.map(chat => chat.id === chatId ? { ...chat, title } : chat));
     try {
       await updateGuestChat(sessionIdRef.current, chatId, title);
-    } catch (err) {
+    } catch {
       setError('Failed to update chat title');
     }
   };
@@ -184,7 +211,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
     }
     try {
       await deleteGuestChat(sessionIdRef.current, chatId);
-    } catch (err) {
+    } catch {
       setError('Failed to delete chat');
     }
   };
@@ -228,21 +255,24 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       // Update chats state
       setChats(prev => prev.map(chat => {
         if (chat.id === chatId) {
-          const newMessages = [
+          const newMessages: Message[] = [
             ...chat.messages,
-            { 
-              role: 'user', 
-              content: message, 
+            {
+              role: 'user',
+              content: message,
               timestamp: new Date().toISOString(),
               attachments: [...uploadedFiles, ...(additionalFiles || [])]
             },
-            { 
-              role: 'assistant', 
-              content: response, 
-              timestamp: new Date().toISOString() 
+            {
+              role: 'assistant',
+              content: response,
+              timestamp: new Date().toISOString()
             }
           ];
-          const title = chat.messages.length === 0 ? message.split(' ').slice(0, 5).join(' ') + '...' : chat.title;
+          const title =
+            chat.messages.length === 0
+              ? message.split(' ').slice(0, 5).join(' ') + '...'
+              : chat.title ?? '';
           
           // Update title on backend if this is the first message
           if (chat.messages.length === 0 && sessionIdRef.current) {
@@ -277,13 +307,19 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       isInitializingRef.current = true;
       try {
         // Check if we already have a session ID in state or localStorage
-        let sid = sessionId || localStorage.getItem('guestSessionId190190');
+        const existingSid = sessionId || getGuestSessionId();
+        let sid: string;
         let isNewSession = false;
 
-        if (!sid) {
+        if (existingSid) {
+          sid = existingSid;
+        } else {
           const response = await startGuestSession();
-          sid = response.data.sessionId;
-          localStorage.setItem('guestSessionId190190', sid);
+          sid = response.data?.sessionId;
+          if (!sid) {
+            throw new Error('Guest session could not be created');
+          }
+          setGuestSessionId(sid);
           isNewSession = true;
         }
 
@@ -311,7 +347,8 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
               setSelectedChatId(newChatId);
             }
           } catch (sessionErr) {
-            console.log('Failed to load existing session, creating a new one:', sessionErr.message);
+            const reason = sessionErr instanceof Error ? sessionErr.message : String(sessionErr);
+            console.log('Failed to load existing session, creating a new one:', reason);
             // If we can't fetch the session, create a new chat as a fallback
             const newChatId = await createInitialChat(sid);
             setSelectedChatId(newChatId);

@@ -58,7 +58,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost> {
   try {
     // First try the direct blog endpoint
     return await fetchAPI<BlogPost>(`/blog/${slug}`);
-  } catch (error) {
+  } catch {
     console.log('Slug endpoint failed, trying to find post by slug in all posts');
     
     // Fallback: Get all posts and find the one with matching slug
@@ -79,7 +79,7 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost> {
     if (post.id) {
       try {
         return await getBlogPostById(post.id);
-      } catch (idError) {
+      } catch {
         console.log('Failed to get post by ID, using list item instead');
         // If getting by ID fails, fallback to using the list item
         return post as unknown as BlogPost;
@@ -97,6 +97,21 @@ export async function getBlogPostBySlug(slug: string): Promise<BlogPost> {
 export async function getBlogPostById(id: number): Promise<BlogPost> {
   return fetchAPI<BlogPost>(`/blog/posts/${id}`);
 }
+
+/**
+ * A Spring Data `Page` as returned by the blog endpoints. Some endpoints
+ * return a bare array instead, hence the union used by callers.
+ */
+export interface SpringPage<T> {
+  content: T[];
+  totalPages: number;
+  totalElements: number;
+  number: number;
+  size: number;
+  hasNext?: boolean;
+}
+
+export type BlogListPayload = SpringPage<BlogPostListItem> | BlogPostListItem[];
 
 /**
  * Interface for pagination metadata
@@ -119,11 +134,11 @@ export async function getBlogPosts(
   sortBy = 'publishedAt',
   direction = 'desc',
   language?: string
-): Promise<{ posts: any; pagination: PaginationInfo }> {
+): Promise<{ posts: BlogListPayload; pagination: PaginationInfo }> {
   const langParam = language ? `&language=${language}` : '';
   
   try {
-    const response = await fetchAPI<any>(
+    const response = await fetchAPI<BlogListPayload>(
       `/blog?page=${page}&size=${size}&sortBy=${sortBy}&direction=${direction}${langParam}`
     );
 
@@ -137,21 +152,19 @@ export async function getBlogPosts(
       size
     };
 
-    // Handle different response formats
-    if (response && response.content) {
-      // Spring Data Page format
-      paginationInfo = {
-        currentPage: response.number || page,
-        totalPages: response.totalPages || 1,
-        totalElements: response.totalElements || response.content.length,
-        hasNext: response.hasNext || false,
-        hasPrevious: (response.number || page) > 0,
-        size: response.size || size
-      };
-    } else if (Array.isArray(response)) {
-      // Direct array format
+    // Narrow by array first; the remaining arm is the Spring page.
+    if (Array.isArray(response)) {
       paginationInfo.totalElements = response.length;
       paginationInfo.hasNext = response.length >= size;
+    } else if (response && Array.isArray(response.content)) {
+      paginationInfo = {
+        currentPage: response.number ?? page,
+        totalPages: response.totalPages || 1,
+        totalElements: response.totalElements || response.content.length,
+        hasNext: response.hasNext ?? false,
+        hasPrevious: (response.number ?? page) > 0,
+        size: response.size || size
+      };
     }
     
     // Return the original response to let the component handle structure differences
@@ -196,17 +209,17 @@ export async function getPostsByTag(
   try {
     // First try the dedicated tag endpoint that matches client-side API
     try {
-      const response = await fetchAPI<any>(
+      const response = await fetchAPI<BlogListPayload>(
         `/blog/tag/${tagSlug}?page=${page}&size=${size}`
       );
 
-      // Handle different response formats
-      if (response && response.content) {
-        return response.content as BlogPostListItem[];
-      } else if (Array.isArray(response)) {
-        return response as BlogPostListItem[];
+      if (Array.isArray(response)) {
+        return response;
       }
-    } catch (e) {
+      if (response && Array.isArray(response.content)) {
+        return response.content;
+      }
+    } catch {
       console.log(`Tag posts endpoint failed for ${tagSlug}, using fallback method`);
     }
     
@@ -227,7 +240,7 @@ export async function getPostsByTag(
         if (!post.tags || !Array.isArray(post.tags)) {
           return false;
         }
-        return post.tags.some(t => t.slug === tagSlug);
+        return post.tags.some((t: Tag) => t.slug === tagSlug);
       });
     }
     
@@ -236,7 +249,7 @@ export async function getPostsByTag(
       if (!post.tags || !Array.isArray(post.tags)) {
         return false;
       }
-      return post.tags.some(t => t.id === tag.id || t.slug === tagSlug);
+      return post.tags.some((t: Tag) => t.id === tag.id || t.slug === tagSlug);
     });
     
   } catch (error) {
@@ -252,7 +265,7 @@ export async function getTagBySlug(slug: string): Promise<Tag | null> {
   try {
     // Try the same endpoint as the client-side API uses
     return await fetchAPI<Tag>(`/tags/${slug}`);
-  } catch (error) {
+  } catch {
     console.log(`Tag endpoint failed for ${slug}, trying to find tag in all tags`);
     
     // Fallback: Get all tags and find the matching one
@@ -264,7 +277,7 @@ export async function getTagBySlug(slug: string): Promise<Tag | null> {
           const tag = allTags.find(t => t.slug === slug);
           if (tag) return tag;
         }
-      } catch (e) {
+      } catch {
         console.log(`All tags endpoint failed, trying top tags as fallback`);
       }
       
@@ -294,15 +307,15 @@ export async function searchBlogPosts(
   size = 10
 ): Promise<BlogPostListItem[]> {
   try {
-    const response = await fetchAPI<any>(
+    const response = await fetchAPI<BlogListPayload>(
       `/blog/search?query=${encodeURIComponent(query)}&page=${page}&size=${size}`
     );
 
-    // Handle different response formats
-    if (response && response.content) {
-      return response.content as BlogPostListItem[];
-    } else if (Array.isArray(response)) {
-      return response as BlogPostListItem[];
+    if (Array.isArray(response)) {
+      return response;
+    }
+    if (response && Array.isArray(response.content)) {
+      return response.content;
     }
     
     return [];

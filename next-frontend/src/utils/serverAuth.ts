@@ -7,26 +7,30 @@ import { NextRequest, NextResponse } from 'next/server';
  */
 
 /**
- * Get the auth token from cookies (server-side)
+ * Get the auth token from cookies (server-side).
+ *
+ * cookies() returns a Promise in Next 15; calling .get() on it without
+ * awaiting silently yields undefined, so every caller would read as
+ * unauthenticated.
  */
-export function getAuthTokenFromCookies() {
-  const cookieStore = cookies();
+export async function getAuthTokenFromCookies() {
+  const cookieStore = await cookies();
   return cookieStore.get('auth_token')?.value;
 }
 
 /**
  * Check if the user is authenticated (server-side)
  */
-export function isAuthenticatedServerSide() {
-  return !!getAuthTokenFromCookies();
+export async function isAuthenticatedServerSide() {
+  return !!(await getAuthTokenFromCookies());
 }
 
 /**
  * Handles redirects for protected routes based on authentication status
  * Call this from server components to redirect if not authenticated
  */
-export function handleProtectedRoute(redirectTo = '/login') {
-  if (!isAuthenticatedServerSide()) {
+export async function handleProtectedRoute(redirectTo = '/login') {
+  if (!(await isAuthenticatedServerSide())) {
     // Return a redirect response
     return Response.redirect(new URL(redirectTo, process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'));
   }
@@ -37,8 +41,8 @@ export function handleProtectedRoute(redirectTo = '/login') {
 /**
  * Create authentication headers for server-side API requests
  */
-export function createAuthHeaders() {
-  const token = getAuthTokenFromCookies();
+export async function createAuthHeaders() {
+  const token = await getAuthTokenFromCookies();
   if (!token) {
     return {};
   }

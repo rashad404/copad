@@ -1,14 +1,15 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import type { FileUploadResult } from '@/components/MultiFileUpload';
+import type { MedicalFileCategory } from '@/utils/fileCategories';
 import { useTranslation } from 'react-i18next';
 import { ListBulletIcon, PaperClipIcon, XMarkIcon } from '@heroicons/react/24/outline';
-import Image from 'next/image';
 import ChatSidebar from './ChatSidebar';
 import FileAttachmentPreview from './FileAttachmentPreview';
 import { MultiFileUpload } from './MultiFileUpload';
-import { useAuth } from '@/context/AuthContext';
 import { useChat } from '@/context/ChatContext';
+import type { Message } from '@/context/ChatContext';
 import { FileAttachment } from '@/types/chat';
 
 interface GuestChatProps {
@@ -31,28 +32,21 @@ const GuestChat: React.FC<GuestChatProps> = ({
   onSidebarClose 
 }) => {
   const { t } = useTranslation();
-  const { isAuthenticated } = useAuth();
   const {
     sessionId,
     chats,
     selectedChatId,
     isInitializing,
-    error,
     uploadedFiles,
     createNewChat,
-    updateChatTitle,
-    deleteChat,
     sendMessage,
     setSelectedChatId,
-    uploadFile,
     removeUploadedFile,
-    clearUploadedFiles
   } = useChat();
-  const [messages, setMessages] = useState<any[]>([]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [newMessage, setNewMessage] = useState('');
   const [loading, setLoading] = useState(false);
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-  const [uploadError, setUploadError] = useState<string | null>(null);
   const [showMultiFileUpload, setShowMultiFileUpload] = useState(false);
   const [selectedCategory, setSelectedCategory] = useState<'general' | 'lab-results' | 'imaging' | 'prescriptions' | 'clinical-notes'>('general');
   const [pendingFileIds, setPendingFileIds] = useState<string[]>([]);
@@ -72,7 +66,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
 
   useEffect(() => {
     if (selectedChatId) {
-      const selectedChat = chats.find((chat: any) => chat.id === selectedChatId);
+      const selectedChat = chats.find((chat) => chat.id === selectedChatId);
       if (selectedChat) {
         setMessages(selectedChat.messages || []);
       }
@@ -91,18 +85,18 @@ const GuestChat: React.FC<GuestChatProps> = ({
   // Notify parent of title changes only
   useEffect(() => {
     if (onTitleChange) {
-      const selectedChat = chats.find((chat: any) => chat.id === selectedChatId);
+      const selectedChat = chats.find((chat) => chat.id === selectedChatId);
       const title = selectedChat?.title || t('chat.untitledChat');
       onTitleChange(title);
     }
   }, [selectedChatId, chats, onTitleChange, t]);
 
 
-  const handleMultiFileSelect = (files: File[]) => {
+  const handleMultiFileSelect = () => {
     // Files are selected in the MultiFileUpload component
   };
 
-  const handleMultiFileUploadComplete = (results: any[]) => {
+  const handleMultiFileUploadComplete = (results: FileUploadResult[]) => {
     // Extract file IDs and create file attachments from results
     const successfulFiles = results.filter(r => r.success);
     const fileIds = successfulFiles.map(r => r.fileId);
@@ -110,11 +104,11 @@ const GuestChat: React.FC<GuestChatProps> = ({
     // Create FileAttachment objects for preview
     const newFiles: FileAttachment[] = successfulFiles.map(file => ({
       fileId: file.fileId,
-      url: file.url, // Use the URL from backend which now matches single file upload pattern
+      url: file.url ?? '', // Use the URL from backend which now matches single file upload pattern
       filename: file.filename,
       fileType: file.fileType || 'application/octet-stream',
       fileSize: file.fileSize || 0,
-      uploadedAt: file.uploadedAt || new Date(),
+      uploadedAt: file.uploadedAt ? new Date(file.uploadedAt) : new Date(),
       isImage: file.isImage !== undefined ? file.isImage : (file.fileType ? file.fileType.startsWith('image/') : false)
     }));
     
@@ -135,7 +129,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
     setNewMessage('');
     
     // Create new message object with attachments
-    const newMessageObj = { 
+    const newMessageObj: Message = { 
       role: 'user', 
       content: messageToSend, 
       timestamp: new Date(),
@@ -153,7 +147,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
     
     try {
       const response = await sendMessage(selectedChatId, messageToSend, pendingFileIds, currentPendingFiles);
-      const assistantMessage = {
+      const assistantMessage: Message = {
         role: 'assistant',
         content: response,
         timestamp: new Date()
@@ -161,7 +155,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
-      const errorMessage = {
+      const errorMessage: Message = {
         role: 'assistant',
         content: t('chat.error.message'),
         timestamp: new Date()
@@ -187,7 +181,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
   };
 
   const handleNewChat = async () => {
-    const currentChat = chats.find((chat: any) => chat.id === selectedChatId);
+    const currentChat = chats.find((chat) => chat.id === selectedChatId);
     if (currentChat && currentChat.messages && currentChat.messages.length > 0) {
       await createNewChat();
     }
@@ -219,7 +213,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
             <ListBulletIcon className="w-6 h-6" />
           </button>
           <h1 className="text-xl font-semibold text-gray-900 dark:text-gray-100">
-            {chats.find((chat: any) => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
+            {chats.find((chat) => chat.id === selectedChatId)?.title || t('chat.untitledChat')}
           </h1>
         </div>
         {/* Chat messages */}
@@ -304,7 +298,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 </label>
                 <select
                   value={selectedCategory}
-                  onChange={(e) => setSelectedCategory(e.target.value as any)}
+                  onChange={(e) => setSelectedCategory(e.target.value as MedicalFileCategory)}
                   className="w-full p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-transparent dark:bg-gray-700 dark:text-gray-200"
                 >
                   <option value="general">{t('chat.fileUpload.categories.general')}</option>

@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, use } from "react";
+import { useEffect } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
@@ -10,10 +10,11 @@ export default function OAuthCallbackPage() {
   const { login } = useAuth();
 
   useEffect(() => {
-    const params = use(searchParams);
-    const token = params.get("token");
-    const name = params.get("name");
-    const email = params.get("email");
+    // useSearchParams() already returns the params; use() is a hook and
+    // throws if called inside an effect.
+    const token = searchParams.get("token");
+    const name = searchParams.get("name");
+    const email = searchParams.get("email");
 
     if (token) {
       localStorage.setItem("token", token);

@@ -1,4 +1,5 @@
 import React, { useState, useCallback, useRef } from 'react';
+import { getGuestSessionId } from '@/utils/guestSession';
 import { Upload, X, File, AlertCircle, CheckCircle, Loader } from 'lucide-react';
 import api from '@/api';
 
@@ -11,22 +12,28 @@ interface FileUploadItem {
   uploadedFileId?: string;
 }
 
-interface MultiFileUploadProps {
+export interface MultiFileUploadProps {
   onFilesSelected: (files: File[]) => void;
   onUploadComplete?: (results: FileUploadResult[]) => void;
   maxFiles?: number;
   maxSizeMB?: number;
   acceptedFormats?: string[];
   category?: 'general' | 'lab-results' | 'imaging' | 'prescriptions' | 'clinical-notes';
-  chatId: string;
+  chatId: string | null;
   conversationId?: string;
 }
 
-interface FileUploadResult {
+export interface FileUploadResult {
   filename: string;
   fileId: string;
   success: boolean;
   error?: string;
+  /** Present on successful uploads; the batch endpoint returns the stored file. */
+  url?: string;
+  fileType?: string;
+  fileSize?: number;
+  uploadedAt?: string | Date;
+  isImage?: boolean;
 }
 
 const MEDICAL_FILE_CATEGORIES = {
@@ -109,7 +116,7 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
         file,
         status: error ? 'error' : 'pending',
         progress: 0,
-        error
+        error: error ?? undefined
       });
     });
 
@@ -151,7 +158,7 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
     
     // Create FormData for batch upload
     const formData = new FormData();
-    pendingFiles.forEach((fileItem, index) => {
+    pendingFiles.forEach((fileItem) => {
       formData.append('files', fileItem.file);
     });
     formData.append('category', category);
@@ -168,7 +175,7 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
 
       const response = await api.post(`/v2/messages/chat/${chatId}/files/batch`, formData, {
         headers: {
-          'X-Guest-Session-Id': localStorage.getItem('guestSessionId') || ''
+          'X-Guest-Session-Id': getGuestSessionId() || ''
         }
       });
 
@@ -222,7 +229,7 @@ export const MultiFileUpload: React.FC<MultiFileUploadProps> = ({
           
           if (onUploadComplete) {
             // Map the files to the expected format with all information
-            const results = uploadedFiles.map((file: any) => ({
+            const results = uploadedFiles.map((file: FileUploadResult) => ({
               filename: file.filename,
               fileId: file.fileId,
               fileType: file.fileType,

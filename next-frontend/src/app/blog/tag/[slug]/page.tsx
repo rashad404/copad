@@ -1,5 +1,7 @@
 import { Metadata, ResolvingMetadata } from 'next';
+import type { BlogPostListItem } from '@/api/blog';
 import { headers } from 'next/headers';
+import { resolveBlogLanguage } from '@/utils/blogLanguage';
 import { notFound } from 'next/navigation';
 import TagPageClient from './client';
 import { getPostsByTag, getTagBySlug, getTopTags } from '@/api/serverFetch';
@@ -8,7 +10,7 @@ import { siteConfig } from '@/context/siteConfig';
 
 // Types for generateMetadata props
 type Props = {
-  params: { slug: string };
+  params: Promise<{ slug: string }>;
 };
 
 // Fetch the tag and its posts
@@ -40,7 +42,7 @@ export async function generateMetadata(
   { params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
-  const { slug } = params;
+  const { slug } = await params;
   
   // Fetch tag data for metadata
   const { tag } = await fetchTagData(slug);
@@ -98,7 +100,7 @@ export async function generateMetadata(
 }
 
 // Generate structured data
-function generateJsonLd(tag: Tag, posts: any[]) {
+function generateJsonLd(tag: Tag, posts: BlogPostListItem[]) {
   const baseUrl = process.env.NEXT_PUBLIC_APP_URL || '';
   
   // Get site info for proper branding
@@ -172,10 +174,17 @@ function generateJsonLd(tag: Tag, posts: any[]) {
 }
 
 // The main page component
-export default async function TagPage({ params }: { params: { slug: string } }) {
-  const { slug } = params;
-  const headersList = headers();
-  const lang = headersList.get('accept-language')?.split(',')[0]?.split('-')[0] || 'en';
+export default async function TagPage({
+  params,
+  searchParams,
+}: {
+  params: Promise<{ slug: string }>;
+  searchParams: Promise<{ lang?: string }>;
+}) {
+  const { slug } = await params;
+  const { lang: langParam } = await searchParams;
+  const headersList = await headers();
+  const lang = resolveBlogLanguage(langParam, headersList.get('cookie') || '');
   
   // Fetch tag data
   const { tag, posts, relatedTags, error } = await fetchTagData(slug);

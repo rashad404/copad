@@ -47,7 +47,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     onClose();
   };
 
-  const startEditingTitle = (chat: Chat, e: React.MouseEvent) => {
+  const startEditingTitle = (chat: Chat, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     setEditingChatId(chat.id);
     setEditTitle(chat.title || t('chat.untitledChat'));
@@ -63,7 +63,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     }
   };
 
-  const handleDeleteChat = (chatId: string, e: React.MouseEvent) => {
+  const handleDeleteChat = (chatId: string, e: React.MouseEvent | React.KeyboardEvent) => {
     e.stopPropagation();
     if (window.confirm(t('chat.confirmDelete'))) {
       if (onDeleteChat) {
@@ -76,7 +76,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
     if (!timestamp) return '';
     try {
       return formatDistanceToNow(new Date(timestamp), { addSuffix: true });
-    } catch (e) {
+    } catch {
       return '';
     }
   };
@@ -157,7 +157,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                 className="p-1 text-gray-500 hover:text-gray-700 dark:text-gray-400 dark:hover:text-gray-200 cursor-pointer"
                                 role="button"
                                 tabIndex={0}
-                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingTitle(chat, e as any); }}
+                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') startEditingTitle(chat, e); }}
                                 aria-label={t('chat.editTitle')}
                               >
                                 <PencilIcon className="w-4 h-4" />
@@ -169,7 +169,7 @@ const ChatSidebar: React.FC<ChatSidebarProps> = ({
                                 className="p-1 text-gray-500 hover:text-red-600 dark:text-gray-400 dark:hover:text-red-400 cursor-pointer"
                                 role="button"
                                 tabIndex={0}
-                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDeleteChat(chat.id, e as any); }}
+                                onKeyPress={(e) => { if (e.key === 'Enter' || e.key === ' ') handleDeleteChat(chat.id, e); }}
                                 aria-label={t('chat.deleteChat')}
                               >
                                 <TrashIcon className="w-4 h-4" />

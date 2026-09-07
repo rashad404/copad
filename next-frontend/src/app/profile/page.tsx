@@ -25,7 +25,12 @@ interface Profile {
   medicalProfile: MedicalProfile;
 }
 
-const normalizeProfile = (data: any): Profile => ({
+/** The API omits optional fields entirely, so every value is treated as absent-able. */
+type RawProfile = Partial<Omit<Profile, 'medicalProfile'>> & {
+  medicalProfile?: Partial<MedicalProfile>;
+};
+
+const normalizeProfile = (data: RawProfile): Profile => ({
   ...data,
   name: data.name ?? "",
   email: data.email ?? "",

@@ -1,10 +1,10 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import { useRouter } from 'next/navigation';
 import { useTranslation } from 'react-i18next';
 import { 
-  Save, 
   ArrowLeft, 
   X, 
   Plus, 
@@ -35,7 +35,6 @@ export default function CreatePostPage() {
   
   // UI state
   const [availableTags, setAvailableTags] = useState<Tag[]>([]);
-  const [loading, setLoading] = useState(false);
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [unsavedChanges, setUnsavedChanges] = useState(false);
@@ -171,7 +170,7 @@ export default function CreatePostPage() {
       console.log('Full image URL:', imageUrl);
       setFeaturedImage(imageUrl);
       setErrors({ ...errors, featuredImage: '' });
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error uploading image:', err);
       setErrors({
         ...errors,
@@ -243,7 +242,7 @@ export default function CreatePostPage() {
         language,
       };
       
-      const response = await createPost(postData);
+      await createPost(postData);
       
       // Reset form and mark as saved
       setUnsavedChanges(false);
@@ -251,9 +250,9 @@ export default function CreatePostPage() {
       // Redirect to post list page
       router.push('/admin/posts');
       
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error creating post:', err);
-      setError(err.message || t('admin.posts.form.saveError'));
+      setError(getErrorMessage(err) || t('admin.posts.form.saveError'));
     } finally {
       setSaving(false);
     }

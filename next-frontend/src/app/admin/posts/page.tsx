@@ -1,6 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
+import { getErrorMessage } from '@/utils/errors';
 import Link from 'next/link';
 import { useTranslation } from 'react-i18next';
 import { 
@@ -24,12 +25,12 @@ export default function AdminPostList() {
   const [page, setPage] = useState(0);
   const [totalPages, setTotalPages] = useState(0);
   const [totalElements, setTotalElements] = useState(0);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize] = useState(10);
   const [filter, setFilter] = useState('all');
   const [searchText, setSearchText] = useState('');
   const [selectedPosts, setSelectedPosts] = useState<number[]>([]);
-  const [sortBy, setSortBy] = useState('createdAt');
-  const [sortDirection, setSortDirection] = useState('desc');
+  const [sortBy] = useState('createdAt');
+  const [sortDirection] = useState('desc');
 
   // Confirmation modal states
   const [showDeleteModal, setShowDeleteModal] = useState(false);
@@ -51,9 +52,9 @@ export default function AdminPostList() {
         setTotalPages(Math.ceil(response.data.length / pageSize));
         setTotalElements(response.data.length);
       }
-    } catch (err: any) {
+    } catch (err) {
       console.error('Error fetching posts:', err);
-      setError(err.message || t('common.errors.generic'));
+      setError(getErrorMessage(err) || t('common.errors.generic'));
     } finally {
       setLoading(false);
     }
@@ -93,9 +94,9 @@ export default function AdminPostList() {
           // Otherwise, refetch the current page
           fetchPosts();
         }
-      } catch (err: any) {
+      } catch (err) {
         console.error('Error deleting post:', err);
-        setError(err.message || t('common.errors.generic'));
+        setError(getErrorMessage(err) || t('common.errors.generic'));
       } finally {
         // Close modal regardless of result
         setShowDeleteModal(false);
