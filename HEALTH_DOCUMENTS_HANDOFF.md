@@ -8,7 +8,7 @@ Three new tabs on `/health-record`: Documents, Lab results, Prescription review.
 
 Two small backend changes are part of this branch. `ClinicalRecordService.medications()` now excludes unconfirmed prescriptions, which also protects the PDF summary that reads this list. `TimelineService` excludes both lifecycle events for an unconfirmed medication. Previously these endpoints could present extracted proposals as record data, and the ordinary medication DTO did not expose confirmation status for the frontend to distinguish them.
 
-All four protected files are unchanged. No database migration or dependency change.
+All four protected files are unchanged. No database migration or dependency change. The backend multipart limit is raised from 10 MB to 25 MB (26 MB total request allowance for metadata). This configuration change requires a backend restart.
 
 ## Behavior
 
@@ -38,3 +38,9 @@ Production and the port 3003 dev proxy use same-origin requests, so urgent respo
 - Java 21: `ConfirmedMedicationVisibilityTest` and `ImmunizationUpdateTest`, 5 tests passed.
 - Isolated headless Chrome with test fixtures: desktop/mobile documents, labs, prescriptions, correction dialog, AZ/EN and emergency banner; no page overflow or browser errors. No patient records created for these checks.
 - Preview: `http://100.89.150.50:3003/health-record`, shared backend remains on port 8002.
+
+## Upload proxy follow-up
+
+The local preview was stopped when the upload failure was investigated; it is running again on 3003. Small unauthenticated multipart probes reach the real backend and return the expected 401. An 11 MB probe exposed the backend's 10 MB multipart cap and returned 413, not the reported 502. The original 502 has not yet been reproduced with the user's file.
+
+The development proxy now preserves urgent chat headers, provides a readable message for an empty 413 response, handles bodyless response statuses correctly, and logs transport diagnostics without uploaded data or auth headers. Five proxy regression tests pass, including exact multipart byte/metadata forwarding. The 25 MB backend limit is committed here but is not applied to the shared running backend until restart/deployment by the main agent.
