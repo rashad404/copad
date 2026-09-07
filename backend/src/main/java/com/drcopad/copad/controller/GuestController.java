@@ -12,6 +12,7 @@ import com.drcopad.copad.entity.ConsentType;
 import com.drcopad.copad.service.AiSpendService;
 import com.drcopad.copad.service.ConsentService;
 import com.drcopad.copad.service.DocumentRetrievalService;
+import com.drcopad.copad.service.SpecialtyReferralService;
 import com.drcopad.copad.service.RedFlagDetector;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -45,6 +46,7 @@ public class GuestController {
     private final AiSpendService aiSpend;
     private final ConsentService consents;
     private final DocumentRetrievalService documentRetrieval;
+    private final SpecialtyReferralService specialtyReferral;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -144,6 +146,14 @@ public class GuestController {
             if (!fromDocuments.isBlank()) {
                 context.append(fromDocuments);
             }
+        }
+
+        // Which kind of doctor, when one is needed. Says what the directory
+        // actually holds, so the assistant cannot offer to find somebody who is
+        // not there.
+        String referral = specialtyReferral.context();
+        if (!referral.isBlank()) {
+            context.append(referral);
         }
 
         // Local drug prices, for anyone. This is the part a general assistant
