@@ -2,7 +2,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
-import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
 import BrandLogo from "@/components/brand/BrandLogo";
 import SiteHeader from "@/components/navigation/SiteHeader";
@@ -11,7 +10,6 @@ import "./homepage.css";
 const members = ["Leyla", "Ayan", "Rauf"];
 export default function HomePage() {
   const { i18n } = useTranslation();
-  const { isAuthenticated } = useAuth();
   const { WEBSITE_NAME } = useSiteContext();
   const brand =
     WEBSITE_NAME === "Localhost" ? "azdoc" : WEBSITE_NAME.toLowerCase();
@@ -19,8 +17,7 @@ export default function HomePage() {
   const language = requestedLanguage in homeCopy ? requestedLanguage : "en";
   const copy = (text: string) => homeCopy[language]?.[text] ?? text;
   const [member, setMember] = useState("Leyla");
-  const [view, setView] = useState("Nəticələr");
-  const [answer, setAnswer] = useState(false);
+  const [view, setView] = useState("Allergiyalar");
   return (
     <div
       className="azdoc-home"
@@ -36,42 +33,40 @@ export default function HomePage() {
           <div className="hero-copy">
             <div className="eyebrow">
               <span className="live-dot" />{" "}
-              {copy("SAĞLAMLIQ HAQQINDA DAHA AYDIN SÖHBƏT")}
+              {copy("AZƏRBAYCAN DİLİNDƏ SAĞLAMLIQ KÖMƏKÇİSİ")}
             </div>
             <h1>
-              {copy("Hər nəticə.")}
+              {copy("Sağlamlıqla bağlı")}
               <br />
-              {copy("Hər sual.")}
-              <br />
-              <span>{copy("Bir yerdə.")}</span>
+              <span>{copy("sualınız var?")}</span>
             </h1>
             <p>
               {copy(
-                "Sağlamlıq suallarınızı Azərbaycan dilində verin. Söhbətinizə sənəd əlavə edin və məlumatları anlamaq üçün ilk addımı atın.",
+                "Analiz cavabında anlamadığınız göstəricini soruşun, şikayətinizi yazın və ya tibbi sənədinizi göndərin. azdoc yazdıqlarınızı nəzərə alıb suallarınızı cavablandırır.",
               )}
             </p>
             <div className="hero-actions">
               <Link className="button blue" href="/chat">
-                {copy("Söhbətə başla")}
+                {copy("Sual verin")}
                 <span>^</span>
               </Link>
               <a className="text-link" href="#how">
-                {copy("azdoc ilə tanış ol")}
+                {copy("Necə istifadə olunur?")}
                 <span>↓</span>
               </a>
             </div>
             <div className="hero-foot">
               <span className="mini-mark">↳</span>
               <span>
-                {copy("Bir sualdan başlayır.")}
+                {copy("Sual vermək üçün")}
                 <br />
-                <strong>{copy("Daha aydın bir söhbətə çevrilir.")}</strong>
+                <strong>{copy("qeydiyyatdan keçmək lazım deyil.")}</strong>
               </span>
             </div>
           </div>
           <div className="hero-stage" id="demo">
             <div className="stage-top">
-              <span>{copy("GƏLƏCƏK MƏHSULDAN BİR DEMO")}</span>
+              <span>{copy("SAĞLAMLIQ QEYDİ NÜMUNƏSİ")}</span>
               <span aria-hidden="true">^</span>
             </div>
             <div className="orbit orbit-one" />
@@ -82,18 +77,16 @@ export default function HomePage() {
                   {brand}
                   <span>-</span>
                 </span>
-                <span className="demo-label">{copy("DEMO")}</span>
+                <span className="demo-label">{copy("NÜMUNƏ")}</span>
                 <span className="profile">{member[0]}</span>
               </div>
               <div className="record-body">
                 <div className="record-heading">
                   <div>
                     <span className="muted tiny">
-                      {copy("AİLƏNİZİN SAĞLAMLIĞI")}
+                      {copy("SEÇİLMİŞ AİLƏ ÜZVÜ")}
                     </span>
-                    <h2>
-                      {copy("Salam,")} {member}.
-                    </h2>
+                    <h2>{member}</h2>
                   </div>
                   <span className="sun">✳</span>
                 </div>
@@ -105,7 +98,6 @@ export default function HomePage() {
                       className={member === m ? "selected" : ""}
                       onClick={() => {
                         setMember(m);
-                        setAnswer(false);
                       }}
                     >
                       <span className={"avatar a" + i}>{m[0]}</span>
@@ -114,7 +106,7 @@ export default function HomePage() {
                   ))}
                 </div>
                 <div className="record-nav">
-                  {["Nəticələr", "Sənədlər", "Tarixçə"].map((v) => (
+                  {["Allergiyalar", "Dərmanlar", "Ölçülər"].map((v) => (
                     <button
                       key={v}
                       onClick={() => setView(v)}
@@ -125,153 +117,102 @@ export default function HomePage() {
                     </button>
                   ))}
                 </div>
-                {view === "Nəticələr" ? (
-                  <>
-                    <div className="result-title">
-                      <div>
-                        <span className="file-icon">▤</span>
-                        <strong>{copy("Ümumi qan analizi")}</strong>
-                      </div>
-                      <span>{copy("04 sent.")}</span>
-                    </div>
-                    <div className="result-line">
-                      <div>
-                        <span>{copy("Hemoqlobin")}</span>
-                        <small>
-                          {copy("Son nəticə ·")} {member}
-                        </small>
-                      </div>
-                      <strong>
-                        13.2 <small>{copy("g/dL")}</small>
-                      </strong>
-                    </div>
-                    <div
-                      className="mini-chart"
-                      role="img"
-                      aria-label={copy(
-                        "Nümunə hemoqlobin nəticələri, may 12.8, iyun 13.0, iyul 12.9, avqust 13.1, sentyabr 13.2 g/dL",
+                <div className="result-title">
+                  <strong>{copy(view)}</strong>
+                  <span>{copy("Nümunə qeyd")}</span>
+                </div>
+                {view === "Allergiyalar" ? (
+                  <div className="result-line">
+                    <span>{copy("Allergiya")}</span>
+                    <strong>
+                      {copy(
+                        member === "Leyla" ? "Penisillin" : "Qeyd edilməyib",
                       )}
-                    >
-                      <div className="chart-axis">
-                        <span>14</span>
-                        <span>13</span>
-                        <span>12</span>
-                      </div>
-                      <div className="bars">
-                        {[12.8, 13.0, 12.9, 13.1, 13.2].map((value, i) => (
-                          <div key={i}>
-                            <span
-                              style={{ height: ((value - 12) / 2) * 76 + "px" }}
-                            />
-                            <small>
-                              {copy(["May", "İyn", "İyl", "Avq", "Sen"][i])}
-                            </small>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="source-line">
-                      <span className="source-dot" />{" "}
-                      {copy("Mənbə: analiz-nəticəsi.pdf")}
-                    </div>
-                  </>
-                ) : view === "Sənədlər" ? (
-                  <div className="alternate">
-                    <span className="file-icon">▤</span>
-                    <h3>
-                      {member} {copy("üçün sənədlər")}
-                    </h3>
-                    <p>{copy("Ümumi qan analizi")}</p>
-                    <small>{copy("04 sentyabr 2026 · PDF · Nümunə")}</small>
-                    <button onClick={() => setView("Nəticələr")}>
-                      {copy("Nəticələrə bax ->")}
-                    </button>
+                    </strong>
+                  </div>
+                ) : view === "Dərmanlar" ? (
+                  <div className="result-line">
+                    <span>{copy("Qəbul olunan dərman")}</span>
+                    <strong>{copy("Qeyd edilməyib")}</strong>
                   </div>
                 ) : (
-                  <div className="alternate timeline">
-                    <h3>
-                      {member} {copy("üçün tarixçə")}
-                    </h3>
-                    <p>
-                      <b>{copy("04 sentyabr")}</b>{" "}
-                      {copy("Analiz nəticəsi əlavə edilib")}
-                    </p>
-                    <p>
-                      <b>{copy("12 avqust")}</b> {copy("Yeni ölçü qeyd edilib")}
-                    </p>
-                    <p>
-                      <b>{copy("20 iyul")}</b> {copy("Sənəd əlavə edilib")}
-                    </p>
-                    <small>{copy("Nümunə fəaliyyət tarixçəsi")}</small>
-                  </div>
+                  <>
+                    <div className="result-line">
+                      <span>{copy("Çəki")}</span>
+                      <strong>
+                        {member === "Leyla"
+                          ? "64"
+                          : member === "Ayan"
+                            ? "24"
+                            : "78"}{" "}
+                        kg
+                      </strong>
+                    </div>
+                    <div className="result-line">
+                      <span>{copy("Qan təzyiqi")}</span>
+                      <strong>
+                        {member === "Ayan"
+                          ? copy("Qeyd edilməyib")
+                          : "120/80 mmHg"}
+                      </strong>
+                    </div>
+                  </>
                 )}
-                <button
-                  className="ask"
-                  onClick={() => setAnswer(!answer)}
-                  aria-expanded={answer}
-                >
-                  <span>✳</span> {copy("Bu nəticəni anlamağa kömək et")}
-                  <span>^</span>
-                </button>
-                {answer && (
-                  <div className="demo-answer">
-                    {copy(
-                      "Bu, dizayn nümunəsidir. Hazır məhsulda izah seçilmiş üzvün təsdiqlənmiş məlumatlarına əsaslanacaq və mənbəyə keçid göstərəcək.",
-                    )}
-                  </div>
-                )}
+                <Link className="ask" href="/health-record">
+                  {copy("Sağlamlıq qeydlərinə keçin")}
+                </Link>
               </div>
             </div>
             <div className="floating-note">
               <span className="note-icon">✓</span>
               <div>
-                <strong>{copy("Sənəddən tarixçəyə.")}</strong>
-                <span>{copy("Mənbəsi ilə birlikdə, bir yerdə.")}</span>
+                <strong>{copy("Ailə üzvünü seçin.")}</strong>
+                <span>{copy("Onun qeydlərinə ayrıca baxın.")}</span>
               </div>
             </div>
             <p className="preview-caption">
               {copy(
-                "Ailə tarixçəsi və nəticə qrafikləri hazırlanır. Burada göstərilənlər nümunədir.",
+                "Buradakı adlar və qeydlər nümunədir, real şəxslərə aid deyil.",
               )}
             </p>
             <div className="stage-bottom">
-              <span>{copy("ÖZÜNÜZÜ DAHA YAXŞI TANIYIN.")}</span>
+              <span>{copy("ALLERGİYALAR, DƏRMANLAR VƏ ÖLÇÜLƏR")}</span>
               <span className="stage-arrow">^</span>
             </div>
           </div>
         </section>
         <section className="statement wrap">
-          <span className="section-number">
-            {copy("01 - DAHA AZ QARIŞIQLIQ")}
-          </span>
+          <span className="section-number">{copy("AZDOC NƏ ÜÇÜNDÜR?")}</span>
           <p>
-            {copy("Ayrı-ayrı fayllar arasında itən məlumatlar.")}
+            {copy("Analizdəki terminləri başa düşmürsünüz?")}
             <br />
             <strong>
-              {copy("Daha aydın məlumat üçün bir yerdən başlayın.")}
+              {copy("Sənədi göndərin, nəyi öyrənmək istədiyinizi yazın.")}
             </strong>
           </p>
         </section>
         <section className="how wrap" id="how">
           <div className="section-heading">
-            <div className="eyebrow">{copy("SADƏ BİR BAŞLANĞIC")}</div>
+            <div className="eyebrow">{copy("NECƏ İSTİFADƏ OLUNUR?")}</div>
             <h2>
-              {copy("Sualınızdan")}
+              {copy("Sualınızı öz")}
               <br />
-              {copy("başlayaq.")}
+              {copy("sözlərinizlə yazın.")}
             </h2>
             <p>
-              {copy("Sual verin, sənəd əlavə edin və söhbəti davam etdirin.")}
+              {copy(
+                "Tibbi terminləri bilməyiniz lazım deyil. Nəyin sizi narahat etdiyini yazmağınız kifayətdir.",
+              )}
             </p>
           </div>
           <div className="steps">
             <article>
               <span className="step-number">01</span>
               <div>
-                <h3>{copy("Sualınızı yazın.")}</h3>
+                <h3>{copy("Nəyi öyrənmək istəyirsiniz?")}</h3>
                 <p>
                   {copy(
-                    "Nəyi anlamaq istədiyinizi öz sözlərinizlə izah edin. Haradan başlayacağınızı bilməsəniz də yaza bilərsiniz.",
+                    'Məsələn: "Analizimdə bu göstərici nə deməkdir?" Şikayətiniz varsa, nə vaxt başladığını və necə hiss etdiyinizi qeyd edin.',
                   )}
                 </p>
               </div>
@@ -280,10 +221,10 @@ export default function HomePage() {
             <article>
               <span className="step-number">02</span>
               <div>
-                <h3>{copy("Sənəd əlavə edin.")}</h3>
+                <h3>{copy("Analiz cavabınız varsa, göndərin.")}</h3>
                 <p>
                   {copy(
-                    "Lazım olduqda analiz PDF-i və ya sənəd şəklini söhbətə əlavə edin.",
+                    "PDF faylını və ya sənədin aydın şəklini söhbətə əlavə edə bilərsiniz. Sual vermək üçün sənəd göndərmək məcburi deyil.",
                   )}
                 </p>
               </div>
@@ -292,10 +233,10 @@ export default function HomePage() {
             <article>
               <span className="step-number">03</span>
               <div>
-                <h3>{copy("Söhbəti davam etdirin.")}</h3>
+                <h3>{copy("Başa düşmədiyiniz hissəni soruşun.")}</h3>
                 <p>
                   {copy(
-                    "Aydın olmayan hissələr haqqında yenidən soruşun. Tibbi qərarları həkiminizlə müzakirə edin.",
+                    "Cavabda sizə tanış olmayan söz varsa, izahını istəyin. Həkim qəbuluna gedirsinizsə, verəcəyiniz sualları hazırlamağa da kömək edə bilərik.",
                   )}
                 </p>
               </div>
@@ -319,42 +260,43 @@ export default function HomePage() {
                 <span>{copy("Rauf · Atam")}</span>
               </div>
               <span className="family-caption">
-                {copy("FƏRQLİ İNSANLAR. AYRI TARİXÇƏLƏR.")}
+                {copy("HƏR AİLƏ ÜZVÜ ÜÇÜN AYRICA QEYDLƏR")}
               </span>
             </div>
             <div className="family-copy">
               <div className="eyebrow">
-                {copy("NÖVBƏTİ ADDIM · HAZIRLANIR")}
+                {copy("AİLƏNİZİN SAĞLAMLIQ QEYDLƏRİ")}
               </div>
               <h2>
-                {copy("Sizin üçün.")}
+                {copy("Özünüzün və ailənizin")}
                 <br />
-                {copy("Sevdikləriniz üçün.")}
+                {copy("qeydlərini saxlayın.")}
               </h2>
               <p>
                 {copy(
-                  "Ailə üzvləri üçün ayrıca tarixçələr, sənədlər və ölçülər üzərində işləyirik. Hər kəsin məlumatını öz yerində saxlamaq üçün.",
+                  "Allergiyaları, qəbul olunan dərmanları, xəstəlikləri və peyvəndləri hər ailə üzvü üçün ayrıca qeyd edin. Söhbətdə həmin şəxsi seçdikdə azdoc cavab verərkən onun sağlamlıq qeydlərini də nəzərə alır.",
                 )}
               </p>
-              <a className="text-link" href="#demo">
-                {copy("Ailə nümunəsini araşdır")}
-                <span>^</span>
-              </a>
+              <Link className="text-link" href="/health-record">
+                {copy("Sağlamlıq qeydlərini açın")}
+              </Link>
             </div>
           </div>
         </section>
         <section className="faq wrap" id="questions">
           <div>
-            <div className="eyebrow">{copy("BİLMƏK İSTƏDİKLƏRİNİZ")}</div>
-            <h2>{copy("Aydın cavablar.")}</h2>
-            <p>{copy("Başlamazdan əvvəl bir neçə vacib məqam.")}</p>
+            <div className="eyebrow">{copy("TEZ-TEZ VERİLƏN SUALLAR")}</div>
+            <h2>{copy("Suallar və cavablar")}</h2>
+            <p>
+              {copy("Qeydiyyat, ailə qeydləri və azdoc-un imkanları haqqında.")}
+            </p>
           </div>
           <div className="faq-items">
             <details>
-              <summary>{copy("Hazırda azdoc ilə nə edə bilərəm?")}</summary>
+              <summary>{copy("azdoc ilə nə edə bilərəm?")}</summary>
               <p>
                 {copy(
-                  "Sağlamlıq haqqında suallar verə, söhbətə sənədlər əlavə edə və hesab yarada bilərsiniz. Ailə tarixçəsi və nəticə qrafikləri gələcək məhsulun nümunəsidir.",
+                  "Sağlamlıqla bağlı suallar verə, tibbi sənədləri söhbətə göndərə, ailənizin sağlamlıq qeydlərini saxlaya bilərsiniz. Dərman kataloqunda isə dərmanların qiymətlərinə və tərkibində eyni təsiredici maddə olan digər preparatlara baxa bilərsiniz.",
                 )}
               </p>
             </details>
@@ -362,15 +304,17 @@ export default function HomePage() {
               <summary>{copy("azdoc həkimi əvəz edirmi?")}</summary>
               <p>
                 {copy(
-                  "Xeyr. azdoc məlumatları anlamağa kömək edən AI köməkçisidir. Diaqnoz və müalicə qərarları üçün həkimə müraciət edin.",
+                  "Xeyr. azdoc süni intellekt köməkçisidir və səhv edə bilər. Diaqnoz qoymur, müalicə təyin etmir. Dərman qəbuluna və ya müalicəyə dair qərarı həkiminizlə verin. Təcili tibbi yardım üçün 103-ə zəng edin.",
                 )}
               </p>
             </details>
             <details>
-              <summary>{copy("Ailə tarixçəsi artıq mövcuddur?")}</summary>
+              <summary>
+                {copy("Ailə üzvünün qeydlərini necə əlavə edim?")}
+              </summary>
               <p>
                 {copy(
-                  "Hələ yox. Yuxarıdakı ailə tarixçəsi interaktiv nümunədir. Bu imkanlar hazır olduqda ayrıca təqdim ediləcək.",
+                  'Hesabınıza daxil olub "Sağlamlıq qeydləri" bölməsini açın. Ailə üzvünü əlavə edin, sonra onun allergiyalarını, dərmanlarını və digər məlumatlarını qeyd edin. Mövcud qeydlərə baxmaq üçün siyahıdan həmin şəxsi seçin.',
                 )}
               </p>
             </details>
@@ -378,26 +322,24 @@ export default function HomePage() {
         </section>
         <section className="closing wrap">
           <div>
-            <div className="eyebrow">{copy("DAHA AYDIN BİR BAŞLANĞIC")}</div>
+            <div className="eyebrow">
+              {copy("QEYDİYYATSIZ SUAL VERƏ BİLƏRSİNİZ")}
+            </div>
             <h2>
-              {copy("Sağlamlığınıza")}
+              {copy("Nəyi öyrənmək")}
               <br />
-              {copy("bütöv baxın.")}
+              {copy("istəyirsiniz?")}
             </h2>
           </div>
-          <Link
-            className="button lime"
-            href={isAuthenticated ? "/chat" : "/register"}
-          >
-            {copy(isAuthenticated ? "Söhbətə davam et" : "Hesab yarat")}{" "}
-            <span>^</span>
+          <Link className="button lime" href="/chat">
+            {copy("Sual verin")} <span>^</span>
           </Link>
           <span className="closing-star">✳</span>
         </section>
       </main>
       <footer className="wrap">
         <BrandLogo />
-        <span>{copy("Sağlamlığınızın bütöv hekayəsi.")}</span>
+        <span>{copy("Sağlamlıq sualları və ailə qeydləri.")}</span>
         <div className="footer-links">
           <Link href="/blog">{copy("Bloq")}</Link>
           <Link href="/contact">{copy("Əlaqə")}</Link>
