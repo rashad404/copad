@@ -73,7 +73,7 @@ export default function ChatSidebar({
       <p className="public-history-note">
         {c(
           "One question is a good place to start.",
-          "Başlamaq üçün bir sual kifayətdir.",
+          "Əvvəlki söhbətə qayıda və ya yeni söhbət aça bilərsiniz.",
         )}
       </p>
     </>

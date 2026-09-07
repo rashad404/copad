@@ -13,7 +13,7 @@ export default function AboutPage() {
     <ProductLayout>
       <div className="public-container">
         <PageIntro
-          eyebrow={c("A clearer way forward", "İrəliyə daha aydın yol")}
+          eyebrow={c("A clearer way forward", "PLATFORMA HAQQINDA")}
           title={t("about.title")}
           description={t("about.introduction")}
         />
@@ -22,7 +22,7 @@ export default function AboutPage() {
           <p>
             {c(
               "Health questions deserve a thoughtful conversation.",
-              "Sağlamlıq sualları diqqətli söhbətə layiqdir.",
+              "Analiz cavabında başa düşmədiyiniz termin var? Soruşun.",
             )}
           </p>
           <Link href="/chat" className="public-button">

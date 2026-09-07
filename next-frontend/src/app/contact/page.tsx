@@ -36,7 +36,7 @@ export default function ContactPage() {
             <h2>{t("contact.medicalNote.title")}</h2>
             <p>{t("contact.medicalNote.description")}</p>
             <Link href="/chat" className="public-button">
-              {c("Ask AzDoc", "AzDoc-dan soruş")}
+              {c("Ask AzDoc", "Sual ver")}
               <ArrowUpRight size={18} />
             </Link>
             <Link href="/faq" className="public-text-link">

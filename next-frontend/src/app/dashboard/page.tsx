@@ -15,7 +15,7 @@ export default function DashboardPage() {
       <ProductLayout>
         <div className="public-container">
           <PageIntro
-            eyebrow={c("Your space", "Sizin məkanınız")}
+            eyebrow={c("Your space", "Hesabınız")}
             title={
               user?.name
                 ? c(
@@ -26,7 +26,7 @@ export default function DashboardPage() {
             }
             description={c(
               "What would you like to understand today?",
-              "Bu gün nəyi öyrənmək istərdiniz?",
+              "Söhbətlərinizə keçin və ya ailənizin sağlamlıq qeydlərinə baxın.",
             )}
           />
           <div className="public-dashboard-grid">
@@ -35,13 +35,13 @@ export default function DashboardPage() {
               <h2>
                 {c(
                   "Let's talk about how you feel.",
-                  "Özünüzü necə hiss etdiyinizdən danışaq.",
+                  "Sağlamlıqla bağlı sualınız var?",
                 )}
               </h2>
               <p>
                 {c(
                   "Ask a health question, discuss a concern, or bring a document into your conversation.",
-                  "Sağlamlıqla bağlı sual verin, narahatlığınızı bölüşün və ya söhbətə sənəd əlavə edin.",
+                  "Əlamətlər, analiz nəticələri və dərmanlar haqqında soruşun. Tibbi sənəd də əlavə edə bilərsiniz.",
                 )}
               </p>
               <Link href="/chat" className="public-button">
@@ -51,7 +51,7 @@ export default function DashboardPage() {
               <small>
                 {c(
                   "AI guidance does not replace professional medical care.",
-                  "Süni intellektin məlumatları peşəkar tibbi yardımı əvəz etmir.",
+                  "Cavabları süni intellekt hazırlayır. azdoc həkimi əvəz etmir.",
                 )}
               </small>
             </section>
@@ -87,7 +87,7 @@ export default function DashboardPage() {
                 <p>
                   {c(
                     "Members, clinical records, and measurements in one place.",
-                    "Ailə üzvləri, klinik qeydlər və ölçülər bir yerdə.",
+                    "Allergiyalar, dərmanlar, peyvəndlər və ölçülər.",
                   )}
                 </p>
               </div>
@@ -95,15 +95,15 @@ export default function DashboardPage() {
             </Link>
           </section>
           <section className="public-next-section">
-            <h2>{c("A little more clarity", "Bir az daha aydınlıq")}</h2>
+            <h2>{c("A little more clarity", "Faydalı məlumatlar")}</h2>
             <Link className="public-resource-row" href="/blog">
               <BookOpen />
               <div>
-                <h3>{c("Explore the journal", "Bloqu kəşf edin")}</h3>
+                <h3>{c("Explore the journal", "Sağlamlıq haqqında məqalələr")}</h3>
                 <p>
                   {c(
                     "Read articles and explore health topics at your own pace.",
-                    "Məqalələri oxuyun və sağlamlıq mövzularını öz tempinizdə araşdırın.",
+                    "Xəstəliklər və dərmanlar haqqında bloq yazılarını oxuyun.",
                   )}
                 </p>
               </div>
@@ -115,7 +115,7 @@ export default function DashboardPage() {
                 <h3>
                   {c(
                     "Understand your privacy",
-                    "Məxfiliyiniz barədə məlumat alın",
+                    "Məxfilik siyasəti",
                   )}
                 </h3>
                 <p>

@@ -42,7 +42,7 @@ export default function ProductLayout({
             <p>
               {c(
                 "A little clarity. A better next step.",
-                "Daha aydın məlumat. Daha düzgün növbəti addım.",
+                "Sağlamlıq sualları və ailə qeydləri.",
               )}
             </p>
           </div>

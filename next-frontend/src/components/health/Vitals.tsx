@@ -175,7 +175,7 @@ export function VitalForm({
         <p className={styles.helper}>
           {c(
             "Your value and chosen unit will be shown in the record.",
-            "Qeyddə daxil etdiyiniz dəyər və seçdiyiniz vahid göstəriləcək.",
+            "Nəticə yazdığınız rəqəm və seçdiyiniz ölçü vahidi ilə göstəriləcək.",
           )}
         </p>
         <div className={styles.formActions}>
@@ -261,7 +261,7 @@ function HistoryChart({
         </div>
         {units.length > 1 && (
           <label htmlFor={id + "unit"}>
-            {c("Show entered unit", "Daxil edilmiş vahid")}
+            {c("Show entered unit", "Ölçü vahidi")}
             <select
               id={id + "unit"}
               value={unit}
@@ -427,7 +427,7 @@ export default function Vitals({
           <p>
             {c(
               "Your measurements, with the units you entered.",
-              "Ölçüləriniz, daxil etdiyiniz vahidlərlə.",
+              "Ölçüləri qeyd edin və zamanla necə dəyişdiyinə baxın.",
             )}
           </p>
         </div>
@@ -454,7 +454,7 @@ export default function Vitals({
           </select>
         </label>
         <label htmlFor="trend-window">
-          {c("Trend window", "Tendensiya müddəti")}
+          {c("Trend window", "Müqayisə dövrü")}
           <select
             id="trend-window"
             value={windowDays}
@@ -504,7 +504,7 @@ export default function Vitals({
             <span>
               {c(
                 "A trend needs at least two readings in this period.",
-                "Tendensiya üçün bu müddətdə ən azı iki ölçü lazımdır.",
+                "Dəyişikliyi hesablamaq üçün seçilmiş dövrdə ən azı iki ölçü olmalıdır.",
               )}
             </span>
           )}

@@ -163,7 +163,7 @@ function FamilyWorkspace() {
         <p>
           {c(
             "A clear picture. One person at a time.",
-            "Aydın mənzərə. Hər insan üçün ayrıca.",
+            "Xəstəlikləri, allergiyaları, dərmanları və ölçüləri ailə üzvləri üzrə qeyd edin.",
           )}
         </p>
       </div>
@@ -177,7 +177,7 @@ function FamilyWorkspace() {
       )}
       {loading ? (
         <div className={styles.loading} role="status">
-          {c("Loading your family...", "Ailəniz yüklənir...")}
+          {c("Loading your family...", "Ailə üzvləri yüklənir...")}
         </div>
       ) : (
         !error && (
@@ -226,7 +226,7 @@ function FamilyWorkspace() {
                 <h2>
                   {c(
                     "Your family record starts here",
-                    "Ailənizin sağlamlıq qeydləri buradan başlayır",
+                    "Hələ ailə üzvü əlavə edilməyib",
                   )}
                 </h2>
                 <p>
@@ -305,7 +305,7 @@ function MemberRecord({
   const tabsRef = useRef<HTMLDivElement>(null);
   const fallback = c(
     "Could not load this part of the record. Please try again.",
-    "Qeydin bu hissəsini yükləmək mümkün olmadı. Yenidən cəhd edin.",
+    "Bu bölməni yükləmək mümkün olmadı. Yenidən cəhd edin.",
   );
   const conditions = useResource(
     `${member.id}.conditions.${version}`,
@@ -450,7 +450,7 @@ function MemberRecord({
         ref={tabsRef}
         className={styles.tabs}
         role="tablist"
-        aria-label={c("Member record sections", "Üzvün qeyd bölmələri")}
+        aria-label={c("Member record sections", "Sağlamlıq qeydinin bölmələri")}
         onKeyDown={(e) => {
           const index = tabs.findIndex((item) => item.key === tab);
           let next = index;
@@ -500,7 +500,7 @@ function MemberRecord({
           <>
             <div className={styles.sectionToolbar}>
               <div>
-                <h2>{c("The latest picture", "Son vəziyyət")}</h2>
+                <h2>{c("The latest picture", "Son göstəricilər")}</h2>
                 <p>
                   {c("Measurements and records for", "Ölçülər və qeydlər:")}{" "}
                   {member.fullName}.
@@ -556,7 +556,7 @@ function MemberRecord({
                 <p>
                   {c(
                     "New measurements will appear here with their recorded units and status.",
-                    "Yeni ölçülər daxil edilmiş vahidlər və statusla burada görünəcək.",
+                    "Ölçü əlavə etdikdən sonra nəticəsi və qiymətləndirilməsi burada görünəcək.",
                   )}
                 </p>
                 {write && (
@@ -607,7 +607,7 @@ function MemberRecord({
                 {member.gestationalAgeWeeks != null && (
                   <div>
                     <dt>
-                      {c("Gestational age at birth", "Doğumda hamiləlik yaşı")}
+                      {c("Gestational age at birth", "Doğuşun baş verdiyi həftə")}
                     </dt>
                     <dd>
                       {member.gestationalAgeWeeks} {c("weeks", "həftə")}
@@ -655,7 +655,7 @@ function MemberRecord({
                   {write
                     ? c(
                         "Manage recorded information",
-                        "Qeydə alınmış məlumatları idarə edin",
+                        "Qeyd əlavə edə, dəyişə və silə bilərsiniz",
                       )
                     : c("Read-only access", "Yalnız baxış hüququ")}
                 </p>
@@ -682,7 +682,7 @@ function MemberRecord({
                 <p>
                   {c(
                     "An empty record means no information has been added here.",
-                    "Boş qeyd burada məlumatın əlavə edilmədiyini bildirir.",
+                    "Bu bölməyə hələ məlumat əlavə edilməyib.",
                   )}
                 </p>
                 {write && (
@@ -849,7 +849,7 @@ function MemberRecord({
           onSaved={(saved) => {
             setEditingMember(false);
             onMemberSaved(saved);
-            setNotice(c("Member updated.", "Üzv yeniləndi."));
+            setNotice(c("Member updated.", "Ailə üzvünün məlumatları yeniləndi."));
           }}
         />
       )}
@@ -902,7 +902,7 @@ function AuditHistory({
           <p>
             {c(
               "Who changed the clinical record, and when.",
-              "Klinik qeydləri kim və nə vaxt dəyişib.",
+              "Qeydlərə edilmiş dəyişikliklər, tarix və dəyişiklik edən şəxs.",
             )}
           </p>
         </div>
@@ -921,7 +921,7 @@ function AuditHistory({
         <div className={styles.empty}>
           {c(
             "No clinical changes recorded yet.",
-            "Hələ klinik dəyişiklik qeydə alınmayıb.",
+            "Qeydlərdə hələ dəyişiklik edilməyib.",
           )}
         </div>
       ) : (
@@ -964,7 +964,7 @@ function Snapshot({ revision }: { revision: Revision }) {
   }
   return (
     <details className={styles.snapshot}>
-      <summary>{c("Recorded details", "Qeyd edilmiş təfərrüatlar")}</summary>
+      <summary>{c("Recorded details", "Dəyişikliyin təfərrüatları")}</summary>
       <dl>
         {Object.entries(snapshot)
           .filter(([, value]) => value !== null && typeof value !== "object")
