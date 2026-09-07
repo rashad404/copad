@@ -1,0 +1,1330 @@
+.azdoc-home {
+  --ink: #172a35;
+  --muted: #657076;
+  --paper: #fafaf6;
+  --blue: #214be2;
+  --lime: #dbed9c;
+}
+.azdoc-home * {
+  box-sizing: border-box;
+}
+.azdoc-home {
+  scroll-behavior: smooth;
+  scroll-padding-top: 30px;
+}
+.azdoc-home {
+  margin: 0;
+  background: var(--paper);
+  color: var(--ink);
+  font-family: "Manrope", Arial, sans-serif;
+  -webkit-font-smoothing: antialiased;
+}
+.azdoc-home a {
+  color: inherit;
+  text-decoration: none;
+}
+.azdoc-home button {
+  font: inherit;
+  cursor: pointer;
+}
+.azdoc-home button,
+.azdoc-home a,
+.azdoc-home summary {
+  -webkit-tap-highlight-color: transparent;
+}
+.azdoc-home button:focus-visible,
+.azdoc-home a:focus-visible,
+.azdoc-home summary:focus-visible {
+  outline: 3px solid #214be2;
+  outline-offset: 5px;
+}
+.azdoc-home button {
+  color: inherit;
+}
+.azdoc-home button,
+.azdoc-home a {
+  transition:
+    background 0.18s,
+    transform 0.18s;
+}
+.azdoc-home button:hover,
+.azdoc-home .button:hover {
+  transform: translateY(-2px);
+}
+.azdoc-home .wrap {
+  max-width: 1280px;
+  margin: 0 auto;
+  padding-left: 52px;
+  padding-right: 52px;
+}
+.azdoc-home .concept-banner {
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-align: center;
+  background: #e9eddf;
+  padding: 8px;
+  color: #4a5543;
+}
+.azdoc-home .concept-banner span {
+  margin: 0 10px;
+}
+.azdoc-home .header {
+  height: 100px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.azdoc-home .logo {
+  font-size: 37px;
+  font-weight: 800;
+  letter-spacing: -2px;
+}
+.azdoc-home .logo-dot {
+  color: var(--blue);
+}
+.azdoc-home .nav {
+  display: flex;
+  gap: 32px;
+  font-size: 13px;
+  font-weight: 600;
+}
+.azdoc-home .nav a:hover,
+.azdoc-home .text-link:hover {
+  color: var(--blue);
+}
+.azdoc-home .header-cta {
+  font-size: 12px;
+  border: 1px solid #cbd0c9;
+  padding: 13px 18px;
+  border-radius: 5px;
+  font-weight: 700;
+}
+.azdoc-home .header-cta span {
+  margin-left: 14px;
+}
+.azdoc-home .menu {
+  display: none;
+}
+.azdoc-home .hero {
+  display: grid;
+  grid-template-columns: 1fr 1.04fr;
+  gap: 32px;
+  align-items: center;
+  padding-top: 36px;
+  padding-bottom: 70px;
+}
+.azdoc-home .eyebrow {
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.14em;
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.azdoc-home .live-dot {
+  width: 7px;
+  height: 7px;
+  border-radius: 100%;
+  background: var(--blue);
+}
+.azdoc-home h1 {
+  font-size: clamp(60px, 6.3vw, 84px);
+  line-height: 1.04;
+  letter-spacing: -5px;
+  font-weight: 650;
+  margin: 29px 0 25px;
+}
+.azdoc-home h1 > span {
+  color: var(--blue);
+}
+.azdoc-home .hero-copy > p {
+  font-size: 15px;
+  line-height: 1.85;
+  max-width: 410px;
+  color: var(--muted);
+}
+.azdoc-home .hero-actions {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 29px;
+}
+.azdoc-home .button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+  border-radius: 5px;
+  padding: 18px 21px;
+  font-size: 12px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+.azdoc-home .blue {
+  background: var(--blue);
+  color: #fff;
+}
+.azdoc-home .button > span {
+  font-size: 18px;
+}
+.azdoc-home .text-link {
+  font-size: 11px;
+  font-weight: 700;
+  display: inline-flex;
+  align-items: center;
+  gap: 13px;
+}
+.azdoc-home .hero-foot {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-top: 42px;
+  font-size: 10px;
+  line-height: 1.9;
+  color: var(--muted);
+}
+.azdoc-home .hero-foot strong {
+  font-weight: 600;
+  color: var(--ink);
+}
+.azdoc-home .mini-mark {
+  font-size: 29px;
+  color: #8f9d79;
+}
+.azdoc-home .hero-stage {
+  position: relative;
+  min-height: 588px;
+  background: #edf0e5;
+  border-radius: 6px;
+  overflow: hidden;
+  padding: 25px 31px 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+.azdoc-home .stage-top,
+.azdoc-home .stage-bottom {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 8px;
+  letter-spacing: 0.15em;
+  font-weight: 700;
+  color: #627054;
+  z-index: 1;
+}
+.azdoc-home .stage-bottom {
+  margin-top: 22px;
+}
+.azdoc-home .stage-arrow {
+  font-size: 31px;
+  font-weight: 400;
+}
+.azdoc-home .orbit {
+  position: absolute;
+  width: 490px;
+  height: 490px;
+  border: 1px solid #d6debf;
+  border-radius: 50%;
+  pointer-events: none;
+}
+.azdoc-home .orbit-one {
+  left: 180px;
+  top: -200px;
+}
+.azdoc-home .orbit-two {
+  left: -190px;
+  top: 260px;
+}
+.azdoc-home .record-window {
+  position: relative;
+  background: #fff;
+  width: 100%;
+  max-width: 398px;
+  margin: 30px auto 0;
+  border: 1px solid #d9ddcf;
+  border-radius: 10px;
+  box-shadow: 0 22px 42px #23352a12;
+  z-index: 2;
+  transform: rotate(-2deg);
+}
+.azdoc-home .window-top {
+  height: 48px;
+  display: flex;
+  align-items: center;
+  padding: 0 20px;
+  border-bottom: 1px solid #f0f0eb;
+  gap: 12px;
+}
+.azdoc-home .small-logo {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -1px;
+  margin-right: auto;
+}
+.azdoc-home .small-logo > span {
+  color: var(--blue);
+}
+.azdoc-home .demo-label {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  color: #747c73;
+}
+.azdoc-home .profile {
+  width: 23px;
+  height: 23px;
+  display: grid;
+  place-items: center;
+  border-radius: 50%;
+  background: #eedac8;
+  font-size: 9px;
+  font-weight: 700;
+}
+.azdoc-home .record-body {
+  padding: 23px;
+}
+.azdoc-home .tiny {
+  font-size: 7px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+}
+.azdoc-home .muted {
+  color: var(--muted);
+}
+.azdoc-home .record-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.azdoc-home .record-heading h2 {
+  font-size: 24px;
+  letter-spacing: -0.9px;
+  margin: 3px 0 18px;
+}
+.azdoc-home .sun {
+  font-size: 43px;
+  color: #a8b48b;
+  line-height: 1;
+}
+.azdoc-home .member-tabs {
+  display: flex;
+  gap: 6px;
+  margin-bottom: 23px;
+}
+.azdoc-home .member-tabs button {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #e7e9e2;
+  background: white;
+  border-radius: 20px;
+  padding: 5px 10px 5px 5px;
+  font-size: 9px;
+}
+.azdoc-home .member-tabs button.selected {
+  background: #eef1fe;
+  border-color: #c9d3fc;
+  color: #2346c8;
+}
+.azdoc-home .avatar {
+  height: 21px;
+  width: 21px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 8px;
+  background: #ecdacb;
+}
+.azdoc-home .a1 {
+  background: #e9e0f3;
+}
+.azdoc-home .a2 {
+  background: #e4ebd4;
+}
+.azdoc-home .record-nav {
+  display: flex;
+  gap: 21px;
+  border-bottom: 1px solid #eceee9;
+  margin-bottom: 17px;
+}
+.azdoc-home .record-nav button {
+  border: 0;
+  background: none;
+  font-size: 9px;
+  padding: 0 0 11px;
+  color: var(--muted);
+}
+.azdoc-home .record-nav button.active {
+  color: var(--blue);
+  border-bottom: 2px solid var(--blue);
+  font-weight: 700;
+}
+.azdoc-home .result-title,
+.azdoc-home .result-title > div {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.azdoc-home .result-title {
+  justify-content: space-between;
+  font-size: 9px;
+}
+.azdoc-home .result-title > span {
+  font-size: 8px;
+  color: var(--muted);
+}
+.azdoc-home .file-icon {
+  color: #536292;
+  font-size: 19px;
+}
+.azdoc-home .result-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 16px 0 8px;
+}
+.azdoc-home .result-line > div > span {
+  font-size: 10px;
+  font-weight: 600;
+}
+.azdoc-home .result-line small {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  font-weight: 400;
+  margin-top: 3px;
+}
+.azdoc-home .result-line > strong {
+  font-size: 24px;
+  letter-spacing: -1px;
+}
+.azdoc-home .result-line > strong > small {
+  display: inline;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+.azdoc-home .mini-chart {
+  display: flex;
+  height: 96px;
+  margin-top: 10px;
+}
+.azdoc-home .chart-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  font-size: 7px;
+  color: #788078;
+  padding-bottom: 20px;
+  padding-right: 12px;
+}
+.azdoc-home .bars {
+  flex: 1;
+  display: flex;
+  justify-content: space-around;
+  background: repeating-linear-gradient(
+    to top,
+    transparent 0px,
+    transparent 31px,
+    #edf0e9 32px
+  );
+  align-items: flex-end;
+}
+.azdoc-home .bars > div {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 9px;
+  width: 13%;
+}
+.azdoc-home .bars span {
+  display: block;
+  width: 100%;
+  background: #d3dbfb;
+  border-radius: 3px 3px 0 0;
+}
+.azdoc-home .bars > div:last-child span {
+  background: #3159dc;
+}
+.azdoc-home .bars small {
+  font-size: 7px;
+  color: #738071;
+  background: #fff;
+  width: 100%;
+  text-align: center;
+}
+.azdoc-home .source-line {
+  display: flex;
+  gap: 5px;
+  align-items: center;
+  font-size: 7px;
+  color: #6c776e;
+  margin: 14px 0 16px;
+}
+.azdoc-home .source-line > span:last-child {
+  margin-left: auto;
+}
+.azdoc-home .source-dot {
+  width: 4px;
+  height: 4px;
+  background: #778769;
+  border-radius: 100%;
+}
+.azdoc-home .ask {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  background: #f0f2fd;
+  border-radius: 5px;
+  padding: 12px 10px;
+  font-size: 8px;
+  font-weight: 600;
+  color: #2446b9;
+}
+.azdoc-home .ask > span:first-child {
+  font-size: 17px;
+}
+.azdoc-home .ask > span:last-child {
+  margin-left: auto;
+}
+.azdoc-home .demo-answer {
+  font-size: 10px;
+  line-height: 1.7;
+  padding: 12px;
+  background: #f5f7fd;
+}
+.azdoc-home .floating-note {
+  position: absolute;
+  right: 12px;
+  bottom: 65px;
+  display: flex;
+  align-items: center;
+  gap: 11px;
+  background: var(--lime);
+  padding: 15px 19px;
+  border-radius: 5px;
+  box-shadow: 0 10px 25px #23352a10;
+  z-index: 3;
+  transform: rotate(3deg);
+}
+.azdoc-home .floating-note strong {
+  display: block;
+  font-size: 11px;
+}
+.azdoc-home .floating-note div > span {
+  font-size: 8px;
+  display: block;
+  margin-top: 4px;
+}
+.azdoc-home .note-icon {
+  border: 1px solid #839450;
+  border-radius: 50%;
+  height: 25px;
+  width: 25px;
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+}
+.azdoc-home .alternate {
+  min-height: 222px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 12px;
+  font-size: 12px;
+}
+.azdoc-home .alternate h3,
+.azdoc-home .alternate p {
+  margin: 0;
+}
+.azdoc-home .alternate small {
+  font-size: 9px;
+  color: var(--muted);
+}
+.azdoc-home .alternate button {
+  border: 0;
+  background: #f1f3fb;
+  text-align: left;
+  padding: 12px;
+  font-size: 10px;
+  color: var(--blue);
+}
+.azdoc-home .timeline p {
+  font-size: 10px;
+  padding-bottom: 13px;
+  border-bottom: 1px solid #eee;
+}
+.azdoc-home .timeline b {
+  display: block;
+  font-size: 8px;
+  color: var(--muted);
+  margin-bottom: 5px;
+}
+.azdoc-home .statement {
+  padding-top: 31px;
+  padding-bottom: 38px;
+  border-top: 1px solid #dde0d6;
+  border-bottom: 1px solid #dde0d6;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 30px;
+}
+.azdoc-home .section-number {
+  font-size: 9px;
+  letter-spacing: 0.13em;
+  color: #65705f;
+}
+.azdoc-home .statement p {
+  font-size: 20px;
+  line-height: 1.6;
+  letter-spacing: -0.5px;
+  color: #737c75;
+  margin: 0;
+}
+.azdoc-home .statement strong {
+  color: var(--ink);
+  font-weight: 600;
+}
+.azdoc-home .how {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 60px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+.azdoc-home h2 {
+  font-size: 43px;
+  line-height: 1.17;
+  letter-spacing: -1.8px;
+  font-weight: 600;
+  margin: 22px 0;
+}
+.azdoc-home .section-heading p,
+.azdoc-home .family-copy p,
+.azdoc-home .faq > div > p {
+  font-size: 13px;
+  line-height: 1.9;
+  color: var(--muted);
+  max-width: 340px;
+}
+.azdoc-home .steps article {
+  padding: 22px 0;
+  display: flex;
+  gap: 19px;
+  border-bottom: 1px solid #dfe2d8;
+}
+.azdoc-home .steps article:first-child {
+  padding-top: 0;
+}
+.azdoc-home .step-number {
+  font-size: 9px;
+  color: var(--blue);
+  padding-top: 7px;
+}
+.azdoc-home .steps h3 {
+  font-size: 17px;
+  margin: 0 0 8px;
+  letter-spacing: -0.3px;
+  font-weight: 650;
+}
+.azdoc-home .steps p {
+  font-size: 12px;
+  color: var(--muted);
+  line-height: 1.8;
+  max-width: 330px;
+  margin: 0;
+}
+.azdoc-home .step-symbol {
+  margin-left: auto;
+  font-size: 24px;
+  color: #7e8975;
+}
+.azdoc-home .family-section {
+  background: #edf0e6;
+}
+.azdoc-home .family-inner {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 80px;
+  padding-top: 70px;
+  padding-bottom: 70px;
+  align-items: center;
+}
+.azdoc-home .family-art {
+  position: relative;
+  min-height: 315px;
+}
+.azdoc-home .family-circle {
+  position: absolute;
+  border: 1px solid #afb9a0;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  font-size: 42px;
+  font-weight: 500;
+  width: 120px;
+  height: 120px;
+  background: #e5d6c7;
+  box-shadow:
+    0 0 0 15px #edf0e6,
+    0 0 0 16px #d2dac4;
+}
+.azdoc-home .family-circle > span {
+  position: absolute;
+  bottom: -27px;
+  font-size: 10px;
+  background: #fff;
+  padding: 7px 13px;
+  border-radius: 4px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.azdoc-home .c1 {
+  left: 11%;
+  top: 16px;
+}
+.azdoc-home .c2 {
+  right: 13%;
+  top: 50px;
+  background: #dcd4eb;
+  width: 100px;
+  height: 100px;
+}
+.azdoc-home .c3 {
+  left: 37%;
+  top: 183px;
+  width: 90px;
+  height: 90px;
+  background: #d2dfb6;
+  font-size: 30px;
+}
+.azdoc-home .family-caption {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  font-size: 7px;
+  letter-spacing: 0.17em;
+  color: #6b765d;
+}
+.azdoc-home .family-copy .text-link {
+  margin-top: 18px;
+}
+.azdoc-home .faq {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 50px;
+  padding-top: 100px;
+  padding-bottom: 100px;
+}
+.azdoc-home .faq h2 {
+  font-size: 36px;
+}
+.azdoc-home .faq-items details {
+  border-bottom: 1px solid #dce0d5;
+  padding: 21px 0;
+}
+.azdoc-home .faq-items summary {
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  list-style: none;
+  display: flex;
+  justify-content: space-between;
+  gap: 20px;
+}
+.azdoc-home .faq-items summary::after {
+  content: "+";
+  font-size: 18px;
+  color: #73805d;
+}
+.azdoc-home .faq-items details[open] summary::after {
+  content: "−";
+}
+.azdoc-home .faq-items p {
+  font-size: 12px;
+  line-height: 1.85;
+  color: var(--muted);
+}
+.azdoc-home .closing {
+  position: relative;
+  margin-bottom: 55px;
+  background: #2445b6;
+  color: #fff;
+  padding-top: 53px;
+  padding-bottom: 53px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  overflow: hidden;
+  border-radius: 5px;
+}
+.azdoc-home .closing h2 {
+  font-size: 49px;
+  margin: 20px 0 0;
+  position: relative;
+  z-index: 1;
+}
+.azdoc-home .closing .eyebrow {
+  font-size: 8px;
+  color: #d0d9ff;
+}
+.azdoc-home .lime {
+  background: var(--lime);
+  color: var(--ink);
+  position: relative;
+  z-index: 1;
+  margin-right: 55px;
+}
+.azdoc-home .closing-star {
+  position: absolute;
+  font-size: 270px;
+  line-height: 1;
+  right: 0;
+  top: 4px;
+  color: #4965c3;
+  font-weight: 400;
+  pointer-events: none;
+}
+.azdoc-home footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 40px;
+  gap: 20px;
+}
+.azdoc-home footer .logo {
+  font-size: 30px;
+}
+.azdoc-home footer > span {
+  font-size: 10px;
+  color: var(--muted);
+}
+@media (min-width: 1450px) {
+  .azdoc-home .hero {
+    padding-top: 55px;
+    padding-bottom: 80px;
+  }
+  .azdoc-home .hero-stage {
+    min-height: 620px;
+  }
+  .azdoc-home .record-window {
+    max-width: 410px;
+  }
+}
+@media (max-width: 1000px) {
+  .azdoc-home .wrap {
+    padding-left: 28px;
+    padding-right: 28px;
+  }
+  .azdoc-home .hero {
+    gap: 24px;
+  }
+  .azdoc-home h1 {
+    font-size: 66px;
+    letter-spacing: -4px;
+  }
+  .azdoc-home .hero-actions {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 18px;
+  }
+  .azdoc-home .hero-stage {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+  .azdoc-home .record-body {
+    padding: 19px;
+  }
+  .azdoc-home .floating-note {
+    right: 5px;
+  }
+  .azdoc-home .statement p {
+    font-size: 17px;
+  }
+  .azdoc-home .family-inner {
+    gap: 35px;
+  }
+  .azdoc-home .family-circle.c2 {
+    right: 4%;
+  }
+  .azdoc-home .closing {
+    margin-left: 28px;
+    margin-right: 28px;
+  }
+  .azdoc-home .lime {
+    margin-right: 15px;
+  }
+}
+@media (max-width: 720px) {
+  .azdoc-home .wrap {
+    padding-left: 22px;
+    padding-right: 22px;
+  }
+  .azdoc-home .header {
+    height: 80px;
+  }
+  .azdoc-home .logo {
+    font-size: 32px;
+  }
+  .azdoc-home .header-cta {
+    margin-left: auto;
+    margin-right: 18px;
+    padding: 11px 13px;
+    font-size: 10px;
+  }
+  .azdoc-home .menu {
+    display: block;
+    border: 0;
+    background: none;
+    font-size: 21px;
+  }
+  .azdoc-home .nav {
+    display: none;
+  }
+  .azdoc-home .nav.open {
+    display: flex;
+    position: absolute;
+    top: 105px;
+    left: 22px;
+    right: 22px;
+    background: #fff;
+    z-index: 10;
+    padding: 22px;
+    box-shadow: 0 10px 20px #172a3512;
+    flex-direction: column;
+    gap: 22px;
+  }
+  .azdoc-home .hero {
+    grid-template-columns: 1fr;
+    padding-top: 24px;
+    gap: 40px;
+    padding-bottom: 40px;
+  }
+  .azdoc-home .eyebrow {
+    font-size: 8px;
+  }
+  .azdoc-home h1 {
+    font-size: 68px;
+    margin-top: 24px;
+    letter-spacing: -4px;
+  }
+  .azdoc-home .hero-copy > p {
+    font-size: 14px;
+    max-width: 360px;
+  }
+  .azdoc-home .hero-actions {
+    flex-direction: row;
+    align-items: center;
+    gap: 17px;
+    flex-wrap: wrap;
+  }
+  .azdoc-home .button {
+    padding: 17px;
+    font-size: 10px;
+    gap: 20px;
+  }
+  .azdoc-home .hero-foot {
+    margin-top: 27px;
+  }
+  .azdoc-home .hero-stage {
+    min-height: 570px;
+    max-width: 500px;
+    width: 100%;
+    margin: auto;
+    padding: 20px;
+  }
+  .azdoc-home .record-window {
+    max-width: 345px;
+    margin-top: 24px;
+  }
+  .azdoc-home .record-body {
+    padding: 20px;
+  }
+  .azdoc-home .floating-note {
+    bottom: 52px;
+    right: 8px;
+  }
+  .azdoc-home .statement {
+    align-items: flex-start;
+    flex-direction: column;
+    gap: 20px;
+    margin: 0 22px;
+    padding: 26px 0;
+  }
+  .azdoc-home .statement p {
+    font-size: 16px;
+  }
+  .azdoc-home .how {
+    grid-template-columns: 1fr;
+    padding-top: 60px;
+    padding-bottom: 60px;
+    gap: 32px;
+  }
+  .azdoc-home h2 {
+    font-size: 37px;
+  }
+  .azdoc-home .section-heading p {
+    max-width: 100%;
+  }
+  .azdoc-home .family-inner {
+    grid-template-columns: 1fr;
+    gap: 30px;
+    padding-top: 44px;
+    padding-bottom: 50px;
+  }
+  .azdoc-home .family-art {
+    max-width: 370px;
+    width: 100%;
+    margin: auto;
+    order: 2;
+    min-height: 330px;
+  }
+  .azdoc-home .family-copy {
+    order: 1;
+  }
+  .azdoc-home .family-copy p {
+    max-width: 100%;
+  }
+  .azdoc-home .family-circle.c2 {
+    right: 13%;
+  }
+  .azdoc-home .faq {
+    grid-template-columns: 1fr;
+    gap: 18px;
+    padding-top: 60px;
+    padding-bottom: 60px;
+  }
+  .azdoc-home .faq h2 {
+    font-size: 33px;
+  }
+  .azdoc-home .closing {
+    margin: 0 22px 35px;
+    padding: 34px 25px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 30px;
+  }
+  .azdoc-home .closing h2 {
+    font-size: 42px;
+  }
+  .azdoc-home .closing-star {
+    right: -45px;
+    top: 60px;
+    font-size: 280px;
+  }
+  .azdoc-home .closing .button {
+    margin: 0;
+  }
+  .azdoc-home footer {
+    flex-wrap: wrap;
+    padding-bottom: 28px;
+    gap: 14px;
+  }
+  .azdoc-home footer > span:last-child {
+    width: 100%;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .azdoc-home {
+    scroll-behavior: auto;
+  }
+  .azdoc-home * {
+    transition: none !important;
+  }
+  .azdoc-home button:hover,
+  .azdoc-home .button:hover {
+    transform: none;
+  }
+}
+
+/* Homepage-only integration; shared layouts and the chat retain their styles. */
+.azdoc-home {
+  font-family: var(--font-home), Arial, sans-serif;
+  color-scheme: light;
+  min-height: 100vh;
+  overflow-x: clip;
+}
+.azdoc-home .skip-link {
+  position: absolute;
+  inset-inline-start: 20px;
+  top: -100px;
+  z-index: 100;
+  background: white;
+  padding: 14px;
+  border: 2px solid var(--blue);
+}
+.azdoc-home .skip-link:focus {
+  top: 10px;
+}
+.azdoc-home .header {
+  position: relative;
+  z-index: 20;
+}
+.azdoc-home .header-actions {
+  display: flex;
+  align-items: center;
+  gap: 18px;
+}
+.azdoc-home .header-actions .relative.w-26 {
+  width: 84px;
+}
+.azdoc-home .header-actions .relative.w-26 button {
+  background: transparent;
+  color: var(--ink);
+  box-shadow: none;
+}
+.azdoc-home .header-actions .relative.w-26 button span {
+  color: var(--ink);
+}
+.azdoc-home .header-actions [role="listbox"] {
+  background: white;
+  color: var(--ink);
+  min-width: 105px;
+}
+.azdoc-home .header-actions [role="option"] {
+  color: var(--ink);
+}
+.azdoc-home .header-actions [role="option"][data-focus] {
+  background: #edf0ff;
+}
+.azdoc-home .header-cta {
+  margin: 0;
+}
+.azdoc-home .login-link {
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+}
+.azdoc-home .hero-copy > p {
+  font-size: 16px;
+}
+.azdoc-home .hero-stage {
+  min-height: 650px;
+}
+.azdoc-home .preview-caption {
+  position: relative;
+  z-index: 4;
+  max-width: 360px;
+  margin: 20px auto 0;
+  font-size: 11px;
+  line-height: 1.6;
+  color: #465242;
+  text-align: center;
+}
+.azdoc-home .floating-note {
+  bottom: 118px;
+  pointer-events: none;
+}
+.azdoc-home .stage-bottom {
+  margin-top: 12px;
+}
+.azdoc-home .member-tabs button {
+  min-height: 36px;
+  min-width: 65px;
+  font-size: 11px;
+}
+.azdoc-home .record-nav button {
+  min-height: 34px;
+  font-size: 11px;
+}
+.azdoc-home .ask {
+  min-height: 44px;
+  font-size: 10px;
+}
+.azdoc-home .result-title {
+  font-size: 11px;
+}
+.azdoc-home .result-line > div > span {
+  font-size: 12px;
+}
+.azdoc-home .source-line,
+.azdoc-home .result-line small {
+  font-size: 10px;
+}
+.azdoc-home .alternate {
+  min-height: 235px;
+}
+.azdoc-home .source-line {
+  gap: 6px;
+}
+.azdoc-home .record-window {
+  transform: rotate(-1.2deg);
+}
+.azdoc-home .member-tabs,
+.azdoc-home .record-nav {
+  flex-wrap: wrap;
+}
+.azdoc-home .footer-links {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 16px;
+  font-size: 11px;
+  color: var(--muted);
+}
+.azdoc-home .section-heading p,
+.azdoc-home .family-copy p,
+.azdoc-home .faq > div > p {
+  font-size: 15px;
+}
+.azdoc-home .steps p,
+.azdoc-home .faq-items p {
+  font-size: 14px;
+}
+.azdoc-home .faq-items summary {
+  font-size: 14px;
+  min-height: 30px;
+}
+.azdoc-home button {
+  touch-action: manipulation;
+}
+.azdoc-home [id] {
+  scroll-margin-top: 24px;
+}
+@media (max-width: 1050px) {
+  .azdoc-home .nav {
+    gap: 16px;
+  }
+  .azdoc-home .header-actions {
+    gap: 10px;
+  }
+  .azdoc-home .hero-actions {
+    flex-wrap: wrap;
+  }
+  .azdoc-home .hero-stage {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
+@media (max-width: 800px) {
+  .azdoc-home .header .nav {
+    display: none;
+  }
+  .azdoc-home .header .nav.open {
+    display: flex;
+    position: absolute;
+    top: 80px;
+    left: 22px;
+    right: 22px;
+    flex-direction: column;
+    gap: 20px;
+    padding: 24px;
+    background: white;
+    box-shadow: 0 15px 25px #172a3512;
+  }
+  .azdoc-home .menu {
+    display: block;
+    min-height: 44px;
+    min-width: 44px;
+    border: 0;
+    background: none;
+    font-size: 21px;
+  }
+  .azdoc-home .header-actions {
+    margin-inline-start: auto;
+  }
+  .azdoc-home .header-cta {
+    font-size: 11px;
+  }
+  .azdoc-home .login-link {
+    font-size: 11px;
+  }
+}
+@media (max-width: 720px) {
+  .azdoc-home .hero-stage {
+    min-height: 660px;
+  }
+  .azdoc-home .record-window {
+    max-width: 380px;
+  }
+  .azdoc-home .floating-note {
+    bottom: 126px;
+  }
+  .azdoc-home .header-actions {
+    gap: 7px;
+  }
+  .azdoc-home .header-actions .relative.w-26 {
+    width: 73px;
+  }
+  .azdoc-home .header-cta {
+    padding: 11px;
+  }
+  .azdoc-home .header-cta span {
+    display: none;
+  }
+  .azdoc-home .hero h1 {
+    font-size: clamp(46px, 12vw, 68px);
+    letter-spacing: -2.8px;
+  }
+  .azdoc-home .hero-actions {
+    gap: 18px;
+  }
+  .azdoc-home .button {
+    font-size: 12px;
+  }
+  .azdoc-home .login-link {
+    display: none;
+  }
+  .azdoc-home footer {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+  .azdoc-home .footer-links {
+    gap: 14px;
+  }
+  .azdoc-home .record-body {
+    padding: 17px;
+  }
+  .azdoc-home .record-window h2 {
+    font-size: 24px;
+  }
+  .azdoc-home .hero-stage {
+    padding-left: 14px;
+    padding-right: 14px;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .azdoc-home * {
+    scroll-behavior: auto !important;
+  }
+}
+.azdoc-home .mobile-account {
+  display: none;
+}
+.azdoc-home .hero > * {
+  min-width: 0;
+}
+.azdoc-home:lang(en) .hero h1 {
+  font-size: clamp(48px, 5.3vw, 72px);
+  letter-spacing: -3px;
+}
+.azdoc-home .bars {
+  height: 96px;
+  background: repeating-linear-gradient(
+    to bottom,
+    #edf0e9 0px,
+    #edf0e9 1px,
+    transparent 1px,
+    transparent 38px
+  );
+}
+.azdoc-home .bars > div {
+  gap: 0;
+}
+.azdoc-home .bars small {
+  height: 20px;
+  line-height: 20px;
+}
+@media (max-width: 800px) {
+  .azdoc-home .nav.open .mobile-account {
+    display: block;
+  }
+}
+@media (max-width: 720px) {
+  .azdoc-home:lang(en) .hero h1 {
+    font-size: clamp(40px, 10.4vw, 66px);
+    letter-spacing: -2px;
+  }
+}

@@ -20,7 +20,6 @@ export function middleware(request: NextRequest) {
     '/dashboard',
     '/appointments',
     '/profile',
-    '/chat',
   ];
   
   // Admin routes need special handling
@@ -30,6 +29,7 @@ export function middleware(request: NextRequest) {
 
   // Public routes that should bypass auth checks
   const publicRoutes = [
+    '/chat', // Guest chat previously served on the public homepage.
     '/',
     '/login',
     '/register',
