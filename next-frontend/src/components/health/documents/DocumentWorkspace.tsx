@@ -673,7 +673,6 @@ function DeleteDocument({
   onDeleted: () => void;
 }) {
   const c = usePublicCopy();
-  const { p: privacyCopy } = usePrivacyCopy();
   const controller = useRef<AbortController | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");
