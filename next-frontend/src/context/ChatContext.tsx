@@ -2,6 +2,8 @@
 
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
 import { track } from '@/utils/analytics';
+import { isAxiosError } from 'axios';
+import { resolveGuestSession } from '@/utils/resolveGuestSession';
 import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
 import { useTranslation } from 'react-i18next';
@@ -173,6 +175,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   // Create new chat
   const createNewChat = async () => {
     if (!sessionIdRef.current) return null;
+    setError(null);
     try {
       const response = await createGuestChat(sessionIdRef.current, 'New Chat');
       const newChatId = response?.data?.chatId || `temp-${Date.now()}`;
@@ -245,6 +248,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
   // Send message
   const sendMessage = async (chatId: string | null, message: string, additionalFileIds?: string[], additionalFiles?: FileAttachment[]) => {
     if (!sessionIdRef.current || !chatId) throw new Error('Session or chat missing');
+    setError(null);
     try {
       // Get file IDs from uploaded files and additional file IDs
       const uploadedFileIds = uploadedFiles.map(file => file.fileId);
@@ -307,54 +311,28 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       setIsInitializing(true);
       isInitializingRef.current = true;
       try {
-        // Check if we already have a session ID in state or localStorage
-        const existingSid = sessionId || getGuestSessionId();
-        let sid: string;
-        let isNewSession = false;
+        setError(null);
+        const resolved = await resolveGuestSession(sessionId || getGuestSessionId(), {
+          load: getGuestSession,
+          start: async () => {
+            const response = await startGuestSession();
+            return response.data?.sessionId;
+          },
+          persist: setGuestSessionId,
+          isMissing: error => isAxiosError(error) && error.response?.status === 404,
+        });
+        const sid = resolved.sessionId;
+        setSessionId(sid);
+        sessionIdRef.current = sid;
+        if (resolved.isNew) track('guest_session_started');
 
-        if (existingSid) {
-          sid = existingSid;
+        const loadedChats = resolved.data ? processSessionData(resolved.data) : [];
+        setChats(loadedChats);
+        if (loadedChats.length > 0) {
+          setSelectedChatId(loadedChats[0].id);
         } else {
-          const response = await startGuestSession();
-          sid = response.data?.sessionId;
-          if (!sid) {
-            throw new Error('Guest session could not be created');
-          }
-          setGuestSessionId(sid);
-          isNewSession = true;
-          track('guest_session_started');
-        }
-
-        // Only update if state doesn't already have the session ID
-        if (!sessionIdRef.current) {
-          setSessionId(sid);
-          sessionIdRef.current = sid;
-        }
-
-        if (isNewSession) {
-          // No need to fetch session, just create initial chat
           const newChatId = await createInitialChat(sid);
           setSelectedChatId(newChatId);
-        } else if (chats.length === 0) {
-          // Only fetch session details if we don't already have chats loaded
-          try {
-            const sessionResponse = await getGuestSession(sid);
-            const loadedChats = processSessionData(sessionResponse);
-            setChats(loadedChats);
-            
-            if (loadedChats.length > 0) {
-              setSelectedChatId(loadedChats[0].id);
-            } else {
-              const newChatId = await createInitialChat(sid);
-              setSelectedChatId(newChatId);
-            }
-          } catch (sessionErr) {
-            const reason = sessionErr instanceof Error ? sessionErr.message : String(sessionErr);
-            console.log('Failed to load existing session, creating a new one:', reason);
-            // If we can't fetch the session, create a new chat as a fallback
-            const newChatId = await createInitialChat(sid);
-            setSelectedChatId(newChatId);
-          }
         }
       } catch (err) {
         console.error('Chat initialization error:', err);
