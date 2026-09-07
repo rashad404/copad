@@ -107,7 +107,13 @@ public class SecurityConfig {
         configuration.setAllowedOrigins(allowedDomains);
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
-        configuration.setExposedHeaders(List.of("Authorization"));
+        // A cross-origin caller cannot read a response header unless it is
+        // named here. The web app is same-origin so it sees these anyway, but
+        // the mobile app is not, and the emergency notice failing silently
+        // there is exactly the failure this header exists to prevent.
+        configuration.setExposedHeaders(List.of(
+                "Authorization", "X-Urgent", "X-Urgent-Categories",
+                "X-Emergency-Number", "X-Request-Id", "Retry-After"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
