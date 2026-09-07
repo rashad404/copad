@@ -42,6 +42,7 @@ export default function SiteHeader() {
     ["/#questions", "Suallar"],
   ];
   const accountLinks = [
+    ["/health-record", "Sağlamlıq qeydləri"],
     ["/dashboard", "Hesabım"],
     ["/profile", "Profilim"],
   ];

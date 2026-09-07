@@ -210,6 +210,26 @@ public class ClinicalRecordService {
     }
 
     @Transactional
+    public Immunization updateImmunization(Long memberId, Long id, Long userId, Immunization changes) {
+        FamilyMember member = familyService.requireMemberAccess(memberId, userId, true);
+        Immunization existing = immunizationRepository.findByIdAndDeletedAtIsNull(id)
+                .orElseThrow(() -> new IllegalArgumentException("Immunization not found"));
+        if (!memberId.equals(existing.getFamilyMember().getId())) {
+            throw new IllegalArgumentException("Immunization not found for this member");
+        }
+        existing.setVaccine(changes.getVaccine());
+        existing.setDoseNumber(changes.getDoseNumber());
+        existing.setAdministeredOn(changes.getAdministeredOn());
+        existing.setProvider(changes.getProvider());
+        existing.setLotNumber(changes.getLotNumber());
+        existing.setNextDueOn(changes.getNextDueOn());
+        existing.setNotes(changes.getNotes());
+        Immunization saved = immunizationRepository.save(existing);
+        audit(member, "IMMUNIZATION", saved.getId(), RecordAction.UPDATED, userId, saved);
+        return saved;
+    }
+
+    @Transactional
     public void deleteImmunization(Long id, Long userId) {
         Immunization existing = immunizationRepository.findByIdAndDeletedAtIsNull(id)
                 .orElseThrow(() -> new IllegalArgumentException("Immunization not found"));

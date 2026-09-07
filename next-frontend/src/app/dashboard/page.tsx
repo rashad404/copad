@@ -75,6 +75,26 @@ export default function DashboardPage() {
             </aside>
           </div>
           <section className="public-next-section">
+            <Link className="public-resource-row" href="/health-record">
+              <UserRound />
+              <div>
+                <h3>
+                  {c(
+                    "Your family’s health record",
+                    "Ailənizin sağlamlıq qeydləri",
+                  )}
+                </h3>
+                <p>
+                  {c(
+                    "Members, clinical records, and measurements in one place.",
+                    "Ailə üzvləri, klinik qeydlər və ölçülər bir yerdə.",
+                  )}
+                </p>
+              </div>
+              <ArrowUpRight />
+            </Link>
+          </section>
+          <section className="public-next-section">
             <h2>{c("A little more clarity", "Bir az daha aydınlıq")}</h2>
             <Link className="public-resource-row" href="/blog">
               <BookOpen />
