@@ -18,5 +18,9 @@ public interface LabResultRepository extends JpaRepository<LabResult, Long> {
 
     List<LabResult> findByFamilyMemberIdAndConfirmedFalseAndDeletedAtIsNull(Long memberId);
 
+    /** Accepted by a person, which is the only kind the assistant may see. */
+    List<LabResult> findByFamilyMemberIdAndConfirmedTrueAndDeletedAtIsNullOrderByCollectedAtDesc(
+            Long memberId);
+
     Optional<LabResult> findByIdAndDeletedAtIsNull(Long id);
 }

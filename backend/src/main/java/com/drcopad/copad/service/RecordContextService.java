@@ -1,13 +1,17 @@
 package com.drcopad.copad.service;
 
 import com.drcopad.copad.entity.*;
+import com.drcopad.copad.repository.LabResultRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
+import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Turns a member's record into the context block the assistant sees.
@@ -36,11 +40,13 @@ public class RecordContextService {
     private static final int MAX_CONDITIONS = 10;
     private static final int MAX_MEDICATIONS = 15;
     private static final int MAX_VITALS = 8;
+    private static final int MAX_LAB_RESULTS = 12;
     private static final int TREND_WINDOW_DAYS = 180;
 
     private final FamilyService familyService;
     private final ClinicalRecordService records;
     private final VitalService vitals;
+    private final LabResultRepository labResults;
 
     /**
      * @param prompt      the block appended to the system prompt, empty when there
@@ -204,6 +210,57 @@ public class RecordContextService {
                   .append(" ").append(t.unit())
                   .append(" across ").append(t.readings()).append(" readings\n");
             }
+        }
+
+        // Lab values. Until now a person could upload a report, have it read and
+        // accept the values, then ask what their blood test showed and be
+        // answered by a model that had never seen it.
+        //
+        // Confirmed only, for the same reason medications are: an extracted
+        // number is a proposal, and a wrong lab value reasoned over as fact is
+        // worse than no lab value at all.
+        var labs = labResults
+                .findByFamilyMemberIdAndConfirmedTrueAndDeletedAtIsNullOrderByCollectedAtDesc(memberId);
+        if (!labs.isEmpty()) {
+            // One row per analyte, the most recent, abnormal ones first: a
+            // normal result rarely changes an answer and an abnormal one often
+            // does, so the cap must not spend itself on normals.
+            Map<String, LabResult> latestByAnalyte = new LinkedHashMap<>();
+            for (LabResult r : labs) {
+                latestByAnalyte.putIfAbsent(r.getAnalyteKey(), r);
+            }
+            List<LabResult> shown = latestByAnalyte.values().stream()
+                    .sorted(Comparator.comparing(
+                            (LabResult r) -> r.getAbnormalFlag() != null
+                                    && r.getAbnormalFlag().isAbnormal() ? 0 : 1))
+                    .limit(MAX_LAB_RESULTS)
+                    .toList();
+
+            sb.append("\nLAB RESULTS (most recent per test):\n");
+            for (LabResult r : shown) {
+                sb.append("- ").append(r.getAnalyte()).append(": ").append(r.getDisplayValue());
+                if (r.getReferenceLabel() != null) {
+                    sb.append(" (reference ").append(r.getReferenceLabel()).append(")");
+                }
+                if (r.getAbnormalFlag() != null && r.getAbnormalFlag().isAbnormal()) {
+                    sb.append(" [").append(r.getAbnormalFlag()).append("]");
+                }
+                if (r.getCollectedAt() != null) {
+                    sb.append(" - ").append(r.getCollectedAt().toLocalDate());
+                }
+                sb.append("\n");
+            }
+            // The reference range on the report is the laboratory's own, and
+            // ranges differ by lab and method. Saying so stops the model
+            // recomputing a verdict against a range it invented.
+            sb.append("Reference ranges are the laboratory's own, as printed on the report.\n");
+
+            long abnormal = shown.stream().filter(r -> r.getAbnormalFlag() != null
+                    && r.getAbnormalFlag().isAbnormal()).count();
+            summary.append(summary.isEmpty() ? "" : ", ")
+                   .append(shown.size()).append(" lab result")
+                   .append(shown.size() == 1 ? "" : "s")
+                   .append(abnormal > 0 ? " (" + abnormal + " abnormal)" : "");
         }
 
         // Repeated at the end because the constraint has to survive a long
