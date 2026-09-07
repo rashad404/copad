@@ -36,27 +36,6 @@
   justify-content: space-between;
   gap: 28px;
 }
-.brand {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
-  font-size: 37px;
-  font-weight: 800;
-  letter-spacing: -2px;
-  white-space: nowrap;
-  color: #172a35 !important;
-}
-.brandMark {
-  /* Sized to the wordmark's cap height and centred by the flex row on .brand,
-     rather than baseline-aligned, which left it riding above the text. */
-  display: block;
-  width: 0.78em;
-  height: 0.78em;
-  flex-shrink: 0;
-  /* The wordmark has no descenders, so its optical centre sits below the line
-     box centre; nudging the mark down aligns them to the eye. */
-  transform: translateY(0.12em);
-}
 .desktopNav {
   display: flex;
   gap: 32px;
@@ -183,9 +162,6 @@
     padding: 0 22px;
     gap: 12px;
   }
-  .brand {
-    font-size: 32px;
-  }
   .desktopNav,
   .login,
   .account {
@@ -242,9 +218,6 @@
   .inner {
     padding: 0 16px;
     gap: 8px;
-  }
-  .brand {
-    font-size: 29px;
   }
   .actions {
     gap: 3px;

@@ -1,0 +1,39 @@
+.brand {
+  display: inline-flex;
+  line-height: 1.5;
+  text-decoration: none;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 4px;
+  font-size: 37px;
+  font-weight: 800;
+  letter-spacing: -2px;
+  white-space: nowrap;
+  color: #172a35 !important;
+}
+.brandMark {
+  /* Sized to the wordmark's cap height and centred by the flex row on .brand,
+     rather than baseline-aligned, which left it riding above the text. */
+  display: block;
+  width: 0.78em;
+  height: 0.78em;
+  flex-shrink: 0;
+  /* The wordmark has no descenders, so its optical centre sits below the line
+     box centre; nudging the mark down aligns them to the eye. */
+  transform: translateY(0.12em);
+}
+
+.brand:focus-visible {
+  outline: 3px solid #214be2;
+  outline-offset: 4px;
+}
+@media (max-width: 1000px) {
+  .brand {
+    font-size: 32px;
+  }
+}
+@media (max-width: 390px) {
+  .brand {
+    font-size: 29px;
+  }
+}

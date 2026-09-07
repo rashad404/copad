@@ -74,14 +74,6 @@
   align-items: center;
   justify-content: space-between;
 }
-.azdoc-home .logo {
-  font-size: 37px;
-  font-weight: 800;
-  letter-spacing: -2px;
-}
-.azdoc-home .logo-dot {
-  color: var(--blue);
-}
 .azdoc-home .nav {
   display: flex;
   gap: 32px;
@@ -795,9 +787,6 @@
   padding-bottom: 40px;
   gap: 20px;
 }
-.azdoc-home footer .logo {
-  font-size: 30px;
-}
 .azdoc-home footer > span {
   font-size: 10px;
   color: var(--muted);
@@ -865,9 +854,6 @@
   }
   .azdoc-home .header {
     height: 80px;
-  }
-  .azdoc-home .logo {
-    font-size: 32px;
   }
   .azdoc-home .header-cta {
     margin-left: auto;

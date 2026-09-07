@@ -5,7 +5,7 @@ import { Manrope } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import { useAuth } from "@/context/AuthContext";
-import { useSiteContext } from "@/context/SiteContext";
+import BrandLogo from "@/components/brand/BrandLogo";
 import "./public.css";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--public-font" });
@@ -22,9 +22,6 @@ export default function ProductLayout({
   children: React.ReactNode;
   viewport?: boolean;
 }) {
-  const { WEBSITE_NAME } = useSiteContext();
-  const brand =
-    WEBSITE_NAME === "Localhost" ? "azdoc" : WEBSITE_NAME.toLowerCase();
   const c = usePublicCopy();
   const { isAuthenticated, logout } = useAuth();
   return (
@@ -41,10 +38,7 @@ export default function ProductLayout({
       {!viewport && (
         <footer className="public-footer">
           <div>
-            <Link href="/" className="public-footer-brand">
-              {brand}
-              <span className="public-brand-dot">-</span>
-            </Link>
+            <BrandLogo />
             <p>
               {c(
                 "A little clarity. A better next step.",

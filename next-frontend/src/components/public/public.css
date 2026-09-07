@@ -188,11 +188,6 @@
   align-items: center;
   gap: 32px;
 }
-.public-footer-brand {
-  font-size: 26px;
-  font-weight: 800;
-  letter-spacing: -1px;
-}
 .public-footer p {
   font-size: 12px;
   color: var(--muted);
