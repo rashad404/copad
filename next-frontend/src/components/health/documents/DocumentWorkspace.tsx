@@ -1,4 +1,5 @@
 "use client";
+import { usePrivacyCopy } from "@/components/privacy/usePrivacyCopy";
 import { documentDateLabel as dateLabel } from "./model";
 import { useEffect, useRef, useState } from "react";
 import { useTranslation } from "react-i18next";
@@ -42,6 +43,7 @@ export default function DocumentWorkspace({
   onManual: (kind: RecordKind) => void;
 }) {
   const c = usePublicCopy();
+  const { p: privacyCopy } = usePrivacyCopy();
   const { i18n } = useTranslation();
   const [docs, setDocs] = useState<MemberDocument[]>([]),
     [loading, setLoading] = useState(true),
@@ -167,6 +169,8 @@ export default function DocumentWorkspace({
           "Sənəd oxundu. Tapılan məlumatları Analiz nəticələri və ya Reseptin yoxlanması bölməsində təsdiqləyin.",
         );
       case "SKIPPED":
+        if (doc.extractionError === "AI_PROCESSING_DECLINED")
+          return privacyCopy.ocrDeclined;
         return c(
           "File saved, but no readable text was found. This is common with photos.",
           "Fayl saxlanıldı, amma oxuna bilən mətn tapılmadı. Şəkillərdə bu hal ola bilər.",
@@ -669,6 +673,7 @@ function DeleteDocument({
   onDeleted: () => void;
 }) {
   const c = usePublicCopy();
+  const { p: privacyCopy } = usePrivacyCopy();
   const controller = useRef<AbortController | null>(null);
   const [busy, setBusy] = useState(false),
     [error, setError] = useState("");

@@ -89,6 +89,44 @@ class ConsentServiceTest {
     }
 
     @Test
+    void initialRefusalNeverInventsAGrant() {
+        service.withdraw(1L, ConsentType.CROSS_BORDER_AI);
+        var captor = org.mockito.ArgumentCaptor.forClass(Consent.class);
+        verify(repository).save(captor.capture());
+        ReflectionTestUtils.invokeMethod(captor.getValue(), "onCreate");
+        assertNull(captor.getValue().getGrantedAt());
+        assertNotNull(captor.getValue().getWithdrawnAt());
+        assertEquals(ConsentType.CROSS_BORDER_AI, captor.getValue().getConsentType());
+    }
+
+    @Test
+    void guardianWithdrawalTargetsOnlyTheNamedMember() {
+        Consent guardian = granted();
+        guardian.setConsentType(ConsentType.GUARDIAN);
+        guardian.setFamilyMemberId(9L);
+        when(repository.findFirstByUserIdAndConsentTypeAndFamilyMemberIdAndWithdrawnAtIsNull(
+                1L, ConsentType.GUARDIAN, 9L)).thenReturn(Optional.of(guardian));
+        service.withdraw(1L, ConsentType.GUARDIAN, 9L);
+        verify(repository).save(guardian);
+        verify(repository, never()).findFirstByUserIdAndConsentTypeAndWithdrawnAtIsNull(any(), any());
+        assertNotNull(guardian.getWithdrawnAt());
+    }
+
+    @Test
+    void unscopedGuardianWithdrawalCannotAffectAnArbitraryMember() {
+        assertThrows(IllegalArgumentException.class, () -> service.withdraw(1L, ConsentType.GUARDIAN));
+        verifyNoInteractions(repository);
+    }
+
+    @Test
+    void repeatedRefusalIsIdempotent() {
+        when(repository.findFirstByUserIdAndConsentTypeAndWithdrawnAtIsNotNull(any(), any()))
+                .thenReturn(Optional.of(withdrawn()));
+        assertFalse(service.withdraw(1L, ConsentType.CROSS_BORDER_AI));
+        verify(repository, never()).save(any());
+    }
+
+    @Test
     void grantingTwiceDoesNotCreateASecondRow() {
         when(repository.findFirstByUserIdAndConsentTypeAndWithdrawnAtIsNull(any(), any()))
                 .thenReturn(Optional.of(granted()));

@@ -11,7 +11,8 @@
     "Profilim": "Profilim",
     "Çıxış": "Çıxış",
     "Sağlamlıq qeydləri": "Sağlamlıq qeydləri",
-    "Dərmanlar": "Dərmanlar"
+    "Dərmanlar": "Dərmanlar",
+    "Məxfilik və razılıqlar": "Məxfilik və razılıqlar"
   },
   "en": {
     "Necə işləyir": "How it works",
@@ -25,7 +26,8 @@
     "Profilim": "My profile",
     "Çıxış": "Sign out",
     "Sağlamlıq qeydləri": "Health record",
-    "Dərmanlar": "Medicines"
+    "Dərmanlar": "Medicines",
+    "Məxfilik və razılıqlar": "Privacy and consent"
   },
   "ru": {
     "Necə işləyir": "Как это работает",
@@ -39,6 +41,7 @@
     "Profilim": "Мой профиль",
     "Çıxış": "Выйти",
     "Sağlamlıq qeydləri": "Медицинские записи",
-    "Dərmanlar": "Лекарства"
+    "Dərmanlar": "Лекарства",
+    "Məxfilik və razılıqlar": "Данные и согласия"
   }
 }

@@ -502,27 +502,42 @@
     },
     "privacy": {
       "title": "Məxfilik siyasəti",
-      "lastUpdated": "Son yenilənmə: {{date}}",
-      "introduction": "Bu məxfilik siyasəti {{agentName}} xidmətindən istifadə zamanı şəxsi məlumatlarınızın necə toplandığını, istifadə edildiyini və qorunduğunu izah edir. Platformadan istifadə etməklə məlumatların bu siyasətə uyğun toplanmasına və istifadəsinə razılıq verirsiniz.",
+      "introduction": "Bu səhifədə azdoc-un hansı məlumatları saxladığı, onları nə üçün istifadə etdiyi və seçimlərinizi necə dəyişə biləcəyiniz izah olunur. Son yenilənmə: 7 sentyabr 2026.",
+      "owner": {
+        "title": "Məlumatları kim saxlayır",
+        "description": "Məlumatlarınızı azdoc xidməti saxlayır və xidmətin göstərilməsi üçün istifadə edir. Hesabınız, sağlamlıq qeydləriniz və məlumatlarınızla bağlı müraciətlər üçün əlaqə ünvanımız info@azdoc.ai-dır."
+      },
       "information": {
-        "title": "Hansı məlumatlar toplanır?",
-        "description": "Xidməti göstərmək və təkmilləşdirmək üçün adınız, e-poçt ünvanınız və təqdim etdiyiniz sağlamlıq məlumatları toplanır. Saytdan necə istifadə olunduğunu anlamaq üçün istifadə məlumatları da toplanır."
+        "title": "Hansı məlumatları toplayırıq",
+        "description": "Hesab yaratdıqda adınızı, e-poçt ünvanınızı və şifrənizin təhlükəsiz yoxlanması üçün heşini saxlayırıq. Əlavə etdiyiniz ailə üzvlərinin adı, doğum tarixi və digər profil məlumatları, xəstəliklər, allergiyalar, dərmanlar, peyvəndlər, ölçmələr, analiz nəticələri və sənədlər sağlamlıq qeydlərinə daxildir. Mesajlar, cavablar, əlavə edilmiş fayllar, razılıq seçimləri və tarixləri də saxlanır. Xidmətin təhlükəsizliyi və işləməsi üçün IP ünvanı, sorğu vaxtı, cihaz və istifadə barədə texniki məlumatlar işlənə bilər."
       },
       "usage": {
-        "title": "Məlumatlar necə istifadə olunur?",
-        "description": "Bu məlumatlar xidmətin işləməsi və təkmilləşdirilməsi, saytdan istifadəni asanlaşdırmaq, yenilik və dəyişikliklər barədə sizinlə əlaqə saxlamaq, həmçinin platformanın təhlükəsizliyini qorumaq üçün istifadə olunur."
+        "title": "Məlumatlar nə üçün istifadə olunur",
+        "description": "Məlumatlar hesabınıza girişi təmin etmək, ailə üzvlərinin qeydlərini saxlamaq və göstərmək, sənədləri oxumaq, analiz nəticələrini təqdim etmək və suallarınıza cavab hazırlamaq üçün istifadə olunur. Seçilmiş şəxsin sağlamlıq qeydləri cavabın hazırlanmasında nəzərə alına bilər. Texniki məlumatlar nasazlıqları araşdırmaq, icazəsiz girişi və sui-istifadəni məhdudlaşdırmaq, xidmətin istifadəsini və xərclərini ölçmək üçün istifadə olunur."
+      },
+      "transfer": {
+        "title": "Məlumatların ABŞ-a göndərilməsi",
+        "description": "Süni intellekt cavabları və sənədlərin avtomatik oxunması üçün OpenAI xidmətindən istifadə edirik. Mesaj və sənədlərinizin məzmunu, lazım gəldikdə seçilmiş şəxsin sağlamlıq qeydləri Azərbaycandan kənara, ABŞ-dakı OpenAI şirkətinə işlənmək üçün göndərilir. Sağlamlıq qeydlərinin azdoc-da saxlanması ilə bu məzmunun xaricdə işlənməsi ayrı razılıq seçimləridir. Xaricdə işlənməyə razı olmadan da hesab yarada bilərsiniz. Razılığı geri götürdükdə köməkçi mesajlarınıza cavab verməyəcək. Əvvəl göndərilmiş məlumatlar bu seçimlə geri çağırılmır."
+      },
+      "recipients": {
+        "title": "Məlumatlara kim çıxış əldə edə bilər",
+        "description": "Ailənizin qeydlərinə həmin ailəyə giriş icazəsi olan hesablar öz rollarına uyğun baxa bilər. OpenAI cavab və sənəd emalı üçün göndərilən məzmunu alır. Server və məlumat saxlama xidmətlərini təmin edən texniki təchizatçılar, həmçinin xidmətin dəstəyi və təhlükəsizliyi ilə məşğul olan səlahiyyətli şəxslər işləri üçün lazım olan həcmdə məlumatlara çıxış əldə edə bilərlər. Qanunla tələb olunduqda məlumatlar səlahiyyətli orqanlara təqdim oluna bilər."
+      },
+      "retention": {
+        "title": "Saxlanma və silinmə müddətləri",
+        "description": "Hesaba bağlı olmayan anonim söhbətlər 90 gün fəaliyyətsizlikdən sonra silinir. Hesaba bağlı qeydlər və sənədlər siz onları silənədək və ya hesabınızı silənədək saxlanır. Məxfilik bölməsində birdəfəlik silmə qeydləri və sənəd fayllarını işlək sistemdən çıxarır. Silmənin baş verdiyini təsdiqləmək üçün məzmunsuz məlumat, o cümlədən tarix və saylar saxlanır. Başqa hesabların da çıxışı olan ailələrin qeydləri yalnız sizin hesabınızı sildiyiniz üçün silinmir. Ehtiyat nüsxələr və xarici təchizatçılardakı surətlər eyni anda silinməyə bilər; onların saxlanması ayrıca qaydalardan asılıdır. Konkret sorğu üçün bizimlə əlaqə saxlayın."
       },
       "security": {
-        "title": "Məlumatların qorunması",
-        "description": "Şəxsi məlumatlara icazəsiz girişin, onların dəyişdirilməsinin, açıqlanmasının və silinməsinin qarşısını almaq üçün təhlükəsizlik tədbirləri tətbiq edirik. Ailənin sağlamlıq qeydlərinə giriş hesab və ailə üzrə icazə ilə yoxlanılır."
+        "title": "Məlumatları necə qoruyuruq",
+        "description": "Şəxsi sənədlərə giriş hesab və ailə icazələri ilə yoxlanılır. Saxlanmış sənəd faylları şifrələnir, saytla məlumat mübadiləsi HTTPS üzərindən aparılır. Heç bir sistem tam risksiz deyil. Hesabınızın şifrəsini paylaşmayın. Endirdiyiniz arxivdə sağlamlıq məlumatları var və onun təhlükəsiz saxlanması sizin nəzarətinizdədir."
       },
       "rights": {
-        "title": "Hüquqlarınız",
-        "description": "Şəxsi məlumatlarınıza baxmaq, düzəliş etmək və ya onları sildirmək hüququnuz var. Məlumatlarınızın surətini tələb edə və onların emalına verdiyiniz razılığı istənilən vaxt geri götürə bilərsiniz."
+        "title": "Məlumatlarınıza baxmaq və seçimləri dəyişmək",
+        "description": "Sağlamlıq qeydləri bölməsində hər ailə üzvünün qeydlərinə baxa və icazəniz varsa onları düzəldə bilərsiniz. Profilinizdəki Məxfilik və razılıqlar bölməsindən razılıq tarixçəsinə baxa, razılıq verə və ya onu geri götürə, şəxsin bütün qeydlərini sənədlərlə birlikdə ZIP arxivi kimi endirə bilərsiniz. Qeydləri silmək üçün redaktə icazəsi, hesabı silmək üçün isə şifrəniz tələb olunur. Yalnız baxış icazəsi olan şəxs arxivi endirə bilər, amma qeydləri silə bilməz. Razılığı geri götürmək mövcud qeydləri avtomatik silmir; birdəfəlik silmə ayrıca əməliyyatdır."
       },
       "contact": {
-        "title": "Əlaqə",
-        "description": "Məxfilik siyasəti və şəxsi məlumatlarınızla bağlı suallarınızı info@azdoc.ai ünvanına göndərə bilərsiniz."
+        "title": "Əlaqə və müraciətlər",
+        "description": "Məlumatlarınıza çıxış, düzəliş, silmə, razılıq və ya bu siyasətlə bağlı suallar üçün info@azdoc.ai ünvanına yazın. Müraciətin sizə aid olduğunu yoxlamaq üçün əlavə məlumat istəyə bilərik. İlk məktubda tibbi sənədləri və ya şifrənizi göndərməyin."
       }
     },
     "terms": {

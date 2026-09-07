@@ -38,7 +38,7 @@ public class Consent {
     @Column(name = "policy_version", nullable = false, length = 32)
     private String policyVersion;
 
-    @Column(name = "granted_at", nullable = false)
+    @Column(name = "granted_at")
     private LocalDateTime grantedAt;
 
     @Column(name = "withdrawn_at")
@@ -46,7 +46,8 @@ public class Consent {
 
     @PrePersist
     void onCreate() {
-        if (grantedAt == null) grantedAt = LocalDateTime.now();
+        // A first refusal has no grant. Never manufacture agreement.
+        if (grantedAt == null && withdrawnAt == null) grantedAt = LocalDateTime.now();
     }
 
     @Transient

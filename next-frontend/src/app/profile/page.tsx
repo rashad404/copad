@@ -1,4 +1,6 @@
 "use client";
+import Link from "next/link";
+import { usePrivacyCopy } from "@/components/privacy/usePrivacyCopy";
 import { useEffect, useState } from "react";
 import api from "@/api";
 import { useTranslation } from "react-i18next";
@@ -49,6 +51,7 @@ const normalizeProfile = (data: RawProfile): Profile => ({
 export default function ProfilePage() {
   const { t, i18n } = useTranslation();
   const c = usePublicCopy();
+  const { p } = usePrivacyCopy();
   const { isAuthenticated } = useAuth();
   const [profile, setProfile] = useState<Profile>(normalizeProfile({}));
   const [loading, setLoading] = useState(true);
@@ -137,6 +140,9 @@ export default function ProfilePage() {
               <a href="#medical">
                 02 <span>{t("profile.medicalInfo.title")}</span>
               </a>
+              <Link href="/profile/privacy">
+                03 <span>{p.title}</span>
+              </Link>
               <p className="public-small">
                 {c(
                   "Share only the details you're comfortable adding. You can update them here.",

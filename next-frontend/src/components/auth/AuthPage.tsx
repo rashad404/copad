@@ -1,4 +1,7 @@
 "use client";
+import RegistrationConsents from "@/components/privacy/RegistrationConsents";
+import { usePrivacyCopy } from "@/components/privacy/usePrivacyCopy";
+import { saveRegistrationConsents } from "@/api/privacy";
 
 import { useRef, useState, type FormEvent } from "react";
 import Link from "next/link";
@@ -42,6 +45,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
   const params = useSearchParams();
   const redirect = params.get("redirect");
   const alternate = `${registering ? "/login" : "/register"}${redirect ? `?redirect=${encodeURIComponent(redirect)}` : ""}`;
+  const { p: privacyCopy } = usePrivacyCopy();
+  const [choices, setChoices] = useState({ storage: false, ai: false });
+  const [accountCreated, setAccountCreated] = useState(false);
+  const createdRef = useRef(false);
   const [form, setForm] = useState({ name: "", email: "", password: "" });
   const [visible, setVisible] = useState(false);
   const [loading, setLoading] = useState(false);
@@ -56,14 +63,26 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
     setLoading(true);
     setError("");
     try {
-      if (registering)
-        await register(form.email.trim(), form.password, form.name.trim());
-      else await login(form.email.trim(), form.password);
+      if (registering) {
+        if (!createdRef.current) {
+          await register(form.email.trim(), form.password, form.name.trim());
+          createdRef.current = true;
+          setAccountCreated(true);
+          setForm((previous) => ({ ...previous, password: "" }));
+        }
+        await saveRegistrationConsents(choices.storage, choices.ai);
+      } else await login(form.email.trim(), form.password);
       window.location.assign(
         authDestination(redirect, registering ? "/chat" : "/dashboard"),
       );
     } catch {
-      setError(registering ? copy.registrationFailed : copy.loginFailed);
+      setError(
+        createdRef.current
+          ? privacyCopy.saveFailed
+          : registering
+            ? copy.registrationFailed
+            : copy.loginFailed,
+      );
       setLoading(false);
       submitting.current = false;
       requestAnimationFrame(() => errorRef.current?.focus());
@@ -190,9 +209,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                         id="name"
                         name="name"
                         autoComplete="name"
-                        required
+                        required={!accountCreated}
                         value={form.name}
                         onChange={change}
+                        disabled={accountCreated}
                         placeholder={copy.namePlaceholder}
                       />
                     </div>
@@ -206,9 +226,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                       autoComplete="email"
                       autoCapitalize="none"
                       spellCheck={false}
-                      required
+                      required={!accountCreated}
                       value={form.email}
                       onChange={change}
+                      disabled={accountCreated}
                       placeholder="you@example.com"
                       aria-describedby={error ? "auth-error" : undefined}
                     />
@@ -224,9 +245,10 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                           registering ? "new-password" : "current-password"
                         }
                         minLength={registering ? 8 : undefined}
-                        required
+                        required={!accountCreated}
                         value={form.password}
                         onChange={change}
+                        disabled={accountCreated}
                         placeholder="--------"
                         aria-describedby={
                           registering ? "password-hint" : undefined
@@ -250,6 +272,19 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                     )}
                   </div>
                   {registering && (
+                    <RegistrationConsents
+                      storage={choices.storage}
+                      ai={choices.ai}
+                      onChange={(key, value) =>
+                        setChoices((previous) => ({
+                          ...previous,
+                          [key]: value,
+                        }))
+                      }
+                    />
+                  )}
+                  {accountCreated && <p role="status">{privacyCopy.created}</p>}
+                  {registering && (
                     <div className={styles.terms}>
                       <input type="checkbox" id="terms" required />
                       <label htmlFor="terms">
@@ -261,17 +296,18 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                         >
                           {t("register.form.termsLink")}
                         </Link>{" "}
-                        {copy.and}{" "}
-                        <Link
-                          href="/privacy-policy"
-                          target="_blank"
-                          rel="noopener noreferrer"
-                        >
-                          {t("register.form.privacyLink")}
-                        </Link>
                         .
                       </label>
                     </div>
+                  )}
+                  {registering && (
+                    <Link
+                      href="/privacy-policy"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                    >
+                      {privacyCopy.policy}
+                    </Link>
                   )}
                   <button type="submit" className={styles.submit}>
                     {loading ? (
@@ -287,6 +323,8 @@ export default function AuthPage({ mode }: { mode: "login" | "register" }) {
                             : "auth.login.signing_in",
                         )}
                       </>
+                    ) : accountCreated ? (
+                      privacyCopy.retryChoices
                     ) : (
                       <>
                         {t(

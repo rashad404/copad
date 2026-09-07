@@ -83,6 +83,11 @@ public class DocumentExtractionService {
     }
 
     public String extractText(byte[] bytes, String contentType) {
+        return extractText(bytes, contentType, true);
+    }
+
+    /** Local text extraction remains available when external processing is declined. */
+    public String extractText(byte[] bytes, String contentType, boolean allowExternalProcessing) {
         if (bytes == null || bytes.length == 0 || contentType == null) return null;
         try {
             switch (contentType) {
@@ -93,7 +98,7 @@ public class DocumentExtractionService {
                         // A scan saved as a PDF has no text layer, so the
                         // stripper returns nothing. That is not an empty
                         // document, it is a picture of one.
-                        return transcribePages(document);
+                        return allowExternalProcessing ? transcribePages(document) : null;
                     }
                 }
                 case "application/vnd.openxmlformats-officedocument.wordprocessingml.document" -> {
@@ -107,7 +112,7 @@ public class DocumentExtractionService {
                 }
                 default -> {
                     if (contentType.startsWith("image/")) {
-                        return ocr.transcribe(bytes, contentType);
+                        return allowExternalProcessing ? ocr.transcribe(bytes, contentType) : null;
                     }
                     // Nothing readable, and nothing worth paying to guess at.
                     // The document is still stored and viewable.

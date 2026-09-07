@@ -46,6 +46,7 @@ public class DocumentController {
         private String contentType;
         private Long sizeBytes;
         private ExtractionStatus extractionStatus;
+        private String extractionError;
         private boolean hasText;
         private String notes;
         private LocalDateTime createdAt;
@@ -56,6 +57,7 @@ public class DocumentController {
                     .documentDate(d.getDocumentDate()).provider(d.getProvider())
                     .contentType(d.getContentType()).sizeBytes(d.getSizeBytes())
                     .extractionStatus(d.getExtractionStatus())
+                    .extractionError(d.getExtractionError())
                     .hasText(d.getExtractedText() != null && !d.getExtractedText().isBlank())
                     .notes(d.getNotes()).createdAt(d.getCreatedAt())
                     .build();
