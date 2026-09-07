@@ -37,6 +37,9 @@
   gap: 28px;
 }
 .brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
   font-size: 37px;
   font-weight: 800;
   letter-spacing: -2px;
@@ -44,12 +47,12 @@
   color: #172a35 !important;
 }
 .brandMark {
-  display: inline-block;
-  width: 0.73em;
-  height: 0.73em;
-  width: 1cap;
-  height: 1cap;
-  vertical-align: baseline;
+  /* Sized to the wordmark's cap height and centred by the flex row on .brand,
+     rather than baseline-aligned, which left it riding above the text. */
+  display: block;
+  width: 0.78em;
+  height: 0.78em;
+  flex-shrink: 0;
 }
 .desktopNav {
   display: flex;

@@ -71,8 +71,8 @@ export default function SiteHeader() {
           aria-label={brand}
           onClick={close}
         >
+          <Image src="/logo.svg" alt="" width={36} height={36} className={styles.brandMark} priority />
           {brand}
-          <Image src="/logo.svg" alt="" width={27} height={27} className={styles.brandMark} />
         </Link>
         <nav className={styles.desktopNav} aria-label={copy("Əsas naviqasiya")}>
           {links.map(([href, label]) => (
