@@ -11,6 +11,7 @@ import com.drcopad.copad.service.MedicineContextService;
 import com.drcopad.copad.entity.ConsentType;
 import com.drcopad.copad.service.AiSpendService;
 import com.drcopad.copad.service.ConsentService;
+import com.drcopad.copad.service.DocumentRetrievalService;
 import com.drcopad.copad.service.RedFlagDetector;
 import com.drcopad.copad.service.RecordContextService;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -43,6 +44,7 @@ public class GuestController {
     private final RedFlagDetector redFlags;
     private final AiSpendService aiSpend;
     private final ConsentService consents;
+    private final DocumentRetrievalService documentRetrieval;
     
     @PostMapping("/start")
     public ResponseEntity<GuestSessionDTO> startSession(HttpServletRequest request) {
@@ -130,6 +132,17 @@ public class GuestController {
             if (!ctx.isEmpty()) {
                 context.append(ctx.prompt());
                 log.info("Chat grounded in member {} record ({})", memberId, ctx.summary());
+            }
+        }
+
+        // Passages from this person's own documents that bear on the question.
+        // Lab values already reach the assistant because they are structured; a
+        // discharge summary is prose, and was invisible.
+        if (memberId != null && user != null) {
+            String fromDocuments = documentRetrieval.contextFor(
+                    memberId, user.getId(), messageRequest.getMessage());
+            if (!fromDocuments.isBlank()) {
+                context.append(fromDocuments);
             }
         }
 
