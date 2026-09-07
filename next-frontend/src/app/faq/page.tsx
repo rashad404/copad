@@ -57,7 +57,7 @@ export default function FAQPage() {
         <PageIntro
           eyebrow={c(
             "Good questions. Clear answers.",
-            "Yaxşı suallar. Aydın cavablar.",
+            "AZDOC-DAN İSTİFADƏ",
           )}
           title={t("faq.title")}
           description={t("faq.subtitle")}
@@ -67,7 +67,7 @@ export default function FAQPage() {
             <p>
               {c(
                 "A few things to know before your first conversation.",
-                "İlk söhbətdən əvvəl bilməli olduğunuz bir neçə məqam.",
+                "Qeydiyyat nə vaxt lazımdır? Cavabları kim hazırlayır?",
               )}
             </p>
             <Link href="/contact" className="public-text-link">

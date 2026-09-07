@@ -43,7 +43,7 @@ export default function ClinicalTimeline({
           <p>
             {c(
               "Newest events first, by the date they happened-not when they were entered.",
-              "Hadisələr daxil edilmə tarixinə deyil, baş verdiyi tarixə görə yenidən köhnəyə sıralanır.",
+              "Qeydlər hadisənin baş verdiyi tarixə görə sıralanır. Ən yeni hadisələr əvvəl göstərilir.",
             )}
           </p>
         </div>
@@ -73,11 +73,11 @@ export default function ClinicalTimeline({
         </div>
       ) : !resource.data?.length ? (
         <div className={styles.empty}>
-          <h3>{c("No clinical events yet", "Hələ klinik hadisə yoxdur")}</h3>
+          <h3>{c("No clinical events yet", "Tarixçədə hələ qeyd yoxdur")}</h3>
           <p>
             {c(
               "Recorded clinical events will appear here. Normal vital readings remain on the Vitals screen.",
-              "Qeydə alınmış klinik hadisələr burada görünəcək. Normal göstəricilər Göstəricilər bölməsində qalır.",
+              "Əlavə etdiyiniz qeydlər burada görünəcək. Normal ölçü nəticələrinə Göstəricilər bölməsində baxa bilərsiniz.",
             )}
           </p>
         </div>
@@ -130,7 +130,7 @@ export default function ClinicalTimeline({
             <p className={styles.helper}>
               {c(
                 "Showing the latest 100 clinical events.",
-                "Ən son 100 klinik hadisə göstərilir.",
+                "Ən son 100 hadisə göstərilir.",
               )}
             </p>
           )}

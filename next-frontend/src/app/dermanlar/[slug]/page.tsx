@@ -24,7 +24,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
       robots: { index: false },
     };
   const min = lowestPrice(d);
-  const description = `${d.name}: ${d.active_ingredient || "dərman məlumatı"}. ${min == null ? "Qablaşdırma məlumatları" : `${price(min)} başlayan qablaşdırma qiymətləri`}, istehsalçı və alternativlər.`;
+  const description = `${d.name}: ${d.active_ingredient || "dərman məlumatı"}. ${min == null ? "Qablaşdırma məlumatları" : `${price(min)} - ən aşağı qablaşdırma qiyməti`}, istehsalçı və alternativlər.`;
   return {
     title: { absolute: `${d.name} - qiymətlər və alternativlər | AzDoc` },
     description,
@@ -75,7 +75,7 @@ export default async function MedicinePage({ params }: Props) {
             </span>
           </div>
           <aside className={styles.priceStage}>
-            <p>Başlayan qablaşdırma qiyməti</p>
+            <p>Ən ucuz qablaşdırma</p>
             <strong>{price(min)}</strong>
             <p>{prices.length} qablaşdırma variantı</p>
             <a href="#prices">Qiymətlərə bax ↓</a>
@@ -83,17 +83,17 @@ export default async function MedicinePage({ params }: Props) {
         </header>
         <AllergyCheck medicineId={d.id} />
         <section className={styles.section} id="alternatives">
-          <p className={styles.eyebrow}>QİYMƏTİ NƏ DƏYİŞİR?</p>
-          <h2>Ortaq təsiredici maddəli alternativlər</h2>
+          <p className={styles.eyebrow}>DİGƏR DƏRMANLARLA MÜQAYİSƏ</p>
+          <h2>Eyni maddəni ehtiva edən dərmanlar</h2>
           <p className={styles.muted}>
-            Ən ucuz qablaşdırmadan başlayaraq. Ortaq maddə eyni tərkib, doza və
-            ya dərman forması demək deyil; kombinasiya preparatları da göstərilə
-            bilər. Əvəzləməni həkim və ya əczaçı ilə dəqiqləşdirin.
+            Ən ucuz qablaşdırmalar əvvəl göstərilir. Bu dərmanlarda ən azı bir
+            təsiredici maddə eynidir, amma tam tərkib, doza və dərman forması
+            fərqlənə bilər. Dərmanı dəyişməzdən əvvəl həkim və ya əczaçı ilə məsləhətləşin.
           </p>
           {difference != null && (
             <div className={styles.saving}>
               <div>
-                <span>Ən aşağı qeyd olunmuş qiymətlər arasında fərq</span>
+                <span>Ən ucuz qablaşdırmaların qiymət fərqi</span>
                 <strong>{price(difference)}</strong>
                 <p>
                   {d.name}: {price(min)} · {best.name}:{" "}

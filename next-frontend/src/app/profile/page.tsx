@@ -140,7 +140,7 @@ export default function ProfilePage() {
               <p className="public-small">
                 {c(
                   "Share only the details you're comfortable adding. You can update them here.",
-                  "Yalnız paylaşmaq istədiyiniz məlumatları əlavə edin. Onları burada yeniləyə bilərsiniz.",
+                  "Əlaqə məlumatlarınızı yoxlayın. Sağlamlıq məlumatlarını əlavə etmək istəyə bağlıdır.",
                 )}
               </p>
             </aside>
@@ -277,7 +277,7 @@ export default function ProfilePage() {
                           ? t("profile.saved")
                           : c(
                               "Changes are saved when you select save.",
-                              "Dəyişikliklər yadda saxlama düyməsi ilə saxlanılır.",
+                              "Məlumatları dəyişdikdən sonra yadda saxlayın.",
                             )}
                       </span>
                       <button

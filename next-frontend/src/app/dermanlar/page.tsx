@@ -13,7 +13,7 @@ export async function generateMetadata({
   return {
     title: { absolute: "Dərmanlar - qiymətlər və alternativlər | AzDoc" },
     description:
-      "Dərmanları adı və təsiredici maddəsi ilə axtarın. Qablaşdırma qiymətlərini və ortaq təsiredici maddəli alternativləri müqayisə edin.",
+      "Dərmanları adına və ya təsiredici maddəsinə görə axtarın. Qablaşdırma qiymətlərinə və oxşar tərkibli dərmanlara baxın.",
     alternates: {
       canonical: `${process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai"}/dermanlar`,
     },
@@ -36,15 +36,15 @@ export default async function Catalogue({ searchParams }: Props) {
       <div className={styles.page} lang="az">
         <header className={styles.hero}>
           <div>
-            <p className={styles.eyebrow}>DƏRMAN BƏLƏDÇİSİ</p>
+            <p className={styles.eyebrow}>DƏRMAN KATALOQU</p>
             <h1>
               Dərmanı tapın.
               <br />
               <span>Qiyməti müqayisə edin.</span>
             </h1>
             <p>
-              Adına və ya təsiredici maddəsinə görə axtarın. Qiymətləri,
-              qablaşdırmaları və alternativləri bir yerdə görün.
+              Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif
+              qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.
             </p>
           </div>
           <aside className={styles.note}>
@@ -86,7 +86,7 @@ export default async function Catalogue({ searchParams }: Props) {
             ) : (
               <>
                 <p className={styles.muted}>
-                  Uyğunluğa görə sıralanıb · qiymətlər qablaşdırma variantlarına
+                  Axtarışa uyğunluğa görə sıralanıb. Qiymətlər qablaşdırmalara
                   aiddir.
                 </p>
                 <div className={styles.results}>
@@ -107,7 +107,7 @@ export default async function Catalogue({ searchParams }: Props) {
                       <div className={styles.resultPrice}>
                         <strong>{price(m.lowestPrice)}</strong>
                         {m.lowestPrice != null && (
-                          <small>başlayan qiymət</small>
+                          <small>ən aşağı qiymət</small>
                         )}
                         <span aria-hidden="true">^</span>
                       </div>
@@ -122,7 +122,7 @@ export default async function Catalogue({ searchParams }: Props) {
           </section>
         ) : (
           <section className={styles.section}>
-            <h2>Haradan başlamaq olar?</h2>
+            <h2>Axtarış nümunələri</h2>
             <p>
               Dərmanın ticarət adını və ya qutuda yazılan təsiredici maddəni
               daxil edin. Axtarış üçün ən azı 2 hərf lazımdır.

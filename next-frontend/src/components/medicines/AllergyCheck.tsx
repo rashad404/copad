@@ -13,9 +13,9 @@ export default function AllergyCheck({ medicineId }: { medicineId: number }) {
   if (!isAuthenticated || !user)
     return (
       <aside className={styles.advisory}>
-        <h2>Allergiyalarınızı nəzərə alın</h2>
+        <h2>Allergiya yoxlaması</h2>
         <p>
-          Ailə üzvünün sağlamlıq qeydləri ilə mümkün allergiya uyğunluqlarını
+          Dərmanın qeydə alınmış allergiyalarla əlaqəsini
           yoxlamaq üçün <Link href="/login">daxil olun</Link>.
         </p>
       </aside>
@@ -53,7 +53,7 @@ function MemberCheck({
   const member = members.find((m) => String(m.id) === selected);
   return (
     <section className={styles.allergy}>
-      <h2>Şəxsi allergiya yoxlaması</h2>
+      <h2>Sağlamlıq qeydləri üzrə allergiya yoxlaması</h2>
       {families.loading ? (
         <p role="status">Ailə üzvləri yüklənir...</p>
       ) : families.error ? (
@@ -161,18 +161,18 @@ function Warnings({
             <strong>
               {w.critical
                 ? "Ciddi allergiya - həyati təhlükə riski"
-                : "Mümkün allergiya uyğunluğu"}
+                : "Allergiya riski ola bilər"}
             </strong>
             <p>
               {w.medicineName} · {w.allergen}
             </p>
             <p>
               {w.basis === "CLASS"
-                ? "Dərman sinfinə görə mümkün uyğunluq"
-                : "Təsiredici maddə adına görə mümkün uyğunluq"}
+                ? "Dərman qrupuna görə mümkün allergiya riski"
+                : "Təsiredici maddənin adına görə mümkün allergiya riski"}
             </p>
             <small>
-              Ağırlıq:{" "}
+              Allergiyanın ağırlığı:{" "}
               {(
                 {
                   MILD: "Yüngül",

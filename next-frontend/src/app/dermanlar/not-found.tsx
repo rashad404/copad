@@ -6,7 +6,7 @@ export default function NotFound() {
     <ProductLayout>
       <div lang="az" className={styles.page}>
         <h1>Dərman tapılmadı</h1>
-        <p>Adı dəyişmiş və ya kataloqda olmayan dərmanı axtarırsınız.</p>
+        <p>Bu ünvanda dərman məlumatı tapılmadı. Kataloqda adına görə axtara bilərsiniz.</p>
         <Link href="/dermanlar">Kataloqda axtar {'->'}</Link>
       </div>
     </ProductLayout>

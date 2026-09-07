@@ -267,7 +267,7 @@ const birthFields: Field[] = [
     key: "gestationalAgeWeeks",
     label: [
       "Gestational age at birth (weeks)",
-      "Doğumda hamiləlik yaşı (həftə)",
+      "Doğuşun baş verdiyi həftə",
     ],
     type: "number",
     min: 0,
@@ -353,7 +353,7 @@ export function MemberForm({
                     err,
                     c(
                       "Could not save this member. Please try again.",
-                      "Üzvü saxlamaq mümkün olmadı. Yenidən cəhd edin.",
+                      "Məlumatları saxlamaq mümkün olmadı. Yenidən cəhd edin.",
                     ),
                   ),
             );
@@ -377,7 +377,7 @@ export function MemberForm({
             <p>
               {c(
                 "For children born early, gestational age is used to show corrected age.",
-                "Erkən doğulmuş uşaqlarda düzəldilmiş yaşın göstərilməsi üçün hamiləlik yaşından istifadə olunur.",
+                "Erkən doğulmuş uşağın düzəldilmiş yaşını hesablamaq üçün doğuşun hansı həftədə baş verdiyi lazımdır.",
               )}
             </p>
             <Fields fields={birthFields} values={values} onChange={update} />
@@ -400,7 +400,7 @@ export function MemberForm({
           <button className="public-button" disabled={busy}>
             {busy
               ? c("Saving...", "Saxlanılır...")
-              : c("Save member", "Üzvü saxla")}
+              : c("Save member", "Məlumatları saxla")}
           </button>
         </div>
       </form>

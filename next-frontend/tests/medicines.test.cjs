@@ -168,7 +168,7 @@ test("critical and class warnings, member switch cancellation and no false-safe 
     document.querySelector("[role=alert]").textContent,
     /həyati təhlükə/,
   );
-  assert.match(document.body.textContent, /Dərman sinfinə/);
+  assert.match(document.body.textContent, /Dərman qrupuna/);
   assert.match(document.body.textContent, /əvəz etmir/);
   await flush(() => {
     const s = document.querySelector("select");

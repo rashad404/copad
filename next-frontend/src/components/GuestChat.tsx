@@ -385,21 +385,21 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 <p className="public-eyebrow">
                   {c(
                     "A little clarity starts here",
-                    "Aydınlıq buradan başlayır",
+                    "SAĞLAMLIQ HAQQINDA SÖHBƏT",
                   )}
                 </p>
-                <h2>{c("What's on your mind?", "Sizi nə düşündürür?")}</h2>
+                <h2>{c("What's on your mind?", "Nə soruşmaq istəyirsiniz?")}</h2>
                 <p>
                   {c(
                     "Tell me how you feel, ask a question, or share a medical document.",
-                    "Özünüzü necə hiss etdiyinizi yazın, sual verin və ya tibbi sənəd paylaşın.",
+                    "Əlamətlər, analiz nəticələri və dərmanlar haqqında soruşa bilərsiniz.",
                   )}
                 </p>
                 <div className="public-chat-prompts">
                   {[
                     c(
                       "Help me understand a lab result",
-                      "Analiz nəticəsini anlamağa kömək et",
+                      "Analiz cavabımı izah edə bilərsən?",
                     ),
                     c(
                       "I have a health question",
@@ -407,7 +407,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                     ),
                     c(
                       "Help me prepare for a doctor's visit",
-                      "Həkim qəbuluna hazırlaşmağa kömək et",
+                      "Həkim qəbuluna nə aparmalıyam?",
                     ),
                   ].map((prompt) => (
                     <button
@@ -487,7 +487,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                     {t("chat.fileUpload.multipleFiles")}
                   </DialogTitle>
                   <button
-                    aria-label={c("Close upload", "Yükləməni bağla")}
+                    aria-label={c("Close upload", "Fayl əlavə etmə pəncərəsini bağla")}
                     onClick={() => setShowMultiFileUpload(false)}
                     className="text-gray-500 hover:text-gray-700  "
                   >
