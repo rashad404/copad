@@ -1,8 +1,13 @@
 spring:
   flyway:
-    enabled: false
+    enabled: true
     baseline-on-migrate: true
+    # Existing schemas were built by ddl-auto, not by V3-V7, so treat anything
+    # already deployed as being at V7 and only apply V8 onward.
+    baseline-version: 7
+    baseline-description: "Schema as built by hibernate ddl-auto"
     locations: classpath:db/migration
+    validate-on-migrate: true
   mvc:
     throw-exception-if-no-handler-found: true  # Needed to catch 404s manually
   devtools:
@@ -35,7 +40,10 @@ spring:
     password: ${DATABASE_PASSWORD}
   jpa:
     hibernate:
-      ddl-auto: update
+      # Flyway owns the schema outright. Not "validate": Hibernate compares
+      # columnDefinition strings literally, so MySQL charset/collation on text
+      # columns fails validation even when the schema is correct.
+      ddl-auto: none
     show-sql: false
     database-platform: org.hibernate.dialect.MySQLDialect
     properties:
