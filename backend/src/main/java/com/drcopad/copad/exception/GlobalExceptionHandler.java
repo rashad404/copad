@@ -21,6 +21,13 @@ import java.util.Map;
 @RestControllerAdvice
 public class GlobalExceptionHandler {
 
+    /**
+     * The configured cap, because Tomcat does not always report it on the
+     * exception and "too large" without a number is not actionable.
+     */
+    @org.springframework.beans.factory.annotation.Value("${spring.servlet.multipart.max-file-size:25MB}")
+    private String maxUploadSize;
+
     @ExceptionHandler(RateLimitExceededException.class)
     public ResponseEntity<Map<String, Object>> handleRateLimit(RateLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
@@ -62,6 +69,24 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE)
                 .header(HttpHeaders.RETRY_AFTER, String.valueOf(Math.max(secondsToMidnight, 60)))
                 .body(body(HttpStatus.SERVICE_UNAVAILABLE, ex.getMessage()));
+    }
+
+    /**
+     * A file larger than the container will accept.
+     *
+     * Spring rejects it before any controller runs, and the default response
+     * has an empty body - so the person is told only "413", and the interface
+     * has nothing to show them. The size that was refused is the one fact that
+     * makes the refusal actionable.
+     */
+    @ExceptionHandler(org.springframework.web.multipart.MaxUploadSizeExceededException.class)
+    public ResponseEntity<Map<String, Object>> handleUploadTooLarge(
+            org.springframework.web.multipart.MaxUploadSizeExceededException ex) {
+        long maxBytes = ex.getMaxUploadSize();
+        String limit = maxBytes > 0 ? (maxBytes / 1024 / 1024) + " MB" : maxUploadSize;
+        return ResponseEntity.status(HttpStatus.PAYLOAD_TOO_LARGE)
+                .body(body(HttpStatus.PAYLOAD_TOO_LARGE,
+                        "The file is larger than " + limit + "."));
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
