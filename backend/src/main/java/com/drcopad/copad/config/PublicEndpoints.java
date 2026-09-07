@@ -18,6 +18,12 @@ public class PublicEndpoints {
             "/api/health",
             // The published drug registry; the allergy check under
             // /api/members/** stays authenticated.
+            // The doctor directory. Public because being found is the point,
+            // and every listing carries its own verification status.
+            "/api/doctors",
+            "/api/doctors/*",
+            "/api/doctors/*/slots",
+            "/api/doctors/sitemap",
             "/api/medicines",
             "/api/medicines/*",
             "/api/medicines/*/alternatives",
