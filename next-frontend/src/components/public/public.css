@@ -57,18 +57,8 @@
   display: flex;
   align-items: center;
   font-weight: 800;
-  font-size: 30px;
-  letter-spacing: -1.6px;
-}
-.public-brand > span:first-child {
-  display: grid;
-  place-items: center;
-  background: var(--blue);
-  color: white;
-  border-radius: 12px;
-  width: 35px;
-  height: 35px;
-  margin-right: 10px;
+  font-size: 37px;
+  letter-spacing: -2px;
 }
 .public-brand-dot {
   color: var(--blue);
@@ -670,12 +660,7 @@
     gap: 12px;
   }
   .public-brand {
-    font-size: 26px;
-  }
-  .public-brand > span:first-child {
-    width: 30px;
-    height: 30px;
-    border-radius: 9px;
+    font-size: 32px;
   }
   .public-header-actions {
     gap: 8px;

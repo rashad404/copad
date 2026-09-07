@@ -4,10 +4,11 @@ import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { Manrope } from "next/font/google";
-import { Menu, X, ArrowUpRight, Plus } from "lucide-react";
+import { Menu, X, ArrowUpRight } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
 import { useAuth } from "@/context/AuthContext";
+import { useSiteContext } from "@/context/SiteContext";
 import "./public.css";
 
 const manrope = Manrope({ subsets: ["latin"], variable: "--public-font" });
@@ -24,6 +25,9 @@ export default function ProductLayout({
   children: React.ReactNode;
   viewport?: boolean;
 }) {
+  const { WEBSITE_NAME } = useSiteContext();
+  const brand =
+    WEBSITE_NAME === "Localhost" ? "azdoc" : WEBSITE_NAME.toLowerCase();
   const c = usePublicCopy();
   const pathname = usePathname();
   const { isAuthenticated, logout } = useAuth();
@@ -49,11 +53,9 @@ export default function ProductLayout({
         {c("Skip to content", "Məzmuna keç")}
       </a>
       <header className="public-header">
-        <Link href="/" className="public-brand" aria-label="AzDoc">
-          <span>
-            <Plus size={23} strokeWidth={3} />
-          </span>
-          azdoc<span className="public-brand-dot">.</span>
+        <Link href="/" className="public-brand" aria-label={brand}>
+          {brand}
+          <span className="public-brand-dot">•</span>
         </Link>
         <nav
           className="public-desktop-nav"
@@ -119,7 +121,8 @@ export default function ProductLayout({
         <footer className="public-footer">
           <div>
             <Link href="/" className="public-footer-brand">
-              azdoc.
+              {brand}
+              <span className="public-brand-dot">•</span>
             </Link>
             <p>
               {c(
