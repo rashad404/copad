@@ -99,6 +99,28 @@ public class GuestSessionRetentionService {
         String in = placeholders(expired.size());
         Object[] ids = expired.toArray();
 
+        // A reply carries no session of its own - only the message that
+        // prompted it does - so deleting by session alone leaves the assistant
+        // side of every conversation behind, and the chat cannot then be
+        // removed. Rows are matched by their chat as well.
+        //
+        // That widening is only safe while a chat belongs to one session. This
+        // refuses to run if it ever stops being true, rather than deleting a
+        // live conversation because it shared a chat with an expired one.
+        Integer shared = jdbc.queryForObject(
+                "SELECT COUNT(*) FROM chats c "
+                        + "JOIN chat_messages m ON m.chat_id = c.id "
+                        + "JOIN guest_sessions live ON live.id = m.guest_session_id "
+                        + "WHERE c.guest_session_id IN (" + in + ") "
+                        + "AND live.id NOT IN (" + in + ")",
+                Integer.class, concat(ids, ids));
+        if (shared != null && shared > 0) {
+            throw new IllegalStateException(
+                    "Refusing to purge: " + shared + " messages from sessions that are still "
+                            + "active sit in chats belonging to expired ones. Deleting those "
+                            + "chats would remove a live conversation.");
+        }
+
         // Order dictated by the foreign keys. Deepest dependency first.
         counts.put("conversationFiles", jdbc.update(
                 "DELETE cf FROM conversation_files cf "
@@ -107,7 +129,9 @@ public class GuestSessionRetentionService {
         counts.put("openaiResponses", jdbc.update(
                 "DELETE r FROM openai_responses r "
                         + "JOIN chat_messages m ON m.id = r.chat_message_id "
-                        + "WHERE m.guest_session_id IN (" + in + ")", ids));
+                        + "LEFT JOIN chats c ON c.id = m.chat_id "
+                        + "WHERE m.guest_session_id IN (" + in + ") "
+                        + "OR c.guest_session_id IN (" + in + ")", concat(ids, ids)));
 
         // Usage rows are kept: they are the cost history, hold no patient
         // content, and losing them would make past spend unexplainable. Only
@@ -119,9 +143,17 @@ public class GuestSessionRetentionService {
         counts.put("batchUploads", jdbc.update(
                 "DELETE FROM batch_file_uploads WHERE guest_session_id IN (" + in + ")", ids));
         counts.put("attachments", jdbc.update(
-                "DELETE FROM file_attachment WHERE session_id IN (" + in + ")", ids));
+                "DELETE fa FROM file_attachment fa "
+                        + "LEFT JOIN chat_messages m ON m.id = fa.message_id "
+                        + "LEFT JOIN chats c ON c.id = m.chat_id "
+                        + "WHERE fa.session_id IN (" + in + ") "
+                        + "OR m.guest_session_id IN (" + in + ") "
+                        + "OR c.guest_session_id IN (" + in + ")", concat(ids, ids, ids)));
         counts.put("messages", jdbc.update(
-                "DELETE FROM chat_messages WHERE guest_session_id IN (" + in + ")", ids));
+                "DELETE m FROM chat_messages m "
+                        + "LEFT JOIN chats c ON c.id = m.chat_id "
+                        + "WHERE m.guest_session_id IN (" + in + ") "
+                        + "OR c.guest_session_id IN (" + in + ")", concat(ids, ids)));
         counts.put("chats", jdbc.update(
                 "DELETE FROM chats WHERE guest_session_id IN (" + in + ")", ids));
         counts.put("conversations", jdbc.update(
@@ -132,12 +164,39 @@ public class GuestSessionRetentionService {
         return counts;
     }
 
+    /**
+     * Every file about to lose its row.
+     *
+     * Matched the same way the delete is, or a file linked through a message
+     * rather than directly to the session keeps its bytes on disk after the row
+     * pointing at it is gone.
+     */
     private List<String> storageKeysFor(List<Long> sessionIds) {
         if (sessionIds.isEmpty()) return List.of();
+        String in = placeholders(sessionIds.size());
+        Object[] ids = sessionIds.toArray();
         return jdbc.queryForList(
-                "SELECT storage_key FROM file_attachment WHERE session_id IN ("
-                        + placeholders(sessionIds.size()) + ") AND storage_key IS NOT NULL",
-                String.class, sessionIds.toArray());
+                "SELECT DISTINCT fa.storage_key FROM file_attachment fa "
+                        + "LEFT JOIN chat_messages m ON m.id = fa.message_id "
+                        + "LEFT JOIN chats c ON c.id = m.chat_id "
+                        + "WHERE fa.storage_key IS NOT NULL AND ("
+                        + "fa.session_id IN (" + in + ") "
+                        + "OR m.guest_session_id IN (" + in + ") "
+                        + "OR c.guest_session_id IN (" + in + "))",
+                String.class, concat(ids, ids, ids));
+    }
+
+    /** The same id list repeated, for a statement that binds it more than once. */
+    private Object[] concat(Object[]... groups) {
+        int total = 0;
+        for (Object[] g : groups) total += g.length;
+        Object[] out = new Object[total];
+        int at = 0;
+        for (Object[] g : groups) {
+            System.arraycopy(g, 0, out, at, g.length);
+            at += g.length;
+        }
+        return out;
     }
 
     private String placeholders(int n) {
