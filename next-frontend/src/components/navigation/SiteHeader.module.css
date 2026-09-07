@@ -39,7 +39,7 @@
 .brand {
   display: inline-flex;
   align-items: center;
-  gap: 10px;
+  gap: 4px;
   font-size: 37px;
   font-weight: 800;
   letter-spacing: -2px;
@@ -53,6 +53,9 @@
   width: 0.78em;
   height: 0.78em;
   flex-shrink: 0;
+  /* The wordmark has no descenders, so its optical centre sits below the line
+     box centre; nudging the mark down aligns them to the eye. */
+  transform: translateY(0.06em);
 }
 .desktopNav {
   display: flex;
@@ -192,7 +195,7 @@
     display: block;
   }
   .actions {
-    gap: 10px;
+    gap: 4px;
   }
   .header .cta {
     padding: 11px 13px;
