@@ -101,9 +101,12 @@ test("public inline copy cannot silently fall back to English in Russian", () =>
   visit(root);
   assert.deepEqual(missing, []);
 });
-test("Russian resolves registered patient text instead of English fallback; default remains English", async () => {
+test("Russian resolves registered patient text instead of English fallback; a visitor lands in Azerbaijani", async () => {
   const i18n = require("../src/i18n.ts").default;
-  assert.equal(i18n.options.lng, "en");
+  // Where a visitor lands, for an Azerbaijani service. English remains the
+  // fallback for a missing key, which is a different question.
+  assert.equal(i18n.options.lng, "az");
+  assert.deepEqual(i18n.options.fallbackLng, ["en"]);
   await i18n.changeLanguage("ru-RU");
   assert.equal(i18n.resolvedLanguage, "ru");
   assert.equal(i18n.t("profile.medicalInfo.allergies"), "Аллергии");
@@ -124,7 +127,9 @@ test("only AZ, EN and RU can be persisted as site languages", () => {
     DEFAULT_SITE_LANGUAGE,
   } = require("../src/utils/languages.ts");
   assert.deepEqual(SUPPORTED_LANGUAGES, ["az", "en", "ru"]);
-  assert.equal(DEFAULT_SITE_LANGUAGE, "en");
+  // The residual case only: a browser asking for a language we do not have.
+  // A Russian or English browser is honoured before this is reached.
+  assert.equal(DEFAULT_SITE_LANGUAGE, "az");
   for (const lang of ["tr", "es", "pt", "ar", "zh", "hi"])
     assert.equal(supportedLanguage(lang), undefined);
   assert.equal(supportedLanguage("ru-RU"), "ru");

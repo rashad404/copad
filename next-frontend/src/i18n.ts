@@ -21,8 +21,12 @@ if (!i18n.isInitialized) {
         translation: azTranslations,
       },
     },
+    // English as the last resort for a missing key, Azerbaijani as the
+    // language a visitor lands in. Different questions: a missing Azerbaijani
+    // string should show English rather than a raw key, while a visitor with no
+    // stated preference should see the language this service is written in.
     fallbackLng: "en",
-    lng: "en", // Default language
+    lng: "az",
     debug: false,
     interpolation: {
       escapeValue: false,
