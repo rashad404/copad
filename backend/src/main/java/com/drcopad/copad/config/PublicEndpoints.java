@@ -12,6 +12,7 @@ public class PublicEndpoints {
             "/api/blog/**",
             "/api/v2/messages/**", // Responses API endpoints
             "/uploads/**", // Make uploads publicly accessible
+            "/api/health",
             "/custom-error"
     );
 }

@@ -1,6 +1,7 @@
 'use client';
 
 import { Fragment, useState, useEffect } from 'react';
+import { track } from '@/utils/analytics';
 import { Listbox, Transition } from '@headlessui/react';
 import { ChevronUpDownIcon } from '@heroicons/react/20/solid';
 import { useTranslation } from 'react-i18next';
@@ -101,6 +102,7 @@ export default function LanguageSwitcher() {
       document.cookie = `i18nextLng=${language.code}; path=/; max-age=${60 * 60 * 24 * 365}; SameSite=Lax`;
     }
     i18n.changeLanguage(language.code);
+    track('language_changed', { lang: language.code });
     
     // Reload the page to force server-side rendering with the new language
     // This ensures blog posts are fetched with the correct language

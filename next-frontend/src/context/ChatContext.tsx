@@ -1,6 +1,7 @@
 'use client';
 
 import React, { createContext, useContext, useState, useEffect, useRef, ReactNode } from 'react';
+import { track } from '@/utils/analytics';
 import { getGuestSessionId, setGuestSessionId } from '@/utils/guestSession';
 import api from '@/api';
 import { useTranslation } from 'react-i18next';
@@ -321,6 +322,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
           }
           setGuestSessionId(sid);
           isNewSession = true;
+          track('guest_session_started');
         }
 
         // Only update if state doesn't already have the session ID

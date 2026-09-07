@@ -1,6 +1,7 @@
 'use client';
 
 import React, { useState, useEffect, useRef } from 'react';
+import { track } from '@/utils/analytics';
 import type { FileUploadResult } from '@/components/MultiFileUpload';
 import type { MedicalFileCategory } from '@/utils/fileCategories';
 import { useTranslation } from 'react-i18next';
@@ -146,7 +147,14 @@ const GuestChat: React.FC<GuestChatProps> = ({
     setLoading(true);
     
     try {
+      // Counts only - never the message itself.
+      track(messages.length === 0 ? 'first_message_sent' : 'message_sent', {
+        attachments: pendingFileIds.length,
+      });
+
+      const startedAt = Date.now();
       const response = await sendMessage(selectedChatId, messageToSend, pendingFileIds, currentPendingFiles);
+      track('ai_response_received', { ms: Date.now() - startedAt });
       const assistantMessage: Message = {
         role: 'assistant',
         content: response,
@@ -155,6 +163,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
       setMessages(prev => [...prev, assistantMessage]);
     } catch (error) {
       console.error('Error sending message:', error);
+      track('error_shown', { where: 'chat_send' });
       const errorMessage: Message = {
         role: 'assistant',
         content: t('chat.error.message'),

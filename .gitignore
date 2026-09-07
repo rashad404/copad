@@ -7,3 +7,4 @@ docs
 # Local-only ops tooling
 restart.sh
 pull-backups.sh
+check-azdoc.sh
