@@ -36,8 +36,10 @@ export type AnalyticsEvent =
 
 type AnalyticsProps = Record<string, string | number | boolean | undefined>;
 
-interface PlausibleWindow extends Window {
+interface AnalyticsWindow extends Window {
   plausible?: (event: string, options?: { props?: AnalyticsProps }) => void;
+  gtag?: (command: string, ...args: unknown[]) => void;
+  dataLayer?: unknown[];
 }
 
 /** Fields that must never leave the browser, regardless of caller mistakes. */
@@ -66,23 +68,42 @@ export function track(event: AnalyticsEvent, props?: AnalyticsProps): void {
   if (typeof window === 'undefined') return;
 
   const safeProps = scrub(props);
-  const plausible = (window as PlausibleWindow).plausible;
+  const w = window as AnalyticsWindow;
+  let delivered = false;
 
-  if (plausible) {
+  // Both providers can run at once; whichever is configured receives the event.
+  if (w.plausible) {
     try {
-      plausible(event, safeProps ? { props: safeProps } : undefined);
+      w.plausible(event, safeProps ? { props: safeProps } : undefined);
+      delivered = true;
     } catch {
       // Analytics must never break the page.
     }
-    return;
   }
 
-  if (process.env.NODE_ENV !== 'production') {
+  if (w.gtag) {
+    try {
+      w.gtag('event', event, safeProps ?? {});
+      delivered = true;
+    } catch {
+      /* ignored */
+    }
+  }
+
+  if (!delivered && process.env.NODE_ENV !== 'production') {
     console.debug('[analytics]', event, safeProps ?? '');
   }
 }
 
-/** True when a provider is configured; used to decide whether to load a script. */
-export function isAnalyticsEnabled(): boolean {
+export function isPlausibleEnabled(): boolean {
   return Boolean(process.env.NEXT_PUBLIC_PLAUSIBLE_DOMAIN);
+}
+
+export function isGoogleAnalyticsEnabled(): boolean {
+  return Boolean(process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID);
+}
+
+/** True when any provider is configured. */
+export function isAnalyticsEnabled(): boolean {
+  return isPlausibleEnabled() || isGoogleAnalyticsEnabled();
 }
