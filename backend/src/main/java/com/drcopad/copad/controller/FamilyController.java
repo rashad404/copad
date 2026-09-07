@@ -67,7 +67,8 @@ public class FamilyController {
             @RequestBody FamilyMemberDTO body,
             @AuthenticationPrincipal User user) {
         log.info("Adding member to family {} (relationship: {})", familyId, body.getRelationship());
-        FamilyMember saved = familyService.addMember(familyId, user.getId(), body.toEntity());
+        FamilyMember saved = familyService.addMember(familyId, user.getId(), body.toEntity(),
+                Boolean.TRUE.equals(body.getAttestation()));
         return ResponseEntity.status(HttpStatus.CREATED).body(FamilyMemberDTO.from(saved));
     }
 

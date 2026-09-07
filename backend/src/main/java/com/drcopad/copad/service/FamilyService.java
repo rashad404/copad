@@ -23,10 +23,21 @@ import java.util.List;
 @RequiredArgsConstructor
 public class FamilyService {
 
+    /**
+     * Whether an attestation is demanded rather than merely recorded.
+     *
+     * Off until the interface sends one, so turning this on is a deliberate act
+     * rather than an outage.
+     */
+    @org.springframework.beans.factory.annotation.Value("${consent.require-attestation:false}")
+    private boolean requireAttestation;
+
+
     private final FamilyRepository familyRepository;
     private final FamilyMemberRepository memberRepository;
     private final FamilyMembershipRepository membershipRepository;
     private final UserRepository userRepository;
+    private final ConsentService consents;
 
     /**
      * The user's family, created on first use.
@@ -96,8 +107,29 @@ public class FamilyService {
         return member;
     }
 
+    /** Kept for callers that add a member for the account holder themselves. */
     @Transactional
     public FamilyMember addMember(Long familyId, Long requestingUserId, FamilyMember details) {
+        return addMember(familyId, requestingUserId, details, false);
+    }
+
+    /**
+     * Adds a person to a family.
+     *
+     * @param attested the account holder's claim to be entitled to hold this
+     *                 person's record. A child cannot consent, so the basis is a
+     *                 guardian's; a competent adult consents for themselves and
+     *                 the account holder is stating they have that permission.
+     *                 Which of the two applies follows from the person's age.
+     *
+     * Recorded rather than required, for now. Requiring it today would break
+     * every existing client mid-flight; the requirement switches on with
+     * consent.require-attestation once the interface sends it. An unattested
+     * addition is logged so the gap stays visible rather than silent.
+     */
+    @Transactional
+    public FamilyMember addMember(Long familyId, Long requestingUserId,
+                                  FamilyMember details, boolean attested) {
         requireRole(familyId, requestingUserId, true);
 
         Family family = familyRepository.findByIdAndDeletedAtIsNull(familyId)
@@ -111,7 +143,22 @@ public class FamilyService {
 
         details.setFamily(family);
         details.setId(null);
-        return memberRepository.save(details);
+        FamilyMember saved = memberRepository.save(details);
+
+        // Adding yourself needs no claim about anybody else.
+        boolean aboutSomeoneElse = details.getRelationship() != Relationship.SELF;
+        if (aboutSomeoneElse) {
+            if (attested) {
+                consents.grant(requestingUserId, ConsentType.GUARDIAN, saved.getId());
+            } else if (requireAttestation) {
+                throw new IllegalArgumentException(
+                        "Adding another person's record needs a statement that you are "
+                                + "entitled to hold it");
+            } else {
+                log.warn("Member {} added for someone else with no attestation", saved.getId());
+            }
+        }
+        return saved;
     }
 
     @Transactional

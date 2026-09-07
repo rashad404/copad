@@ -35,6 +35,19 @@ public class FamilyMemberDTO {
     /** True when this member is the account holder themselves. */
     private boolean self;
 
+    /**
+     * The account holder's claim to be entitled to hold this person's record.
+     *
+     * Required when adding anyone other than yourself. A child cannot consent,
+     * so the basis is a guardian's; a competent adult consents for themselves,
+     * and the account holder is stating they have that permission. Which of the
+     * two it is follows from the person's age, so one field carries both.
+     *
+     * Write-only: it is a claim made at the moment of adding, recorded as a
+     * consent, and never read back off the member.
+     */
+    private Boolean attestation;
+
     public static FamilyMemberDTO from(FamilyMember m) {
         return FamilyMemberDTO.builder()
                 .id(m.getId())
