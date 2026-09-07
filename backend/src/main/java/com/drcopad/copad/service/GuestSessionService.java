@@ -75,6 +75,15 @@ public class GuestSessionService {
 
     @Transactional
     public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds) {
+        return processChat(sessionId, message, specialty, language, chatId, fileIds, null);
+    }
+
+    /**
+     * @param recordContext the patient record block, or null. Anonymous
+     *                      conversations pass null and still work; they simply
+     *                      get answers that are not grounded in a record.
+     */
+    public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds, String recordContext) {
         // Message content is the patient's medical complaint and is never logged.
         log.info("Processing chat message for session: {} - Chat: {} - Specialty: {} - Language: {} - Attachments: {}",
                 sessionId, chatId, specialty, language, fileIds == null ? 0 : fileIds.size());
@@ -124,7 +133,7 @@ public class GuestSessionService {
         }
 
         // Get AI response with specialty and language
-        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language, attachments);
+        String response = chatGPTService.getChatResponse(message, chatHistory, specialty, language, attachments, recordContext);
 
         // Create and save AI message
         ChatMessage aiMsg = new ChatMessage();

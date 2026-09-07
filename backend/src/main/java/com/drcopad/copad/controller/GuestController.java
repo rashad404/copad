@@ -6,6 +6,9 @@ import com.drcopad.copad.dto.MessageRequest;
 import com.drcopad.copad.entity.FileAttachment;
 import com.drcopad.copad.service.FileAttachmentService;
 import com.drcopad.copad.service.GuestSessionService;
+import com.drcopad.copad.entity.User;
+import com.drcopad.copad.service.RecordContextService;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import com.drcopad.copad.service.RateLimitPolicy;
 import com.drcopad.copad.service.RateLimiterService;
 import com.drcopad.copad.util.ClientIpResolver;
@@ -30,6 +33,7 @@ public class GuestController {
     private final GuestSessionService guestSessionService;
     private final RateLimiterService rateLimiterService;
     private final FileAttachmentService fileAttachmentService;
+    private final RecordContextService recordContext;
     
     @Value("${upload.public-url:http://localhost:8080}")
     private String publicUrl;
@@ -72,6 +76,8 @@ public class GuestController {
             @PathVariable String chatId,
             @RequestBody MessageRequest messageRequest,
             @RequestParam(defaultValue = "general") String specialty,
+            @RequestParam(required = false) Long memberId,
+            @AuthenticationPrincipal User user,
             HttpServletRequest request) {
         // Never log message content: it is the patient's medical complaint.
         log.info("Chat request for session {} chat {} (specialty: {}, language: {}, attachments: {})",
@@ -82,14 +88,26 @@ public class GuestController {
         // Limited by session and by IP, because sessions are free to mint.
         rateLimiterService.requireAll(RateLimitPolicy.AI_CHAT,
                 sessionId, ClientIpResolver.resolve(request));
+
+        // Grounding is opt-in and only for a signed-in caller who can reach the
+        // member. An anonymous conversation is unchanged.
+        String context = null;
+        if (memberId != null && user != null) {
+            RecordContextService.Context ctx = recordContext.forMember(memberId, user.getId());
+            if (!ctx.isEmpty()) {
+                context = ctx.prompt();
+                log.info("Chat grounded in member {} record ({})", memberId, ctx.summary());
+            }
+        }
         try {
             String response = guestSessionService.processChat(
                 sessionId, 
-                messageRequest.getMessage(), 
-                specialty, 
-                messageRequest.getLanguage(), 
-                chatId, 
-                messageRequest.getFileIds()
+                messageRequest.getMessage(),
+                specialty,
+                messageRequest.getLanguage(),
+                chatId,
+                messageRequest.getFileIds(),
+                context
             );
             return ResponseEntity.ok(response);
         } catch (Exception e) {

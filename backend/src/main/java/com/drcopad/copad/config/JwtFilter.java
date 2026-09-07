@@ -33,15 +33,18 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        String path = request.getRequestURI();
-        boolean shouldNotFilter = PublicEndpoints.PUBLIC_URLS.stream()
-                .anyMatch(publicUrl -> pathMatcher.match(publicUrl, path));
-        if (shouldNotFilter) {
-            log.trace("Path {} is public, skipping JWT filter.", path);
-        }
-            log.info("Checking shouldNotFilter for path '{}': {}", path, shouldNotFilter); // ADD THIS LOG
-
-        return shouldNotFilter;
+        // The filter runs everywhere, including public paths.
+        //
+        // Skipping it on public paths made authentication impossible to observe
+        // there: a signed-in user calling /api/guest/** arrived with no
+        // principal, so the chat could not tell who was asking and could not
+        // ground an answer in their record.
+        //
+        // This does not make those paths protected - the filter already passes
+        // a request with no token straight through, and access is decided by
+        // the security config, not here. It only means a token is honoured when
+        // one is present.
+        return false;
     }
 
     @Override

@@ -33,6 +33,9 @@ import reactor.core.publisher.Mono;
 @RequiredArgsConstructor
 public class ChatGPTService {
 
+    /** Turns of history sent per request; roughly a dozen exchanges. */
+    private static final int MAX_HISTORY_MESSAGES = 24;
+
     private final WebClient webClient;
     private final ChatGPTConfig chatGPTConfig;
     private final ObjectMapper objectMapper;
@@ -55,6 +58,15 @@ public class ChatGPTService {
     }
     
     public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments) {
+        return getChatResponse(newUserMessage, history, specialtyCode, language, attachments, null);
+    }
+
+    /**
+     * @param recordContext the patient's record, appended to the system prompt.
+     *                      Null for anonymous conversations, which still work -
+     *                      they simply get ungrounded answers.
+     */
+    public String getChatResponse(String newUserMessage, List<ChatMessage> history, String specialtyCode, String language, List<FileAttachment> attachments, String recordContext) {
         List<Message> messages = new ArrayList<>();
         
         // Get specialty-specific prompt
@@ -66,36 +78,55 @@ public class ChatGPTService {
 
         // Enhanced system prompt that handles files and images
         String systemPrompt = specialty.getSystemPrompt() +
-            "\nYou are an AI doctor providing practical medical information.\n" +
-            // "\nYou are an AI doctor providing concise, practical medical information. Follow these guidelines:\n" +
-            // "1. Give direct, actionable advice without unnecessary introductions.\n" +
-            // "2. Use simple language and short sentences.\n" +
-            // "3. Format your responses as brief bullet points when possible.\n" +
-            // "4. Include this disclaimer with medical recommendations: \"These suggestions are not medical advice. Please consult your doctor.\"\n" +
-            // "5. Admit knowledge gaps directly without speculation.\n" +
-            // "6. Only share evidence-based information.\n" +
-            // "7. List common medication side effects briefly when relevant.\n" +
-            // "8. Never diagnose - describe potential conditions only.\n" +
-            // "9. Clearly flag emergency symptoms requiring immediate care.\n" +
-            // "10. Stay within your knowledge scope.\n" +
-            // "11. Prioritize the most effective solutions first.\n" +
-            // "12. For images that appear to show medical conditions, explain what you can observe but emphasize that a proper in-person medical evaluation is necessary.\n" +
-            (fullLanguageName != null ? String.format("\nPlease respond in %s.", fullLanguageName) : "");
+            """
 
-        // messages.add(new Message("system", systemPrompt));
+            You are azdoc, a medical assistant. Answer the person in front of you directly and usefully.
 
-        // Add message history
-        // for (ChatMessage c : history) {
-        //     String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
-            
-        //     // Regular text message
-        //     if (c.getAttachments() == null || c.getAttachments().isEmpty()) {
-        //         messages.add(new Message(role, c.getMessage()));
-        //     } else {
-        //         // Message with attachments - handle differently
-        //         processMessageWithAttachments(messages, c, role);
-        //     }
-        // }
+            How to answer:
+            - Lead with the answer. No preamble about what you are or what you cannot do.
+            - Be specific. Name things, give amounts, say how long. Vague advice helps nobody.
+            - Keep it short and scannable. Short paragraphs or a few bullets, not an essay.
+            - Plain language. Explain a medical term the first time you use it.
+            - If something genuinely needs to be seen in person, say so once, plainly, and say why.
+
+            Do not:
+            - Do not add a disclaimer to every message. The interface carries a standing
+              notice that this is not a substitute for a doctor, so repeating it buries the
+              useful part and reads as evasive.
+            - Do not open with "I am not a doctor" or "consult a healthcare professional".
+            - Do not refuse a reasonable question by deferring. Answer it, and flag the
+              limits of what can be judged remotely if that matters.
+            - Do not pad with caveats a person cannot act on.
+
+            Urgency is not a disclaimer. If what is described could be an emergency, say so
+            first, say plainly what to do, and give the local emergency number (103 in
+            Azerbaijan). Be concrete, not alarming.
+            """ +
+            (recordContext != null && !recordContext.isBlank() ? recordContext : "") +
+            (fullLanguageName != null ? String.format("%nAnswer in %s.", fullLanguageName) : "");
+
+        // The system prompt and the history were both commented out, so every
+        // request reached the model as a bare standalone question: specialty
+        // prompts, the language instruction and the patient record were built
+        // and then discarded, and the assistant had no memory of the
+        // conversation. History is loaded before the new message is saved, so
+        // appending both does not duplicate.
+        messages.add(new Message("system", systemPrompt));
+
+        // Recent turns only. A long conversation would otherwise grow the
+        // request without bound, and its cost is paid on every turn.
+        List<ChatMessage> recent = history == null ? List.of()
+                : history.size() <= MAX_HISTORY_MESSAGES ? history
+                : history.subList(history.size() - MAX_HISTORY_MESSAGES, history.size());
+
+        for (ChatMessage c : recent) {
+            String role = c.getSender().equalsIgnoreCase("USER") ? "user" : "assistant";
+            if (c.getAttachments() == null || c.getAttachments().isEmpty()) {
+                messages.add(new Message(role, c.getMessage()));
+            } else {
+                processMessageWithAttachments(messages, c, role);
+            }
+        }
 
         // Process current message
         if (history.isEmpty() || !history.get(history.size() - 1).getMessage().equals(newUserMessage)) {
