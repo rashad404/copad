@@ -87,14 +87,19 @@ public class GuestSessionRetentionService {
             return counts;
         }
 
-        // The files first. A row removed before its file leaves patient data on
-        // disk that nothing points at and nothing will ever clean up.
-        int files = 0;
-        for (String key : storageKeysFor(expired)) {
-            attachments.delete(key);
-            files++;
-        }
-        counts.put("files", files);
+        // Noted now, deleted after the transaction commits.
+        //
+        // Deleting them here cost 38 files on the first production run: the
+        // files went, a foreign key then failed, the transaction rolled back,
+        // and the rows came back pointing at bytes that no longer existed. A
+        // filesystem does not roll back with the database, so nothing
+        // irreversible may happen before the database has agreed.
+        //
+        // The opposite order risks a row deleted and its file left behind. That
+        // is untidy; this was data loss, and only a backup taken twenty minutes
+        // earlier made it recoverable.
+        List<String> filesToDelete = storageKeysFor(expired);
+        counts.put("files", filesToDelete.size());
 
         String in = placeholders(expired.size());
         Object[] ids = expired.toArray();
@@ -160,6 +165,19 @@ public class GuestSessionRetentionService {
                 "DELETE FROM conversations WHERE guest_session_id IN (" + in + ")", ids));
         counts.put("sessionsRemoved", jdbc.update(
                 "DELETE FROM guest_sessions WHERE id IN (" + in + ")", ids));
+
+        // Only once every statement above has succeeded. If the transaction
+        // rolls back after this point the worst case is an orphaned file, which
+        // is recoverable; the reverse was not.
+        org.springframework.transaction.support.TransactionSynchronizationManager
+                .registerSynchronization(
+                        new org.springframework.transaction.support.TransactionSynchronization() {
+                            @Override
+                            public void afterCommit() {
+                                filesToDelete.forEach(attachments::delete);
+                                log.info("Retention removed {} stored files", filesToDelete.size());
+                            }
+                        });
 
         return counts;
     }
