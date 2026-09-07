@@ -89,6 +89,21 @@ public class GlobalExceptionHandler {
                         "The file is larger than " + limit + "."));
     }
 
+    /**
+     * The appointment slot went to somebody else.
+     *
+     * 409 rather than 400: nothing was wrong with the request, the world moved
+     * between choosing a time and confirming it. Two people reaching for the
+     * last slot is the ordinary case, and the interface should offer the next
+     * time rather than an apology.
+     */
+    @ExceptionHandler(com.drcopad.copad.service.BookingService.SlotTakenException.class)
+    public ResponseEntity<Map<String, Object>> handleSlotTaken(
+            com.drcopad.copad.service.BookingService.SlotTakenException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(body(HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
     @ExceptionHandler(IllegalArgumentException.class)
     public ResponseEntity<Map<String, Object>> handleIllegalArgument(IllegalArgumentException ex) {
         return ResponseEntity.status(HttpStatus.BAD_REQUEST)
