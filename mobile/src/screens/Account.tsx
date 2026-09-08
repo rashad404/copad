@@ -157,6 +157,7 @@ function PrivacyScope({
 }) {
   const { language, c } = useCopy(),
     p = privacy[language],
+    nav = useNavigation<any>(),
     s = useSession(),
     f = useFamily();
   const r = useResource(`consent:${s.user!.id}`, (signal) =>
@@ -251,6 +252,16 @@ function PrivacyScope({
       )}
       <Heading>{p.records}</Heading>
       <MemberPicker allowNone={false} />
+      {f.member && (
+        <LinkRow
+          title={c(
+            "Who viewed the record",
+            "Qeydlərə kim baxıb?",
+            "Кто просматривал записи",
+          )}
+          onPress={() => nav.navigate("RecordAccess")}
+        />
+      )}
       {f.member && (
         <>
           <Button

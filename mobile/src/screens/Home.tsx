@@ -1,4 +1,5 @@
 import React from "react";
+import { SyncResult } from "./ConnectedSources";
 import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useCopy } from "../core/copy";
@@ -83,6 +84,7 @@ export default function Home() {
             )}
       </Title>
       <MemberPicker />
+      <SyncResult compact />
       <View
         style={[
           styles.card,

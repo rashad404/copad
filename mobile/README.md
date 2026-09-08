@@ -15,7 +15,7 @@ This creates `native-builds/derived/Build/Products/Release-iphoneos/azdocPreview
 
 The preview has its own name and identifier (`azdoc Preview`, `ai.azdoc.app.preview`) and uses the Tailscale backend on port 8002. It does not replace an eventual production app. `app.config.js` enables HTTP only for the preview variant; the production variant uses HTTPS and the identifier `ai.azdoc.app`.
 
-For Android, the EAS `preview` profile produces an installable APK. It requires access to the existing Expo project and Android signing credentials. A compiled iOS app is not an Android APK.
+For Android, with JDK 17 or 21 and Android SDK 36 installed, run `npm run build:android:preview`. This creates `android/app/build/outputs/apk/release/app-release.apk` for arm64 phones. It uses the generated project's debug signing key for local testing, has an embedded JavaScript bundle and needs no Metro server. Install with `adb install -r android/app/build/outputs/apk/release/app-release.apk`. It is a preview APK, not a store-signed release. EAS builds remain available with access to the existing Expo project.
 
 The compatibility plugin in `plugins/with-fmt-compat.js` narrowly handles fmt 11.0.2 with newer Apple Clang. Generated Xcode/Gradle projects and local build output are ignored by git and can be regenerated.
 
@@ -40,7 +40,8 @@ See [environment setup](ENVIRONMENT_SETUP.md) for backend and device configurati
 - Documents: authenticated file upload/download/sharing, extraction progress, saved-but-unreadable states and manual result entry.
 - Review: extracted lab values and prescription proposals remain distinct from confirmed records. Correct, accept or reject proposals. Confirmed lab trends show their source and separate units.
 - Services: doctor, medicine and laboratory directories. Doctor appointment requests, medicine alternatives and member-specific allergy warnings, test baskets and home collection requests.
-- Account: appointments and lab orders, cancellation, personal information, consent history, export, permanent deletion and AZ/EN/RU selection.
+- Account: appointments and lab orders, cancellation, personal information, consent history, record-access history, export, permanent deletion and AZ/EN/RU selection. Appointment sharing explicitly ends on cancellation.
+- Connected sources: native read permissions, provider connections, manual and foreground sync, server cursors, uploads of at most 500 readings, and visible counts for added, existing, manual-priority, rejected and locally invalid readings.
 
 VIEWER access hides member record writes. Appointment and lab submissions are requests, not confirmed appointments or payments. Registration permits record storage consent without AI processing consent. Incomplete consent saving survives a restart and blocks chat until resolved.
 
@@ -86,4 +87,18 @@ Before store release, confirm the production app identifiers and signing setup, 
 
 This rebuild retains the SDK 53 platform line. Compatible dependency security patches are applied, but the inherited Expo/Metro/navigation dependency tree still has audit findings that require a separately validated platform upgrade or upstream fixes. Do not run `npm audit fix --force` blindly.
 
-This version does not add push notifications, HealthKit/Health Connect import, automatic AI booking actions, background sync, offline medical-record storage, app links or an embedded document viewer. Legal and contact pages open the existing website. Those are separate native capabilities, not claims made by the controls here.
+This version does not add push notifications, automatic AI booking actions, OS background delivery, offline medical-record storage, app links or an embedded document viewer. Legal and contact pages open the existing website. Those are separate native capabilities, not claims made by the controls here.
+
+## Device sync integration and remaining verification
+
+Connected sources is under Records. The connection is bound to the signed-in person's own member profile on this phone; changing the selected family member does not redirect phone data into a child's record. VIEWER has no write actions. Every sync rechecks family access and the server's enabled connection. Disconnect stops local automatic sync immediately, retains imported records and explains where to revoke OS read permission.
+
+Initial sync reads the last 30 days. Subsequent runs resume from `syncedThrough`, interpreted as UTC because device instants are submitted as UTC ISO strings. Confirm this timezone convention with the backend before release, especially for manual-reading precedence. All permitted types are combined chronologically within each read window before upload so a partial failure does not advance the common cursor past an unread type. Partial counts are retained locally without storing the underlying measurements.
+
+Apple Health uses the platform UUID unchanged and requests read access only. Read refusal is private on iOS, so an empty read is never presented as proof that access was granted. Oxygen saturation converts the HealthKit fraction to a percentage as documented by [Apple](https://developer.apple.com/documentation/healthkit/hkunit/percent%28%29). Head circumference is not supported by this integration.
+
+Health Connect requests supported read permissions only. Its permission-rationale entry opens a localized native explanation with a privacy-policy link. Waist and head circumference are not supported by the platform.
+
+**Unresolved Android identity contract:** Health Connect blood-pressure records contain two values with one record ID; heart-rate records contain multiple timestamped samples with one record ID. See [Android's series-data documentation](https://developer.android.com/health-and-fitness/health-connect/write-data). The deployed backend deduplicates by sourceRef alone. The app preserves exact native IDs as requested and stops with an explanation on a compound-ID collision, before uploading a misleading partial record. Full blood-pressure and heart-rate-series sync needs a coordinated decision: allow stable record-ID/type/timestamp references, or change server deduplication to distinguish those samples. No backend contract has been changed, and this limitation must be resolved before advertising complete Android device sync.
+
+Run native device acceptance checks for permission refusal, limited access, reconnect, foreground resume, >500 samples, manual-priority counts, interrupted upload, and account/member isolation. Automated native-adapter tests use synthetic readings; they do not establish physical-device validation. Do not test with a real person's health data without their deliberate connection and permission choices.

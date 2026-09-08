@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import { useHealthSyncRevision } from "../health/HealthSyncContext";
 import { View, Pressable, ScrollView } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { useCopy } from "../core/copy";
@@ -52,7 +53,8 @@ export default function Records() {
 }
 function Workspace() {
   const { c } = useCopy(),
-    f = useFamily();
+    f = useFamily(),
+    nav = useNavigation<any>();
   const [tab, setTab] = useState("overview"),
     [memberForm, setMemberForm] = useState<"add" | "edit" | null>(null),
     [remove, setRemove] = useState(false),
@@ -77,6 +79,15 @@ function Workspace() {
         {c("Health records", "Sağlamlıq qeydləri", "Медицинские записи")}
       </Title>
       <MemberPicker allowNone={false} />
+      <LinkRow
+        title={c(
+          "Connected sources",
+          "Qoşulmuş mənbələr",
+          "Подключенные источники",
+        )}
+        icon="watch-outline"
+        onPress={() => nav.navigate("ConnectedSources")}
+      />
       {writable.length > 0 && (
         <Button
           secondary
@@ -234,7 +245,8 @@ function Overview() {
   const { c } = useCopy(),
     { member } = useFamily(),
     nav = useNavigation<any>();
-  const latest = useResource(`latest:${member!.id}`, (s) =>
+  const syncRevision = useHealthSyncRevision(member!.id);
+  const latest = useResource(`latest:${member!.id}:${syncRevision}`, (s) =>
     healthApi.latest(member!.id, s),
   );
   const allergies = useResource(`allergies:${member!.id}`, (s) =>
@@ -426,11 +438,14 @@ function Vitals() {
     f = useFamily();
   const [type, setType] = useState<VitalType>("WEIGHT"),
     [add, setAdd] = useState(false);
-  const rows = useResource(`series:${f.member!.id}:${type}`, (s) =>
-    healthApi.series(f.member!.id, type, s),
+  const syncRevision = useHealthSyncRevision(f.member!.id);
+  const rows = useResource(
+    `series:${f.member!.id}:${type}:${syncRevision}`,
+    (s) => healthApi.series(f.member!.id, type, s),
   );
-  const trends = useResource(`trends:${f.member!.id}:${type}`, (s) =>
-    healthApi.trends(f.member!.id, 90, s),
+  const trends = useResource(
+    `trends:${f.member!.id}:${type}:${syncRevision}`,
+    (s) => healthApi.trends(f.member!.id, 90, s),
   );
   const trend = trends.data?.find((t) => t.type === type);
   const units = [
@@ -528,7 +543,8 @@ function Vitals() {
 function Timeline() {
   const { c, language } = useCopy(),
     { member } = useFamily();
-  const r = useResource(`timeline:${member!.id}`, (s) =>
+  const syncRevision = useHealthSyncRevision(member!.id);
+  const r = useResource(`timeline:${member!.id}:${syncRevision}`, (s) =>
     healthApi.timeline(member!.id, s),
   );
   return (
@@ -580,7 +596,8 @@ function Timeline() {
 function History() {
   const { c, language } = useCopy(),
     { member } = useFamily();
-  const r = useResource(`history:${member!.id}`, (s) =>
+  const syncRevision = useHealthSyncRevision(member!.id);
+  const r = useResource(`history:${member!.id}:${syncRevision}`, (s) =>
     healthApi.history(member!.id, s),
   );
   return (

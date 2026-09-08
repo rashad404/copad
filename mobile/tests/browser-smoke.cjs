@@ -436,6 +436,75 @@ let currentPage;
     await context.close();
     console.log("PASS: Russian profile and editable personal information");
   }
+  {
+    const { context, page, calls } = await session();
+    await visibleText(page, "Account", { exact: true }).click();
+    await page
+      .getByRole("button", { name: "Privacy and consent", exact: true })
+      .click();
+    await page
+      .getByRole("button", { name: "Who viewed the record", exact: true })
+      .click();
+    await visibleText(page, "Recent Doctor", { exact: true }).waitFor();
+    const content = await page.locator("body").innerText();
+    assert.ok(
+      content.indexOf("Recent Doctor") < content.indexOf("Earlier Doctor"),
+    );
+    assert.ok(
+      calls.some((r) => r.path === "/members/11/bookings/record-access"),
+    );
+    await page
+      .getByRole("button", { name: "Family member", exact: true })
+      .click();
+    await page.getByRole("radio", { name: "Test Leyla", exact: true }).click();
+    await visibleText(
+      page,
+      "No doctor has opened this person's shared record.",
+      { exact: true },
+    ).waitFor();
+    assert.equal(
+      await visibleText(page, "Recent Doctor", { exact: true }).count(),
+      0,
+    );
+    await page.screenshot({ path: "/tmp/azdoc-mobile-record-access.png" });
+    await context.close();
+    console.log(
+      "PASS: record access order, member isolation and honest empty state",
+    );
+  }
+  {
+    const { context, page, calls } = await session({ viewer: true });
+    await visibleText(page, "Records", { exact: true }).click();
+    await page
+      .getByRole("button", { name: "Connected sources", exact: true })
+      .click();
+    await visibleText(page, "Test phone", { exact: true }).waitFor();
+    await visibleText(page, "You have read-only access to this record.", {
+      exact: true,
+    }).waitFor();
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Disconnect", exact: true })
+        .count(),
+      0,
+    );
+    assert.equal(
+      await page
+        .getByRole("button", { name: "Connect this phone", exact: true })
+        .count(),
+      0,
+    );
+    assert.equal(
+      calls.filter((r) => r.method === "POST" && r.path.includes("health-sync"))
+        .length,
+      0,
+    );
+    await page.screenshot({ path: "/tmp/azdoc-mobile-connected-sources.png" });
+    await context.close();
+    console.log(
+      "PASS: source list is usable without native health and VIEWER cannot write",
+    );
+  }
   assert.deepEqual(errors, []);
   await browser.close();
 })().catch(async (e) => {

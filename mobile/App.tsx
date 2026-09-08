@@ -13,10 +13,13 @@ import { Ionicons } from "@expo/vector-icons";
 import { CopyProvider, useCopy } from "./src/core/copy";
 import { SessionProvider, FamilyProvider } from "./src/core/Session";
 import { Brand, palette } from "./src/ui/kit";
+import { HealthSyncProvider } from "./src/health/HealthSyncContext";
 import Home from "./src/screens/Home";
 import Chat from "./src/screens/Chat";
 import Records from "./src/screens/Records";
 import Profile from "./src/screens/Profile";
+import ConnectedSources from "./src/screens/ConnectedSources";
+import RecordAccess from "./src/screens/RecordAccess";
 import Auth from "./src/screens/Auth";
 import { Services, Directory, Doctor, Medicine } from "./src/screens/Services";
 import Laboratory from "./src/screens/Laboratory";
@@ -122,6 +125,8 @@ function Navigation() {
         <Stack.Screen name="Laboratory" component={Laboratory} />
         <Stack.Screen name="Orders" component={Orders} />
         <Stack.Screen name="Privacy" component={Privacy} />
+        <Stack.Screen name="ConnectedSources" component={ConnectedSources} />
+        <Stack.Screen name="RecordAccess" component={RecordAccess} />
       </Stack.Navigator>
     </NavigationContainer>
   );
@@ -133,8 +138,10 @@ export default function App() {
         <CopyProvider>
           <SessionProvider>
             <FamilyProvider>
-              <StatusBar style="dark" />
-              <Navigation />
+              <HealthSyncProvider>
+                <StatusBar style="dark" />
+                <Navigation />
+              </HealthSyncProvider>
             </FamilyProvider>
           </SessionProvider>
         </CopyProvider>

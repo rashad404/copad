@@ -694,6 +694,13 @@ function Booking({ doctor }: { doctor: PublicDoctor }) {
                 value={share}
                 onChange={setShare}
               />
+              <Body small>
+                {c(
+                  "Access is shared for this appointment. Cancelling the appointment ends the doctor's access.",
+                  "Həkim qeydlərə bu randevu üçün baxa bilər. Randevunu ləğv etsəniz, bu icazə də ləğv olunur.",
+                  "Доступ предоставляется для этого приема. При отмене записи доступ врача прекращается.",
+                )}
+              </Body>
               <Notice>
                 {c(
                   "This is a request. The doctor still needs to confirm the appointment.",
