@@ -93,7 +93,20 @@
     "CONFIRMED": "Laboratoriya təsdiqləyib",
     "SAMPLE_COLLECTED": "Nümunə götürülüb",
     "COMPLETED": "Tamamlanıb",
-    "CANCELLED": "Ləğv edilib"
+    "CANCELLED": "Ləğv edilib",
+    "compareTitle": "Analiz qiymətlərinin müqayisəsi",
+    "compareDescription": "Eyni analizin laboratoriyalar arasında qiyməti. Qiymətlər laboratoriyanın öz siyahısındandır.",
+    "compareLink": "Qiymətləri müqayisə et",
+    "compareBack": "Bütün analizlərə qayıt",
+    "compareEmpty": "Hələ iki laboratoriyada eyni adla təkrarlanan analiz yoxdur.",
+    "compareLabs": "laboratoriya",
+    "compareRange": "Qiymət aralığı",
+    "compareSaving": "Fərq",
+    "compareCheapest": "Ən ucuz",
+    "compareNoPrice": "Qiymət açıqlanmayıb",
+    "compareSame": "Hər iki laboratoriyada eyni qiymət",
+    "compareChoose": "Analiz seçin",
+    "compareNote": "Müqayisə analizin adına görə aparılır. Metod və material laboratoriyalar arasında fərqlənə bilər."
   },
   "en": {
     "title": "Laboratories",
@@ -189,7 +202,20 @@
     "CONFIRMED": "Accepted by the laboratory",
     "SAMPLE_COLLECTED": "Sample collected",
     "COMPLETED": "Completed",
-    "CANCELLED": "Cancelled"
+    "CANCELLED": "Cancelled",
+    "compareTitle": "Comparing test prices",
+    "compareDescription": "What the same test costs at one laboratory and another. Prices are the laboratory's own.",
+    "compareLink": "Compare prices",
+    "compareBack": "Back to all tests",
+    "compareEmpty": "No test is yet offered under the same name by two laboratories.",
+    "compareLabs": "laboratories",
+    "compareRange": "Price range",
+    "compareSaving": "Difference",
+    "compareCheapest": "Cheapest",
+    "compareNoPrice": "No price published",
+    "compareSame": "The same price at both laboratories",
+    "compareChoose": "Choose a test",
+    "compareNote": "Tests are matched by name. The method and the sample can differ between laboratories."
   },
   "ru": {
     "title": "Лаборатории",
@@ -285,6 +311,19 @@
     "CONFIRMED": "Подтверждено лабораторией",
     "SAMPLE_COLLECTED": "Материал взят",
     "COMPLETED": "Завершено",
-    "CANCELLED": "Отменено"
+    "CANCELLED": "Отменено",
+    "compareTitle": "Сравнение цен на анализы",
+    "compareDescription": "Сколько один и тот же анализ стоит в разных лабораториях. Цены - из прайса самой лаборатории.",
+    "compareLink": "Сравнить цены",
+    "compareBack": "Ко всем анализам",
+    "compareEmpty": "Пока нет анализа, который под одним названием предлагают две лаборатории.",
+    "compareLabs": "лаборатории",
+    "compareRange": "Диапазон цен",
+    "compareSaving": "Разница",
+    "compareCheapest": "Дешевле всего",
+    "compareNoPrice": "Цена не опубликована",
+    "compareSame": "В обеих лабораториях одна цена",
+    "compareChoose": "Выберите анализ",
+    "compareNote": "Анализы сопоставляются по названию. Метод и материал в лабораториях могут отличаться."
   }
 }

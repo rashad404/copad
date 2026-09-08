@@ -33,3 +33,33 @@ export async function laboratoryCopy() {
     supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
   return { language, c: labCopy(language) };
 }
+
+/** One analyte offered at more than one laboratory, with what it costs. */
+export type ComparableTest = {
+  key: string;
+  name: string;
+  labCount: number;
+  lowest: number | null;
+  highest: number | null;
+};
+
+/** Every offer of one analyte, cheapest first. */
+export type ComparedOffer = {
+  labSlug: string;
+  labName: string;
+  labCity: string | null;
+  homeCollection: boolean;
+  name: string;
+  price: number | null;
+  turnaroundHours: number | null;
+};
+
+export const getComparable = cache((lang: SiteLanguage) =>
+  get<ComparableTest[]>(`/labs/comparable?lang=${lang}`).then((r) => r ?? []),
+);
+
+export const getComparison = cache((key: string, lang: SiteLanguage) =>
+  get<ComparedOffer[]>(
+    `/labs/compare/${encodeURIComponent(key)}?lang=${lang}`,
+  ).then((r) => r ?? []),
+);

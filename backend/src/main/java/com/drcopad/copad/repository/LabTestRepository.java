@@ -37,4 +37,17 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
             + "AND l.active = true AND l.deletedAt IS NULL "
             + "GROUP BY t.analyteKey HAVING COUNT(DISTINCT l.id) > 1 ORDER BY t.analyteKey")
     List<String> comparableAnalytes();
+
+    /**
+     * Every offer of a set of analytes, in one query.
+     *
+     * The comparison index needs a name and a price range for each analyte.
+     * Asking per analyte would be one query a row for a page that is entirely
+     * cacheable, so they are fetched together and grouped in Java.
+     */
+    @Query("SELECT t FROM LabTest t JOIN FETCH t.lab l "
+            + "WHERE t.analyteKey IN :keys AND t.active = true "
+            + "AND l.active = true AND l.deletedAt IS NULL "
+            + "ORDER BY t.analyteKey, CASE WHEN t.price IS NULL THEN 1 ELSE 0 END, t.price ASC")
+    List<LabTest> byAnalytes(@Param("keys") List<String> keys);
 }

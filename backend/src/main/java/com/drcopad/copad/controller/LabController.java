@@ -10,9 +10,13 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 
 /**
  * The public laboratory directory.
@@ -93,10 +97,56 @@ public class LabController {
         }).toList();
     }
 
-    /** Which tests can be compared at all, so nothing offers a comparison of one. */
+    /**
+     * Which tests can be compared at all, with what it costs to have each done.
+     *
+     * The keys alone were not enough to build anything on: a comparison index
+     * has to be able to name a test in the reader's language and say what the
+     * range is, or it is a list of database identifiers.
+     */
     @GetMapping("/comparable")
-    public List<String> comparable() {
-        return tests.comparableAnalytes();
+    public List<Map<String, Object>> comparable(@RequestParam(defaultValue = "az") String lang) {
+        String language = language(lang);
+        List<String> keys = tests.comparableAnalytes();
+        if (keys.isEmpty()) return List.of();
+
+        Map<String, List<LabTest>> byKey = new LinkedHashMap<>();
+        for (String key : keys) byKey.put(key, new ArrayList<>());
+        for (LabTest t : tests.byAnalytes(keys)) {
+            List<LabTest> group = byKey.get(t.getAnalyteKey());
+            if (group != null) group.add(t);
+        }
+
+        List<Map<String, Object>> out = new ArrayList<>();
+        byKey.forEach((key, group) -> {
+            if (group.isEmpty()) return;
+            List<BigDecimal> prices = group.stream()
+                    .map(LabTest::getPrice)
+                    .filter(Objects::nonNull)
+                    .sorted()
+                    .toList();
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("key", key);
+            // The cheapest offer names the analyte, since that is the row a
+            // reader lands on first anyway.
+            row.put("name", group.get(0).nameIn(language));
+            row.put("labCount", group.stream().map(t -> t.getLab().getId()).distinct().count());
+            row.put("lowest", prices.isEmpty() ? null : prices.get(0));
+            row.put("highest", prices.isEmpty() ? null : prices.get(prices.size() - 1));
+            out.add(row);
+        });
+        // Where the difference is largest is where the page is worth reading.
+        out.sort(Comparator.comparing(
+                (Map<String, Object> row) -> saving(row), Comparator.reverseOrder()));
+        return out;
+    }
+
+    /** What a reader saves by choosing the cheaper laboratory, or zero. */
+    private static BigDecimal saving(Map<String, Object> row) {
+        BigDecimal low = (BigDecimal) row.get("lowest");
+        BigDecimal high = (BigDecimal) row.get("highest");
+        if (low == null || high == null) return BigDecimal.ZERO;
+        return high.subtract(low);
     }
 
     private Map<String, Object> summary(Lab lab) {

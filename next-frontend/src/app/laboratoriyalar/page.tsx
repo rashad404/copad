@@ -49,6 +49,11 @@ export default async function Laboratories({ searchParams }: Props) {
         <header className={d.hero}>
           <h1>{c.title}</h1>
           <p>{c.description}</p>
+          <p>
+            <Link className={d.clear} href="/laboratoriyalar/muqayise">
+              {c.compareLink}
+            </Link>
+          </p>
         </header>
         <form
           action="/laboratoriyalar"
