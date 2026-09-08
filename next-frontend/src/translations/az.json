@@ -502,14 +502,14 @@
     },
     "privacy": {
       "title": "Məxfilik siyasəti",
-      "introduction": "Bu səhifədə azdoc-un hansı məlumatları saxladığı, onları nə üçün istifadə etdiyi və seçimlərinizi necə dəyişə biləcəyiniz izah olunur. Son yenilənmə: 7 sentyabr 2026.",
+      "introduction": "Bu səhifədə azdoc-un hansı məlumatları saxladığı, onları nə üçün istifadə etdiyi və seçimlərinizi necə dəyişə biləcəyiniz izah olunur. Son yenilənmə: 8 sentyabr 2026.",
       "owner": {
         "title": "Məlumatları kim saxlayır",
         "description": "Məlumatlarınızı azdoc xidməti saxlayır və xidmətin göstərilməsi üçün istifadə edir. Hesabınız, sağlamlıq qeydləriniz və məlumatlarınızla bağlı müraciətlər üçün əlaqə ünvanımız info@azdoc.ai-dır."
       },
       "information": {
         "title": "Hansı məlumatları toplayırıq",
-        "description": "Hesab yaratdıqda adınızı, e-poçt ünvanınızı və şifrənizin təhlükəsiz yoxlanması üçün heşini saxlayırıq. Əlavə etdiyiniz ailə üzvlərinin adı, doğum tarixi və digər profil məlumatları, xəstəliklər, allergiyalar, dərmanlar, peyvəndlər, ölçmələr, analiz nəticələri və sənədlər sağlamlıq qeydlərinə daxildir. Mesajlar, cavablar, əlavə edilmiş fayllar, razılıq seçimləri və tarixləri də saxlanır. Xidmətin təhlükəsizliyi və işləməsi üçün IP ünvanı, sorğu vaxtı, cihaz və istifadə barədə texniki məlumatlar işlənə bilər."
+        "description": "Hesab yaratdıqda adınızı, e-poçt ünvanınızı və şifrənizin təhlükəsiz yoxlanması üçün heşini saxlayırıq. Əlavə etdiyiniz ailə üzvlərinin adı, doğum tarixi və digər profil məlumatları, xəstəliklər, allergiyalar, dərmanlar, peyvəndlər, ölçmələr, analiz nəticələri və sənədlər sağlamlıq qeydlərinə daxildir. Mesajlar, cavablar, əlavə edilmiş fayllar, razılıq seçimləri və tarixləri də saxlanır. Xidmətin təhlükəsizliyi və işləməsi üçün IP ünvanı, sorğu vaxtı, cihaz və istifadə barədə texniki məlumatlar işlənə bilər. Randevu aldıqda həkim, vaxt və müraciət səbəbi olaraq yazdığınız mətn saxlanılır. Sağlamlıq qeydlərinizi həmin həkimlə paylaşmağı seçsəniz, bu seçim və onun bitmə tarixi saxlanılır, həkimin qeydləri hər dəfə açması qeydə alınır. Telefon və ya saatdan sinxronlaşdırılan ölçmələr hansı cihazdan gəldiyi ilə birlikdə saxlanılır. Laborator sifarişdə seçilmiş analizlər, o andakı qiymət, evdə qan alınması halında isə verdiyiniz ünvan və telefon saxlanılır. Cavab barədə şikayət göndərsəniz, hansı cavab olduğu, seçdiyiniz səbəb və əlavə etdiyiniz mətn saxlanılır."
       },
       "usage": {
         "title": "Məlumatlar nə üçün istifadə olunur",
@@ -521,7 +521,7 @@
       },
       "recipients": {
         "title": "Məlumatlara kim çıxış əldə edə bilər",
-        "description": "Ailənizin qeydlərinə həmin ailəyə giriş icazəsi olan hesablar öz rollarına uyğun baxa bilər. OpenAI cavab və sənəd emalı üçün göndərilən məzmunu alır. Server və məlumat saxlama xidmətlərini təmin edən texniki təchizatçılar, həmçinin xidmətin dəstəyi və təhlükəsizliyi ilə məşğul olan səlahiyyətli şəxslər işləri üçün lazım olan həcmdə məlumatlara çıxış əldə edə bilərlər. Qanunla tələb olunduqda məlumatlar səlahiyyətli orqanlara təqdim oluna bilər."
+        "description": "Ailənizin qeydlərinə həmin ailəyə giriş icazəsi olan hesablar öz rollarına uyğun baxa bilər. OpenAI cavab və sənəd emalı üçün göndərilən məzmunu alır. Server və məlumat saxlama xidmətlərini təmin edən texniki təchizatçılar, həmçinin xidmətin dəstəyi və təhlükəsizliyi ilə məşğul olan səlahiyyətli şəxslər işləri üçün lazım olan həcmdə məlumatlara çıxış əldə edə bilərlər. Qanunla tələb olunduqda məlumatlar səlahiyyətli orqanlara təqdim oluna bilər. Randevu aldığınız həkim adınızı və yazdığınız müraciət səbəbini görür. Sağlamlıq qeydlərinizi yalnız həmin randevu üçün paylaşdığınız halda və yalnız müddəti bitənədək görür. Sifariş verdiyiniz laboratoriya seçilmiş analizləri, evdə qan alınması halında isə ünvan və telefonu alır."
       },
       "retention": {
         "title": "Saxlanma və silinmə müddətləri",

@@ -504,14 +504,14 @@
     },
     "privacy": {
       "title": "Privacy policy",
-      "introduction": "This page explains what azdoc stores, why we use it and how to change your choices. Last updated: 7 September 2026.",
+      "introduction": "This page explains what azdoc stores, why we use it and how to change your choices. Last updated: 8 September 2026.",
       "owner": {
         "title": "Who holds your data",
         "description": "The azdoc service holds your information and uses it to provide the service. Contact info@azdoc.ai about your account, health records or personal information."
       },
       "information": {
         "title": "Information we collect",
-        "description": "When you register, we store your name, email address and a hash used to verify your password. Health records include family member names, dates of birth and other profile details, conditions, allergies, medications, immunizations, measurements, lab results and documents you add. We also store messages, replies, attachments, consent choices and their dates. Technical information such as IP addresses, request times, device information and usage may be processed to operate and secure the service."
+        "description": "When you register, we store your name, email address and a hash used to verify your password. Health records include family member names, dates of birth and other profile details, conditions, allergies, medications, immunizations, measurements, lab results and documents you add. We also store messages, replies, attachments, consent choices and their dates. Technical information such as IP addresses, request times, device information and usage may be processed to operate and secure the service. When you book an appointment we store the doctor, the time and whatever you write as the reason. If you choose to share your health record with that doctor, that choice and its expiry are stored, and every time the doctor opens the record it is recorded. Readings synced from a phone or a watch are stored together with the name of the device they came from. A laboratory order stores the tests chosen, the price at the time, and, for home collection, the address and phone number you give. If you report an answer, we store which answer it was, the reason you chose and anything you add."
       },
       "usage": {
         "title": "Why we use it",
@@ -523,7 +523,7 @@
       },
       "recipients": {
         "title": "Who can receive or access information",
-        "description": "Accounts with access to your family can view its records according to their roles. OpenAI receives the content sent for replies and document processing. Technical suppliers providing hosting and storage, and authorized personnel responsible for support and security, may access information needed for those tasks. Information may also be disclosed to competent authorities when required by law."
+        "description": "Accounts with access to your family can view its records according to their roles. OpenAI receives the content sent for replies and document processing. Technical suppliers providing hosting and storage, and authorized personnel responsible for support and security, may access information needed for those tasks. Information may also be disclosed to competent authorities when required by law. A doctor you book with sees your name and the reason you wrote. They see your health record only if you shared it for that appointment, and only until that sharing expires. A laboratory you order from receives the tests ordered and, for home collection, the address and phone number for the visit."
       },
       "retention": {
         "title": "Retention and deletion",
