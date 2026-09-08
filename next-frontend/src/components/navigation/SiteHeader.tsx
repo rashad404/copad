@@ -124,6 +124,10 @@ export default function SiteHeader() {
   const links = [
     ["/dermanlar", "Dərmanlar"],
     ["/hekimler", "Həkimlər"],
+    // The third public directory, beside the doctors and the medicines. It was
+    // reachable only from the account menu, which is the wrong place for
+    // something anybody can browse without signing in.
+    ["/laboratoriyalar", "Laboratoriyalar"],
     ["/#how", "Necə işləyir"],
     ["/#family", "Ailəniz üçün"],
     ["/#questions", "Suallar"],
@@ -132,7 +136,6 @@ export default function SiteHeader() {
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/randevularim", "Randevularım"],
     ["/analizlerim", "Analiz sifarişlərim"],
-    ["/laboratoriyalar", "Laboratoriyalar"],
     // Only for accounts that have a listing. Almost nobody is a doctor, and a
     // "Doctor panel" link with nothing behind it just makes a patient wonder
     // what they are.
