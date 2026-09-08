@@ -1,6 +1,7 @@
 package com.drcopad.copad.service;
 
 import com.drcopad.copad.entity.*;
+import com.drcopad.copad.entity.VitalReading;
 import com.drcopad.copad.repository.HealthConnectionRepository;
 import com.drcopad.copad.repository.VitalReadingRepository;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,10 +50,20 @@ class HealthSyncServiceTest {
         when(connections.findByFamilyMemberIdAndProvider(21L, HealthProvider.APPLE_HEALTH))
                 .thenReturn(Optional.of(connection));
 
+        // The blood pressure and heart rate shapes below are Android's, so that
+        // source has to be connected too.
+        HealthConnection android = new HealthConnection();
+        android.setId(2L);
+        android.setFamilyMember(member);
+        android.setProvider(HealthProvider.HEALTH_CONNECT);
+        android.setEnabled(true);
+        when(connections.findByFamilyMemberIdAndProvider(21L, HealthProvider.HEALTH_CONNECT))
+                .thenReturn(Optional.of(android));
+
         when(converter.toCanonical(any(), any(), any()))
                 .thenAnswer(i -> new VitalUnitConverter.Converted(
                         i.getArgument(1), "bpm"));
-        when(vitals.existingRefs(anyLong(), any(), anyList())).thenReturn(List.of());
+        when(vitals.existingSamples(anyLong(), any(), anyList())).thenReturn(List.of());
     }
 
     private HealthSyncService.Sample sample(String ref, LocalDateTime at) {
@@ -62,7 +73,7 @@ class HealthSyncServiceTest {
 
     @Test
     void aSampleAlreadyHeldIsCountedRatherThanStoredAgain() {
-        when(vitals.existingRefs(anyLong(), any(), anyList())).thenReturn(List.of("a1"));
+        when(vitals.existingSamples(anyLong(), any(), anyList())).thenReturn(List.of(held("a1", VitalType.PULSE, WHEN)));
 
         HealthSyncService.Result result = service.sync(21L, 5L, HealthProvider.APPLE_HEALTH,
                 List.of(sample("a1", WHEN), sample("a2", WHEN)));
@@ -97,6 +108,56 @@ class HealthSyncServiceTest {
         assertThat(result.skippedManual()).isEqualTo(1);
         assertThat(result.accepted()).isZero();
         verify(vitals, never()).saveAll(any());
+    }
+
+    private VitalReading held(String ref, VitalType type, LocalDateTime at) {
+        VitalReading row = new VitalReading();
+        row.setSourceRef(ref);
+        row.setVitalType(type);
+        row.setMeasuredAt(at);
+        return row;
+    }
+
+    private HealthSyncService.Sample typed(String ref, VitalType type, LocalDateTime at) {
+        return new HealthSyncService.Sample(type, new BigDecimal("120"), "mmHg",
+                at, ref, "Phone");
+    }
+
+    /**
+     * Android puts both halves of a blood pressure in one record with one id.
+     * Keying on the id alone stored the systolic and silently dropped the
+     * diastolic, which is worse than storing neither.
+     */
+    @Test
+    void bothHalvesOfABloodPressureShareARecordIdAndAreBothKept() {
+        HealthSyncService.Result result = service.sync(21L, 5L, HealthProvider.HEALTH_CONNECT,
+                List.of(typed("hc-bp-1", VitalType.BLOOD_PRESSURE_SYSTOLIC, WHEN),
+                        typed("hc-bp-1", VitalType.BLOOD_PRESSURE_DIASTOLIC, WHEN)));
+
+        assertThat(result.accepted()).isEqualTo(2);
+        assertThat(result.alreadyHad()).isZero();
+    }
+
+    /** A heart rate record holds a whole series of samples under one id. */
+    @Test
+    void aHeartRateSeriesUnderOneRecordIdKeepsEverySample() {
+        HealthSyncService.Result result = service.sync(21L, 5L, HealthProvider.HEALTH_CONNECT,
+                List.of(typed("hc-hr-1", VitalType.PULSE, WHEN),
+                        typed("hc-hr-1", VitalType.PULSE, WHEN.plusMinutes(1)),
+                        typed("hc-hr-1", VitalType.PULSE, WHEN.plusMinutes(2))));
+
+        assertThat(result.accepted()).isEqualTo(3);
+    }
+
+    /** Widening identity must not weaken it: the same sample twice is still one. */
+    @Test
+    void theSameSampleFromTheSameRecordIsStillTakenOnce() {
+        HealthSyncService.Result result = service.sync(21L, 5L, HealthProvider.HEALTH_CONNECT,
+                List.of(typed("hc-bp-1", VitalType.BLOOD_PRESSURE_SYSTOLIC, WHEN),
+                        typed("hc-bp-1", VitalType.BLOOD_PRESSURE_SYSTOLIC, WHEN)));
+
+        assertThat(result.accepted()).isEqualTo(1);
+        assertThat(result.alreadyHad()).isEqualTo(1);
     }
 
     @Test
@@ -144,7 +205,8 @@ class HealthSyncServiceTest {
 
     @Test
     void syncingBeforeConnectingIsRefused() {
-        assertThatThrownBy(() -> service.sync(21L, 5L, HealthProvider.HEALTH_CONNECT,
+        // FILE is the one source this member has not connected.
+        assertThatThrownBy(() -> service.sync(21L, 5L, HealthProvider.FILE,
                 List.of(sample("a1", WHEN))))
                 .isInstanceOf(IllegalStateException.class);
     }
