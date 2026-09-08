@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -279,28 +280,43 @@ public class ClinicalRecordService {
      * them another person's data - into the audit row.
      */
     private Map<String, Object> summarise(Object record) {
+        Map<String, Object> out = new LinkedHashMap<>();
         if (record instanceof MedicalCondition c) {
-            return Map.of("label", String.valueOf(c.getLabel()),
-                    "status", String.valueOf(c.getStatus()),
-                    "severity", String.valueOf(c.getSeverity()));
+            put(out, "label", c.getLabel());
+            put(out, "status", c.getStatus());
+            put(out, "severity", c.getSeverity());
+        } else if (record instanceof Allergy a) {
+            put(out, "allergen", a.getAllergen());
+            put(out, "type", a.getAllergenType());
+            put(out, "severity", a.getSeverity());
+            put(out, "active", a.isActive());
+        } else if (record instanceof Medication m) {
+            put(out, "name", m.getName());
+            put(out, "dose", m.getDoseLabel());
+            put(out, "frequency", m.getFrequency());
+            put(out, "active", m.isActive());
+        } else if (record instanceof Immunization i) {
+            put(out, "vaccine", i.getVaccine());
+            put(out, "doseNumber", i.getDoseNumber());
+            put(out, "administeredOn", i.getAdministeredOn());
         }
-        if (record instanceof Allergy a) {
-            return Map.of("allergen", String.valueOf(a.getAllergen()),
-                    "type", String.valueOf(a.getAllergenType()),
-                    "severity", String.valueOf(a.getSeverity()),
-                    "active", a.isActive());
-        }
-        if (record instanceof Medication m) {
-            return Map.of("name", String.valueOf(m.getName()),
-                    "dose", String.valueOf(m.getDoseLabel()),
-                    "frequency", String.valueOf(m.getFrequency()),
-                    "active", m.isActive());
-        }
-        if (record instanceof Immunization i) {
-            return Map.of("vaccine", String.valueOf(i.getVaccine()),
-                    "doseNumber", String.valueOf(i.getDoseNumber()),
-                    "administeredOn", String.valueOf(i.getAdministeredOn()));
-        }
-        return Map.of();
+        return out;
+    }
+
+    /**
+     * Records a field only when it has a value.
+     *
+     * This used to go through String.valueOf because Map.of will not take a
+     * null, which turned every field the person left blank into the text
+     * "null" - and the history screen showed it to them exactly like that. An
+     * unset field belongs out of the snapshot, not in it as a word.
+     *
+     * Numbers and booleans keep their type; everything else is written as text
+     * so the audit row does not depend on how an entity serialises.
+     */
+    private static void put(Map<String, Object> into, String key, Object value) {
+        if (value == null) return;
+        into.put(key, value instanceof Number || value instanceof Boolean
+                ? value : String.valueOf(value));
     }
 }

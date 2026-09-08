@@ -973,7 +973,18 @@ function Snapshot({ revision }: { revision: Revision }) {
       <summary>{c("Recorded details", "Dəyişikliyin təfərrüatları")}</summary>
       <dl>
         {Object.entries(snapshot)
-          .filter(([, value]) => value !== null && typeof value !== "object")
+          // Rows written before the fix carry the text "null" where a field was
+          // left blank, because the snapshot was built with String.valueOf. An
+          // audit row is not rewritten to tidy it up, so it is dropped here.
+          .filter(
+            ([, value]) =>
+              value !== null &&
+              value !== undefined &&
+              typeof value !== "object" &&
+              String(value).trim() !== "" &&
+              String(value) !== "null" &&
+              String(value) !== "undefined",
+          )
           .map(([key, value]) => (
             <div key={key}>
               <dt>
