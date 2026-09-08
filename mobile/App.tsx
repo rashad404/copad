@@ -51,6 +51,7 @@ function Tabs() {
         headerTitle: () => <Brand />,
         headerStyle: { backgroundColor: palette.bg },
         headerShadowVisible: false,
+        tabBarHideOnKeyboard: true,
         tabBarActiveTintColor: palette.blue,
         tabBarInactiveTintColor: palette.muted,
         tabBarStyle: {

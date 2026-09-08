@@ -19,6 +19,7 @@ import { DateField } from "./DateField";
 import { decimal, calendarDate } from "../core/validation";
 import { Ionicons } from "@expo/vector-icons";
 import { useNavigation } from "@react-navigation/native";
+import { useHeaderHeight } from "@react-navigation/elements";
 import { useCopy } from "../core/copy";
 import { useFamily, useSession } from "../core/Session";
 import {
@@ -172,11 +173,13 @@ export function Page({
   children: React.ReactNode;
   scroll?: boolean;
 }) {
+  const headerHeight = useHeaderHeight();
   return (
     <SafeAreaView edges={["left", "right"]} style={styles.page}>
       <KeyboardAvoidingView
         style={{ flex: 1 }}
         behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={headerHeight}
       >
         {scroll ? (
           <ScrollView
@@ -380,6 +383,7 @@ export function Sheet({
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
+        keyboardVerticalOffset={0}
         >
           <ScrollView
             keyboardShouldPersistTaps="handled"

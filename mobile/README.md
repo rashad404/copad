@@ -2,7 +2,24 @@
 
 The patient app uses React Native and Expo SDK 53. It follows the current website's brand, member-scoped health record and API contracts. Azerbaijani is the default; English and Russian are available under Account.
 
-## Run the preview
+## Build the native iPhone preview
+
+With Xcode, the iOS platform component, CocoaPods and your Apple development team configured:
+
+```sh
+npm ci
+APPLE_TEAM_ID=YOUR_TEAM_ID npm run build:ios:preview
+```
+
+This creates `native-builds/derived/Build/Products/Release-iphoneos/azdocPreview.app`, signed for development. It embeds the app's JavaScript and runs without Metro. Install it on a device covered by your development profile using Xcode or `xcrun devicectl device install app --device DEVICE_ID PATH_TO_APP`.
+
+The preview has its own name and identifier (`azdoc Preview`, `ai.azdoc.app.preview`) and uses the Tailscale backend on port 8002. It does not replace an eventual production app. `app.config.js` enables HTTP only for the preview variant; the production variant uses HTTPS and the identifier `ai.azdoc.app`.
+
+For Android, the EAS `preview` profile produces an installable APK. It requires access to the existing Expo project and Android signing credentials. A compiled iOS app is not an Android APK.
+
+The compatibility plugin in `plugins/with-fmt-compat.js` narrowly handles fmt 11.0.2 with newer Apple Clang. Generated Xcode/Gradle projects and local build output are ignored by git and can be regenerated.
+
+## Run the optional browser preview
 
 ```sh
 npm ci
@@ -11,7 +28,7 @@ npm run dev
 
 Open http://100.89.150.50:3003 in a browser on Tailscale. This is a responsive preview of the native screens, not the Next.js website. `npm run dev` uses port 3003 and refuses to stop a server belonging to a different checkout. It leaves the main agent's port 3002 alone. It runs Expo without file watching; restart it after changes.
 
-For interactive development with reloads, stop the verified preview from this checkout and use `npm start`. Native devices need a development client compatible with SDK 53. Do not assume the current store version of Expo Go supports an older SDK.
+For interactive development with reloads, stop the verified preview from this checkout and use `npm start`. `npm run ios` and `npm run android` compile native debug builds using the local platform tools and port 3003. Do not assume the current store version of Expo Go supports SDK 53.
 
 See [environment setup](ENVIRONMENT_SETUP.md) for backend and device configuration.
 
@@ -65,7 +82,7 @@ The browser suite intercepts API requests and uses synthetic people, records and
 
 ## Native release work
 
-JavaScript/Hermes exports are not signed device builds. Before release, configure the existing EAS project's approved iOS bundle identifier and Android application ID, build a development client, and test on actual iOS/Android devices. In particular, verify keyboard/safe areas, native date input, document selection, authenticated file sharing and interruption/resume behavior. No available simulator device was installed on the development Mac during this rebuild.
+Before store release, confirm the production app identifiers and signing setup, then test the patient flows on actual iOS/Android devices. In particular, verify keyboard/safe areas, native date input, document selection, authenticated file sharing and interruption/resume behavior. Native build and launch checks do not establish full patient-flow validation on a phone.
 
 This rebuild retains the SDK 53 platform line. Compatible dependency security patches are applied, but the inherited Expo/Metro/navigation dependency tree still has audit findings that require a separately validated platform upgrade or upstream fixes. Do not run `npm audit fix --force` blindly.
 

@@ -6,12 +6,20 @@
   "build": {
     "development": {
       "developmentClient": true,
-      "distribution": "internal"
+      "distribution": "internal",
+      "env": {
+        "AZDOC_BUILD_VARIANT": "preview",
+        "EXPO_PUBLIC_API_URL": "http://100.89.150.50:8002/api"
+      }
     },
     "preview": {
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_API_URL": "http://100.89.150.50:8002/api"
+        "EXPO_PUBLIC_API_URL": "http://100.89.150.50:8002/api",
+        "AZDOC_BUILD_VARIANT": "preview"
+      },
+      "android": {
+        "buildType": "apk"
       }
     },
     "production": {

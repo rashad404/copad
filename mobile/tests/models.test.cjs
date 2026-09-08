@@ -253,3 +253,25 @@ test("all native labels have Russian copy instead of silent English fallbacks", 
     }
   }
 });
+
+test("native preview has a separate identity and release does not allow development HTTP", () => {
+  const configure = require("../app.config.js");
+  const previous = process.env.AZDOC_BUILD_VARIANT;
+  try {
+    delete process.env.AZDOC_BUILD_VARIANT;
+    const release = configure({ config: {} });
+    assert.equal(release.ios.bundleIdentifier, "ai.azdoc.app");
+    assert.equal(release.ios.infoPlist.NSAppTransportSecurity, undefined);
+    process.env.AZDOC_BUILD_VARIANT = "preview";
+    const preview = configure({ config: {} });
+    assert.equal(preview.ios.bundleIdentifier, "ai.azdoc.app.preview");
+    assert.equal(preview.android.package, "ai.azdoc.app.preview");
+    assert.equal(
+      preview.ios.infoPlist.NSAppTransportSecurity.NSAllowsArbitraryLoads,
+      true,
+    );
+  } finally {
+    if (previous === undefined) delete process.env.AZDOC_BUILD_VARIANT;
+    else process.env.AZDOC_BUILD_VARIANT = previous;
+  }
+});
