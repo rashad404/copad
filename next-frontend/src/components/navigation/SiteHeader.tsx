@@ -100,9 +100,11 @@ export default function SiteHeader() {
       ? [
           ["/health-record", "Sağlamlıq qeydləri"],
           ["/randevularim", "Randevularım"],
+          ["/analizlerim", "Analiz sifarişlərim"],
         ]
       : []),
     ["/hekimler", "Həkimlər"],
+    ["/laboratoriyalar", "Laboratoriyalar"],
     ["/dermanlar", "Dərmanlar"],
   ];
   const mobileAccountLinks = signedIn
@@ -129,6 +131,8 @@ export default function SiteHeader() {
   const accountLinks = [
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/randevularim", "Randevularım"],
+    ["/analizlerim", "Analiz sifarişlərim"],
+    ["/laboratoriyalar", "Laboratoriyalar"],
     // Only for accounts that have a listing. Almost nobody is a doctor, and a
     // "Doctor panel" link with nothing behind it just makes a patient wonder
     // what they are.

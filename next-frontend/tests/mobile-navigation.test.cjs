@@ -189,7 +189,9 @@ test("signed-in tools precede account and language, with one active destination 
       "/chat",
       "/health-record",
       "/randevularim",
+      "/analizlerim",
       "/hekimler",
+      "/laboratoriyalar",
       "/dermanlar",
       "/dashboard",
       "/profile",
@@ -226,7 +228,14 @@ test("visitors see public tools and real sign-in and registration links", async 
     [...document.querySelectorAll("#site-mobile-navigation a")].map((a) =>
       a.getAttribute("href"),
     ),
-    ["/chat", "/hekimler", "/dermanlar", "/login", "/register"],
+    [
+      "/chat",
+      "/hekimler",
+      "/laboratoriyalar",
+      "/dermanlar",
+      "/login",
+      "/register",
+    ],
   );
 });
 test("Escape, menu toggle and selecting a destination each close the menu", async () => {
