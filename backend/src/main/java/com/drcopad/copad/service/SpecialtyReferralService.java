@@ -2,13 +2,14 @@ package com.drcopad.copad.service;
 
 import com.drcopad.copad.repository.DoctorRepository;
 import com.drcopad.copad.repository.MedicalSpecialtyRepository;
+import com.drcopad.copad.repository.SpecialtyRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -29,6 +30,7 @@ import java.util.Map;
 public class SpecialtyReferralService {
 
     private final MedicalSpecialtyRepository specialties;
+    private final SpecialtyRepository directorySpecialties;
     private final DoctorRepository doctors;
 
     /**
@@ -85,10 +87,20 @@ public class SpecialtyReferralService {
         return block.toString();
     }
 
+    /**
+     * Doctors the directory can offer for one assistant specialty.
+     *
+     * The two vocabularies are different sizes on purpose - the assistant knows
+     * six kinds of doctor, the directory knows forty - so the count has to go
+     * through the mapping. Counting on the assistant's code directly returned
+     * zero for everything except ENT, which would have had it telling people
+     * there was no cardiologist here while three were listed.
+     */
     private long countFor(String code) {
         try {
-            return doctors.publicSearch(code, null, null, null, PageRequest.of(0, 1))
-                    .getTotalElements();
+            List<String> codes = directorySpecialties.patientFacingCodesFor(code);
+            if (codes.isEmpty()) return 0;
+            return doctors.countPublicBySpecialtyCodes(codes);
         } catch (RuntimeException e) {
             // A referral is worth making even when the count is unavailable;
             // treating it as zero simply keeps the assistant from over-promising.

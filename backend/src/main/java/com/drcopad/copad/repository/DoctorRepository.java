@@ -57,6 +57,18 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
                               @Param("q") String q,
                               Pageable pageable);
 
+    /**
+     * How many listings the directory can actually offer for a set of specialty codes.
+     *
+     * Mirrors publicSearch's visibility rules rather than counting the table,
+     * so the assistant is never told about a doctor a person could not find.
+     */
+    @Query("SELECT COUNT(d) FROM Doctor d "
+            + "WHERE d.deletedAt IS NULL AND d.active = true "
+            + "AND d.verification <> 'REJECTED' "
+            + "AND d.specialtyCode IN :codes")
+    long countPublicBySpecialtyCodes(@Param("codes") java.util.List<String> codes);
+
     /** Slugs for the sitemap, oldest first so paging stays stable across a crawl. */
     @Query("SELECT d FROM Doctor d WHERE d.deletedAt IS NULL AND d.active = true "
             + "AND d.verification <> 'REJECTED' ORDER BY d.id")

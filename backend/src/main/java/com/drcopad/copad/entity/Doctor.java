@@ -38,7 +38,7 @@ public class Doctor {
     @Column(nullable = false)
     private String slug;
 
-    /** Matches medical_specialties.code, so the assistant and the directory agree. */
+    /** Matches specialty.code, so the assistant and the directory agree. */
     @Column(name = "specialty_code", length = 64)
     private String specialtyCode;
 
