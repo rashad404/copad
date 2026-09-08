@@ -7,6 +7,11 @@ import ProductLayout from "@/components/public/ProductLayout";
 import { useAuth } from "@/context/AuthContext";
 import {
   getMyListing,
+  updateMyListing,
+  getTimeOff,
+  addTimeOff,
+  removeTimeOff,
+  type TimeOff,
   getAvailability,
   addAvailability,
   removeAvailability,
@@ -22,6 +27,7 @@ import { supportedLanguage } from "@/utils/languages";
 import type { DirectoryLanguage } from "@/components/doctors/copy";
 import { shortDate, weekdayNames } from "@/components/booking/copy";
 import { portalCopy } from "@/components/booking/portalCopy";
+import ClaimListing from "@/components/booking/ClaimListing";
 import styles from "@/components/booking/portal.module.css";
 
 const DAY_ORDER = [1, 2, 3, 4, 5, 6, 0];
@@ -40,6 +46,15 @@ export default function DoctorPortal() {
   const [bookings, setBookings] = useState<DoctorBooking[]>([]);
   const [busy, setBusy] = useState<number | null>(null);
   const [error, setError] = useState<string | null>(null);
+  const [away, setAway] = useState<TimeOff[]>([]);
+  const [savedNote, setSavedNote] = useState(false);
+  const [profile, setProfile] = useState({
+    bio: "",
+    qualifications: "",
+    consultationFee: "",
+    languages: "",
+  });
+  const [awayForm, setAwayForm] = useState({ from: "", to: "", reason: "" });
 
   const [form, setForm] = useState({
     dayOfWeek: 1,
@@ -49,12 +64,14 @@ export default function DoctorPortal() {
   });
 
   const loadSchedule = useCallback(async () => {
-    const [a, b] = await Promise.all([
+    const [a, b, t] = await Promise.all([
       getAvailability().catch(() => []),
       getMyBookings().catch(() => []),
+      getTimeOff().catch(() => []),
     ]);
     setBlocks(a);
     setBookings(b);
+    setAway(t);
   }, []);
 
   useEffect(() => {
@@ -63,7 +80,16 @@ export default function DoctorPortal() {
     getMyListing(controller.signal)
       .then((mine) => {
         setListing(mine);
-        if (mine) void loadSchedule();
+        if (mine) {
+          setProfile({
+            bio: mine.bio ?? "",
+            qualifications: mine.qualifications ?? "",
+            consultationFee:
+              mine.consultationFee == null ? "" : String(mine.consultationFee),
+            languages: (mine.languages ?? []).join(", "),
+          });
+          void loadSchedule();
+        }
       })
       .catch(() => setListing(null));
     return () => controller.abort();
@@ -122,6 +148,65 @@ export default function DoctorPortal() {
     }
   }
 
+  async function saveProfile() {
+    setBusy(-2);
+    setError(null);
+    setSavedNote(false);
+    try {
+      const updated = await updateMyListing({
+        bio: profile.bio.trim() || null,
+        qualifications: profile.qualifications.trim() || null,
+        consultationFee: profile.consultationFee
+          ? Number(profile.consultationFee)
+          : null,
+        languages: profile.languages
+          .split(",")
+          .map((l) => l.trim().toLowerCase())
+          .filter(Boolean),
+      });
+      setListing(updated);
+      setSavedNote(true);
+    } catch {
+      setError(c.saveFailed);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function blockTime() {
+    if (!awayForm.from || !awayForm.to || awayForm.from >= awayForm.to) {
+      setError(c.timeOffBadRange);
+      return;
+    }
+    setBusy(-3);
+    setError(null);
+    try {
+      await addTimeOff({
+        startsAt: `${awayForm.from}:00`,
+        endsAt: `${awayForm.to}:00`,
+        reason: awayForm.reason.trim() || null,
+      });
+      setAwayForm({ from: "", to: "", reason: "" });
+      await loadSchedule();
+    } catch {
+      setError(c.timeOffFailed);
+    } finally {
+      setBusy(null);
+    }
+  }
+
+  async function unblockTime(id: number) {
+    setBusy(id);
+    try {
+      await removeTimeOff(id);
+      await loadSchedule();
+    } catch {
+      setError(c.timeOffFailed);
+    } finally {
+      setBusy(null);
+    }
+  }
+
   const when = (value: string) =>
     `${shortDate(dayOf(value), language)}, ${timeOf(value)}`;
 
@@ -152,9 +237,12 @@ export default function DoctorPortal() {
           <>
             <p className={styles.emptyTitle}>{c.noListing}</p>
             <p className={styles.muted}>{c.noListingNote}</p>
-            <Link className={styles.primary} href="/hekimler">
-              {c.findListing}
-            </Link>
+            {/*
+              The claim flow itself, rather than a link to the directory and a
+              hope. Sending people to browse and work it out was the reason no
+              doctor could reach this panel.
+            */}
+            <ClaimListing language={language} onClaimed={setListing} />
           </>
         ) : (
           <>
@@ -184,6 +272,140 @@ export default function DoctorPortal() {
                 {error}
               </p>
             )}
+
+            <h2>{c.profile}</h2>
+            <div className={styles.addRow} style={{ flexDirection: "column" }}>
+              <label style={{ width: "100%" }}>
+                <span>{c.bio}</span>
+                <textarea
+                  rows={3}
+                  maxLength={2000}
+                  value={profile.bio}
+                  onChange={(e) =>
+                    setProfile({ ...profile, bio: e.target.value })
+                  }
+                  style={{ width: "100%" }}
+                />
+              </label>
+              <label style={{ width: "100%" }}>
+                <span>{c.qualifications}</span>
+                <textarea
+                  rows={2}
+                  maxLength={1000}
+                  value={profile.qualifications}
+                  onChange={(e) =>
+                    setProfile({ ...profile, qualifications: e.target.value })
+                  }
+                  style={{ width: "100%" }}
+                />
+              </label>
+              <div style={{ display: "flex", gap: 12, flexWrap: "wrap" }}>
+                <label>
+                  <span>{c.fee}</span>
+                  <input
+                    type="number"
+                    min="0"
+                    step="1"
+                    value={profile.consultationFee}
+                    onChange={(e) =>
+                      setProfile({
+                        ...profile,
+                        consultationFee: e.target.value,
+                      })
+                    }
+                  />
+                </label>
+                <label>
+                  <span>{c.languages}</span>
+                  <input
+                    placeholder="az, ru, en"
+                    value={profile.languages}
+                    onChange={(e) =>
+                      setProfile({ ...profile, languages: e.target.value })
+                    }
+                  />
+                </label>
+              </div>
+              <button
+                type="button"
+                className={styles.primary}
+                disabled={busy === -2}
+                onClick={saveProfile}
+              >
+                {busy === -2 ? c.saving : c.save}
+              </button>
+              {savedNote && (
+                <span className={styles.muted} role="status">
+                  {c.saved}
+                </span>
+              )}
+            </div>
+
+            <h2>{c.timeOff}</h2>
+            <p className={styles.muted}>
+              {c.timeOffNote} {c.existingKept}
+            </p>
+            {away.length === 0 ? (
+              <p className={styles.muted}>{c.timeOffNone}</p>
+            ) : (
+              <ul className={styles.blocks}>
+                {away.map((period) => (
+                  <li key={period.id}>
+                    <span className={styles.range}>
+                      {when(period.startsAt)} - {when(period.endsAt)}
+                    </span>
+                    <span className={styles.muted}>{period.reason}</span>
+                    <button
+                      type="button"
+                      className={styles.remove}
+                      disabled={busy === period.id}
+                      onClick={() => unblockTime(period.id)}
+                    >
+                      {c.timeOffRemove}
+                    </button>
+                  </li>
+                ))}
+              </ul>
+            )}
+            <div className={styles.addRow}>
+              <label>
+                <span>{c.timeOffFrom}</span>
+                <input
+                  type="datetime-local"
+                  value={awayForm.from}
+                  onChange={(e) =>
+                    setAwayForm({ ...awayForm, from: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                <span>{c.timeOffTo}</span>
+                <input
+                  type="datetime-local"
+                  value={awayForm.to}
+                  onChange={(e) =>
+                    setAwayForm({ ...awayForm, to: e.target.value })
+                  }
+                />
+              </label>
+              <label>
+                <span>{c.timeOffReason}</span>
+                <input
+                  value={awayForm.reason}
+                  onChange={(e) =>
+                    setAwayForm({ ...awayForm, reason: e.target.value })
+                  }
+                />
+              </label>
+              <button
+                type="button"
+                className={styles.primary}
+                disabled={busy === -3}
+                onClick={blockTime}
+              >
+                {busy === -3 ? c.adding : c.timeOffAdd}
+              </button>
+            </div>
 
             <h2>{c.hours}</h2>
             <p className={styles.muted}>{c.hoursNote}</p>

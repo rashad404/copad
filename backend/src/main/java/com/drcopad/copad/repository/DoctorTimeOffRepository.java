@@ -9,6 +9,10 @@ import java.util.List;
 public interface DoctorTimeOffRepository extends JpaRepository<DoctorTimeOff, Long> {
 
     /** Any absence overlapping the window being offered. */
+    /** Everything upcoming, so a doctor can see and undo what they booked off. */
+    List<DoctorTimeOff> findByDoctorIdAndEndsAtAfterOrderByStartsAtAsc(
+            Long doctorId, java.time.LocalDateTime after);
+
     List<DoctorTimeOff> findByDoctorIdAndEndsAtAfterAndStartsAtBefore(
             Long doctorId, LocalDateTime from, LocalDateTime to);
 }

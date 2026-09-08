@@ -34,6 +34,7 @@ public class DoctorSelfService {
     private final DoctorAvailabilityRepository availability;
     private final ClinicRepository clinics;
     private final BookingRepository bookings;
+    private final DoctorTimeOffRepository timeOff;
     private final UserRepository users;
     private final com.drcopad.copad.service.notification.NotificationService notifications;
 
@@ -126,7 +127,7 @@ public class DoctorSelfService {
     @Transactional
     public Doctor updateMine(Long userId, Doctor input) {
         Doctor doctor = require(userId);
-        applyOwnFields(doctor, input);
+        applySuppliedFields(doctor, input);
 
         // A verified doctor may pause their own bookings: they know when they
         // are away. Nobody else may turn them on.
@@ -233,6 +234,49 @@ public class DoctorSelfService {
         return saved;
     }
 
+    /** Time the doctor is away, so nothing can be booked into it. */
+    @Transactional(readOnly = true)
+    public List<DoctorTimeOff> myTimeOff(Long userId) {
+        Doctor doctor = require(userId);
+        return timeOff.findByDoctorIdAndEndsAtAfterOrderByStartsAtAsc(
+                doctor.getId(), java.time.LocalDateTime.now());
+    }
+
+    /**
+     * Marks a period away.
+     *
+     * Availability already reads these, so blocking time needed nothing more
+     * than a way to write one - without it a doctor on holiday kept being
+     * offered, and had to decline each appointment by hand.
+     *
+     * Appointments already made are deliberately left alone. Cancelling
+     * somebody's appointment is a decision with a person on the other end of
+     * it, and belongs to the doctor, not to a side effect.
+     */
+    @Transactional
+    public DoctorTimeOff addTimeOff(Long userId, java.time.LocalDateTime from,
+                                    java.time.LocalDateTime to, String reason) {
+        Doctor doctor = require(userId);
+        if (from == null || to == null || !to.isAfter(from)) {
+            throw new IllegalArgumentException("The end must be after the start");
+        }
+        DoctorTimeOff away = new DoctorTimeOff();
+        away.setDoctor(doctor);
+        away.setStartsAt(from);
+        away.setEndsAt(to);
+        away.setReason(reason);
+        log.info("Doctor {} blocked time off", doctor.getId());
+        return timeOff.save(away);
+    }
+
+    @Transactional
+    public void removeTimeOff(Long userId, Long id) {
+        Doctor doctor = require(userId);
+        timeOff.findById(id)
+                .filter(t -> t.getDoctor().getId().equals(doctor.getId()))
+                .ifPresent(timeOff::delete);
+    }
+
     private Doctor require(Long userId) {
         Doctor doctor = doctors.findByUserIdAndDeletedAtIsNull(userId).orElse(null);
         if (doctor == null) {
@@ -242,6 +286,33 @@ public class DoctorSelfService {
     }
 
     /** The fields a doctor may set about themselves. */
+    /**
+     * Changes only what was sent.
+     *
+     * An update is a patch, not a replacement. Copying the whole entity meant a
+     * screen that edited a biography also blanked the name, the specialty and
+     * the licence number, and the save failed outright because full_name is not
+     * nullable. A field left out means "leave it alone"; an empty string means
+     * "clear it".
+     */
+    private void applySuppliedFields(Doctor doctor, Doctor input) {
+        if (input.getFullName() != null && !input.getFullName().isBlank()) {
+            doctor.setFullName(input.getFullName());
+        }
+        if (input.getSpecialtyCode() != null) doctor.setSpecialtyCode(blankToNull(input.getSpecialtyCode()));
+        if (input.getQualifications() != null) doctor.setQualifications(blankToNull(input.getQualifications()));
+        if (input.getLicenseNumber() != null) doctor.setLicenseNumber(blankToNull(input.getLicenseNumber()));
+        if (input.getYearsExperience() != null) doctor.setYearsExperience(input.getYearsExperience());
+        if (input.getBio() != null) doctor.setBio(blankToNull(input.getBio()));
+        if (input.getPhotoUrl() != null) doctor.setPhotoUrl(blankToNull(input.getPhotoUrl()));
+        if (input.getLanguages() != null) doctor.setLanguages(blankToNull(input.getLanguages()));
+        if (input.getConsultationFee() != null) doctor.setConsultationFee(input.getConsultationFee());
+    }
+
+    private static String blankToNull(String value) {
+        return value == null || value.isBlank() ? null : value;
+    }
+
     private void applyOwnFields(Doctor doctor, Doctor input) {
         doctor.setFullName(input.getFullName());
         doctor.setSpecialtyCode(input.getSpecialtyCode());

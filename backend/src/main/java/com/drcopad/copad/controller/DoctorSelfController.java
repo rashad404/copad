@@ -208,6 +208,41 @@ public class DoctorSelfController {
     }
 
     @Data
+    public static class TimeOffRequest {
+        private LocalDateTime startsAt;
+        private LocalDateTime endsAt;
+        private String reason;
+    }
+
+    /** Periods the doctor is away. Availability already respects these. */
+    @GetMapping("/me/time-off")
+    public List<Map<String, Object>> timeOff(@AuthenticationPrincipal User user) {
+        return self.myTimeOff(user.getId()).stream().map(t -> Map.<String, Object>of(
+                "id", t.getId(),
+                "startsAt", t.getStartsAt(),
+                "endsAt", t.getEndsAt(),
+                "reason", t.getReason() == null ? "" : t.getReason())).toList();
+    }
+
+    @PostMapping("/me/time-off")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Map<String, Object> addTimeOff(@RequestBody TimeOffRequest body,
+                                          @AuthenticationPrincipal User user) {
+        DoctorTimeOff saved = self.addTimeOff(user.getId(), body.getStartsAt(),
+                body.getEndsAt(), body.getReason());
+        return Map.of("id", saved.getId(),
+                "startsAt", saved.getStartsAt(),
+                "endsAt", saved.getEndsAt());
+    }
+
+    @DeleteMapping("/me/time-off/{id}")
+    public ResponseEntity<Void> removeTimeOff(@PathVariable Long id,
+                                              @AuthenticationPrincipal User user) {
+        self.removeTimeOff(user.getId(), id);
+        return ResponseEntity.noContent().build();
+    }
+
+    @Data
     public static class DecisionRequest {
         /** Only shown to the person who asked, so they know why. */
         private String reason;

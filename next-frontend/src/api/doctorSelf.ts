@@ -81,3 +81,36 @@ export const declineBooking = (id: number, reason?: string) =>
   api
     .post(`/doctor/me/bookings/${id}/decline`, { reason: reason || null })
     .then((r) => r.data);
+
+export interface TimeOff {
+  id: number;
+  startsAt: string;
+  endsAt: string;
+  reason: string;
+}
+
+export const getTimeOff = (signal?: AbortSignal) =>
+  api.get<TimeOff[]>("/doctor/me/time-off", { signal }).then((r) => r.data);
+
+export const addTimeOff = (body: {
+  startsAt: string;
+  endsAt: string;
+  reason?: string | null;
+}) => api.post("/doctor/me/time-off", body).then((r) => r.data);
+
+export const removeTimeOff = (id: number) =>
+  api.delete(`/doctor/me/time-off/${id}`);
+
+/**
+ * Claims a listing somebody else created.
+ *
+ * Puts it under review; it verifies nobody and takes no appointments until a
+ * person has checked who this is.
+ */
+export const claimListing = (doctorId: number, evidence: string) =>
+  api
+    .post<MyListing>("/doctor/claim", { doctorId, evidence })
+    .then((r) => r.data);
+
+export const registerListing = (body: Partial<MyListing>) =>
+  api.post<MyListing>("/doctor/register", body).then((r) => r.data);

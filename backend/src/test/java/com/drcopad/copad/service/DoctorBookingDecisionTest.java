@@ -41,6 +41,7 @@ class DoctorBookingDecisionTest {
                 mock(DoctorAvailabilityRepository.class),
                 mock(ClinicRepository.class),
                 bookings,
+                mock(DoctorTimeOffRepository.class),
                 mock(UserRepository.class),
                 mock(NotificationService.class));
 
