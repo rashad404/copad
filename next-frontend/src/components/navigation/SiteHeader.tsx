@@ -79,7 +79,9 @@ export default function SiteHeader() {
           ))}
         </nav>
         <div className={styles.actions}>
-          <LanguageSwitcher />
+          <span className={styles.desktopLanguage}>
+            <LanguageSwitcher />
+          </span>
           {hydrated && isAuthenticated ? (
             <details ref={accountRef} className={styles.account}>
               <summary>
@@ -136,6 +138,9 @@ export default function SiteHeader() {
               <ArrowUpRight size={16} />
             </Link>
           ))}
+          <div className={styles.mobileLanguage}>
+            <LanguageSwitcher />
+          </div>
           <div className={styles.mobileAccount}>
             {hydrated && isAuthenticated ? (
               <>

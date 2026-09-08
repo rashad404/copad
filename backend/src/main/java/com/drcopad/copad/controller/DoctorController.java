@@ -4,6 +4,7 @@ import com.drcopad.copad.entity.Clinic;
 import com.drcopad.copad.entity.Doctor;
 import com.drcopad.copad.entity.VerificationStatus;
 import com.drcopad.copad.repository.DoctorRepository;
+import com.drcopad.copad.repository.SpecialtyRepository;
 import com.drcopad.copad.service.AvailabilityService;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
@@ -38,6 +39,7 @@ public class DoctorController {
 
     private final DoctorRepository doctors;
     private final AvailabilityService availability;
+    private final SpecialtyRepository specialties;
 
     @Data
     @NoArgsConstructor
@@ -150,6 +152,39 @@ public class DoctorController {
                         "startsAt", s.startsAt(),
                         "endsAt", s.endsAt(),
                         "clinicId", s.clinicId() == null ? "" : s.clinicId()))
+                .toList();
+    }
+
+    /**
+     * The directory's specialty list, named in the language being read.
+     *
+     * The frontend used to carry its own table of these, which covered
+     * fourteen of the forty-three; the rest rendered as their raw code, so a
+     * card read "anesthesiology" instead of the specialty's name. The names
+     * live in one place now, beside the codes they belong to.
+     *
+     * Sits under /api/doctors because that prefix is already public. A literal
+     * path wins over /{slug}, so no doctor can shadow it.
+     */
+    @GetMapping("/specialties")
+    public List<Map<String, Object>> specialties(
+            @RequestParam(defaultValue = "az") String lang) {
+        String language = switch (lang == null ? "" : lang.toLowerCase()) {
+            case "en", "ru" -> lang.toLowerCase();
+            default -> "az";
+        };
+        return specialties.findByActiveTrueOrderBySortOrderAscNameEnAsc().stream()
+                .map(sp -> Map.<String, Object>of(
+                        "code", sp.getCode(),
+                        "name", switch (language) {
+                            case "en" -> sp.getNameEn();
+                            // Russian is optional in the table; fall back to the
+                            // Azerbaijani name rather than to a bare code.
+                            case "ru" -> sp.getNameRu() == null || sp.getNameRu().isBlank()
+                                    ? sp.getNameAz() : sp.getNameRu();
+                            default -> sp.getNameAz();
+                        },
+                        "patientFacing", sp.isPatientFacing()))
                 .toList();
     }
 

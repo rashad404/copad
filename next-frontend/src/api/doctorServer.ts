@@ -3,7 +3,11 @@ import { cache } from "react";
 import { cookies } from "next/headers";
 import { resolveApiBaseUrl } from "./apiBase";
 import { supportedLanguage } from "@/utils/languages";
-import { doctorCopy, defaultSpecialties } from "@/components/doctors/copy";
+import {
+  doctorCopy,
+  defaultSpecialties,
+  type DirectoryLanguage,
+} from "@/components/doctors/copy";
 import {
   filterQuery,
   type Filters,
@@ -35,12 +39,15 @@ export async function getDoctors(filters: Filters) {
     throw new Error("Directory API unavailable");
   return result;
 }
-export async function getSpecialties() {
-  return (
-    (await get<{ code: string; name: string }[]>("/specialties").catch(
-      () => null,
-    )) || defaultSpecialties()
-  );
+export async function getSpecialties(language: DirectoryLanguage = "az") {
+  // /specialties is the assistant's own six chat personas and needs a token.
+  // The directory's list is the one under /doctors, named in the language
+  // being read; the local table only ever covered fourteen of the forty-three,
+  // so everything else showed its raw code.
+  const list = await get<{ code: string; name: string }[]>(
+    `/doctors/specialties?lang=${encodeURIComponent(language)}`,
+  ).catch(() => null);
+  return Array.isArray(list) && list.length ? list : defaultSpecialties();
 }
 export async function getSlots(id: number, from: string, to: string) {
   const result = await get<Slot[]>(

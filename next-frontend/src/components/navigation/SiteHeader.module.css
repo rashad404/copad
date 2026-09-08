@@ -48,6 +48,14 @@
   align-items: center;
   gap: 22px;
 }
+.desktopLanguage {
+  display: flex;
+  align-items: center;
+}
+/* Only shown inside the open mobile menu; see the collapse breakpoint. */
+.mobileLanguage {
+  display: none;
+}
 .login,
 .account {
   font-size: 13px;
@@ -123,25 +131,31 @@
 .mobileNav {
   display: none;
 }
+.mobileLanguage [aria-haspopup="listbox"],
 .actions [aria-haspopup="listbox"] {
   background: transparent !important;
   box-shadow: none !important;
   color: #172a35 !important;
 }
+.mobileLanguage [aria-haspopup="listbox"] span,
 .actions [aria-haspopup="listbox"] span {
   color: #172a35 !important;
 }
+.mobileLanguage [role="listbox"],
 .actions [role="listbox"] {
   background: #fff !important;
   color: #172a35 !important;
 }
+.mobileLanguage [role="option"],
 .actions [role="option"] {
   color: #172a35 !important;
 }
+.mobileLanguage [role="option"][data-focus],
 .actions [role="option"][data-focus] {
   background: #edf0e5 !important;
   color: #214be2 !important;
 }
+.mobileLanguage [role="option"] span,
 .actions [role="option"] span {
   color: inherit !important;
 }
@@ -165,7 +179,8 @@
   }
   .desktopNav,
   .login,
-  .account {
+  .account,
+  .desktopLanguage {
     display: none;
   }
   .toggle {
@@ -199,6 +214,12 @@
     padding: 14px 0;
     font-size: 15px;
     font-weight: 600;
+  }
+  .mobileLanguage {
+    display: block;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #dce1da;
   }
   .mobileAccount {
     display: flex;

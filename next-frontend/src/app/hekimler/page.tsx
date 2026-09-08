@@ -38,7 +38,7 @@ export default async function Doctors({ searchParams }: Props) {
   const filters = parseFilters(await searchParams);
   const [result, specialties] = await Promise.all([
     getDoctors(filters).catch(() => null),
-    getSpecialties().catch(() => []),
+    getSpecialties(language).catch(() => []),
   ]);
   // An empty directory and an empty filtered search are different states.
   const globallyEmpty =
