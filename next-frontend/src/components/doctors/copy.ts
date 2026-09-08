@@ -44,7 +44,7 @@ const az = {
     "Bu həkimin peşə sənədləri yoxlanılıb. Bu, müalicənin nəticəsinə zəmanət deyil.",
   unknownNote:
     "Bu profil üzrə təsdiqlənmiş peşə məlumatı yoxdur. Profilin olması azdoc tərəfindən tövsiyə demək deyil.",
-  claim: "Bu profil sizindir? Bizimlə əlaqə saxlayın.",
+  claim: "Bu profil sizindir? Sahiblik tələb edin.",
   claimSubject: "Həkim profilinə sahiblik müraciəti",
   contact: "Qəbul üçün klinika ilə əlaqə saxlayın",
   noPhone: "Klinikanın əlaqə nömrəsi hələ əlavə edilməyib.",
@@ -107,7 +107,7 @@ const en: Copy = {
     "This doctor's professional credentials have been checked. This does not guarantee treatment outcomes.",
   unknownNote:
     "There are no confirmed professional credentials for this listing. Inclusion is not an endorsement by azdoc.",
-  claim: "Is this your profile? Contact us to claim it.",
+  claim: "Is this your profile? Claim it.",
   claimSubject: "Doctor profile claim",
   contact: "Contact the clinic about an appointment",
   noPhone: "The clinic phone number has not been added yet.",
@@ -169,7 +169,7 @@ const ru: Copy = {
     "Документы о профессиональной квалификации врача проверены. Это не гарантирует результат лечения.",
   unknownNote:
     "Для этого профиля нет подтвержденных сведений о квалификации. Наличие профиля не означает рекомендацию azdoc.",
-  claim: "Это ваш профиль? Свяжитесь с нами, чтобы заявить права на него.",
+  claim: "Это ваш профиль? Заявите на него права.",
   claimSubject: "Заявка на управление профилем врача",
   contact: "Свяжитесь с клиникой для записи",
   noPhone: "Телефон клиники пока не указан.",

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { useSearchParams } from "next/navigation";
 import api from "@/api/axios";
 import { claimListing, type MyListing } from "@/api/doctorSelf";
 import type { DirectoryLanguage } from "@/components/doctors/copy";
@@ -13,7 +14,7 @@ type Match = {
   fullName: string;
   specialtyCode: string | null;
   verification: string;
-  clinics: { name: string; city: string | null }[];
+  clinics?: { name: string; city: string | null }[];
 };
 
 /**
@@ -35,6 +36,7 @@ export default function ClaimListing({
   onClaimed: (listing: MyListing) => void;
 }) {
   const c = portalCopy(language);
+  const params = useSearchParams();
   const [query, setQuery] = useState("");
   const [matches, setMatches] = useState<Match[] | null>(null);
   const [chosen, setChosen] = useState<Match | null>(null);
@@ -42,6 +44,33 @@ export default function ClaimListing({
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [done, setDone] = useState(false);
+
+  /*
+   * Arriving from a public profile.
+   *
+   * The link on an unclaimed listing carries its slug, so the doctor lands on
+   * their own entry already selected. Searching for your own name to find the
+   * page you just came from is the kind of step people abandon.
+   */
+  const claimSlug = params.get("claim");
+  useEffect(() => {
+    if (!claimSlug) return;
+    let live = true;
+    api
+      .get<Match>(`/doctors/${encodeURIComponent(claimSlug)}`)
+      .then(({ data }) => {
+        if (!live || data.verification !== "UNCLAIMED") return;
+        setChosen(data);
+        setMatches([data]);
+        setQuery(data.fullName);
+      })
+      .catch(() => {
+        // Nothing to preselect. The search below still works.
+      });
+    return () => {
+      live = false;
+    };
+  }, [claimSlug]);
 
   async function search() {
     if (query.trim().length < 2) return;
@@ -127,7 +156,7 @@ export default function ClaimListing({
             <li key={match.id}>
               <span className={styles.day}>{match.fullName}</span>
               <span className={styles.muted}>
-                {match.clinics.map((clinic) => clinic.name).join(", ")}
+                {(match.clinics ?? []).map((clinic) => clinic.name).join(", ")}
               </span>
               <button
                 type="button"

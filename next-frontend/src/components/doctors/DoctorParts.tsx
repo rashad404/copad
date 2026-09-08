@@ -31,12 +31,12 @@ export function Verification({
   state,
   language,
   expanded = false,
-  name = "",
+  slug = "",
 }: {
   state: string;
   language: DirectoryLanguage;
   expanded?: boolean;
-  name?: string;
+  slug?: string;
 }) {
   const c = doctorCopy(language);
   const checked = state === "VERIFIED";
@@ -63,12 +63,14 @@ export function Verification({
     <aside className={styles.notice}>
       {status}
       <p>{note}</p>
-      {state === "UNCLAIMED" && (
-        <a
-          href={`mailto:info@azdoc.ai?subject=${encodeURIComponent(`${c.claimSubject}: ${name}`)}`}
-        >
-          {c.claim}
-        </a>
+      {/*
+        The claim flow exists and this was a mailto, so the only doctors who
+        ever reached it were the ones who wrote an email and waited. The link
+        carries the slug, which lets the panel open on this listing rather than
+        asking the doctor to search for their own name.
+      */}
+      {state === "UNCLAIMED" && slug && (
+        <a href={`/hekim-panel?claim=${encodeURIComponent(slug)}`}>{c.claim}</a>
       )}
     </aside>
   );

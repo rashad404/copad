@@ -115,7 +115,7 @@ export default async function DoctorProfile({ params }: Props) {
               state={doctor.verification}
               language={language}
               expanded
-              name={doctor.fullName}
+              slug={doctor.slug}
             />
             {doctor.bio && (
               <section className={styles.section}>

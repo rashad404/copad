@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { Suspense, useCallback, useEffect, useMemo, useState } from "react";
 import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import ProductLayout from "@/components/public/ProductLayout";
@@ -242,7 +242,9 @@ export default function DoctorPortal() {
               hope. Sending people to browse and work it out was the reason no
               doctor could reach this panel.
             */}
-            <ClaimListing language={language} onClaimed={setListing} />
+            <Suspense fallback={null}>
+              <ClaimListing language={language} onClaimed={setListing} />
+            </Suspense>
           </>
         ) : (
           <>
