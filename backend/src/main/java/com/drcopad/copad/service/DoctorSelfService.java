@@ -125,14 +125,21 @@ public class DoctorSelfService {
      * would be a way to grant yourself both.
      */
     @Transactional
-    public Doctor updateMine(Long userId, Doctor input) {
+    public Doctor updateMine(Long userId, Doctor input, boolean acceptsBookingsSupplied) {
         Doctor doctor = require(userId);
         applySuppliedFields(doctor, input);
 
         // A verified doctor may pause their own bookings: they know when they
         // are away. Nobody else may turn them on.
-        doctor.setAcceptsBookings(
-                doctor.getVerification() == VerificationStatus.VERIFIED && input.isAcceptsBookings());
+        //
+        // Only when they actually said so. This used to run on every update, so
+        // saving a biography turned bookings off - the field arrived as false
+        // simply for not having been mentioned.
+        if (acceptsBookingsSupplied) {
+            doctor.setAcceptsBookings(
+                    doctor.getVerification() == VerificationStatus.VERIFIED
+                            && input.isAcceptsBookings());
+        }
 
         return doctors.save(doctor);
     }

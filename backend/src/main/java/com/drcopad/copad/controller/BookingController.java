@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Appointments a person has made.
@@ -26,6 +27,7 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookings;
+    private final com.drcopad.copad.service.SharedRecordService sharedRecords;
     private final com.drcopad.copad.service.notification.LanguagePreference languagePreference;
 
     @Data
@@ -115,6 +117,27 @@ public class BookingController {
         return BookingDTO.from(bookings.book(
                 request.getDoctorId(), memberId, user.getId(), request.getClinicId(),
                 request.getStartsAt(), request.getReason(), request.isShareRecord()));
+    }
+
+    /**
+     * Who has opened this person's record, and when.
+     *
+     * The other half of being asked to share: somebody who agreed should be
+     * able to see what came of it, without having to ask.
+     */
+    @GetMapping("/record-access")
+    public List<Map<String, Object>> recordAccess(@PathVariable Long memberId,
+                                                  @AuthenticationPrincipal User user) {
+        bookings.forMember(memberId, user.getId());
+        return sharedRecords.accessesFor(memberId).stream().map(a -> {
+            Map<String, Object> row = new java.util.LinkedHashMap<>();
+            row.put("id", a.getId());
+            row.put("doctorName", a.getDoctor() == null ? null : a.getDoctor().getFullName());
+            row.put("doctorSlug", a.getDoctor() == null ? null : a.getDoctor().getSlug());
+            row.put("bookingId", a.getBooking() == null ? null : a.getBooking().getId());
+            row.put("accessedAt", a.getAccessedAt());
+            return row;
+        }).toList();
     }
 
     @PostMapping("/{bookingId}/cancel")

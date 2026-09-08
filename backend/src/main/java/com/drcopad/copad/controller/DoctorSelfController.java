@@ -30,6 +30,7 @@ import java.util.Map;
 public class DoctorSelfController {
 
     private final DoctorSelfService self;
+    private final com.drcopad.copad.service.SharedRecordService sharedRecords;
 
     @Data
     @NoArgsConstructor
@@ -47,7 +48,13 @@ public class DoctorSelfController {
         private String photoUrl;
         private List<String> languages;
         private BigDecimal consultationFee;
-        private boolean acceptsBookings;
+        /**
+         * Boxed so "not sent" and "sent as false" are different things.
+         *
+         * As a primitive this defaulted to false on every partial update, so a
+         * doctor editing their biography silently stopped taking appointments.
+         */
+        private Boolean acceptsBookings;
         private boolean active;
         /** Read-only. Only a review can change it. */
         private VerificationStatus verification;
@@ -84,7 +91,8 @@ public class DoctorSelfController {
             d.setLanguages(languages == null || languages.isEmpty()
                     ? null : String.join(",", languages));
             d.setConsultationFee(consultationFee);
-            d.setAcceptsBookings(acceptsBookings);
+            // Null means the caller did not mention it; leave it alone.
+            d.setAcceptsBookings(Boolean.TRUE.equals(acceptsBookings));
             return d;
         }
 
@@ -154,7 +162,8 @@ public class DoctorSelfController {
     @PutMapping("/me")
     public MyListingDTO updateMe(@RequestBody MyListingDTO body,
                                  @AuthenticationPrincipal User user) {
-        return MyListingDTO.from(self.updateMine(user.getId(), body.toEntity()));
+        return MyListingDTO.from(self.updateMine(user.getId(), body.toEntity(),
+                body.getAcceptsBookings() != null));
     }
 
     @GetMapping("/me/availability")
@@ -240,6 +249,20 @@ public class DoctorSelfController {
                                               @AuthenticationPrincipal User user) {
         self.removeTimeOff(user.getId(), id);
         return ResponseEntity.noContent().build();
+    }
+
+    /**
+     * The record the patient chose to share for this appointment.
+     *
+     * Refused unless the appointment is this doctor's, the patient actually
+     * shared, the appointment stands, and it is inside the window. The panel
+     * has shown a "record shared" badge since booking shipped and there was
+     * nothing behind it.
+     */
+    @GetMapping("/me/bookings/{id}/record")
+    public Map<String, Object> sharedRecord(@PathVariable Long id,
+                                            @AuthenticationPrincipal User user) {
+        return sharedRecords.forBooking(user.getId(), id);
     }
 
     @Data
