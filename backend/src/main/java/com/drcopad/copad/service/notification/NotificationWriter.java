@@ -33,6 +33,7 @@ public class NotificationWriter {
 
     private final NotificationRepository notifications;
     private final UserRepository users;
+    private final SmsSender sms;
 
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     public void write(Long recipientId, Kind kind, Booking booking,
@@ -41,6 +42,7 @@ public class NotificationWriter {
             User recipient = users.getReferenceById(recipientId);
             Notification row = new Notification();
             row.setUser(recipient);
+            row.setChannel(channelFor(recipient));
             row.setKind(kind);
             row.setBooking(booking);
             row.setLanguage(language);
@@ -56,5 +58,21 @@ public class NotificationWriter {
             log.warn("Could not queue notification {}: {}", kind,
                     e.getClass().getSimpleName());
         }
+    }
+
+    /**
+     * Where this one goes.
+     *
+     * A text if there is a provider, a number, and somebody who asked to be
+     * texted. Otherwise the email we have always sent - never nothing, because
+     * a person who turned SMS on and then gave a number the gateway rejects
+     * should still hear that their appointment was confirmed.
+     */
+    private Notification.Channel channelFor(User recipient) {
+        if (!sms.available()) return Notification.Channel.EMAIL;
+        if (!recipient.isSmsEnabled()) return Notification.Channel.EMAIL;
+        String phone = recipient.getPhone();
+        if (phone == null || phone.isBlank()) return Notification.Channel.EMAIL;
+        return Notification.Channel.SMS;
     }
 }

@@ -7,6 +7,9 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
 
+import com.drcopad.copad.service.notification.SmsSender;
+
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -22,20 +25,46 @@ import java.util.Map;
 public class NotificationPreferenceController {
 
     private final UserRepository users;
+    private final SmsSender sms;
 
     @Data
     public static class Preferences {
         private Boolean enabled;
         private String language;
+        private String phone;
+        private Boolean smsEnabled;
+    }
+
+    /**
+     * Digits and a leading plus, as typed.
+     *
+     * Not validated against an Azerbaijani prefix: people here carry Turkish,
+     * Russian and Georgian numbers, and rejecting one because it does not start
+     * 994 would be rejecting the person.
+     */
+    private static String cleanPhone(String raw) {
+        if (raw == null) return null;
+        String trimmed = raw.replaceAll("[^+0-9]", "");
+        if (trimmed.isBlank()) return null;
+        return trimmed.length() > 32 ? trimmed.substring(0, 32) : trimmed;
+    }
+
+    private Map<String, Object> view(User user) {
+        Map<String, Object> out = new LinkedHashMap<>();
+        out.put("enabled", user.isNotificationsEnabled());
+        out.put("language", user.getPreferredLanguage() == null
+                ? "az" : user.getPreferredLanguage());
+        out.put("phone", user.getPhone() == null ? "" : user.getPhone());
+        out.put("smsEnabled", user.isSmsEnabled());
+        // So the interface can say messages go by email today, rather than
+        // offering a channel that would silently fall back to one.
+        out.put("smsAvailable", sms.available());
+        return out;
     }
 
     @GetMapping
     public Map<String, Object> get(@AuthenticationPrincipal User principal) {
-        User user = users.findById(principal.getId()).orElseThrow();
-        return Map.of(
-                "enabled", user.isNotificationsEnabled(),
-                "language", user.getPreferredLanguage() == null
-                        ? "az" : user.getPreferredLanguage());
+        return view(users.findById(principal.getId()).orElseThrow());
     }
 
     @PutMapping
@@ -53,10 +82,18 @@ public class NotificationPreferenceController {
             };
             user.setPreferredLanguage(language);
         }
+        if (body.getPhone() != null) {
+            user.setPhone(cleanPhone(body.getPhone()));
+        }
+        if (body.getSmsEnabled() != null) {
+            user.setSmsEnabled(body.getSmsEnabled());
+        }
+        // Turning texts on without a number would leave somebody believing
+        // they had, so the two move together.
+        if (user.getPhone() == null || user.getPhone().isBlank()) {
+            user.setSmsEnabled(false);
+        }
         users.save(user);
-        return Map.of(
-                "enabled", user.isNotificationsEnabled(),
-                "language", user.getPreferredLanguage() == null
-                        ? "az" : user.getPreferredLanguage());
+        return view(user);
     }
 }

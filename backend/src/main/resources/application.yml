@@ -102,6 +102,27 @@ app:
     enabled: ${NOTIFICATIONS_ENABLED:false}
     from: ${NOTIFICATIONS_FROM:info@azdoc.ai}
     interval-ms: ${NOTIFICATIONS_INTERVAL_MS:60000}
+  sms:
+    # Off until there is an account somewhere. With this unset every message
+    # goes by email, which is what happens today.
+    #
+    # The gateway is described rather than coded, because the Azerbaijani
+    # aggregators differ only in the shape of one HTTP request. Signing up is
+    # then four environment variables, for example:
+    #
+    #   SMS_URL=https://provider.az/api/send
+    #   SMS_BODY={"sender":"azdoc","recipient":"{phone}","message":"{text}"}
+    #   SMS_AUTH_HEADER=Authorization
+    #   SMS_AUTH_VALUE=Bearer ...
+    #
+    # {phone} and {text} are substituted and escaped for JSON. WhatsApp is the
+    # same shape once a Meta business account exists, and needs no code here.
+    enabled: ${SMS_ENABLED:false}
+    url: ${SMS_URL:}
+    body: ${SMS_BODY:}
+    content-type: ${SMS_CONTENT_TYPE:application/json}
+    auth-header: ${SMS_AUTH_HEADER:}
+    auth-value: ${SMS_AUTH_VALUE:}
   chatgpt:
     use-dummy-data: false
     base-url: ${BASE_URL:http://localhost:8080}

@@ -17,6 +17,7 @@ import { useChatMember } from "@/components/health/useChatMember";
 import MemberSelect from "@/components/health/MemberSelect";
 import { RecordDialog } from "@/components/health/RecordForms";
 import { canWrite } from "@/components/health/model";
+import NotificationSettings from "@/components/settings/NotificationSettings";
 import { usePrivacyCopy } from "./usePrivacyCopy";
 import styles from "./privacy.module.css";
 import healthStyles from "@/components/health/health.module.css";
@@ -312,6 +313,7 @@ function PrivacyContent({
         </p>
       )}
       {removed && <RemovalReceipt result={removed} />}
+      <NotificationSettings />
       <section className={styles.section} aria-labelledby="consent-title">
         <h2 id="consent-title">{p.consentsTitle}</h2>
         <p>{p.separate}</p>

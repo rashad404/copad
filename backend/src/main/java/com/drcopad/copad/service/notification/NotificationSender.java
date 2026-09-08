@@ -32,6 +32,7 @@ public class NotificationSender {
 
     private final NotificationRepository notifications;
     private final JavaMailSender mailSender;
+    private final SmsSender smsSender;
 
     @Value("${app.notifications.from:info@azdoc.ai}")
     private String from;
@@ -50,17 +51,24 @@ public class NotificationSender {
             NotificationTemplates.Message message = NotificationTemplates.render(
                     row.getKind(), row.getLanguage(), contextFor(row));
 
-            SimpleMailMessage mail = new SimpleMailMessage();
-            mail.setFrom(from);
-            mail.setTo(row.getUser().getEmail());
-            mail.setSubject(message.subject());
-            mail.setText(message.body());
-            mailSender.send(mail);
+            if (row.getChannel() == Notification.Channel.SMS) {
+                // The subject is a mail header, not a sentence somebody wants
+                // read out at the top of a text, so the body goes alone.
+                smsSender.send(row.getUser().getPhone(), message.body());
+            } else {
+                SimpleMailMessage mail = new SimpleMailMessage();
+                mail.setFrom(from);
+                mail.setTo(row.getUser().getEmail());
+                mail.setSubject(message.subject());
+                mail.setText(message.body());
+                mailSender.send(mail);
+            }
 
             row.setStatus(Notification.Status.SENT);
             row.setSentAt(LocalDateTime.now());
             // The address is not logged: it identifies the person.
-            log.info("Notification {} sent for booking {}", row.getKind(),
+            log.info("Notification {} sent by {} for booking {}", row.getKind(),
+                    row.getChannel(),
                     row.getBooking() == null ? null : row.getBooking().getId());
         } catch (RuntimeException e) {
             row.setLastError(e.getClass().getSimpleName());

@@ -23,7 +23,15 @@ import java.time.LocalDateTime;
 @Setter
 public class Notification {
 
-    public enum Channel { EMAIL }
+    /**
+     * How it goes out.
+     *
+     * Chosen when the row is written rather than when it is sent, so what was
+     * decided about a person at the time stays readable afterwards, and a
+     * provider switched on later does not silently redirect what is already
+     * queued.
+     */
+    public enum Channel { EMAIL, SMS }
 
     public enum Status { PENDING, SENT, FAILED, SKIPPED }
 

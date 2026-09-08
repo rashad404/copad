@@ -45,6 +45,17 @@ public class User implements UserDetails {
     @Column(name = "notifications_enabled", nullable = false)
     private boolean notificationsEnabled = true;
 
+    /**
+     * A number to text, as they typed it. Optional, and nothing asks for it in
+     * order to let somebody use the product.
+     */
+    @Column(length = 32)
+    private String phone;
+
+    /** Having a number and wanting to be texted are two different things. */
+    @Column(name = "sms_enabled", nullable = false)
+    private boolean smsEnabled = false;
+
     private String password;
     private int age;
     private String gender;
