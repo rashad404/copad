@@ -45,8 +45,7 @@
     "error": "Ölçmələri yeniləmək mümkün olmadı. Oxuma icazələrini və internet bağlantısını yoxlayıb yenidən cəhd edin.",
     "confirm": "Qoş",
     "cancel": "Ləğv et",
-    "retry": "Yenidən cəhd et",
-    "identityConflict": "Bu mənbədə bir neçə ölçmənin eyni identifikatoru var. Ölçmələrin itirilməməsi üçün yeniləmə dayandırıldı. azdoc bu mənbəni tam dəstəkləyənə qədər həmin ölçmələri əl ilə daxil edə bilərsiniz."
+    "retry": "Yenidən cəhd et"
   },
   "en": {
     "title": "Connected sources",
@@ -94,8 +93,7 @@
     "error": "Could not sync measurements. Check read permissions and your connection, then try again.",
     "confirm": "Connect",
     "cancel": "Cancel",
-    "retry": "Try again",
-    "identityConflict": "This source gives several measurements the same ID. Sync stopped to avoid losing readings. You can enter these measurements manually until azdoc fully supports this source."
+    "retry": "Try again"
   },
   "ru": {
     "title": "Подключенные источники",
@@ -143,7 +141,6 @@
     "error": "Не удалось синхронизировать показатели. Проверьте разрешения и подключение, затем повторите попытку.",
     "confirm": "Подключить",
     "cancel": "Отмена",
-    "retry": "Повторить",
-    "identityConflict": "Источник присвоил нескольким показателям один идентификатор. Синхронизация остановлена, чтобы не потерять данные. Пока azdoc не начнет полностью поддерживать этот источник, эти показатели можно внести вручную."
+    "retry": "Повторить"
   }
 }

@@ -231,10 +231,7 @@ export function HealthSyncProvider({
           ...partial,
           memberId: b.memberId,
           error:
-            cause instanceof Error &&
-            ["HEALTH_READ_ONLY", "HEALTH_SOURCE_ID_COLLISION"].includes(
-              cause.message,
-            )
+            cause instanceof Error && cause.message === "HEALTH_READ_ONLY"
               ? cause.message
               : "SYNC_FAILED",
         }).catch(() => {});

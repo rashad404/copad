@@ -266,13 +266,7 @@ export function SyncResult({ compact = false }: { compact?: boolean }) {
         r.accepted + r.alreadyHad + r.skippedManual + r.rejected + r.notSent ===
           0 && <Body small>{t.empty}</Body>}
       {!!r.error && (
-        <Body>
-          {r.error === "HEALTH_READ_ONLY"
-            ? t.ownOnly
-            : r.error === "HEALTH_SOURCE_ID_COLLISION"
-              ? t.identityConflict
-              : t.error}
-        </Body>
+        <Body>{r.error === "HEALTH_READ_ONLY" ? t.ownOnly : t.error}</Body>
       )}
       {compact && (
         <Button

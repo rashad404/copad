@@ -68,15 +68,6 @@ const deviceHealth: DeviceHealth = {
           ascendingOrder: true,
         });
         for (const record of page.records) {
-          // One heart-rate record may span multiple read windows. Stop before
-          // filtering by window, otherwise later samples become false duplicates.
-          if (
-            type === "HeartRate" &&
-            "samples" in record &&
-            Array.isArray(record.samples) &&
-            record.samples.length > 1
-          )
-            throw Error("HEALTH_SOURCE_ID_COLLISION");
           samples.push(
             ...healthConnectSamples({
               ...record,

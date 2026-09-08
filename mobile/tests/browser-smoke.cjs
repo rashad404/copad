@@ -264,11 +264,15 @@ let currentPage;
     await page
       .getByRole("button", { name: "View details", exact: true })
       .click();
-    await visibleText(page, "Penicillin", { exact: false }).first().waitFor();
-    const text = await page.locator("body").innerText();
+    const warning = visibleText(
+      page,
+      /This is advisory and does not replace a doctor or pharmacist/,
+    );
+    await warning.waitFor();
+    const text = await warning.textContent();
     assert.match(text, /life-threatening/i);
     assert.match(text, /pharmacist/i);
-    assert.match(text, /4.90/);
+    await visibleText(page, /4.90/).waitFor();
     assert.equal(
       calls.find((r) => r.path.endsWith("/allergy-check")).query.memberId,
       "11",

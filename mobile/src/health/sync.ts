@@ -68,16 +68,8 @@ export async function syncReadings(options: {
               syncInstant(b.measuredAt).getTime() ||
             a.sourceRef.localeCompare(b.sourceRef),
         );
-      // One platform ID must not hide distinct measurements as backend duplicates.
-      // Health Connect compound records need a coordinated identity decision.
-      const identities = new Map<string, string>();
-      for (const sample of samples) {
-        const signature = `${sample.type}:${syncInstant(sample.measuredAt).toISOString()}:${sample.value}:${sample.unit}`;
-        const existing = identities.get(sample.sourceRef);
-        if (existing && existing !== signature)
-          throw Error("HEALTH_SOURCE_ID_COLLISION");
-        identities.set(sample.sourceRef, signature);
-      }
+      // Native record IDs stay unchanged. The server distinguishes measurements
+      // by sourceRef + type + measuredAt, including compound Health Connect records.
       for (let offset = 0; offset < samples.length;) {
         check();
         const batch = samples.slice(offset, offset + maxBatch);

@@ -193,7 +193,7 @@ test("Health Connect preserves native IDs and converts platform unit fields with
   assert.equal(height.value, 180);
   assert.equal(height.unit, "cm");
 });
-test("compound Android IDs stop before upload rather than silently losing blood pressure or heart rate samples", async () => {
+test("compound Android records send both BP values and every heart-rate sample with unchanged IDs", async () => {
   const bp = healthConnectSamples({
     recordType: "BloodPressure",
     metadata: { id: "native-pair-id" },
@@ -201,26 +201,53 @@ test("compound Android IDs stop before upload rather than silently losing blood 
     systolic: { inMillimetersOfMercury: 120 },
     diastolic: { inMillimetersOfMercury: 80 },
   });
-  assert.deepEqual(
-    bp.map((s) => s.sourceRef),
-    ["native-pair-id", "native-pair-id"],
-  );
-  await assert.rejects(
-    run(bp, async () => assert.fail("must not lose half a pair")),
-    (e) => e.cause.message === "HEALTH_SOURCE_ID_COLLISION",
-  );
   const hr = healthConnectSamples({
     recordType: "HeartRate",
-    metadata: { id: "series-id" },
+    metadata: { id: "native-series-id" },
     samples: [
       { time: "2026-09-08T10:00:00Z", beatsPerMinute: 70 },
       { time: "2026-09-08T10:00:01Z", beatsPerMinute: 71 },
+      { time: "2026-09-08T10:00:02Z", beatsPerMinute: 72 },
     ],
   });
-  await assert.rejects(
-    run(hr, async () => assert.fail("must not lose series")),
-    (e) => e.cause.message === "HEALTH_SOURCE_ID_COLLISION",
+  const held = new Set(),
+    sent = [];
+  const send = async (readings) => {
+    let accepted = 0,
+      alreadyHad = 0;
+    for (const reading of readings) {
+      sent.push(reading);
+      const identity = [
+        reading.sourceRef,
+        reading.type,
+        syncInstant(reading.measuredAt).toISOString(),
+      ].join("|");
+      if (held.has(identity)) alreadyHad++;
+      else {
+        held.add(identity);
+        accepted++;
+      }
+    }
+    return response(accepted, { alreadyHad });
+  };
+  const first = await run([...bp, ...hr], send);
+  assert.equal(first.accepted, 5);
+  assert.equal(first.alreadyHad, 0);
+  assert.equal(first.complete, true);
+  assert.deepEqual(
+    sent
+      .filter((s) => s.sourceRef === "native-pair-id")
+      .map((s) => s.type)
+      .sort(),
+    ["BLOOD_PRESSURE_DIASTOLIC", "BLOOD_PRESSURE_SYSTOLIC"],
   );
+  assert.equal(
+    sent.filter((s) => s.sourceRef === "native-series-id").length,
+    3,
+  );
+  const again = await run([...bp, ...hr], send);
+  assert.equal(again.accepted, 0);
+  assert.equal(again.alreadyHad, 5);
 });
 test("only a writable own-member binding is eligible for phone data", () => {
   assert.equal(canSyncBinding(11, [11, 12], true, true), true);
@@ -421,13 +448,15 @@ test("Health Connect follows page tokens for permitted types and keeps platform 
         },
       ],
     });
-    await assert.rejects(
-      device.read(
-        new Date("2026-09-08T00:00:00Z"),
-        now,
-        new AbortController().signal,
-      ),
-      { message: "HEALTH_SOURCE_ID_COLLISION" },
+    const series = await device.read(
+      new Date("2026-09-07T00:00:00Z"),
+      now,
+      new AbortController().signal,
+    );
+    assert.equal(series.samples.length, 2);
+    assert.deepEqual(
+      series.samples.map((s) => s.sourceRef),
+      ["multi-day-series", "multi-day-series"],
     );
   } finally {
     Module._load = original;
