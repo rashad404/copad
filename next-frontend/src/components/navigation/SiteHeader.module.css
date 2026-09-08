@@ -128,6 +128,7 @@
   background: #edf0e5;
   color: #214be2;
 }
+.backdrop,
 .mobileNav {
   display: none;
 }
@@ -194,46 +195,90 @@
     font-size: 11px;
     gap: 8px;
   }
+  .inner {
+    position: relative;
+    z-index: 2;
+    background: #fafaf6;
+  }
+  .header .backdrop {
+    display: block;
+    position: fixed;
+    inset: 80px 0 0;
+    width: 100%;
+    height: calc(100dvh - 80px);
+    z-index: 0;
+    padding: 0;
+    margin: 0;
+    border: 0;
+    border-radius: 0;
+    background: rgb(23 42 53 / 30%);
+    cursor: default;
+    touch-action: none;
+  }
   .mobileNav {
     display: block;
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
+    z-index: 1;
     background: #fafaf6;
-    padding: 12px 22px 20px;
+    padding: 8px 18px 20px;
     border-bottom: 1px solid #dce1da;
-    box-shadow: 0 15px 24px #172a350a;
-    max-height: calc(100dvh - 80px);
+    box-shadow: 0 16px 32px rgb(23 42 53 / 16%);
+    max-height: calc(100dvh - 144px);
     overflow-y: auto;
+    overscroll-behavior: contain;
+    scrollbar-gutter: stable;
   }
-  .mobileNav > a {
+  .mobileGroup + .mobileGroup,
+  .mobileLanguage + .mobileGroup {
+    border-top: 1px solid #dce1da;
+    margin-top: 8px;
+    padding-top: 8px;
+  }
+  .mobileGroup > a,
+  .mobileGroup > button {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 14px 0;
+    gap: 16px;
+    width: 100%;
+    min-height: 48px;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: start;
+    background: transparent;
     font-size: 15px;
+    line-height: 1.5;
     font-weight: 600;
+    cursor: pointer;
+  }
+  .mobileGroup > a[aria-current="page"] {
+    background: #e9edfb;
+    color: #214be2;
+  }
+  .mobileGroup > a:hover,
+  .mobileGroup > button:hover {
+    background: #edf0e5;
+  }
+  .mobileGroup svg {
+    flex-shrink: 0;
   }
   .mobileLanguage {
-    display: block;
-    margin-top: 12px;
-    padding-top: 12px;
-    border-top: 1px solid #dce1da;
-  }
-  .mobileAccount {
     display: flex;
-    flex-wrap: wrap;
-    gap: 8px 22px;
-    margin-top: 12px;
-    padding-top: 12px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin-top: 8px;
+    padding: 16px 12px;
     border-top: 1px solid #dce1da;
     font-size: 14px;
+    color: #53616a;
   }
-  .mobileAccount > a,
-  .mobileAccount > button {
-    padding: 12px 0;
-    cursor: pointer;
+  /* Leave room for the language options inside the scrollable panel. */
+  .mobileLanguage [role="listbox"] {
+    position: static;
   }
 }
 @media (max-width: 390px) {
