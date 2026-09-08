@@ -48,6 +48,7 @@ export default async function robots(): Promise<MetadataRoute.Robots> {
         '/register',
         '/dashboard',
         '/profile',
+        '/analizlerim',
       ],
     },
     sitemap: [`${baseUrl}/sitemap.xml`, ...(await medicineSitemaps()), ...(await doctorSitemaps())],

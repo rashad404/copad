@@ -17,11 +17,14 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
   // Keep the homepage and public catalogues in initial HTML for indexing.
   const doctorDirectory =
     pathname === "/hekimler" || pathname.startsWith("/hekimler/");
+  const laboratoryDirectory =
+    pathname === "/laboratoriyalar" || pathname.startsWith("/laboratoriyalar/");
   const catalogue =
     pathname === "/" ||
     pathname === "/dermanlar" ||
     pathname.startsWith("/dermanlar/") ||
-    doctorDirectory;
+    doctorDirectory ||
+    laboratoryDirectory;
 
   useEffect(() => {
     // Detect language from localStorage, cookie, or browser
@@ -37,6 +40,7 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
     const lang =
       chosenLang ||
       (!doctorDirectory &&
+        !laboratoryDirectory &&
         typeof navigator !== "undefined" &&
         supportedLanguage(navigator.language)) ||
       DEFAULT_SITE_LANGUAGE;
@@ -65,7 +69,7 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
     } else {
       setReady(true);
     }
-  }, [i18n, doctorDirectory]);
+  }, [i18n, doctorDirectory, laboratoryDirectory]);
 
   useEffect(() => {
     document.documentElement.lang =

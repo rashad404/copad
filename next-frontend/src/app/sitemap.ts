@@ -17,6 +17,7 @@ const baseUrl = process.env.NEXT_PUBLIC_APP_URL || 'https://azdoc.ai';
  */
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
   const routes = [
+    { url: `${baseUrl}/laboratoriyalar`, changeFrequency: 'daily' as const, priority: 0.9 },
     { url: `${baseUrl}/hekimler`, changeFrequency: 'daily' as const, priority: 0.9 },
     { url: `${baseUrl}/`, changeFrequency: 'weekly' as const, priority: 1.0 },
     { url: `${baseUrl}/dermanlar`, changeFrequency: 'daily' as const, priority: 0.9 },

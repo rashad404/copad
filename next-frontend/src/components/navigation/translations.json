@@ -19,7 +19,9 @@
     "Söhbət": "Söhbət",
     "Dil": "Dil",
     "Qeydiyyat": "Qeydiyyat",
-    "Menyunu bağla": "Menyunu bağla"
+    "Menyunu bağla": "Menyunu bağla",
+    "Laboratoriyalar": "Laboratoriyalar",
+    "Analiz sifarişlərim": "Analiz sifarişlərim"
   },
   "en": {
     "Necə işləyir": "How it works",
@@ -41,7 +43,9 @@
     "Söhbət": "Chat",
     "Dil": "Language",
     "Qeydiyyat": "Create account",
-    "Menyunu bağla": "Close menu"
+    "Menyunu bağla": "Close menu",
+    "Laboratoriyalar": "Laboratories",
+    "Analiz sifarişlərim": "My lab orders"
   },
   "ru": {
     "Necə işləyir": "Как это работает",
@@ -63,6 +67,8 @@
     "Söhbət": "Чат",
     "Dil": "Язык",
     "Qeydiyyat": "Регистрация",
-    "Menyunu bağla": "Закрыть меню"
+    "Menyunu bağla": "Закрыть меню",
+    "Laboratoriyalar": "Лаборатории",
+    "Analiz sifarişlərim": "Мои заявки на анализы"
   }
 }
