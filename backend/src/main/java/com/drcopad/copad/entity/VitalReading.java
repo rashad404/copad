@@ -54,6 +54,10 @@ public class VitalReading {
     @Column(name = "source_ref")
     private String sourceRef;
 
+    /** Which device it came off, where that is known. */
+    @Column(name = "device_label", length = 120)
+    private String deviceLabel;
+
     @Enumerated(EnumType.STRING)
     @Column(name = "abnormal_flag", length = 16)
     private AbnormalFlag abnormalFlag;

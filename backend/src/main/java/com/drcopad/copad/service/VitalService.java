@@ -98,7 +98,13 @@ public class VitalService {
         return saved;
     }
 
-    private void recalculateBmi(FamilyMember member, Long userId) {
+    /**
+     * Public so a synced weight keeps BMI honest too.
+     *
+     * A scale that syncs a new weight while BMI still reflects last month's is
+     * a stale third number sitting in the record looking current.
+     */
+    public void recalculateBmi(FamilyMember member, Long userId) {
         VitalReading weight = readingRepository
                 .findFirstByFamilyMemberIdAndVitalTypeAndDeletedAtIsNullOrderByMeasuredAtDesc(
                         member.getId(), VitalType.WEIGHT).orElse(null);
