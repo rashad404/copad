@@ -6,6 +6,7 @@ import { supportedLanguage } from "@/utils/languages";
 import {
   doctorCopy,
   defaultSpecialties,
+  specialtyName,
   type DirectoryLanguage,
 } from "@/components/doctors/copy";
 import {
@@ -49,6 +50,20 @@ export async function getSpecialties(language: DirectoryLanguage = "az") {
   ).catch(() => null);
   return Array.isArray(list) && list.length ? list : defaultSpecialties();
 }
+/**
+ * One specialty's name, for pages that show a single doctor.
+ *
+ * Cached per request so the profile page and its metadata share one fetch, and
+ * falls back to the local table if the directory API is unreachable - a
+ * profile is still worth serving with a slightly less specific label.
+ */
+export const getSpecialtyName = cache(
+  async (code: string, language: DirectoryLanguage = "az") => {
+    const list = await getSpecialties(language).catch(() => []);
+    const match = list.find((item) => item.code === code);
+    return specialtyName(code, language, match?.name);
+  },
+);
 export async function getSlots(id: number, from: string, to: string) {
   const result = await get<Slot[]>(
     `/doctors/${id}/slots?${new URLSearchParams({ from, to })}`,

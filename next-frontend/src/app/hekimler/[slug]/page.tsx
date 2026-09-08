@@ -2,7 +2,12 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductLayout from "@/components/public/ProductLayout";
-import { directoryCopy, getDoctor, getSlots } from "@/api/doctorServer";
+import {
+  directoryCopy,
+  getDoctor,
+  getSlots,
+  getSpecialtyName,
+} from "@/api/doctorServer";
 import {
   profileUrl,
   doctorSchema,
@@ -10,7 +15,7 @@ import {
   slotWindow,
   phoneHref,
 } from "@/components/doctors/model";
-import { specialtyName, experienceYears } from "@/components/doctors/copy";
+import { experienceYears } from "@/components/doctors/copy";
 import {
   ClinicContact,
   Portrait,
@@ -25,10 +30,11 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
   const doctor = await getDoctor(slug);
   if (!doctor) notFound();
-  const title = `${doctor.fullName} - ${specialtyName(doctor.specialtyCode, language)} | azdoc`;
+  const specialty = await getSpecialtyName(doctor.specialtyCode, language);
+  const title = `${doctor.fullName} - ${specialty} | azdoc`;
   const description = [
     doctor.fullName,
-    specialtyName(doctor.specialtyCode, language),
+    specialty,
     doctor.clinics.map((clinic) => clinic.name).join(", "),
     c[
       doctor.verification === "VERIFIED"
@@ -57,7 +63,7 @@ export default async function DoctorProfile({ params }: Props) {
   const { language, c } = await directoryCopy();
   const doctor = await getDoctor((await params).slug);
   if (!doctor) notFound();
-  const specialty = specialtyName(doctor.specialtyCode, language);
+  const specialty = await getSpecialtyName(doctor.specialtyCode, language);
   const window = slotWindow();
   const slots =
     doctor.acceptsBookings && doctor.id != null

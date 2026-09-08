@@ -37,7 +37,15 @@ export default function HomePage() {
           <div className="hero-copy">
             <div className="eyebrow">
               <span className="live-dot" />{" "}
-              {copy("SAĞLAMLIQ HAQQINDA DAHA AYDIN SÖHBƏT")}
+              {/*
+                The same line the footer carries, so the promise is worded once.
+                Uppercased for the locale, not with toUpperCase: Azerbaijani
+                maps i to I-with-dot, and the plain form would render the
+                dotless I, which is a different letter.
+              */}
+              {brandSlogan(i18n.language)
+                .replace(/\.$/, "")
+                .toLocaleUpperCase(language)}
             </div>
             <h1>
               {copy("Hər nəticə.")}
