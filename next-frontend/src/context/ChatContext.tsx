@@ -26,6 +26,7 @@ interface FileAttachment {
 
 /** Raw guest-session payload as returned by GET /guest/session/{id}. */
 interface ApiChatMessage {
+  id?: number;
   sender: 'USER' | 'AI';
   message: string;
   timestamp: string;
@@ -45,6 +46,11 @@ interface GuestSessionResponse {
 }
 
 export interface Message {
+  /**
+   * The row the message is stored in. Present on answers, which is what a
+   * person can report; a message still being sent has none yet.
+   */
+  id?: number;
   role: 'user' | 'assistant';
   content: string;
   timestamp: string | Date;
@@ -78,7 +84,7 @@ interface ChatContextType {
     additionalFileIds?: string[],
     additionalFiles?: FileAttachment[],
     memberId?: number
-  ) => Promise<string>;
+  ) => Promise<{ text: string; id?: number }>;
   setSelectedChatId: (chatId: string) => void;
   uploadFile: (file: File) => Promise<FileAttachment>;
   clearUploadedFiles: () => void;
@@ -106,6 +112,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const formattedChats: Chat[] = responseChats.map((chat: ApiChat) => {
         const formattedMessages = Array.isArray(chat.messages)
           ? chat.messages.map((msg: ApiChatMessage): Message => ({
+              id: msg.id,
               role: msg.sender === 'USER' ? 'user' : 'assistant',
               content: msg.message,
               timestamp: msg.timestamp,
@@ -149,9 +156,13 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       saveUrgency(sid, chatId, urgency);
       setChats(previous => previous.map(chat => chat.id === chatId ? { ...chat, urgency } : chat));
     }
-    return typeof res.data === 'string'
+    const text = typeof res.data === 'string'
       ? res.data
       : res.data.response || res.data.message || t('chat.error.message');
+    // The answer's own row, so it can be reported. A header rather than a
+    // wrapped body, because the body is a plain string everywhere it is read.
+    const answerId = Number(res.headers['x-answer-id']);
+    return { text, id: Number.isFinite(answerId) && answerId > 0 ? answerId : undefined };
   };
 
   // Create initial chat
@@ -258,7 +269,7 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       const fileIds = [...uploadedFileIds, ...(additionalFileIds || [])];
       
       // Send message with file IDs
-      const response = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds, memberId);
+      const answer = await sendGuestMessage(sessionIdRef.current, message, chatId, fileIds, memberId);
       
       // Update chats state
       setChats(prev => prev.map(chat => {
@@ -272,8 +283,9 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
               attachments: [...uploadedFiles, ...(additionalFiles || [])]
             },
             {
+              id: answer.id,
               role: 'assistant',
-              content: response,
+              content: answer.text,
               timestamp: new Date().toISOString()
             }
           ];
@@ -297,12 +309,12 @@ export const ChatProvider = ({ children }: { children: ReactNode }) => {
       // Clear uploaded files after sending
       clearUploadedFiles();
       
-      return response;
+      return answer;
     } catch (err) {
       console.error('sendMessage error:', err);
       const message = readableError(err, t('chat.error.message'));
       setError(message);
-      return message;
+      return { text: message };
     }
   };
 

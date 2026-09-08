@@ -114,7 +114,7 @@ public class SecurityConfig {
         // there is exactly the failure this header exists to prevent.
         configuration.setExposedHeaders(List.of(
                 "Authorization", "X-Urgent", "X-Urgent-Categories",
-                "X-Emergency-Number", "X-Request-Id", "Retry-After"));
+                "X-Emergency-Number", "X-Request-Id", "Retry-After", "X-Answer-Id"));
         configuration.setAllowCredentials(true);
         configuration.setMaxAge(3600L);
         UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();

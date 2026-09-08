@@ -166,7 +166,7 @@ public class GuestController {
             log.info("Chat grounded in the drug registry");
         }
         try {
-            String response = guestSessionService.processChat(
+            GuestSessionService.Answer answer = guestSessionService.answer(
                 sessionId, 
                 messageRequest.getMessage(),
                 specialty,
@@ -178,8 +178,11 @@ public class GuestController {
             // The reply body stays a plain string, so nothing that reads it
             // today has to change. The flag travels beside it in headers,
             // which is what lets the interface show a standing warning rather
-            // than trusting the model to have led with one.
-            return urgentResponse(flags).body(response);
+            // than trusting the model to have led with one. The answer id rides
+            // along the same way, so the reply can be reported.
+            return urgentResponse(flags)
+                    .header("X-Answer-Id", String.valueOf(answer.messageId()))
+                    .body(answer.text());
         } catch (Exception e) {
             log.error("Error processing chat request", e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)

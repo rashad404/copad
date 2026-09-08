@@ -75,8 +75,17 @@ public class GuestSessionService {
 
     @Transactional
     public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds) {
-        return processChat(sessionId, message, specialty, language, chatId, fileIds, null);
+        return answer(sessionId, message, specialty, language, chatId, fileIds, null).text();
     }
+
+    /**
+     * An answer and the row it was written to.
+     *
+     * The id is here so the interface can offer to report the answer. Without
+     * it the reply is only text on a screen and there is nothing to point a
+     * complaint at.
+     */
+    public record Answer(String text, Long messageId) {}
 
     /**
      * @param recordContext the patient record block, or null. Anonymous
@@ -84,6 +93,10 @@ public class GuestSessionService {
      *                      get answers that are not grounded in a record.
      */
     public String processChat(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds, String recordContext) {
+        return answer(sessionId, message, specialty, language, chatId, fileIds, recordContext).text();
+    }
+
+    public Answer answer(String sessionId, String message, String specialty, String language, String chatId, List<String> fileIds, String recordContext) {
         // Message content is the patient's medical complaint and is never logged.
         log.info("Processing chat message for session: {} - Chat: {} - Specialty: {} - Language: {} - Attachments: {}",
                 sessionId, chatId, specialty, language, fileIds == null ? 0 : fileIds.size());
@@ -142,7 +155,7 @@ public class GuestSessionService {
         aiMsg.setTimestamp(LocalDateTime.now().plusSeconds(1));
         aiMsg.setGuestSession(session);
         aiMsg.setChat(chat);
-        MessageRepository.save(aiMsg);
+        ChatMessage savedAiMsg = MessageRepository.save(aiMsg);
 
         // If this is the first message in the chat, set it as the title
         if (chatHistory.isEmpty() && chat.getTitle() == null) {
@@ -151,7 +164,7 @@ public class GuestSessionService {
             chatRepository.save(chat);
         }
 
-        return response;
+        return new Answer(response, savedAiMsg.getId());
     }
     
     private String processAttachments(String message, List<String> fileIds, ChatMessage userMsg) {
@@ -242,7 +255,7 @@ public class GuestSessionService {
                                         })
                                         .collect(Collectors.toList());
                                 
-                                MessageDTO messageDTO = new MessageDTO(msg.getMessage(), msg.getSender(), msg.getTimestamp());
+                                MessageDTO messageDTO = new MessageDTO(msg.getId(), msg.getMessage(), msg.getSender(), msg.getTimestamp());
                                 messageDTO.setAttachments(attachmentDTOs);
                                 return messageDTO;
                             })

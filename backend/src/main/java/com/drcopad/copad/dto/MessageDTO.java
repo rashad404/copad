@@ -13,6 +13,8 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class MessageDTO {
+    /** The row this message is stored in, so an answer can be reported. */
+    private Long id;
     private String message;
     private String sender;
     private LocalDateTime timestamp;
@@ -22,7 +24,8 @@ public class MessageDTO {
     @Builder.Default
     private List<FileAttachmentDTO> attachments = new ArrayList<>();
 
-    public MessageDTO(String message, String sender, LocalDateTime timestamp) {
+    public MessageDTO(Long id, String message, String sender, LocalDateTime timestamp) {
+        this.id = id;
         this.message = message;
         this.sender = sender;
         this.timestamp = timestamp;
@@ -30,6 +33,6 @@ public class MessageDTO {
     }
 
     public MessageDTO(String message, String sender) {
-        this(message, sender, LocalDateTime.now());
+        this(null, message, sender, LocalDateTime.now());
     }
 }

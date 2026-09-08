@@ -12,8 +12,10 @@ import {
   PaperClipIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
+import Link from "next/link";
 import ChatSidebar from "./ChatSidebar";
 import EmergencyNotice from "./EmergencyNotice";
+import ReportAnswer from "./chat/ReportAnswer";
 import MemberSelect from "./health/MemberSelect";
 import { useChatMember } from "./health/useChatMember";
 import { Dialog, DialogPanel, DialogTitle } from "@headlessui/react";
@@ -196,7 +198,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
       });
 
       const startedAt = Date.now();
-      const response = await sendMessage(
+      const answer = await sendMessage(
         selectedChatId,
         messageToSend,
         pendingFileIds,
@@ -205,8 +207,9 @@ const GuestChat: React.FC<GuestChatProps> = ({
       );
       track("ai_response_received", { ms: Date.now() - startedAt });
       const assistantMessage: Message = {
+        id: answer.id,
         role: "assistant",
-        content: response,
+        content: answer.text,
         timestamp: new Date(),
       };
       setMessages((prev) => [...prev, assistantMessage]);
@@ -462,6 +465,13 @@ const GuestChat: React.FC<GuestChatProps> = ({
                         />
                       </div>
                     )}
+
+                    {message.role === "assistant" && message.id && (
+                      <ReportAnswer
+                        messageId={message.id}
+                        sessionId={sessionId}
+                      />
+                    )}
                   </div>
                 </div>
               ))
@@ -713,6 +723,32 @@ const GuestChat: React.FC<GuestChatProps> = ({
                 )}
               </button>
             </form>
+
+            {/*
+              Stated once, always visible, in the place a person is about to
+              act: what writes the answers, and what this is not. Both stores
+              require the second half of that sentence from a health app, and
+              it is true regardless of what they require.
+            */}
+            <p className="mt-2 text-center text-[11px] leading-snug text-gray-400">
+              {c(
+                "Answers are written by AI and can be wrong. azdoc is not a medical device and does not diagnose.",
+                "Cavabları süni intellekt hazırlayır və səhv ola bilər. azdoc tibbi cihaz deyil və diaqnoz qoymur.",
+                "Ответы пишет ИИ, они могут быть ошибочными. azdoc не является медицинским изделием и не ставит диагноз.",
+              )}{" "}
+              {/*
+                The chat screen has no footer, so this was the one place in the
+                product where the policy could not be reached from. Both stores
+                require it to be reachable from inside the app, and this is the
+                screen where the data is actually handed over.
+              */}
+              <Link
+                href="/privacy-policy"
+                className="underline underline-offset-2 hover:text-gray-600"
+              >
+                {c("Privacy", "Məxfilik", "Конфиденциальность")}
+              </Link>
+            </p>
           </div>
         </div>
       </div>
