@@ -10,6 +10,7 @@ import { Menu, X, ArrowUpRight, ChevronDown } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import LanguageSwitcher from "@/components/LanguageSwitcher";
+import { useDoctorListing } from "@/components/booking/useDoctorListing";
 import translations from "./translations.json";
 import styles from "./SiteHeader.module.css";
 
@@ -28,7 +29,8 @@ export default function SiteHeader() {
   ).split("-")[0];
   const copy = (key: string) =>
     dictionary[language]?.[key] ?? dictionary.en?.[key] ?? key;
-  const { isAuthenticated, logout } = useAuth();
+  const { isAuthenticated, logout, user } = useAuth();
+  const hasDoctorListing = useDoctorListing(user?.id);
   const pathname = usePathname();
   const [open, setOpen] = useState(false);
   const toggleRef = useRef<HTMLButtonElement>(null);
@@ -47,10 +49,10 @@ export default function SiteHeader() {
   const accountLinks = [
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/randevularim", "Randevularım"],
-    // Shown to everyone rather than gated on a lookup: a patient who opens it
-    // is told plainly that the account has no doctor profile, which costs less
-    // than a request on every page load to hide one link.
-    ["/hekim-panel", "Həkim paneli"],
+    // Only for accounts that have a listing. Almost nobody is a doctor, and a
+    // "Doctor panel" link with nothing behind it just makes a patient wonder
+    // what they are.
+    ...(hasDoctorListing ? [["/hekim-panel", "Həkim paneli"]] : []),
     ["/dashboard", "Hesabım"],
     ["/profile", "Profilim"],
     ["/profile/privacy", "Məxfilik və razılıqlar"],
