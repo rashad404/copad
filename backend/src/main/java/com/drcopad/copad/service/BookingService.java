@@ -2,6 +2,8 @@ package com.drcopad.copad.service;
 
 import com.drcopad.copad.entity.*;
 import com.drcopad.copad.repository.*;
+import com.drcopad.copad.entity.Notification;
+import com.drcopad.copad.service.notification.NotificationService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -37,6 +39,7 @@ public class BookingService {
     private final FamilyService familyService;
     private final UserRepository users;
     private final AvailabilityService availabilityService;
+    private final NotificationService notifications;
 
     /**
      * Books an appointment.
@@ -88,12 +91,36 @@ public class BookingService {
             Booking saved = bookings.saveAndFlush(booking);
             // No patient detail: who saw whom is itself sensitive.
             log.info("Booking {} created for doctor {}", saved.getId(), doctorId);
+            announceRequested(saved);
             return saved;
         } catch (DataIntegrityViolationException e) {
             // Somebody else took it between the check and the insert. This is
             // the case the unique constraint exists for.
             log.info("Slot taken concurrently for doctor {}", doctorId);
             throw new SlotTakenException("That time was just taken. Please choose another.");
+        }
+    }
+
+    /**
+     * Tells both sides an appointment has been asked for.
+     *
+     * Also books the reminder now rather than looking for it later: the row
+     * carries the time it may go out, so a job that scans for due messages
+     * needs no knowledge of appointments at all.
+     */
+    private void announceRequested(Booking saved) {
+        User patient = saved.getBookedBy();
+        notifications.queueNow(patient, Notification.Kind.BOOKING_REQUESTED_PATIENT, saved);
+
+        User doctorUser = saved.getDoctor() == null ? null : saved.getDoctor().getUser();
+        notifications.queueNow(doctorUser, Notification.Kind.BOOKING_REQUESTED_DOCTOR, saved);
+
+        LocalDateTime remindAt = saved.getStartsAt().minusHours(24);
+        // Only worth sending if it is still ahead of us; an appointment booked
+        // for tomorrow morning does not need a reminder dated yesterday.
+        if (remindAt.isAfter(LocalDateTime.now())) {
+            notifications.queue(patient, Notification.Kind.BOOKING_REMINDER_PATIENT,
+                    saved, remindAt);
         }
     }
 
@@ -125,6 +152,11 @@ public class BookingService {
         booking.setCancellationReason(reason);
         Booking saved = bookings.save(booking);
         log.info("Booking {} cancelled", bookingId);
+        // The doctor kept the time free for this; they should hear that it is
+        // free again without having to reopen the panel.
+        notifications.queueNow(
+                saved.getDoctor() == null ? null : saved.getDoctor().getUser(),
+                Notification.Kind.BOOKING_CANCELLED_DOCTOR, saved);
         return saved;
     }
 

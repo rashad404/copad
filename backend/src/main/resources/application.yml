@@ -34,6 +34,23 @@ spring:
             scope: public_profile,email
             redirect-uri: "{baseUrl}/api/login/oauth2/code/{registrationId}"
 
+  # Sending is off unless a host is configured, so a developer machine never
+  # tries to post real mail. Production sets MAIL_HOST.
+  mail:
+    host: ${MAIL_HOST:localhost}
+    port: ${MAIL_PORT:25}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
+    properties:
+      mail:
+        smtp:
+          auth: ${MAIL_AUTH:false}
+          starttls:
+            enable: ${MAIL_STARTTLS:false}
+          connectiontimeout: 10000
+          timeout: 10000
+          writetimeout: 10000
+
   datasource:
     url: ${DATABASE_URL}?useUnicode=true&characterEncoding=UTF-8&characterSetResults=UTF-8
     username: ${DATABASE_USERNAME}
@@ -79,6 +96,12 @@ server:
       enabled: true # If true, uses default Spring Boot error page
 
 app:
+  # Appointment notifications. Off unless switched on, so a developer machine
+  # and the test profile never post real mail.
+  notifications:
+    enabled: ${NOTIFICATIONS_ENABLED:false}
+    from: ${NOTIFICATIONS_FROM:info@azdoc.ai}
+    interval-ms: ${NOTIFICATIONS_INTERVAL_MS:60000}
   chatgpt:
     use-dummy-data: false
     base-url: ${BASE_URL:http://localhost:8080}

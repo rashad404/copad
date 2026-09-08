@@ -31,6 +31,20 @@ public class User implements UserDetails {
 
     private String name;
     private String email;
+
+    /**
+     * The language this person reads in, so a message reaches them in it.
+     *
+     * Recorded from the interface they were using rather than asked for. Null
+     * means we have not seen them choose, and Azerbaijani is the assumption.
+     */
+    @Column(name = "preferred_language", length = 8)
+    private String preferredLanguage;
+
+    /** Whether we may write to them about their appointments. */
+    @Column(name = "notifications_enabled", nullable = false)
+    private boolean notificationsEnabled = true;
+
     private String password;
     private int age;
     private String gender;

@@ -1,5 +1,7 @@
 package com.drcopad.copad.service;
 
+import com.drcopad.copad.service.notification.NotificationService;
+
 import com.drcopad.copad.entity.*;
 import com.drcopad.copad.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -37,8 +39,11 @@ class BookingServiceTest {
         familyService = mock(FamilyService.class);
         availability = mock(AvailabilityService.class);
 
+        // Notifications are queued, not sent, and a mock keeps this test about
+        // booking rather than about messages.
         service = new BookingService(bookings, doctors, mock(ClinicRepository.class),
-                familyService, mock(UserRepository.class), availability);
+                familyService, mock(UserRepository.class), availability,
+                mock(NotificationService.class));
 
         doctor = new Doctor();
         doctor.setId(1L);

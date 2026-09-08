@@ -1,5 +1,7 @@
 package com.drcopad.copad.service;
 
+import com.drcopad.copad.service.notification.NotificationService;
+
 import com.drcopad.copad.entity.*;
 import com.drcopad.copad.repository.*;
 import org.junit.jupiter.api.BeforeEach;
@@ -39,7 +41,8 @@ class DoctorBookingDecisionTest {
                 mock(DoctorAvailabilityRepository.class),
                 mock(ClinicRepository.class),
                 bookings,
-                mock(UserRepository.class));
+                mock(UserRepository.class),
+                mock(NotificationService.class));
 
         doctor = new Doctor();
         doctor.setId(7L);

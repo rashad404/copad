@@ -35,6 +35,7 @@ public class DoctorSelfService {
     private final ClinicRepository clinics;
     private final BookingRepository bookings;
     private final UserRepository users;
+    private final com.drcopad.copad.service.notification.NotificationService notifications;
 
     /** The caller's own listing, or null when they have none. */
     @Transactional(readOnly = true)
@@ -223,7 +224,13 @@ public class DoctorSelfService {
         // wanted to be seen.
         log.info("Doctor {} {} booking {}", doctor.getId(),
                 accept ? "confirmed" : "declined", bookingId);
-        return bookings.save(booking);
+        Booking saved = bookings.save(booking);
+        // The whole point of an answer is that the person who asked hears it.
+        notifications.queueNow(saved.getBookedBy(),
+                accept ? Notification.Kind.BOOKING_CONFIRMED_PATIENT
+                       : Notification.Kind.BOOKING_DECLINED_PATIENT,
+                saved);
+        return saved;
     }
 
     private Doctor require(Long userId) {

@@ -26,6 +26,7 @@ import java.util.List;
 public class BookingController {
 
     private final BookingService bookings;
+    private final com.drcopad.copad.service.notification.LanguagePreference languagePreference;
 
     @Data
     @NoArgsConstructor
@@ -106,7 +107,11 @@ public class BookingController {
     @ResponseStatus(HttpStatus.CREATED)
     public BookingDTO book(@PathVariable Long memberId,
                            @RequestBody BookRequest request,
-                           @AuthenticationPrincipal User user) {
+                           @AuthenticationPrincipal User user,
+                           jakarta.servlet.http.HttpServletRequest http) {
+        // Noted here because this is the first point at which we owe them a
+        // message, and we would rather send it in the language they are reading.
+        languagePreference.noteFrom(http, user.getId());
         return BookingDTO.from(bookings.book(
                 request.getDoctorId(), memberId, user.getId(), request.getClinicId(),
                 request.getStartsAt(), request.getReason(), request.isShareRecord()));
