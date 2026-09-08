@@ -12,7 +12,14 @@ const inter = Inter({ subsets: ["latin"] });
 const siteInfo = siteConfig.getDefaultSiteInfo();
 const AGENT_NAME = siteInfo.AGENT_NAME;
 
+// azdoc.ai is the primary domain. virtualhekim.az serves the same application
+// and keeps working; this is only what we call ourselves to the outside world.
+const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai";
+
 export const metadata: Metadata = {
+  // Without this, Next resolves image paths against localhost, so every shared
+  // link carried an og:image of http://localhost:3002/images/og-image.jpg.
+  metadataBase: new URL(SITE_URL),
   title: {
     template: `%s | ${AGENT_NAME}`,
     default: DEFAULT_BRAND_TITLE
@@ -24,8 +31,8 @@ export const metadata: Metadata = {
   publisher: AGENT_NAME,
   openGraph: {
     type: 'website',
-    locale: 'en_US',
-    url: process.env.NEXT_PUBLIC_APP_URL || 'https://example.com',
+    locale: 'az_AZ',
+    url: SITE_URL,
     siteName: AGENT_NAME,
     title: DEFAULT_BRAND_TITLE,
     description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",

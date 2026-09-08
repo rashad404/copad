@@ -41,7 +41,8 @@ spring:
 app:
   chatgpt:
     use-dummy-data: false
-    base-url: https://virtualhekim.az
+    # azdoc.ai is the primary domain; virtualhekim.az still serves the same app.
+    base-url: https://azdoc.ai
     openai:
       key: ${OPENAI_API_KEY}
       model: o3
@@ -56,7 +57,7 @@ attachment:
 
 upload:
   base-dir: /home/copad/public_html
-  public-url: https://virtualhekim.az
+  public-url: https://azdoc.ai
 
 # Logging for production
 logging:
