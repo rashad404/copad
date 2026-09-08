@@ -1,23 +1,15 @@
--- The first real laboratory: Sağlam Ailə, from its own published price list.
+-- The first real laboratory: Saglam Aile, from its own published price list.
 --
 -- Read from saglamaile.az on 2026-09-08, in Azerbaijani and English, and
 -- reduced to the laboratory tests: the same list also prices X-rays,
--- ultrasound and doctor consultations, none of which belong in a laboratory
--- catalogue.
+-- ultrasound and doctor consultations, none of which belong here.
 --
 -- Prices are the laboratory's own and were correct on the day they were read.
--- They will drift, which is why the source is recorded on the row rather than
--- only in this comment.
-
-ALTER TABLE lab
-    ADD COLUMN source VARCHAR(120) NULL AFTER description,
-    ADD COLUMN prices_read_at DATETIME(6) NULL AFTER source;
-
--- Eight hundred tests in one flat list cannot be browsed. The laboratory's own
--- grouping is kept so the catalogue can be read the way it is published.
-ALTER TABLE lab_test
-    ADD COLUMN category_az VARCHAR(120) NULL AFTER name_ru,
-    ADD COLUMN category_en VARCHAR(120) NULL AFTER category_az;
+-- They will drift, which is why the source and the date sit on the row.
+--
+-- Data only. The columns and the character set this needs are V30's job, so a
+-- failure here leaves nothing behind and can simply be run again - which is
+-- exactly what went wrong when the two were one migration.
 
 INSERT INTO lab (name, slug, city, district, address, phone, description,
                  source, prices_read_at, home_collection, home_collection_fee,

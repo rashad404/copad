@@ -148,9 +148,25 @@ public class HealthSyncService {
 
         List<String> refs = samples.stream()
                 .map(Sample::sourceRef).filter(r -> r != null && !r.isBlank()).toList();
-        Set<String> already = new HashSet<>(refs.isEmpty()
-                ? List.of()
-                : vitals.existingRefs(memberId, VitalSource.DEVICE, refs));
+        // Identity is the record, what was measured and when. Android puts both
+        // halves of a blood pressure, and an entire heart rate series, under one
+        // record id; keying on the id alone called those duplicates and threw
+        // all but the first away.
+        // Identity is the record, what was measured and when. Android puts both
+        // halves of a blood pressure, and an entire heart rate series, under one
+        // record id; keying on the id alone called those duplicates and threw
+        // all but the first away.
+        //
+        // Built in Java on both sides rather than concatenated in SQL: the
+        // database renders a timestamp differently from Java, so the two
+        // strings would never have matched.
+        Set<String> already = new HashSet<>();
+        if (!refs.isEmpty()) {
+            for (VitalReading held : vitals.existingSamples(memberId, VitalSource.DEVICE, refs)) {
+                already.add(identityOf(held.getSourceRef(), held.getVitalType(),
+                        held.getMeasuredAt()));
+            }
+        }
 
         int accepted = 0, alreadyHad = 0, skippedManual = 0, rejected = 0;
         LocalDateTime furthest = connection.getSyncedThrough();
@@ -169,7 +185,9 @@ public class HealthSyncService {
                 rejected++;
                 continue;
             }
-            if (already.contains(sample.sourceRef())) {
+            String identity = identityOf(sample.sourceRef(), sample.type(),
+                    sample.measuredAt());
+            if (already.contains(identity)) {
                 alreadyHad++;
                 continue;
             }
@@ -196,7 +214,7 @@ public class HealthSyncService {
                     sample.type(), converted.value(), connection.getFamilyMember()));
 
             batch.add(reading);
-            already.add(sample.sourceRef());
+            already.add(identity);
             accepted++;
             if (furthest == null || sample.measuredAt().isAfter(furthest)) {
                 furthest = sample.measuredAt();
@@ -229,6 +247,17 @@ public class HealthSyncService {
         log.info("Sync for connection {}: {} accepted, {} already held, {} deferred to manual, {} rejected",
                 connection.getId(), accepted, alreadyHad, skippedManual, rejected);
         return new Result(accepted, alreadyHad, skippedManual, rejected, furthest);
+    }
+
+    /**
+     * What makes two device readings the same reading.
+     *
+     * Must match the unique key on the table and the query above, or a sample
+     * skipped here would be accepted there, or the reverse.
+     */
+    private static String identityOf(String sourceRef, VitalType type,
+                                     LocalDateTime measuredAt) {
+        return sourceRef + "|" + type + "|" + measuredAt;
     }
 
     private boolean manualExistsNear(Long memberId, Sample sample) {

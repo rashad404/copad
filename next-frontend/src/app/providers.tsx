@@ -8,6 +8,7 @@ import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "next-themes";
 import { SiteContextProvider } from "@/context/SiteContext";
+import { InitialLanguageProvider } from "@/context/InitialLanguage";
 import { useTranslation } from "react-i18next";
 
 function LanguageSyncProvider({ children }: { children: ReactNode }) {
@@ -81,8 +82,15 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
   return <>{children}</>;
 }
 
-export function Providers({ children }: { children: ReactNode }) {
+export function Providers({
+  children,
+  initialLanguage,
+}: {
+  children: ReactNode;
+  initialLanguage?: string;
+}) {
   return (
+    <InitialLanguageProvider value={initialLanguage}>
     <I18nextProvider i18n={i18n}>
       <LanguageSyncProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
@@ -92,5 +100,6 @@ export function Providers({ children }: { children: ReactNode }) {
         </ThemeProvider>
       </LanguageSyncProvider>
     </I18nextProvider>
+    </InitialLanguageProvider>
   );
 }

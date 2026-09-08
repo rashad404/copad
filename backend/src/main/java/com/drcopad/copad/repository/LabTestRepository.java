@@ -23,4 +23,18 @@ public interface LabTestRepository extends JpaRepository<LabTest, Long> {
     List<LabTest> search(@Param("labId") Long labId, @Param("q") String q);
 
     List<LabTest> findByIdInAndActiveTrue(List<Long> ids);
+
+    /** The same analyte wherever it is offered, cheapest first. */
+    @Query("SELECT t FROM LabTest t JOIN FETCH t.lab l "
+            + "WHERE t.analyteKey = :key AND t.active = true "
+            + "AND l.active = true AND l.deletedAt IS NULL "
+            + "ORDER BY CASE WHEN t.price IS NULL THEN 1 ELSE 0 END, t.price ASC")
+    List<LabTest> byAnalyte(@Param("key") String key);
+
+    /** Analytes offered by more than one laboratory, which are the comparable ones. */
+    @Query("SELECT t.analyteKey FROM LabTest t JOIN t.lab l "
+            + "WHERE t.analyteKey IS NOT NULL AND t.active = true "
+            + "AND l.active = true AND l.deletedAt IS NULL "
+            + "GROUP BY t.analyteKey HAVING COUNT(DISTINCT l.id) > 1 ORDER BY t.analyteKey")
+    List<String> comparableAnalytes();
 }

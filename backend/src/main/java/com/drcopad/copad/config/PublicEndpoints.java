@@ -29,6 +29,8 @@ public class PublicEndpoints {
             "/api/labs",
             "/api/labs/*",
             "/api/labs/*/tests",
+            "/api/labs/compare/*",
+            "/api/labs/comparable",
             "/api/medicines",
             "/api/medicines/*",
             "/api/medicines/*/alternatives",

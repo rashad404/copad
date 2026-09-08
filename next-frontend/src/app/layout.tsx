@@ -104,7 +104,7 @@ export default async function RootLayout({
     <html lang={language} suppressHydrationWarning>
       <body className={inter.className}>
         <Analytics />
-        <Providers>{children}</Providers>
+        <Providers initialLanguage={language}>{children}</Providers>
       </body>
     </html>
   );

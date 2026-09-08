@@ -1,6 +1,7 @@
 "use client";
 
 import { useHydrated } from "@/utils/useHydrated";
+import { useInitialLanguage } from "@/context/InitialLanguage";
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import BrandLogo from "@/components/brand/BrandLogo";
@@ -24,8 +25,16 @@ const dictionary: Record<string, Record<string, string>> = translations;
 export default function SiteHeader() {
   const { i18n } = useTranslation();
   const hydrated = useHydrated();
+  // Before hydration, the language the server read from the request cookie
+  // rather than a hardcoded "en". A client component cannot see the cookie, so
+  // the header used to render English for everybody and swap after hydration -
+  // a flash of the wrong language for an Azerbaijani reader, and the only
+  // version a crawler ever saw.
+  const initialLanguage = useInitialLanguage();
   const language = (
-    hydrated ? i18n.resolvedLanguage || i18n.language || "en" : "en"
+    hydrated
+      ? i18n.resolvedLanguage || i18n.language || initialLanguage
+      : initialLanguage
   ).split("-")[0];
   const copy = (key: string) =>
     dictionary[language]?.[key] ?? dictionary.en?.[key] ?? key;
@@ -124,6 +133,10 @@ export default function SiteHeader() {
   const links = [
     ["/dermanlar", "Dərmanlar"],
     ["/hekimler", "Həkimlər"],
+    // The third public directory, beside the doctors and the medicines. It was
+    // reachable only from the account menu, which is the wrong place for
+    // something anybody can browse without signing in.
+    ["/laboratoriyalar", "Laboratoriyalar"],
     ["/#how", "Necə işləyir"],
     ["/#family", "Ailəniz üçün"],
     ["/#questions", "Suallar"],
@@ -132,7 +145,6 @@ export default function SiteHeader() {
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/randevularim", "Randevularım"],
     ["/analizlerim", "Analiz sifarişlərim"],
-    ["/laboratoriyalar", "Laboratoriyalar"],
     // Only for accounts that have a listing. Almost nobody is a doctor, and a
     // "Doctor panel" link with nothing behind it just makes a patient wonder
     // what they are.
