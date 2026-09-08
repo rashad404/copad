@@ -40,6 +40,20 @@ export default function SiteHeader() {
     setOpen(false);
     if (accountRef.current) accountRef.current.open = false;
   }, [pathname]);
+  // The account menu is a details element, which stays open until something
+  // closes it. The mobile menu and the language picker both close on an outside
+  // click; this one did not, and was left hanging over the page.
+  useEffect(() => {
+    const onPointerDown = (event: PointerEvent) => {
+      const account = accountRef.current;
+      if (!account?.open) return;
+      if (event.target instanceof Node && account.contains(event.target)) return;
+      account.open = false;
+    };
+    document.addEventListener("pointerdown", onPointerDown);
+    return () => document.removeEventListener("pointerdown", onPointerDown);
+  }, []);
+
   useEffect(() => {
     if (!open) return;
     const header = headerRef.current;

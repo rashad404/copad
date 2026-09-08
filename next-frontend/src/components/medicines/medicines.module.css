@@ -63,6 +63,16 @@
   align-items: center;
   margin: 18px 0 42px;
 }
+/* What is left of the hero once a search is on screen: enough to say where you
+   are, and nothing that pushes the results below the fold. */
+.heroCompact {
+  margin: 14px 0 18px;
+}
+.heroCompact h1 {
+  font-size: 24px;
+  letter-spacing: -0.02em;
+  margin: 0;
+}
 .hero h1 span {
   color: #214be2;
 }

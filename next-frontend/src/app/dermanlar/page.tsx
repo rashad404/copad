@@ -40,35 +40,45 @@ export default async function Catalogue({ searchParams }: Props) {
   return (
     <ProductLayout>
       <div className={styles.page} lang={language}>
-        <header className={styles.hero}>
-          <div>
-            <p className={styles.eyebrow}> {mc("DƏRMAN KATALOQU")} </p>
-            <h1>
-              {" "}
-              {mc("Dərmanı tapın.")} <br />
-              <span> {mc("Qiyməti müqayisə edin.")} </span>
-            </h1>
-            <p>
-              {" "}
-              {mc(
-                "Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.",
-              )}{" "}
-            </p>
-          </div>
-          <aside className={styles.note}>
-            <span aria-hidden="true">^</span>
-            <h2>
-              {" "}
-              {mc("Eyni maddə.")} <br /> {mc("Fərqli qiymətlər.")}{" "}
-            </h2>
-            <p>
-              {" "}
-              {mc(
-                "Qiymətlə yanaşı dozanı, dərman formasını və qablaşdırmanı da müqayisə edin.",
-              )}{" "}
-            </p>
-          </aside>
-        </header>
+        {/*
+          The full pitch belongs on an empty search, where there is nothing else
+          to look at. Once somebody has searched, it is in the way: the results
+          are what they came for, so the heading shrinks to a single line.
+        */}
+        {q ? (
+          <header className={styles.heroCompact}>
+            <h1> {mc("Dərman kataloqu")} </h1>
+          </header>
+        ) : (
+          <header className={styles.hero}>
+            <div>
+              <p className={styles.eyebrow}> {mc("DƏRMAN KATALOQU")} </p>
+              <h1>
+                {" "}
+                {mc("Dərmanı tapın.")} <br />
+                <span> {mc("Qiyməti müqayisə edin.")} </span>
+              </h1>
+              <p>
+                {" "}
+                {mc(
+                  "Adına və ya təsiredici maddəsinə görə axtarın. Müxtəlif qablaşdırmaların qiymətinə və oxşar tərkibli dərmanlara baxın.",
+                )}{" "}
+              </p>
+            </div>
+            <aside className={styles.note}>
+              <h2>
+                {" "}
+                {mc("Eyni maddə.")} <br /> {mc("Fərqli qiymətlər.")}{" "}
+              </h2>
+              <p>
+                {" "}
+                {mc(
+                  "Qiymətlə yanaşı dozanı, dərman formasını və qablaşdırmanı da müqayisə edin.",
+                )}{" "}
+              </p>
+            </aside>
+          </header>
+        )}
         <Search language={language} q={q} />
         {failed ? (
           <section className={styles.section} role="alert">

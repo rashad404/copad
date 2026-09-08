@@ -11,3 +11,14 @@ export function brandSlogan(language?: string) {
 }
 
 export const DEFAULT_BRAND_TITLE = `azdoc - ${SLOGANS.az.replace(/\.$/, "")}`;
+
+/**
+ * The browser tab title, in the language the page is being read in.
+ *
+ * DEFAULT_BRAND_TITLE is fixed to Azerbaijani, which is right as a fallback and
+ * wrong as the answer: somebody reading the site in English saw a tab that said
+ * "Sizin virtual həkiminiz".
+ */
+export function brandTitle(language?: string) {
+  return `azdoc - ${brandSlogan(language).replace(/\.$/, "")}`;
+}
