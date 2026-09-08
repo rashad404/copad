@@ -4,9 +4,9 @@ import Link from "next/link";
 import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
-import BrandLogo from "@/components/brand/BrandLogo";
 import { brandSlogan } from "@/components/brand/slogan";
 import SiteHeader from "@/components/navigation/SiteHeader";
+import SiteFooter from "@/components/public/SiteFooter";
 import { homeCopy } from "./copy";
 import "./homepage.css";
 const members = ["Leyla", "Ayan", "Rauf"];
@@ -404,16 +404,7 @@ export default function HomePage() {
           <span className="closing-star">✳</span>
         </section>
       </main>
-      <footer className="wrap">
-        <BrandLogo />
-        <span>{brandSlogan(language)}</span>
-        <div className="footer-links">
-          <Link href="/blog">{copy("Bloq")}</Link>
-          <Link href="/contact">{copy("Əlaqə")}</Link>
-          <Link href="/privacy-policy">{copy("Məxfilik")}</Link>
-          <Link href="/terms-of-service">{copy("İstifadə şərtləri")}</Link>
-        </div>
-      </footer>
+      <SiteFooter />
     </div>
   );
 }

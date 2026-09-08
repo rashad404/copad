@@ -780,17 +780,6 @@
   font-weight: 400;
   pointer-events: none;
 }
-.azdoc-home footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding-bottom: 40px;
-  gap: 20px;
-}
-.azdoc-home footer > span {
-  font-size: 10px;
-  color: var(--muted);
-}
 @media (min-width: 1450px) {
   .azdoc-home .hero {
     padding-top: 55px;
@@ -1143,13 +1132,6 @@
 .azdoc-home .record-nav {
   flex-wrap: wrap;
 }
-.azdoc-home .footer-links {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 16px;
-  font-size: 11px;
-  color: var(--muted);
-}
 .azdoc-home .section-heading p,
 .azdoc-home .family-copy p,
 .azdoc-home .faq > div > p {
@@ -1256,9 +1238,6 @@
   .azdoc-home footer {
     align-items: flex-start;
     flex-direction: column;
-  }
-  .azdoc-home .footer-links {
-    gap: 14px;
   }
   .azdoc-home .record-body {
     padding: 17px;

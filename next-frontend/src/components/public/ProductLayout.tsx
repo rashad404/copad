@@ -1,13 +1,10 @@
 "use client";
 
 import { useHydrated } from "@/utils/useHydrated";
-import Link from "next/link";
 import { Manrope } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import SiteHeader from "@/components/navigation/SiteHeader";
-import { useAuth } from "@/context/AuthContext";
-import { SLOGANS } from "@/components/brand/slogan";
-import BrandLogo from "@/components/brand/BrandLogo";
+import SiteFooter from "./SiteFooter";
 import "./public.css";
 import russian from "@/translations/public.ru.json";
 
@@ -37,8 +34,6 @@ export default function ProductLayout({
   viewport?: boolean;
 }) {
   const c = usePublicCopy();
-  const hydrated = useHydrated();
-  const { isAuthenticated, logout } = useAuth();
   return (
     <div
       className={`public-app ${manrope.variable} ${viewport ? "public-viewport" : ""}`}
@@ -50,33 +45,7 @@ export default function ProductLayout({
       <main id="page-content" className="public-main">
         {children}
       </main>
-      {!viewport && (
-        <footer className="public-footer">
-          <div>
-            <BrandLogo />
-            <p>
-              {c(SLOGANS.en, SLOGANS.az, SLOGANS.ru)}
-            </p>
-          </div>
-          <nav aria-label={c("Footer", "Alt naviqasiya")}>
-            {[
-              ["/contact", c("Contact", "Əlaqə")],
-              ["/security", c("Security", "Təhlükəsizlik")],
-              ["/privacy-policy", c("Privacy", "Məxfilik")],
-              ["/terms-of-service", c("Terms", "Şərtlər")],
-            ].map(([href, label]) => (
-              <Link href={href} key={href}>
-                {label}
-              </Link>
-            ))}
-            {hydrated && isAuthenticated && (
-              <button onClick={() => void logout()}>
-                {c("Sign out", "Çıxış")}
-              </button>
-            )}
-          </nav>
-        </footer>
-      )}
+      {!viewport && <SiteFooter />}
     </div>
   );
 }
