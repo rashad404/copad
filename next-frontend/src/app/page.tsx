@@ -20,12 +20,12 @@ export const metadata: Metadata = {
     // Stated rather than inherited: a page that sets openGraph replaces the
     // parent's outright, so the front page was left with no canonical address.
     url: process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai",
-    images: [],
+    images: [{ url: "/images/og-image.jpg", width: 1200, height: 630 }],
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: DEFAULT_BRAND_TITLE,
-    images: [],
+    images: ["/images/og-image.jpg"],
   },
 };
 

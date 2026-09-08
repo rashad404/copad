@@ -154,12 +154,32 @@ export default async function Catalogue({ searchParams }: Props) {
               )}{" "}
             </p>
             <div className={styles.examples}>
-              {["İbuprofen", "Parasetamol", "Amoksisillin"].map((name) => (
+              {/*
+                Spread across what people actually come looking for - pain,
+                antibiotics, stomach, blood pressure, diabetes, allergy,
+                cholesterol - rather than three painkillers. Every one of these
+                returns results in the catalogue; an example that finds nothing
+                teaches the wrong thing about the search.
+              */}
+              {[
+                "Parasetamol",
+                "İbuprofen",
+                "Diklofenak",
+                "Amoksisillin",
+                "Azitromisin",
+                "Omeprazol",
+                "Pantoprazol",
+                "Amlodipin",
+                "Metformin",
+                "Loratadin",
+                "Setirizin",
+                "Rosuvastatin",
+              ].map((name) => (
                 <Link
                   key={name}
                   href={`/dermanlar?q=${encodeURIComponent(name)}`}
                 >
-                  {name} ^
+                  {name}
                 </Link>
               ))}
             </div>
