@@ -13,6 +13,15 @@ spring:
   flyway:
     enabled: false
 
+# A fixture, not a secret: the tests encrypt nothing that outlives the run, and
+# the application refuses to start without a key, which is the behaviour under
+# test everywhere else.
+document:
+  encryption:
+    key: AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=
+  storage:
+    root: ${java.io.tmpdir}/azdoc-test-documents
+
 app:
   chatgpt:
     openai:
