@@ -181,7 +181,7 @@
         "description": "Encrypted, confidential, and protected",
         "learnMore": "Learn more about our privacy policy ->"
       },
-      "footer": "Your health matters to us. This platform is designed for your convenience.",
+      "footer": "Your virtual doctor.",
       "chat": {
         "title": "AI Chat",
         "description": "Start a conversation with our AI health assistant.",
@@ -269,7 +269,7 @@
         "title": "Trusted by healthcare professionals"
       },
       "footer": {
-        "description": "Your trusted AI healthcare companion. Get expert medical guidance, track your health, and manage consultations all in one place.",
+        "description": "Your virtual doctor.",
         "product": "Product",
         "company": "Company",
         "legal": "Legal",

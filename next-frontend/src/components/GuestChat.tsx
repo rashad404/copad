@@ -1,5 +1,7 @@
 "use client";
 
+import { SLOGANS } from "@/components/brand/slogan";
+
 import React, { useState, useEffect, useRef } from "react";
 import { track } from "@/utils/analytics";
 import type { FileUploadResult } from "@/components/MultiFileUpload";
@@ -388,10 +390,7 @@ const GuestChat: React.FC<GuestChatProps> = ({
                   <Plus size={30} strokeWidth={2.5} />
                 </span>
                 <p className="public-eyebrow">
-                  {c(
-                    "A little clarity starts here",
-                    "SAĞLAMLIQ HAQQINDA SÖHBƏT",
-                  )}
+                  {c(SLOGANS.en, SLOGANS.az, SLOGANS.ru)}
                 </p>
                 <h2>
                   {c("What's on your mind?", "Nə soruşmaq istəyirsiniz?")}
