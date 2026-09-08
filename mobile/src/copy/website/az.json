@@ -1,0 +1,849 @@
+{
+    "common": {
+      "welcome": "Xoş gəlmisiniz",
+      "login": "Daxil ol",
+      "logout": "Çıxış",
+      "settings": "Parametrlər",
+      "language": "Dil",
+      "back_to_home": "Ana səhifəyə qayıt",
+      "loading": "Yüklənir...",
+      "loadMore": "Daha çox yüklə",
+      "retry": "Yenidən cəhd edin",
+      "scrollToTop": "Yuxarı qalx",
+      "errors": {
+        "generic": "Xəta baş verdi. Zəhmət olmasa, bir az sonra yenidən cəhd edin."
+      }
+    },
+    "navbar": {
+      "home": "Ana səhifə",
+      "dashboard": "Hesabım",
+      "appointments": "Konsultasiyalar",
+      "pricing": "Qiymətlər",
+      "faq": "Tez-tez verilən suallar",
+      "about": "Haqqımızda",
+      "contact": "Əlaqə",
+      "privacy": "Məxfilik siyasəti",
+      "terms": "İstifadə şərtləri",
+      "security": "Təhlükəsizlik",
+      "blog": "Bloq",
+      "profile": "Profil",
+      "login": "Daxil ol",
+      "register": "Qeydiyyat",
+      "logout": "Çıxış",
+      "chat": "Söhbət"
+    },
+    "auth": {
+      "email": "E-poçt",
+      "email_placeholder": "sizin@email.com",
+      "password": "Şifrə",
+      "password_placeholder": "--------",
+      "forgot_password": "Şifrəni unutmusunuz?",
+      "remember_me": "Məni xatırla",
+      "sign_up": "Qeydiyyatdan keç",
+      "or": "və ya davam edin",
+      "login_with_google": "Google ilə davam edin",
+      "login_with_facebook": "Facebook ilə davam edin",
+      "login": {
+        "welcome": "Yenidən xoş gəlmisiniz",
+        "subtitle": "Davam etmək üçün hesabınıza daxil olun",
+        "signing_in": "Daxil olunur...",
+        "no_account": "Hesabınız yoxdur?",
+        "create_account": "Hesab yaradın",
+        "secure_title": "Təhlükəsiz Tibbi Konsultasiyalar",
+        "secure_description": "Sağlamlıq məlumatlarınız şifrələnir və təhlükəsiz saxlanılır. {{agentName}} ilə istənilən vaxt ekspert tibbi məsləhətlərə giriş əldə edin.",
+        "access": "Giriş",
+        "secure": "Təhlükəsiz",
+        "powered": "Təchiz edilib",
+        "sign_in": "Daxil ol"
+      },
+      "register": {
+        "title": "Hesab yaradın",
+        "subtitle": "Tibbi konsultasiyalara başlamaq üçün qeydiyyatdan keçin",
+        "creating_account": "Hesab yaradılır...",
+        "create_account": "Hesab yarat",
+        "have_account": "Artıq hesabınız var?",
+        "sign_in": "Daxil olun"
+      },
+      "errors": {
+        "invalid_credentials": "E-poçt ünvanı və ya şifrə yanlışdır.",
+        "user_not_found": "İstifadəçi tapılmadı",
+        "login_failed": "Hesaba daxil olmaq mümkün olmadı. Yenidən cəhd edin."
+      },
+      "saveChatTitle": "Söhbəti saxlayın",
+      "saveChatDescription": "Söhbəti hesabınızda saxlamaq üçün daxil olun və ya qeydiyyatdan keçin."
+    },
+    "errors": {
+      "required": "Bu sahə tələb olunur",
+      "invalidEmail": "Zəhmət olmasa düzgün e-poçt ünvanı daxil edin"
+    },
+    "appointments": {
+      "title": "Konsultasiyalarınız",
+      "subtitle": "Bütün tibbi konsultasiyalarınızı idarə edin və izləyin",
+      "newAppointment": "Yeni Konsultasiya",
+      "filters": {
+        "all": "Bütün Konsultasiyalar",
+        "upcoming": "Gələcək",
+        "completed": "Tamamlanmış",
+        "past": "Keçmiş"
+      },
+      "loading": "Konsultasiyalarınız yüklənir...",
+      "empty": {
+        "title": "Konsultasiya tapılmadı",
+        "all": "Hələ planlaşdırılmış konsultasiyalarınız yoxdur.",
+        "filtered": "{{filter}} konsultasiyalarınız yoxdur.",
+        "schedule": "Konsultasiya planlaşdırın"
+      },
+      "card": {
+        "specialty": "İxtisas",
+        "primaryConcern": "Əsas narahatlıq",
+        "date": "Tarix",
+        "time": "Vaxt"
+      },
+      "status": {
+        "undefined": "Naməlum Status"
+      },
+      "viewDetails": "Təfərrüatları göstər"
+    },
+    "newAppointment": {
+      "title": "Yeni Konsultasiyaya başlayın",
+      "subtitle": "Sizə nə ilə kömək lazım olduğunu bizə bildirin və sizi {{agentName}} ilə əlaqələndirəcəyik",
+      "specialty": {
+        "label": "Hansı növ qayğıya ehtiyacınız var?",
+        "options": {
+          "general": "Ümumi Konsultasiya",
+          "pediatrics": "Pediatriya",
+          "dermatology": "Dermatologiya",
+          "cardiology": "Kardiologiya",
+          "mental health": "Psixi Sağlamlıq",
+          "other": "Digər İxtisas"
+        }
+      },
+      "primaryConcern": {
+        "label": "Bu gün əsas narahatlığınız nədir?",
+        "placeholder": "Sizi narahat edən məsələni qısaca təsvir edin (məs., baş ağrısı, dəri səpkisi, narahatlıq)"
+      },
+      "duration": {
+        "label": "Bu problem nə qədər müddətdir sizdə var?",
+        "placeholder": "məs., 3 gün, 2 həftə"
+      },
+      "severity": {
+        "label": "Nə dərəcədə ciddidir?",
+        "options": {
+          "mild": "Yüngül - Hiss olunur, lakin gündəlik fəaliyyətlərə təsir etmir",
+          "moderate": "Orta - Bəzi gündəlik fəaliyyətlərə təsir edir",
+          "severe": "Ciddi - Gündəlik fəaliyyətlərə əhəmiyyətli dərəcədə təsir edir"
+        }
+      },
+      "symptoms": {
+        "label": "Başqa əlamətlər? (İstəyə bağlı)",
+        "placeholder": "Hiss etdiyiniz digər əlamətləri sadalayın"
+      },
+      "treatments": {
+        "label": "Hər hansı bir müalicə sınamısınız? (İstəyə bağlı)",
+        "placeholder": "məs., reseptsiz dərmanlar, ev müalicələri"
+      },
+      "notes": {
+        "label": "{{agentName}} başqa nə bilməlidir? (İstəyə bağlı)",
+        "placeholder": "məs., allergiyalar, mövcud xəstəliklər, hazırda qəbul etdiyiniz dərmanlar"
+      },
+      "continue": "Davam et",
+      "back": "Geri",
+      "submit": "Konsultasiyaya başla",
+      "submitting": "Konsultasiya yaradılır..."
+    },
+    "dashboard": {
+      "title": "İdarə panelinizə xoş gəlmisiniz",
+      "subtitle": "Sağlamlıq alətlərinizə, konsultasiyalarınıza və tibbi tarixçənizə istənilən vaxt daxil olun.",
+      "appointments": {
+        "title": "Konsultasiyalar",
+        "description": "Tibbi konsultasiya seanslarını görün və ya yaradın.",
+        "action": "Konsultasiyalara keçin"
+      },
+      "profile": {
+        "title": "Profiliniz",
+        "description": "Sağlamlıq məlumatlarınızı, tarixçəni və üstünlüklərinizi idarə edin.",
+        "action": "Profili göstər"
+      },
+      "newAppointment": {
+        "title": "Yeni Konsultasiyaya başlayın",
+        "description": "{{agentName}} ilə yeni AI konsultasiyası yaradın.",
+        "action": "İndi başlayın",
+        "recommended": "Tövsiyə edilir"
+      },
+      "healthSummary": {
+        "title": "Sağlamlıq Xülasəniz",
+        "recentConsultations": "Son Konsultasiyalar",
+        "profileCompletion": "Profil Tamamlanması",
+        "nextAppointment": "Növbəti Konsultasiya"
+      },
+      "security": {
+        "title": "Məlumatlarınız təhlükəsizdir",
+        "description": "Şifrələnmiş, məxfi və qorunur",
+        "learnMore": "Məxfilik siyasətimiz haqqında daha çox öyrənin ->"
+      },
+      "footer": "Sizin virtual həkiminiz.",
+      "chat": {
+        "title": "AI Söhbət",
+        "description": "AI sağlamlıq köməkçimizlə söhbətə başlayın.",
+        "action": "Söhbətə keçin"
+      }
+    },
+    "home": {
+      "hero": {
+        "title": "Şəxsi AI Həkiminiz. 24/7 xidmətinizdə!",
+        "subtitle": "Sağlamlıqla bağlı sualınızı verin və dərhal professional məsləhət alın - qeydiyyatsız!",
+        "createAccount": "Hesab yaradın",
+        "login": "Daxil olun",
+        "trustBar": {
+          "usersHelped": "10,000+ istifadəçiyə kömək edilib",
+          "privateSecure": "Məxfi və Təhlükəsiz",
+          "poweredBy": "OpenAI GPT-4 ilə təchiz edilib"
+        }
+      },
+      "howItWorks": {
+        "title": "Necə işləyir",
+        "subtitle": "Üç asan addımda peşəkar tibbi təlimat alın",
+        "step1": {
+          "title": "1. AI Həkim ilə məsləhətləşin",
+          "description": "Sağlamlıq narahatlıqlarınızı və ya əlamətlərinizi daxil edin və AI həkimimizdən dərhal rəy alın."
+        },
+        "step2": {
+          "title": "2. Fərdi Təlimat alın",
+          "description": "Vəziyyətinizə uyğunlaşdırılmış dərhal və məxfi məsləhət alın."
+        },
+        "step3": {
+          "title": "3. İzləyin və İdarə edin",
+          "description": "Konsultasiyaları idarə etmək və sağlamlıq profilinizi yeniləmək üçün qeydiyyatdan keçin."
+        }
+      },
+      "features": {
+        "title": "Xüsusiyyətlər",
+        "subtitle": "Sağlamlığınız üçün lazım olan hər şey",
+        "description": "Əlçatan, etibarlı və fərdi AI ilə təchiz edilmiş tibbi yardım.",
+        "chat": {
+          "title": "AI Həkimi ilə məsləhətləşin",
+          "description": "Əlamətlərinizi təsvir edin və dərhal ekspert təlimatı alın - 24/7. Gözləmə otaqları, təyin olunmuş görüşlər lazım deyil."
+        },
+        "upload": {
+          "title": "Tibbi Faylları Yükləyin",
+          "description": "Laboratoriya nəticələrinizi, şəkillərinizi və tibbi tarixçənizi AI köməyi ilə analiz edin. Sadə dildə izahlar və anlayışlar əldə edin."
+        },
+        "track": {
+          "title": "Konsultasiyaları İzləyin",
+          "description": "Sağlamlıq səyahətinizi tarixçə, xülasələr və AI qeydləri ilə təşkil edin. İstənilən vaxt əvvəlki konsultasiyalarınıza daxil olun."
+        }
+      },
+      "testimonials": {
+        "title": "Dünya miqyasında istifadəçilər tərəfindən etibar edilir",
+        "subtitle": "İstifadəçilərimizin təcrübələri haqqında fikirlərinə baxın",
+        "testimonial1": {
+          "quote": "{{agentName}} həkimlə görüş təyin edə bilmədiyim zaman laboratoriya nəticələrimi başa düşməyə kömək etdi. Hər şeyi aydın, sadə terminlərlə izah etdi.",
+          "author": "Sarah K.",
+          "role": "Xəstə"
+        },
+        "testimonial2": {
+          "quote": "Kənd ərazisində yaşayan biri kimi, 24/7 tibbi təlimatın olması səhiyyə təcrübəmi dəyişdi. Cibinizdə həkim olması kimidir.",
+          "author": "Michael T.",
+          "role": "Xəstə"
+        },
+        "testimonial3": {
+          "quote": "Simptom qiymətləndirməsi olduqca dəqiqdir. Aylarla əsas həkimim tərəfindən nəzərdən qaçırılan bir vəziyyəti müəyyən etməyə kömək etdi.",
+          "author": "Jessica W.",
+          "role": "Səhiyyə İşçisi"
+        }
+      },
+      "cta": {
+        "title": "Rifah halınızı nəzarətə",
+        "subtitle": "almağa hazırsınız?",
+        "description": "{{agentName}} ilə səyahətinizə bu gün başlayın və növbəti nəsil səhiyyəni təcrübə edin. Abunə tələb olunmur.",
+        "getStarted": "Pulsuz Başlayın",
+        "login": "Daxil olun",
+        "benefit1": "Tibbi təlimatlara 24/7 giriş",
+        "benefit2": "Təhlükəsiz və məxfi konsultasiyalar",
+        "security": {
+          "title": "Sağlamlıq Məlumatlarınız Qorunur",
+          "description": "Məlumatlarınızı təhlükəsiz saxlamaq üçün qabaqcıl şifrələmə və ciddi məxfilik protokollarından istifadə edirik"
+        }
+      },
+      "trust": {
+        "title": "Səhiyyə mütəxəssisləri tərəfindən etibar edilir"
+      },
+      "footer": {
+        "description": "Sizin virtual həkiminiz.",
+        "product": "Məhsul",
+        "company": "Şirkət",
+        "legal": "Hüquqi",
+        "links": {
+          "pricing": "Qiymətlər",
+          "faq": "Tez-tez verilən suallar",
+          "about": "Haqqımızda",
+          "blog": "Bloq",
+          "contact": "Əlaqə",
+          "privacy": "Məxfilik Siyasəti",
+          "terms": "Xidmət Şərtləri",
+          "security": "Təhlükəsizlik"
+        },
+        "copyright": "© {{year}} VirtualHekim.az. Bütün hüquqlar qorunur."
+      }
+    },
+    "chat": {
+      "title": "Sağlamlıq köməkçisi",
+      "subtitle": "Süni intellektlə söhbət",
+      "status": {
+        "online": "Onlayn",
+        "offline": "Oflayn"
+      },
+      "input": {
+        "placeholder": "Sağlamlıqla bağlı sualınızı yazın..."
+      },
+      "messagePlaceholder": "Sağlamlıqla bağlı sualınızı yazın...",
+      "send": "Göndər",
+      "sending": "Göndərilir...",
+      "saveChat": "Söhbəti saxla",
+      "welcomeMessage": "Salam! Sağlamlıqla bağlı hansı sualınız var?",
+      "empty": {
+        "title": "Sağlamlıqla bağlı sualınız var?",
+        "description": "Əlamətlər, analiz nəticələri və dərmanlar haqqında soruşa bilərsiniz."
+      },
+      "error": {
+        "message": "Bağışlayın, mesajınızı emal edə bilmədim. Zəhmət olmasa, yenidən cəhd edin.",
+        "session": "Bağlantı itirildi. Zəhmət olmasa, mesajınızı yenidən göndərməyə cəhd edin."
+      },
+      "security": {
+        "general": "Təhlükəsiz",
+        "save": "Söhbəti Saxla"
+      },
+      "fileUpload": {
+        "buttonTitle": "Şəkil və ya sənəd yükləyin",
+        "invalidType": "Bu fayl növü dəstəklənmir. Şəkil və ya uyğun sənəd seçin.",
+        "tooLarge": "Fayl çox böyükdür. Maksimum ölçü {{size}}MB-dir.",
+        "failed": "Fayl yüklənə bilmədi. Zəhmət olmasa, yenidən cəhd edin.",
+        "remove": "Faylı sil",
+        "photoHint": "Şəkil yükləyin",
+        "documentHint": "Sənəd yükləyin",
+        "multipleFiles": "Bir neçə fayl əlavə et",
+        "selectCategory": "Sənədin növünü seçin:",
+        "filesReady": "fayl göndərilməyə hazırdır",
+        "categories": {
+          "general": "Digər tibbi sənədlər",
+          "labResults": "Analiz nəticələri",
+          "imaging": "Tibbi görüntülər",
+          "prescriptions": "Reseptlər",
+          "clinicalNotes": "Həkim qeydləri"
+        }
+      },
+      "messages": "Mesajlar",
+      "newChat": "Yeni söhbət",
+      "untitledChat": "Adsız söhbət",
+      "noMessages": "Hələ mesaj yoxdur",
+      "closeSidebar": "Yan paneli bağla",
+      "openSidebar": "Yan paneli aç",
+      "error": {
+        "initialization": "Söhbət başladıla bilmədi",
+        "message": "Mesaj göndərilə bilmədi"
+      },
+      "inputPlaceholder": "Mesajınızı yazın... məs. Məndə allergiya var, nə etməliyəm?"
+    },
+    "profile": {
+      "title": "Profiliniz",
+      "subtitle": "Şəxsi məlumatlarınızı və sağlamlıq məlumatlarınızı burada yeniləyə bilərsiniz.",
+      "saveChanges": "Dəyişiklikləri saxla",
+      "loading": "Profiliniz yüklənir...",
+      "saved": "Dəyişikliklər saxlanıldı.",
+      "personalInfo": {
+        "title": "Şəxsi məlumatlar",
+        "fullName": "Ad və soyad",
+        "fullNamePlaceholder": "Adınız və soyadınız",
+        "email": "E-poçt ünvanı",
+        "emailPlaceholder": "E-poçt ünvanınızı daxil edin",
+        "age": "Yaş",
+        "agePlaceholder": "Yaşınızı daxil edin",
+        "gender": "Cins",
+        "genderPlaceholder": "Cins seçin",
+        "genderOptions": {
+          "male": "Kişi",
+          "female": "Qadın"
+        }
+      },
+      "medicalInfo": {
+        "title": "Sağlamlıq məlumatları",
+        "height": "Boy (sm)",
+        "heightPlaceholder": "Boyunuzu daxil edin",
+        "weight": "Çəki (kq)",
+        "weightPlaceholder": "Çəkinizi daxil edin",
+        "conditions": "Xəstəliklər",
+        "conditionsPlaceholder": "Diaqnoz qoyulmuş xəstəliklər",
+        "allergies": "Allergiyalar",
+        "allergiesPlaceholder": "Allergiyanız olan dərmanlar, qidalar və digər maddələr",
+        "medications": "Qəbul etdiyiniz dərmanlar",
+        "medicationsPlaceholder": "Hazırda qəbul etdiyiniz dərmanları sadalayın",
+        "lifestyle": "Həyat tərzi",
+        "lifestylePlaceholder": "Fiziki aktivlik, siqaret və alkoqol istifadəsi barədə məlumat"
+      }
+    },
+    "register": {
+      "title": "Hesabınızı yaradın",
+      "subtitle": "Başlamaq üçün məlumatlarınızı doldurun",
+      "illustration": {
+        "title": "Səhiyyə İcmamıza Qoşulun",
+        "description": "AI ilə təchiz edilmiş tibbi konsultasiyalara və sağlamlıq resurslarına daxil olmaq üçün şəxsi hesabınızı yaradın, hamısı bir təhlükəsiz platformada.",
+        "features": {
+          "private": {
+            "title": "Məxfi və Təhlükəsiz",
+            "description": "Sağlamlıq məlumatlarınız şifrələnir və sənaye standartları ilə qorunur"
+          },
+          "access": {
+            "title": "24/7 Giriş",
+            "description": "Ehtiyacınız olduqda tibbi konsultasiyalar əldə edin"
+          },
+          "dashboard": {
+            "title": "Şəxsi İdarə Paneli",
+            "description": "Sağlamlıq səyahətinizi fərdiləşdirilmiş məlumatlarla izləyin"
+          },
+          "ai": {
+            "title": "AI ilə Təchiz Edilmiş",
+            "description": "Tibbi AI texnologiyasında ən son yenilikləri təcrübə edin"
+          }
+        }
+      },
+      "form": {
+        "fullName": "Ad və soyad",
+        "fullNamePlaceholder": "Adınız və soyadınız",
+        "email": "E-poçt ünvanı",
+        "emailPlaceholder": "sizin@email.com",
+        "password": "Şifrə",
+        "passwordPlaceholder": "--------",
+        "passwordHint": "Şifrə ən azı 8 simvol uzunluğunda olmalıdır",
+        "age": "Yaş",
+        "agePlaceholder": "30",
+        "gender": "Cins",
+        "genderPlaceholder": "Seçin",
+        "genderOptions": {
+          "male": "Kişi",
+          "female": "Qadın"
+        },
+        "terms": "Mən",
+        "termsLink": "İstifadə şərtləri",
+        "and": "və",
+        "privacyLink": "Məxfilik siyasəti",
+        "submit": "Hesab yarat",
+        "submitting": "Hesab yaradılır..."
+      },
+      "error": {
+        "registrationFailed": "Qeydiyyat uğursuz oldu. Zəhmət olmasa, yenidən cəhd edin."
+      }
+    },
+    "about": {
+      "title": "Haqqımızda",
+      "introduction": "azdoc sağlamlıqla bağlı suallara cavab verən süni intellekt köməkçisidir. Burada dərman qiymətlərini müqayisə edə və ailənizin sağlamlıq qeydlərini saxlaya bilərsiniz.",
+      "mission": {
+        "title": "Nə üçün yaradılıb?",
+        "description": "Analiz cavabındakı termin, dərmanın yan təsiri və ya yeni bir əlamət sual yarada bilər. azdoc bu mövzular barədə məlumat almağa və həkimə verəcəyiniz sualları hazırlamağa kömək edir. Cavabları süni intellekt hazırlayır, həkim deyil."
+      },
+      "vision": {
+        "title": "Ailə üçün sağlamlıq qeydləri",
+        "description": "Özünüz, uşaqlarınız və valideynləriniz üçün ayrıca qeydlər saxlaya bilərsiniz. Xəstəliklər, allergiyalar, dərmanlar, peyvəndlər və ölçülər seçdiyiniz ailə üzvünə aid olur. Həkim qəbuluna aparmaq üçün bu məlumatların PDF xülasəsini yükləmək mümkündür."
+      },
+      "values": {
+        "title": "Bilməyiniz vacibdir",
+        "items": {
+          "innovation": "Cavabları süni intellekt hazırlayır və səhv edə bilər.",
+          "quality": "azdoc diaqnoz qoymur və müalicə təyin etmir.",
+          "accessibility": "Sual vermək və dərman kataloquna baxmaq üçün qeydiyyat lazım deyil.",
+          "privacy": "Ailənin sağlamlıq qeydlərinə baxmaq üçün hesab və həmin ailəyə giriş icazəsi lazımdır."
+        }
+      },
+      "team": {
+        "title": "Komandamız",
+        "description": "Səhiyyəyə çıxışı və çatdırılmasını yaxşılaşdırmaq üçün birlikdə çalışan səhiyyə mütəxəssisləri, AI ekspertləri və texnologiya yenilikçilərindən ibarət müxtəlif bir qrup."
+      },
+      "technology": {
+        "title": "Texnologiyamız",
+        "description": "Qabaqcıl AI alqoritmləri və maşın öyrənməsi ilə təchiz edilmiş platformamız, məlumat təhlükəsizliyi və məxfiliyinin ən yüksək standartlarını qoruyaraq intellektual, kontekstə həssas tibbi təlimat təqdim edir."
+      }
+    },
+    "faq": {
+      "title": "Tez-tez verilən suallar",
+      "subtitle": "Qeydiyyat, söhbət və sağlamlıq qeydləri haqqında",
+      "questions": {
+        "0": {
+          "question": "{{agentName}} nədir?",
+          "answer": "{{agentName}} sağlamlıqla bağlı suallara cavab verən süni intellekt köməkçisidir. Dərman kataloquna baxmaq və ailə üzvləri üçün sağlamlıq qeydləri saxlamaq da mümkündür."
+        },
+        "1": {
+          "question": "Söhbətdən necə istifadə edim?",
+          "answer": "Sualınızı yazıb göndərin. Analiz cavabını və ya tibbi sənədi də əlavə edə bilərsiniz. Sistem yazdıqlarınızı və göndərdiyiniz sənədləri nəzərə alaraq cavab hazırlayır."
+        },
+        "2": {
+          "question": "azdoc həkimi əvəz edirmi?",
+          "answer": "Xeyr. azdoc məlumat almağa kömək edir, diaqnoz qoymur və müalicə təyin etmir. Təcili hallarda cavab gözləmədən 103 nömrəsinə zəng edin."
+        },
+        "3": {
+          "question": "Sağlamlıq qeydlərimi kim görə bilər?",
+          "answer": "Ailənin sağlamlıq qeydlərinə baxmaq üçün hesaba daxil olmaq və həmin ailəyə giriş icazəsinə malik olmaq lazımdır. Şəxsi məlumatların işlənməsi məxfilik siyasətində izah olunur."
+        },
+        "4": {
+          "question": "Qeydiyyat mütləqdirmi?",
+          "answer": "Sual vermək və dərman kataloquna baxmaq üçün qeydiyyat lazım deyil. Ailənin sağlamlıq qeydlərini saxlamaq üçün isə hesab yaratmalısınız."
+        },
+        "5": {
+          "question": "Nə haqqında soruşa bilərəm?",
+          "answer": "Əlamətlər, analiz nəticələri, dərmanların yan təsirləri və ümumi sağlamlıq mövzuları haqqında soruşa bilərsiniz. Cavablar məlumat üçündür, fərdi müalicə təyinatı deyil."
+        },
+        "6": {
+          "question": "Sualı nə vaxt göndərə bilərəm?",
+          "answer": "İstənilən vaxt yaza bilərsiniz, əvvəlcədən vaxt təyin etmək lazım deyil. Cavabı həkim yox, süni intellekt hazırlayır. Xidmət təcili tibbi yardım üçün nəzərdə tutulmayıb."
+        },
+        "7": {
+          "question": "Cavablar səhv ola bilərmi?",
+          "answer": "Bəli. Süni intellekt məlumatı səhv başa düşə və ya yanlış cavab verə bilər. Dərman və müalicə ilə bağlı qərarları yalnız bu cavablara əsasən verməyin; həkim və ya əczaçı ilə dəqiqləşdirin."
+        }
+      }
+    },
+    "privacy": {
+      "title": "Məxfilik siyasəti",
+      "introduction": "Bu səhifədə azdoc-un hansı məlumatları saxladığı, onları nə üçün istifadə etdiyi və seçimlərinizi necə dəyişə biləcəyiniz izah olunur. Son yenilənmə: 7 sentyabr 2026.",
+      "owner": {
+        "title": "Məlumatları kim saxlayır",
+        "description": "Məlumatlarınızı azdoc xidməti saxlayır və xidmətin göstərilməsi üçün istifadə edir. Hesabınız, sağlamlıq qeydləriniz və məlumatlarınızla bağlı müraciətlər üçün əlaqə ünvanımız info@azdoc.ai-dır."
+      },
+      "information": {
+        "title": "Hansı məlumatları toplayırıq",
+        "description": "Hesab yaratdıqda adınızı, e-poçt ünvanınızı və şifrənizin təhlükəsiz yoxlanması üçün heşini saxlayırıq. Əlavə etdiyiniz ailə üzvlərinin adı, doğum tarixi və digər profil məlumatları, xəstəliklər, allergiyalar, dərmanlar, peyvəndlər, ölçmələr, analiz nəticələri və sənədlər sağlamlıq qeydlərinə daxildir. Mesajlar, cavablar, əlavə edilmiş fayllar, razılıq seçimləri və tarixləri də saxlanır. Xidmətin təhlükəsizliyi və işləməsi üçün IP ünvanı, sorğu vaxtı, cihaz və istifadə barədə texniki məlumatlar işlənə bilər."
+      },
+      "usage": {
+        "title": "Məlumatlar nə üçün istifadə olunur",
+        "description": "Məlumatlar hesabınıza girişi təmin etmək, ailə üzvlərinin qeydlərini saxlamaq və göstərmək, sənədləri oxumaq, analiz nəticələrini təqdim etmək və suallarınıza cavab hazırlamaq üçün istifadə olunur. Seçilmiş şəxsin sağlamlıq qeydləri cavabın hazırlanmasında nəzərə alına bilər. Texniki məlumatlar nasazlıqları araşdırmaq, icazəsiz girişi və sui-istifadəni məhdudlaşdırmaq, xidmətin istifadəsini və xərclərini ölçmək üçün istifadə olunur."
+      },
+      "transfer": {
+        "title": "Məlumatların ABŞ-a göndərilməsi",
+        "description": "Süni intellekt cavabları və sənədlərin avtomatik oxunması üçün OpenAI xidmətindən istifadə edirik. Mesaj və sənədlərinizin məzmunu, lazım gəldikdə seçilmiş şəxsin sağlamlıq qeydləri Azərbaycandan kənara, ABŞ-dakı OpenAI şirkətinə işlənmək üçün göndərilir. Sağlamlıq qeydlərinin azdoc-da saxlanması ilə bu məzmunun xaricdə işlənməsi ayrı razılıq seçimləridir. Xaricdə işlənməyə razı olmadan da hesab yarada bilərsiniz. Razılığı geri götürdükdə köməkçi mesajlarınıza cavab verməyəcək. Əvvəl göndərilmiş məlumatlar bu seçimlə geri çağırılmır."
+      },
+      "recipients": {
+        "title": "Məlumatlara kim çıxış əldə edə bilər",
+        "description": "Ailənizin qeydlərinə həmin ailəyə giriş icazəsi olan hesablar öz rollarına uyğun baxa bilər. OpenAI cavab və sənəd emalı üçün göndərilən məzmunu alır. Server və məlumat saxlama xidmətlərini təmin edən texniki təchizatçılar, həmçinin xidmətin dəstəyi və təhlükəsizliyi ilə məşğul olan səlahiyyətli şəxslər işləri üçün lazım olan həcmdə məlumatlara çıxış əldə edə bilərlər. Qanunla tələb olunduqda məlumatlar səlahiyyətli orqanlara təqdim oluna bilər."
+      },
+      "retention": {
+        "title": "Saxlanma və silinmə müddətləri",
+        "description": "Hesaba bağlı olmayan anonim söhbətlər 90 gün fəaliyyətsizlikdən sonra silinir. Hesaba bağlı qeydlər və sənədlər siz onları silənədək və ya hesabınızı silənədək saxlanır. Məxfilik bölməsində birdəfəlik silmə qeydləri və sənəd fayllarını işlək sistemdən çıxarır. Silmənin baş verdiyini təsdiqləmək üçün məzmunsuz məlumat, o cümlədən tarix və saylar saxlanır. Başqa hesabların da çıxışı olan ailələrin qeydləri yalnız sizin hesabınızı sildiyiniz üçün silinmir. Ehtiyat nüsxələr və xarici təchizatçılardakı surətlər eyni anda silinməyə bilər; onların saxlanması ayrıca qaydalardan asılıdır. Konkret sorğu üçün bizimlə əlaqə saxlayın."
+      },
+      "security": {
+        "title": "Məlumatları necə qoruyuruq",
+        "description": "Şəxsi sənədlərə giriş hesab və ailə icazələri ilə yoxlanılır. Saxlanmış sənəd faylları şifrələnir, saytla məlumat mübadiləsi HTTPS üzərindən aparılır. Heç bir sistem tam risksiz deyil. Hesabınızın şifrəsini paylaşmayın. Endirdiyiniz arxivdə sağlamlıq məlumatları var və onun təhlükəsiz saxlanması sizin nəzarətinizdədir."
+      },
+      "rights": {
+        "title": "Məlumatlarınıza baxmaq və seçimləri dəyişmək",
+        "description": "Sağlamlıq qeydləri bölməsində hər ailə üzvünün qeydlərinə baxa və icazəniz varsa onları düzəldə bilərsiniz. Profilinizdəki Məxfilik və razılıqlar bölməsindən razılıq tarixçəsinə baxa, razılıq verə və ya onu geri götürə, şəxsin bütün qeydlərini sənədlərlə birlikdə ZIP arxivi kimi endirə bilərsiniz. Qeydləri silmək üçün redaktə icazəsi, hesabı silmək üçün isə şifrəniz tələb olunur. Yalnız baxış icazəsi olan şəxs arxivi endirə bilər, amma qeydləri silə bilməz. Razılığı geri götürmək mövcud qeydləri avtomatik silmir; birdəfəlik silmə ayrıca əməliyyatdır."
+      },
+      "contact": {
+        "title": "Əlaqə və müraciətlər",
+        "description": "Məlumatlarınıza çıxış, düzəliş, silmə, razılıq və ya bu siyasətlə bağlı suallar üçün info@azdoc.ai ünvanına yazın. Müraciətin sizə aid olduğunu yoxlamaq üçün əlavə məlumat istəyə bilərik. İlk məktubda tibbi sənədləri və ya şifrənizi göndərməyin."
+      }
+    },
+    "terms": {
+      "title": "İstifadə şərtləri",
+      "lastUpdated": "Son yenilənmə: {{date}}",
+      "introduction": "{{agentName}} xidmətindən istifadə etməzdən əvvəl bu şərtləri oxuyun. Platformadan istifadə etməklə onları qəbul etmiş olursunuz.",
+      "acceptance": {
+        "title": "Şərtlərin qəbulu",
+        "description": "Platformadan istifadə etməklə bu şərtləri oxuduğunuzu, başa düşdüyünüzü və qəbul etdiyinizi təsdiqləyirsiniz."
+      },
+      "services": {
+        "title": "Xidmət haqqında",
+        "description": "{{agentName}} süni intellekt vasitəsilə ümumi sağlamlıq məlumatları təqdim edir. Bu məlumatlar həkim məsləhətini əvəz etmir."
+      },
+      "userResponsibilities": {
+        "title": "İstifadəçinin öhdəlikləri",
+        "description": "Düzgün məlumat təqdim etmək və hesabınızın təhlükəsizliyini qorumaq sizin məsuliyyətinizdir."
+      },
+      "limitations": {
+        "title": "Xidmətin məhdudiyyətləri",
+        "description": "Xidmət həkim məsləhətini əvəz etmir. Sağlamlığınızla bağlı ciddi narahatlığınız varsa, həkimə müraciət edin."
+      },
+      "intellectualProperty": {
+        "title": "Əqli mülkiyyət",
+        "description": "Platformanın bütün məzmunu və funksiyaları {{agentName}} platformasına məxsusdur və müvafiq qanunlarla qorunur."
+      },
+      "liability": {
+        "title": "Məsuliyyətin məhdudlaşdırılması",
+        "description": "{{agentName}} xidmətdən istifadə nəticəsində yaranan hər hansı zərərə görə məsuliyyət daşımır."
+      },
+      "changes": {
+        "title": "Şərtlərin dəyişdirilməsi",
+        "description": "Bu şərtləri istənilən vaxt dəyişmək hüququmuzu saxlayırıq. Dəyişikliklər barədə istifadəçilərə məlumat verəcəyik."
+      },
+      "contact": {
+        "title": "Əlaqə",
+        "description": "İstifadə şərtləri ilə bağlı suallarınızı info@azdoc.ai ünvanına göndərin."
+      }
+    },
+    "security": {
+      "title": "Təhlükəsizlik",
+      "lastUpdated": "Son yenilənmə: {{date}}",
+      "introduction": "Bu səhifədə {{agentName}} hesabına və ailənin sağlamlıq qeydlərinə girişin necə məhdudlaşdırıldığı barədə məlumat verilir.",
+      "dataProtection": {
+        "title": "Sağlamlıq qeydlərinə giriş",
+        "description": "Ailənin sağlamlıq qeydlərini açmaq üçün hesaba daxil olmaq lazımdır. Sistem həmin hesabın seçilmiş ailənin məlumatlarına giriş icazəsini yoxlayır."
+      },
+      "encryption": {
+        "title": "Şifrələrin saxlanması",
+        "description": "Hesab şifrələri açıq mətn kimi saxlanmır. Şifrədən hesablanan qorunan dəyər giriş zamanı yoxlama üçün istifadə olunur."
+      },
+      "access": {
+        "title": "Baxış və dəyişiklik icazələri",
+        "description": "Ailədəki rolunuz qeydlərə baxmaq və onları dəyişmək icazənizi müəyyən edir. Yalnız baxış icazəsi olan istifadəçi qeyd əlavə edə, dəyişə və ya silə bilməz."
+      },
+      "compliance": {
+        "title": "Məxfilik haqqında məlumat",
+        "description": "Hansı şəxsi məlumatların toplandığı, onlardan necə istifadə edildiyi və məlumatlarınızla bağlı hüquqlarınız məxfilik siyasətində izah olunur."
+      },
+      "monitoring": {
+        "title": "Hesabınızı qoruyun",
+        "description": "Şifrənizi başqaları ilə paylaşmayın. Ortaq cihazdan istifadə edirsinizsə, işiniz bitdikdə hesabdan çıxın. Şübhəli hal gördükdə bizə məlumat verin."
+      },
+      "contact": {
+        "title": "Təhlükəsizliklə bağlı müraciətlər",
+        "description": "Hesabınıza icazəsiz girişdən şübhələnirsinizsə və ya saytda təhlükəsizlik problemi görmüsünüzsə, info@azdoc.ai ünvanına yazın."
+      }
+    },
+    "contact": {
+      "title": "Əlaqə",
+      "subtitle": "Texniki dəstək və əməkdaşlıq",
+      "introduction": "Hesabınızda və ya saytda problem varsa, yaxud əməkdaşlıq təklifiniz varsa, bizə yazın. Bu ünvan tibbi məsləhət üçün nəzərdə tutulmayıb.",
+      "email": {
+        "title": "Bizə yazın",
+        "description": "Saytla bağlı problem, əməkdaşlıq və reklam təklifləri üçün:",
+        "address": "info@azdoc.ai"
+      },
+      "support": {
+        "title": "Cavab müddəti",
+        "description": "Müraciətlərə 24 saat ərzində cavab verməyə çalışırıq."
+      },
+      "note": "Bu əlaqə ünvanı təcili tibbi yardım üçün deyil. Təcili hallarda 103 nömrəsinə zəng edin.",
+      "medicalNote": {
+        "title": "Sağlamlıqla bağlı sualınız var?",
+        "description": "Söhbət bölməsində əlamətlər, analiz nəticələri və dərmanlar haqqında soruşa bilərsiniz. Cavabları süni intellekt hazırlayır."
+      }
+    },
+    "blog": {
+      "title": "Bloq",
+      "subtitle": "Sağlamlıq, xəstəliklər və dərmanlar haqqında məqalələr",
+      "readMore": "Məqaləni oxu",
+      "backToList": "Bloqa qayıt",
+      "publishedOn": "Yayımlanma tarixi",
+      "author": "Müəllif",
+      "readingTime": "Oxuma müddəti: {{minutes}} dəqiqə",
+      "tags": "Mövzular",
+      "relatedPosts": "Bu mövzuda digər məqalələr",
+      "anonymous": "Müəllif göstərilməyib",
+      "postsTaggedWith": "Mövzu üzrə məqalələr",
+      "tagDescription": "{{tag}}: {{count}} məqalə",
+      "noPostsWithTag": "{{tag}} mövzusunda məqalə tapılmadı.",
+      "checkOtherTags": "Başqa mövzu seçin və ya bütün məqalələrə baxın.",
+      "tag": {
+        "title": "Mövzu: {{tag}}",
+        "description": "{{tag}} mövzusunda məqalələr",
+        "empty": {
+          "title": "Məqalə tapılmadı",
+          "description": "Bu mövzu üzrə məqalə göstərmək mümkün olmadı. Digər məqalələrə bloq səhifəsində baxa bilərsiniz."
+        },
+        "otherTags": "Digər mövzular",
+        "notFound": "Mövzu tapılmadı"
+      },
+      "search": {
+        "title": "Məqalə axtarışı",
+        "placeholder": "Mövzu və ya məqalə adı...",
+        "button": "Axtar",
+        "noResults": "Axtarışa uyğun məqalə tapılmadı.",
+        "results": "Axtarış nəticələri",
+        "resultsFor": "Axtarış:",
+        "searching": "Axtarılır...",
+        "foundResults": "{{count}} məqalə tapıldı.",
+        "noResultsFor": "\"{{query}}\" axtarışına uyğun məqalə tapılmadı.",
+        "tryAgain": "Başqa sözlə və ya daha qısa ifadə ilə axtarın.",
+        "enterQuery": "Hansı mövzunu axtarırsınız?",
+        "enterQueryDescription": "Yuxarıdakı axtarış sahəsinə mövzu və ya məqalə adı yazın."
+      },
+      "filter": {
+        "byTag": "Mövzu seçin",
+        "allPosts": "Bütün məqalələr",
+        "popular": "Populyar",
+        "latest": "Ən son"
+      },
+      "admin": {
+        "createPost": "Yeni Məqalə Yarat",
+        "editPost": "Məqaləni Redaktə et",
+        "deletePost": "Məqaləni Sil",
+        "manageTags": "Etiketləri İdarə et",
+        "confirmDelete": "Bu məqaləni silmək istədiyinizə əminsiniz?",
+        "form": {
+          "title": "Başlıq",
+          "titlePlaceholder": "Məqalə başlığını daxil edin",
+          "summary": "Xülasə",
+          "summaryPlaceholder": "Məqalənizin qısa xülasəsi",
+          "content": "Məzmun",
+          "contentPlaceholder": "Məqalənizi buraya yazın...",
+          "featuredImage": "Örtük Şəkli URL",
+          "featuredImagePlaceholder": "https://example.com/image.jpg",
+          "tags": "Etiketlər",
+          "tagsPlaceholder": "Etiketlər əlavə edin",
+          "newTag": "Yeni Etiket Əlavə et",
+          "published": "Yayımlanıb",
+          "draft": "Qaralama",
+          "saveAsDraft": "Qaralama olaraq saxla",
+          "publish": "Yayımla",
+          "update": "Yenilə",
+          "cancel": "Ləğv et",
+          "language": "Məqalə Dili",
+          "languageOptions": {
+            "az": "Azərbaycanca",
+            "en": "İngiliscə",
+            "tr": "Türkcə"
+          },
+          "save": "Yazını Saxla"
+        },
+        "messages": {
+          "createSuccess": "Məqalə uğurla yaradıldı",
+          "updateSuccess": "Məqalə uğurla yeniləndi",
+          "deleteSuccess": "Məqalə uğurla silindi",
+          "error": "Xəta baş verdi. Zəhmət olmasa, yenidən cəhd edin."
+        }
+      },
+      "empty": {
+        "title": "Hələ məqalə yoxdur",
+        "description": "Məqalələr dərc olunduqda burada görünəcək."
+      }
+    },
+    "admin": {
+      "title": "Admin Paneli",
+      "dashboard": "İdarə Paneli",
+      "posts": {
+        "title": "Bloq Məqalələri",
+        "description": "Bloq məzmununuzu idarə edin və yayımlayın",
+        "create": "Yeni Məqalə Yarat",
+        "selected": "{{count}} məqalə seçilib",
+        "confirmDelete": "Məqaləni Silmək?",
+        "confirmBulkDelete": "{{count}} məqaləni silmək?",
+        "deleteWarning": "Bu əməliyyat geri qaytarıla bilməz. Məqalə həmişəlik silinəcək.",
+        "published": "Yayımlanıb",
+        "draft": "Qaralama",
+        "noTags": "Etiket yoxdur",
+        "empty": "Məqalə tapılmadı. Başlamaq üçün ilk məqalənizi yaradın.",
+        "table": {
+          "title": "Başlıq",
+          "status": "Status",
+          "tags": "Etiketlər",
+          "created": "Yaradılıb",
+          "actions": "Əməliyyatlar"
+        },
+        "view": "Bax",
+        "edit": "Redaktə et",
+        "delete": "Sil",
+        "form": {
+          "createTitle": "Yeni Məqalə Yarat",
+          "editTitle": "Məqaləni Redaktə et",
+          "createDescription": "Bloqunuza yeni məqalə əlavə edin",
+          "editDescription": "Mövcud məqalənizi yeniləyin",
+          "title": "Başlıq",
+          "slug": "Slug",
+          "generateSlug": "Başlıqdan yarat",
+          "slugPlaceholder": "meqalenizin-url-i",
+          "slugHelp": "Məqaləniz üçün URL-dostu identifikator. Yalnız kiçik hərflər, rəqəmlər və defislər istifadə edin.",
+          "summary": "Xülasə",
+          "summaryHelp": "Məqalənizin qısa təsviri (maksimum 500 simvol)",
+          "content": "Məzmun",
+          "featuredImage": "Örtük Şəkli URL",
+          "tags": "Etiketlər",
+          "addTag": "Etiket əlavə edin",
+          "addTagButton": "Əlavə et",
+          "availableTags": "Mövcud etiketlər",
+          "language": "Dil",
+          "published": "Yayımlanıb",
+          "publishedHelp": "İşarələndikdə, məqalə bloqda hər kəsə görünəcək",
+          "cancel": "Ləğv et",
+          "saveDraft": "Qaralama olaraq saxla",
+          "publish": "Yayımla",
+          "saving": "Saxlanılır...",
+          "preview": "Ön baxış",
+          "editMode": "Redaktə Rejimi",
+          "unsavedChanges": "Saxlanılmamış Dəyişikliklər",
+          "unsavedChangesWarning": "Çıxsanız itiriləcək saxlanılmamış dəyişiklikləriniz var. Davam etmək istədiyinizə əminsiniz?",
+          "leaveAnyway": "Hər halda Çıx",
+          "stayAndEdit": "Qal və Redaktə et",
+          "createSuccess": "Məqalə uğurla yaradıldı",
+          "updateSuccess": "Məqalə uğurla yeniləndi",
+          "saveError": "Məqalə saxlanıla bilmədi",
+          "errors": {
+            "titleRequired": "Başlıq tələb olunur",
+            "summaryRequired": "Xülasə tələb olunur",
+            "summaryTooLong": "Xülasə 500 simvoldan az olmalıdır",
+            "contentRequired": "Məzmun tələb olunur",
+            "imageRequired": "Örtük şəkli URL-i tələb olunur",
+            "invalidUrl": "Zəhmət olmasa, düzgün URL daxil edin",
+            "imageUploadFailed": "Şəkil yüklənmədi. Zəhmət olmasa yenidən cəhd edin."
+          },
+          "save": "Yazını Saxla"
+        }
+      },
+      "tags": {
+        "title": "Etiketlər",
+        "description": "Bloq məqalələriniz üçün kateqoriyaları və etiketləri idarə edin",
+        "create": "Yeni Etiket Əlavə et",
+        "namePlaceholder": "Etiket adını daxil edin",
+        "add": "Etiket Əlavə et",
+        "confirmDelete": "Etiketi Silmək?",
+        "deleteWarning": "Bu əməliyyat geri qaytarıla bilməz. Etiket bütün məqalələrdən silinəcək.",
+        "postsCount": "{{count}} məqalə",
+        "noTags": "Etiket tapılmadı. Başlamaq üçün ilk etiketinizi yaradın.",
+        "noSearchResults": "Axtarışınıza uyğun etiket tapılmadı",
+        "search": "Etiketləri axtar",
+        "createSuccess": "Etiket uğurla yaradıldı",
+        "updateSuccess": "Etiket uğurla yeniləndi",
+        "deleteSuccess": "Etiket uğurla silindi"
+      },
+      "users": {
+        "title": "İstifadəçilər",
+        "admins": "Administratorlar",
+        "authors": "Müəlliflər",
+        "readers": "Oxucular"
+      },
+      "settings": {
+        "title": "Parametrlər",
+        "general": "Ümumi Parametrlər",
+        "theme": "Tema Parametrləri"
+      },
+      "stats": {
+        "totalPosts": "Ümumi Məqalələr",
+        "publishedPosts": "Yayımlanıb",
+        "draftPosts": "Qaralamalar",
+        "tags": "Etiketlər",
+        "users": "İstifadəçilər",
+        "views": "Baxışlar"
+      },
+      "recentPosts": "Son Məqalələr",
+      "noPosts": "Məqalə tapılmadı",
+      "unknownAuthor": "Naməlum Müəllif",
+      "filtersText": "Filtrlər",
+      "filters": {
+        "all": "Hamısı",
+        "published": "Yayımlanıb",
+        "draft": "Qaralamalar"
+      },
+      "search": "Axtar",
+      "pagination": {
+        "previous": "Əvvəlki",
+        "next": "Sonrakı",
+        "showing": "{{total}} nəticədən {{from}} - {{to}} göstərilir"
+      }
+    },
+    "filters": {
+      "all": "Bütün Konsultasiyalar",
+      "upcoming": "Gələcək",
+      "completed": "Tamamlanmış",
+      "past": "Keçmiş"
+    },
+    "status": {
+      "undefined": "Naməlum Status"
+    },
+    "viewDetails": "Təfərrüatları göstər"
+  }

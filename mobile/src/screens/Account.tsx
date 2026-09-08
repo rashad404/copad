@@ -41,6 +41,10 @@ export function Account() {
       {s.user ? (
         <>
           <Heading>{s.user.name}</Heading>
+          <LinkRow
+            title={c("My overview", "Hesabım", "Обзор аккаунта")}
+            onPress={() => nav.navigate("Dashboard")}
+          />
           <Body>{s.user.email}</Body>
           <LinkRow
             title={c(
@@ -81,6 +85,10 @@ export function Account() {
           onPress={() => nav.navigate("Auth")}
         />
       )}
+      <LinkRow
+        title={c("Doctor panel", "Həkim paneli", "Кабинет врача")}
+        onPress={() => nav.navigate("DoctorPortal")}
+      />
       <Select
         label={c("Language", "Dil", "Язык")}
         value={language}
@@ -97,11 +105,41 @@ export function Account() {
           "Məxfilik siyasəti",
           "Политика конфиденциальности",
         )}
-        onPress={() => void Linking.openURL("https://azdoc.ai/privacy-policy")}
+        onPress={() => nav.navigate("Information", { page: "privacy-policy" })}
       />
       <LinkRow
         title={c("Contact", "Əlaqə", "Контакты")}
-        onPress={() => void Linking.openURL("https://azdoc.ai/contact")}
+        onPress={() => nav.navigate("Information", { page: "contact" })}
+      />
+      <LinkRow
+        title={c("Articles", "Məqalələr", "Статьи")}
+        onPress={() => nav.navigate("Blog")}
+      />
+      <LinkRow
+        title={c("About azdoc", "azdoc haqqında", "Об azdoc")}
+        onPress={() => nav.navigate("Information", { page: "about" })}
+      />
+      <LinkRow
+        title={c(
+          "Common questions",
+          "Tez-tez verilən suallar",
+          "Частые вопросы",
+        )}
+        onPress={() => nav.navigate("Information", { page: "faq" })}
+      />
+      <LinkRow
+        title={c("Security", "Təhlükəsizlik", "Безопасность")}
+        onPress={() => nav.navigate("Information", { page: "security" })}
+      />
+      <LinkRow
+        title={c(
+          "Terms of service",
+          "İstifadə şərtləri",
+          "Условия использования",
+        )}
+        onPress={() =>
+          nav.navigate("Information", { page: "terms-of-service" })
+        }
       />
       {s.user && (
         <Button

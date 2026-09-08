@@ -169,9 +169,11 @@ export function Heading({ children }: { children: React.ReactNode }) {
 export function Page({
   children,
   scroll = true,
+  scrollRef,
 }: {
   children: React.ReactNode;
   scroll?: boolean;
+  scrollRef?: React.RefObject<ScrollView | null>;
 }) {
   const headerHeight = useHeaderHeight();
   return (
@@ -183,6 +185,7 @@ export function Page({
       >
         {scroll ? (
           <ScrollView
+            ref={scrollRef}
             keyboardShouldPersistTaps="handled"
             contentContainerStyle={styles.body}
           >
@@ -383,7 +386,7 @@ export function Sheet({
         <KeyboardAvoidingView
           style={{ flex: 1 }}
           behavior={Platform.OS === "ios" ? "padding" : undefined}
-        keyboardVerticalOffset={0}
+          keyboardVerticalOffset={0}
         >
           <ScrollView
             keyboardShouldPersistTaps="handled"

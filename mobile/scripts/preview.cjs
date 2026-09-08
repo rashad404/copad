@@ -55,6 +55,17 @@ function listening() {
   );
   child.unref();
   fs.closeSync(log);
+  // Wait for the actual listener so immediately starting tests does not race Metro.
+  let ready = false;
+  for (let i = 0; i < 100; i++) {
+    if (listening().includes(String(child.pid))) {
+      ready = true;
+      break;
+    }
+    await new Promise((resolve) => setTimeout(resolve, 100));
+  }
+  if (!ready)
+    throw Error("Preview did not start on port 3003. See .expo/preview.log");
   console.log(`Mobile preview: http://100.89.150.50:3003 (PID ${child.pid})`);
 })().catch((error) => {
   console.error(error.message);

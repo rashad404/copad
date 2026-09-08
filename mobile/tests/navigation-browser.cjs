@@ -44,7 +44,7 @@ const visible = (page, text) =>
     await tab("Services").click();
     await page.getByRole("button", { name: "Medicines", exact: true }).click();
     const search = page.getByRole("textbox", {
-      name: "Search by name",
+      name: "Medicine or active ingredient",
       exact: true,
     });
     await search.fill("test medicine");
@@ -57,8 +57,9 @@ const visible = (page, text) =>
     await shell();
     await tab("Services").click();
     assert.equal(await search.inputValue(), "test medicine");
+    await page.getByRole("button", { name: "Search", exact: true }).click();
     await page
-      .getByRole("button", { name: "View details", exact: true })
+      .getByRole("button", { name: "Test medicine", exact: true })
       .click();
     await page
       .getByText(/This is advisory and does not replace a doctor or pharmacist/)
@@ -79,9 +80,7 @@ const visible = (page, text) =>
       .getByRole("button", { name: "Laboratories", exact: true })
       .click();
     await shell();
-    await page
-      .getByRole("button", { name: "View details", exact: true })
-      .click();
+    await page.getByRole("button", { name: "View tests", exact: true }).click();
     await visible(page, "Test laboratoriyası").waitFor();
     await shell();
     const before = await visible(page, "azdoc").boundingBox();
@@ -98,10 +97,10 @@ const visible = (page, text) =>
     await page.getByRole("button", { name: "Back", exact: true }).click();
     await page.getByRole("button", { name: "Doctors", exact: true }).click();
     await page
-      .getByRole("button", { name: "View details", exact: true })
+      .getByRole("button", { name: "View profile", exact: true })
       .click();
     await page
-      .getByText("Listing unconfirmed", { exact: false })
+      .getByText("Unconfirmed listing", { exact: false })
       .filter({ visible: true })
       .waitFor();
     await shell();

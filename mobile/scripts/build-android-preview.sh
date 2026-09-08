@@ -13,4 +13,5 @@ if [[ -z "${JAVA_HOME:-}" && -d /opt/homebrew/opt/openjdk@21/libexec/openjdk.jdk
 fi
 npx expo prebuild --platform android --no-install
 cd android
+./gradlew generateCodegenArtifactsFromSchema --max-workers=2
 ./gradlew assembleRelease -PreactNativeArchitectures=arm64-v8a --max-workers=2

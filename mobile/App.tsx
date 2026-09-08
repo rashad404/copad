@@ -18,6 +18,11 @@ import { CopyProvider, useCopy } from "./src/core/copy";
 import { SessionProvider, FamilyProvider } from "./src/core/Session";
 import { Brand, palette } from "./src/ui/kit";
 import { HealthSyncProvider } from "./src/health/HealthSyncContext";
+import Information from "./src/screens/Information";
+import { Blog, Article } from "./src/screens/Blog";
+import DocumentViewer from "./src/screens/DocumentViewer";
+import DoctorPortal from "./src/screens/DoctorPortal";
+import Dashboard from "./src/screens/Dashboard";
 import Home from "./src/screens/Home";
 import Chat from "./src/screens/Chat";
 import Records from "./src/screens/Records";
@@ -84,6 +89,12 @@ function SectionStack({
       }}
     >
       <Stack.Screen name={name} component={component} />
+      <Stack.Screen name="DocumentViewer" component={DocumentViewer} />
+      <Stack.Screen name="DoctorPortal" component={DoctorPortal} />
+      <Stack.Screen name="Dashboard" component={Dashboard} />
+      <Stack.Screen name="Information" component={Information} />
+      <Stack.Screen name="Blog" component={Blog} />
+      <Stack.Screen name="Article" component={Article} />
       <Stack.Screen name="Auth" component={Auth} />
       <Stack.Screen name="Profile" component={Profile} />
       <Stack.Screen name="Directory" component={Directory} />

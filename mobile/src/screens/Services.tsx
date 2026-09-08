@@ -1,3 +1,9 @@
+import Directories, { Verification, Portrait } from "./Directories";
+import {
+  doctorCopy,
+  specialtyName,
+  experienceYears,
+} from "../copy/website/doctors";
 import React, { useState } from "react";
 import { Linking, View } from "react-native";
 import { useNavigation, useRoute } from "@react-navigation/native";
@@ -5,20 +11,10 @@ import api from "../core/api";
 import { useCopy } from "../core/copy";
 import { useFamily, useSession } from "../core/Session";
 import { useResource } from "../core/useResource";
-import {
-  type MedicineSummary,
-  type MedicineDetail,
-  type AllergyWarning,
-  checkMedicineAllergies,
-} from "../api/medicines";
-import {
-  type PublicDoctor,
-  type DoctorPage,
-  type Slot,
-} from "../api/doctorTypes";
+import { type PublicDoctor, type Slot } from "../api/doctorTypes";
 import { createBooking, fetchSlots } from "../api/booking";
 import { canWrite } from "../api/recordModel";
-import { money, type Lab, type LabPage } from "../api/labModel";
+import { money } from "../api/labModel";
 import { shortDate } from "../utils/dates";
 import {
   Body,
@@ -28,7 +24,6 @@ import {
   LinkRow,
   Input,
   Button,
-  Select,
   Toggle,
   Notice,
   LoadState,
@@ -80,433 +75,14 @@ export function Services() {
     </Page>
   );
 }
+export { Medicine } from "./Medicines";
+import { Medicines } from "./Medicines";
 export function Directory() {
   const { kind } = useRoute<any>().params as { kind: DirectoryKind };
-  return <DirectoryScope key={kind} kind={kind} />;
-}
-function DirectoryScope({ kind }: { kind: DirectoryKind }) {
-  const { c, language } = useCopy(),
-    nav = useNavigation<any>();
-  const [q, setQ] = useState(""),
-    [city, setCity] = useState(""),
-    [home, setHome] = useState(false),
-    [specialty, setSpecialty] = useState(""),
-    [spoken, setSpoken] = useState(""),
-    [query, setQuery] = useState({
-      q: "",
-      city: "",
-      homeCollection: false,
-      specialty: "",
-      language: "",
-      page: 0,
-    });
-  const specialties = useResource(
-    kind === "doctors" ? `specialties:${language}` : null,
-    async (s) =>
-      (
-        await api.get<{ code: string; name: string }[]>(
-          "/doctors/specialties",
-          { params: { lang: language }, signal: s },
-        )
-      ).data,
-  );
-  const r = useResource(
-    `${kind}:${language}:${JSON.stringify(query)}`,
-    async (s) =>
-      (
-        await api.get<DoctorPage | LabPage | MedicineSummary[]>(`/${kind}`, {
-          params: { ...query, lang: language, size: 20, limit: 20 },
-          signal: s,
-        })
-      ).data,
-  );
-  const rows = r.data ? (Array.isArray(r.data) ? r.data : r.data.content) : [];
-  const page = r.data && !Array.isArray(r.data) ? r.data : null;
-  return (
-    <Page>
-      <Title>
-        {kind === "doctors"
-          ? c("Doctors", "Həkimlər", "Врачи")
-          : kind === "medicines"
-            ? c("Medicines", "Dərmanlar", "Лекарства")
-            : c("Laboratories", "Laboratoriyalar", "Лаборатории")}
-      </Title>
-      <Input
-        label={c("Search by name", "Ada görə axtar", "Поиск по названию")}
-        value={q}
-        onChangeText={setQ}
-        returnKeyType="search"
-        onSubmitEditing={() =>
-          setQuery({
-            q: q.trim(),
-            city: city.trim(),
-            homeCollection: home,
-            specialty,
-            language: spoken,
-            page: 0,
-          })
-        }
-      />
-      {kind !== "medicines" && (
-        <Input
-          label={c("City", "Şəhər", "Город")}
-          value={city}
-          onChangeText={setCity}
-        />
-      )}{" "}
-      {kind === "doctors" && (
-        <>
-          <Select
-            label={c("Specialty", "İxtisas", "Специальность")}
-            value={specialty}
-            options={[
-              { value: "", label: c("All", "Hamısı", "Все") },
-              ...(specialties.data || []).map((d) => ({
-                value: d.code,
-                label: d.name,
-              })),
-            ]}
-            onChange={setSpecialty}
-          />
-          <Select
-            label={c("Language", "Dil", "Язык")}
-            value={spoken}
-            options={[
-              { value: "", label: c("All", "Hamısı", "Все") },
-              { value: "az", label: "Azərbaycanca" },
-              { value: "ru", label: "Русский" },
-              { value: "en", label: "English" },
-            ]}
-            onChange={setSpoken}
-          />
-        </>
-      )}
-      {kind === "labs" && (
-        <Toggle
-          label={c(
-            "Home collection available",
-            "Evdən nümunə götürənlər",
-            "Есть забор на дому",
-          )}
-          value={home}
-          onChange={setHome}
-        />
-      )}
-      <Button
-        label={c("Search", "Axtar", "Найти")}
-        onPress={() =>
-          setQuery({
-            q: q.trim(),
-            city: city.trim(),
-            homeCollection: home,
-            specialty,
-            language: spoken,
-            page: 0,
-          })
-        }
-      />
-      <LoadState resource={r} />
-      {r.data && rows.length === 0 && (
-        <Notice>
-          {query.q ||
-          query.city ||
-          query.specialty ||
-          query.language ||
-          query.homeCollection
-            ? c(
-                "No results for these filters. Try a different search.",
-                "Bu filtrlərə uyğun nəticə yoxdur. Axtarışı dəyişin.",
-                "По этим фильтрам ничего не найдено. Измените поиск.",
-              )
-            : kind === "doctors"
-              ? c(
-                  "We are adding doctors. Listings will appear here.",
-                  "Həkimlər əlavə olunur. Siyahı burada təqdim ediləcək.",
-                  "Мы добавляем врачей. Здесь появятся их анкеты.",
-                )
-              : kind === "labs"
-                ? c(
-                    "We are adding laboratories.",
-                    "Laboratoriyalar əlavə olunur.",
-                    "Мы добавляем лаборатории.",
-                  )
-                : c(
-                    "No medicines found.",
-                    "Dərman tapılmadı.",
-                    "Лекарства не найдены.",
-                  )}
-        </Notice>
-      )}
-      {rows.map((item) => (
-        <View style={styles.card} key={item.slug}>
-          {kind === "doctors" ? (
-            <>
-              <Heading>{(item as PublicDoctor).fullName}</Heading>
-              <Body>
-                {specialties.data?.find(
-                  (s) => s.code === (item as PublicDoctor).specialtyCode,
-                )?.name || (item as PublicDoctor).specialtyCode}
-              </Body>
-              <Verification value={(item as PublicDoctor).verification} />
-              <Body small>
-                {(item as PublicDoctor).clinics.map((c) => c.name).join(", ")}
-              </Body>
-              <Body small>
-                {(item as PublicDoctor).languages.join(", ")}
-                {(item as PublicDoctor).yearsExperience != null
-                  ? ` - ${(item as PublicDoctor).yearsExperience} ${c("years", "il", "лет")}`
-                  : ""}
-              </Body>
-              {(item as PublicDoctor).consultationFee != null && (
-                <Body>
-                  {money(
-                    (item as PublicDoctor).consultationFee!,
-                    language,
-                    "-",
-                  )}
-                </Body>
-              )}
-            </>
-          ) : kind === "medicines" ? (
-            <>
-              <Heading>{(item as MedicineSummary).name}</Heading>
-              <Body>{(item as MedicineSummary).activeIngredient || "-"}</Body>
-              <Body>
-                {money(
-                  (item as MedicineSummary).lowestPrice,
-                  language,
-                  c("Price not listed", "Qiymət yoxdur", "Цена не указана"),
-                )}
-              </Body>
-              <Body small>
-                {c("Packs listed", "Qablaşdırma sayı", "Упаковок")}:{" "}
-                {(item as MedicineSummary).priceCount}
-              </Body>
-            </>
-          ) : (
-            <>
-              <Heading>{(item as Lab).name}</Heading>
-              <Body>
-                {[(item as Lab).city, (item as Lab).district]
-                  .filter(Boolean)
-                  .join(", ")}
-              </Body>
-              <Body small>
-                {(item as Lab).homeCollection
-                  ? c(
-                      "Home collection available",
-                      "Evdən nümunə götürülür",
-                      "Есть забор на дому",
-                    )
-                  : c(
-                      "Collection at the lab",
-                      "Nümunə laboratoriyada götürülür",
-                      "Забор в лаборатории",
-                    )}
-              </Body>
-              <Body small>
-                {c("Tests", "Analiz sayı", "Анализов")}:{" "}
-                {(item as Lab).testCount}
-              </Body>
-              {(item as Lab).phone && <Body>{(item as Lab).phone}</Body>}
-            </>
-          )}
-          <Button
-            secondary
-            label={c("View details", "Ətraflı bax", "Подробнее")}
-            onPress={() =>
-              nav.navigate(
-                kind === "doctors"
-                  ? "Doctor"
-                  : kind === "medicines"
-                    ? "Medicine"
-                    : "Laboratory",
-                { slug: item.slug },
-              )
-            }
-          />
-        </View>
-      ))}
-      {page && (
-        <View style={styles.spread}>
-          <Button
-            secondary
-            disabled={query.page === 0}
-            label={c("Previous", "Əvvəlki", "Назад")}
-            onPress={() => setQuery((v) => ({ ...v, page: v.page - 1 }))}
-          />
-          <Body>{query.page + 1}</Body>
-          <Button
-            secondary
-            disabled={query.page + 1 >= page.totalPages}
-            label={c("Next", "Növbəti", "Далее")}
-            onPress={() => setQuery((v) => ({ ...v, page: v.page + 1 }))}
-          />
-        </View>
-      )}
-    </Page>
-  );
-}
-export function Verification({ value }: { value: string }) {
-  const { c } = useCopy();
-  return (
-    <Body small>
-      {value === "VERIFIED"
-        ? c(
-            "Credentials checked",
-            "Peşə sənədləri yoxlanılıb",
-            "Документы об образовании проверены",
-          )
-        : value === "PENDING"
-          ? c(
-              "Claimed listing, under review",
-              "Sahiblik müraciəti yoxlanılır",
-              "Заявка на подтверждение анкеты рассматривается",
-            )
-          : c(
-              "Listing unconfirmed. Information was added from a public source.",
-              "Siyahıdakı məlumatlar həkim tərəfindən təsdiqlənməyib. Açıq mənbədən əlavə olunub.",
-              "Анкета не подтверждена врачом. Данные добавлены из открытого источника.",
-            )}
-    </Body>
-  );
-}
-export function Medicine() {
-  const { slug } = useRoute<any>().params as { slug: string };
-  return <MedicineScope key={slug} slug={slug} />;
-}
-function MedicineScope({ slug }: { slug: string }) {
-  const { c, language } = useCopy(),
-    nav = useNavigation<any>(),
-    { user } = useSession(),
-    f = useFamily();
-  const r = useResource(
-    `medicine:${slug}:${language}`,
-    async (s) =>
-      (
-        await api.get<MedicineDetail>(
-          `/medicines/${encodeURIComponent(slug)}`,
-          { params: { lang: language }, signal: s },
-        )
-      ).data,
-  );
-  const warnings = useResource(
-    user && f.member && r.data
-      ? `allergy:${user.id}:${f.member.id}:${r.data.id}`
-      : null,
-    (s) => checkMedicineAllergies(r.data!.id, f.member!.id, s),
-  );
-  const med = r.data;
-  const price = (v: number | null) =>
-    money(
-      v,
-      language,
-      c("Price not listed", "Qiymət yoxdur", "Цена не указана"),
-    );
-  const min =
-    med?.prices.reduce<number | null>(
-      (min, p) =>
-        p.retailPrice == null ? min : Math.min(min ?? Infinity, p.retailPrice),
-      null,
-    ) ?? null;
-  return (
-    <Page>
-      <LoadState resource={r} />
-      {med && (
-        <>
-          <Title>{med.name}</Title>
-          <Body>{med.active_ingredient || "-"}</Body>
-          <Body small>
-            {[med.manufacturer, med.prescription_status, med.release_form]
-              .filter(Boolean)
-              .join(", ")}
-          </Body>
-          <MemberPicker />
-          <LoadState resource={warnings} />
-          {warnings.data?.map((w, i) => (
-            <Notice danger key={i}>
-              {w.critical
-                ? c(
-                    "Life-threatening allergy risk",
-                    "Həyati təhlükəli allergiya riski",
-                    "Риск аллергии с угрозой для жизни",
-                  )
-                : c(
-                    "Possible allergy conflict",
-                    "Mümkün allergiya riski",
-                    "Возможный риск аллергии",
-                  )}
-              : {w.allergen}.{" "}
-              {c(
-                "This is advisory and does not replace a doctor or pharmacist.",
-                "Bu xəbərdarlıq məlumat üçündür, həkim və ya əczaçı məsləhətini əvəz etmir.",
-                "Предупреждение носит справочный характер и не заменяет консультацию врача или фармацевта.",
-              )}
-            </Notice>
-          ))}
-          <Heading>{c("Prices", "Qiymətlər", "Цены")}</Heading>
-          {[...med.prices]
-            .sort(
-              (a, b) =>
-                (a.retailPrice ?? Infinity) - (b.retailPrice ?? Infinity),
-            )
-            .map((p, i) => (
-              <View key={i} style={styles.line}>
-                <Heading>{price(p.retailPrice)}</Heading>
-                <Body>
-                  {[p.tradeName, p.dosage, p.packaging, p.form]
-                    .filter(Boolean)
-                    .join(", ")}
-                </Body>
-              </View>
-            ))}
-          <Heading>
-            {c(
-              "Same ingredient, other brands",
-              "Eyni maddə, başqa markalar",
-              "То же вещество, другие марки",
-            )}
-          </Heading>
-          {[...med.alternatives]
-            .sort(
-              (a, b) =>
-                (a.lowestPrice ?? Infinity) - (b.lowestPrice ?? Infinity),
-            )
-            .map((a) => (
-              <View style={styles.card} key={a.id}>
-                <Heading>{a.name}</Heading>
-                <Body>{price(a.lowestPrice)}</Body>
-                {min != null &&
-                  a.lowestPrice != null &&
-                  min > a.lowestPrice && (
-                    <Notice>
-                      {c("Price difference", "Qiymət fərqi", "Разница в цене")}:{" "}
-                      {price(Math.round((min - a.lowestPrice) * 100) / 100)}
-                    </Notice>
-                  )}
-                <Button
-                  secondary
-                  label={c(
-                    "View medicine",
-                    "Dərmana bax",
-                    "Посмотреть препарат",
-                  )}
-                  onPress={() => nav.push("Medicine", { slug: a.slug })}
-                />
-              </View>
-            ))}
-          {!med.alternatives.length && (
-            <Body>
-              {c(
-                "No alternatives listed.",
-                "Alternativ qeyd edilməyib.",
-                "Аналоги не указаны.",
-              )}
-            </Body>
-          )}
-        </>
-      )}
-    </Page>
+  return kind === "medicines" ? (
+    <Medicines />
+  ) : (
+    <Directories key={kind} kind={kind} />
   );
 }
 export function Doctor() {
@@ -535,28 +111,52 @@ function DoctorScope({ slug }: { slug: string }) {
       ).data,
   );
   const doctor = r.data;
+  const nav = useNavigation<any>();
+  const d = doctorCopy(language);
   return (
     <Page>
       <LoadState resource={r} />
       {doctor && (
         <>
+          <Portrait doctor={doctor} />
           <Title>{doctor.fullName}</Title>
           <Body>
             {specialty.data?.find((s) => s.code === doctor.specialtyCode)
-              ?.name || doctor.specialtyCode}
+              ?.name || specialtyName(doctor.specialtyCode, language)}
           </Body>
-          <Verification value={doctor.verification} />
-          {doctor.qualifications && <Body>{doctor.qualifications}</Body>}
-          {doctor.bio && <Body>{doctor.bio}</Body>}
+          <Verification value={doctor.verification} detail />
+          {doctor.verification !== "VERIFIED" && (
+            <LinkRow
+              title={d.claim}
+              onPress={() => nav.navigate("DoctorPortal")}
+            />
+          )}
+          {doctor.qualifications && (
+            <>
+              <Heading>{d.qualifications}</Heading>
+              <Body>{doctor.qualifications}</Body>
+            </>
+          )}
+          {doctor.bio && (
+            <>
+              <Heading>{d.about}</Heading>
+              <Body>{doctor.bio}</Body>
+            </>
+          )}
           <Body small>
-            {doctor.languages.join(", ")}
+            {doctor.languages
+              .map((l) => d[l as "az" | "en" | "ru"] || l)
+              .join(", ")}
             {doctor.yearsExperience != null
-              ? ` - ${doctor.yearsExperience} ${c("years", "il", "лет")}`
+              ? ` - ${experienceYears(doctor.yearsExperience, language)}`
               : ""}
           </Body>
           {doctor.consultationFee != null && (
-            <Heading>{money(doctor.consultationFee, language, "-")}</Heading>
+            <Heading>
+              {d.fee}: {money(doctor.consultationFee, language, "-")}
+            </Heading>
           )}
+          <Heading>{d.clinics}</Heading>
           {doctor.clinics.map((clinic) => (
             <View key={clinic.slug} style={styles.card}>
               <Heading>{clinic.name}</Heading>
@@ -565,6 +165,7 @@ function DoctorScope({ slug }: { slug: string }) {
                   .filter(Boolean)
                   .join(", ")}
               </Body>
+              {!clinic.phone && <Body small>{d.noPhone}</Body>}
               {clinic.phone && (
                 <Button
                   secondary
@@ -617,6 +218,13 @@ function Booking({ doctor }: { doctor: PublicDoctor }) {
       <Heading>
         {c("Available appointments", "Boş vaxtlar", "Доступное время")}
       </Heading>
+      <Body small>
+        {c(
+          "Times are shown in Baku time.",
+          "Vaxtlar Bakı vaxtı ilə göstərilir.",
+          "Указано время Баку.",
+        )}
+      </Body>
       <LoadState resource={slots} />
       {slots.data?.length === 0 && (
         <Body>
