@@ -48,7 +48,27 @@ public class MedicineContextService {
     private final JdbcTemplate jdbcTemplate;
 
     private record Priced(String name, String slug, String ingredient, String prescriptionStatus,
-                          BigDecimal lowest, BigDecimal highest, int packCount) {
+                          String usage, BigDecimal lowest, BigDecimal highest, int packCount) {
+    }
+
+    /**
+     * Whether the registry sells this on prescription.
+     *
+     * The status is free text as published, so it is read rather than trusted
+     * to be one of a fixed set. Anything unrecognised is treated as
+     * prescription-only, because being wrong in that direction costs a person
+     * an answer and being wrong in the other costs them a dose.
+     */
+    private static String supplyRule(String status) {
+        if (status == null || status.isBlank()) return "PRESCRIPTION OR UNKNOWN";
+        String lower = status.toLowerCase(Locale.ROOT);
+        // "Reseptsiz" is without a prescription; "Reseptle" is with one. The
+        // first check has to come first, since one contains the other.
+        if (lower.startsWith("reseptsiz") && !lower.contains("resept ilə")
+                && !lower.contains("reseptlə")) {
+            return "OVER THE COUNTER";
+        }
+        return "PRESCRIPTION OR UNKNOWN";
     }
 
     /**
@@ -69,6 +89,12 @@ public class MedicineContextService {
                 Use these figures when the person asks about cost or availability. They are
                 real and local; do not replace them with a general estimate, and do not
                 convert them to another currency.
+
+                Each entry says how it is supplied. Where that is PRESCRIPTION OR UNKNOWN,
+                give no dose, no strength and no schedule for it. Where it is OVER THE
+                COUNTER, use only the dosing printed under "registered use" below, and say
+                it comes from the registered leaflet; if there is none, say the pack
+                leaflet carries it rather than supplying one.
                 """);
 
         for (Priced p : found) {
@@ -77,8 +103,16 @@ public class MedicineContextService {
                 block.append(" (").append(trim(p.ingredient(), 120)).append(")");
             }
             block.append("\n  price: ").append(priceRange(p));
+            block.append("\n  supply: ").append(supplyRule(p.prescriptionStatus()));
             if (p.prescriptionStatus() != null && !p.prescriptionStatus().isBlank()) {
-                block.append("\n  supply: ").append(trim(p.prescriptionStatus(), 80));
+                block.append(" (as published: ").append(trim(p.prescriptionStatus(), 80)).append(")");
+            }
+
+            // The leaflet's own words, and only for something a person can buy
+            // without being told how much to take by whoever prescribed it.
+            if ("OVER THE COUNTER".equals(supplyRule(p.prescriptionStatus()))
+                    && p.usage() != null && !p.usage().isBlank()) {
+                block.append("\n  registered use: ").append(trim(p.usage(), 600));
             }
 
             List<String> packs = packs(p.slug());
@@ -141,7 +175,7 @@ public class MedicineContextService {
         args[args.length - 1] = MAX_MEDICINES;
 
         return jdbcTemplate.query("""
-                SELECT m.name, m.slug, m.active_ingredient, m.prescription_status,
+                SELECT m.name, m.slug, m.active_ingredient, m.prescription_status, m.usage_az,
                        MIN(p.retail_price) AS lowest,
                        MAX(p.retail_price) AS highest,
                        COUNT(p.id)         AS pack_count
@@ -152,7 +186,7 @@ public class MedicineContextService {
                    OR LOWER(SUBSTRING_INDEX(m.name, ' ', 1)) IN (%s)
                    OR EXISTS (SELECT 1 FROM medicine_ingredient i
                                WHERE i.medicine_id = m.id AND i.normalised IN (%s))
-                GROUP BY m.id, m.name, m.slug, m.active_ingredient, m.prescription_status
+                GROUP BY m.id, m.name, m.slug, m.active_ingredient, m.prescription_status, m.usage_az
                 -- A product with published prices is the useful one to quote.
                 ORDER BY (MIN(p.retail_price) IS NULL), COUNT(p.id) DESC, m.name
                 LIMIT ?
@@ -160,6 +194,7 @@ public class MedicineContextService {
                 (rs, rowNum) -> new Priced(
                         rs.getString("name"), rs.getString("slug"),
                         rs.getString("active_ingredient"), rs.getString("prescription_status"),
+                        rs.getString("usage_az"),
                         rs.getBigDecimal("lowest"), rs.getBigDecimal("highest"),
                         rs.getInt("pack_count")),
                 args);
