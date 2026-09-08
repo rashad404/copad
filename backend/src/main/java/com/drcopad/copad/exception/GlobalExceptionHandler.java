@@ -28,6 +28,20 @@ public class GlobalExceptionHandler {
     @org.springframework.beans.factory.annotation.Value("${spring.servlet.multipart.max-file-size:25MB}")
     private String maxUploadSize;
 
+    /**
+     * A request that no longer makes sense against the current state.
+     *
+     * Cancelling an order that is already cancelled, answering an appointment
+     * that is closed. The caller asked for something reasonable at a moment
+     * when it was not possible - that is a conflict, not a fault in the server,
+     * and returning 500 made a normal outcome look like a crash.
+     */
+    @ExceptionHandler(IllegalStateException.class)
+    public ResponseEntity<Map<String, Object>> conflict(IllegalStateException ex) {
+        return ResponseEntity.status(HttpStatus.CONFLICT)
+                .body(body(HttpStatus.CONFLICT, ex.getMessage()));
+    }
+
     @ExceptionHandler(RateLimitExceededException.class)
     public ResponseEntity<Map<String, Object>> handleRateLimit(RateLimitExceededException ex) {
         return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)

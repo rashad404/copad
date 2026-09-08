@@ -24,6 +24,11 @@ public class PublicEndpoints {
             "/api/doctors/*",
             "/api/doctors/*/slots",
             "/api/doctors/sitemap",
+            // The laboratory directory is browsable without an account, like the
+            // doctor directory. Ordering is not: that lives under a member.
+            "/api/labs",
+            "/api/labs/*",
+            "/api/labs/*/tests",
             "/api/medicines",
             "/api/medicines/*",
             "/api/medicines/*/alternatives",
