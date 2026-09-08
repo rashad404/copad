@@ -44,6 +44,7 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     // Create a flag to track if this effect has been completed
     // This helps prevent state updates after component unmounts
     let isMounted = true;
+    let retryWhenAvailable = false;
     
     const checkToken = async () => {
       if (typeof window === 'undefined') {
@@ -100,22 +101,25 @@ export function AuthProvider({ children }: { children: ReactNode }) {
           sessionStorage.setItem('auth_verified', 'true');
         }
       } catch (error) {
-        // A 401 here is an expired or revoked session, which is ordinary and
-        // already handled below by signing the user out. Logging it as an
-        // error made a normal expiry look like a fault in the console.
         const status = axios.isAxiosError(error) ? error.response?.status : undefined;
-        if (status === 401) {
-          console.info('AuthProvider: stored session expired, signing out');
+        const rejected = status === 401 || status === 403;
+        if (rejected) {
+          console.info('AuthProvider: stored session rejected, signing out');
         } else {
-          console.error('AuthProvider: Error fetching user', error);
+          console.warn('AuthProvider: account check unavailable; keeping the saved session for retry', { status });
         }
-        // Invalid token or other error
-        if (isMounted) {
+        // A proxy outage does not revoke a JWT. Retry when the visitor returns
+        // or reconnects, without repeatedly polling an unavailable backend.
+        if (isMounted && getTokenFromLocalStorage() === token) {
           setUser(null);
-          removeTokenFromLocalStorage();
-          clearAuthCookie();
-          // Clear the auth verified flag
+          setIsAdmin(false);
           sessionStorage.removeItem('auth_verified');
+          if (rejected) {
+            removeTokenFromLocalStorage();
+            clearAuthCookie();
+          } else {
+            retryWhenAvailable = true;
+          }
         }
       } finally {
         // Only update state if component is still mounted
@@ -126,12 +130,19 @@ export function AuthProvider({ children }: { children: ReactNode }) {
       }
     };
 
-    // Call the function
-    checkToken();
-    
-    // Cleanup function to prevent state updates after unmount
+    const retryAccountCheck = () => {
+      if (!isMounted || !retryWhenAvailable) return;
+      retryWhenAvailable = false;
+      void checkToken();
+    };
+    window.addEventListener('online', retryAccountCheck);
+    window.addEventListener('focus', retryAccountCheck);
+    void checkToken();
+
     return () => {
       isMounted = false;
+      window.removeEventListener('online', retryAccountCheck);
+      window.removeEventListener('focus', retryAccountCheck);
     };
   }, []);
 

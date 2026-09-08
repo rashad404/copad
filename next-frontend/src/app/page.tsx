@@ -1,3 +1,5 @@
+import { getHomeCopy } from "@/components/home/copy";
+import { supportedLanguage } from "@/utils/languages";
 import { brandTitle, brandSlogan } from "@/components/brand/slogan";
 import { cookies } from "next/headers";
 import type { Metadata } from "next";
@@ -11,16 +13,16 @@ const manrope = Manrope({
 });
 
 export async function generateMetadata(): Promise<Metadata> {
-  const language = (await cookies()).get("i18nextLng")?.value;
+  const language =
+    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
   const TITLE = brandTitle(language);
   return {
     title: { absolute: TITLE },
-    description:
-      "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
+    description: getHomeCopy(language).metadata,
     openGraph: {
       title: TITLE,
       description: brandSlogan(language),
-      locale: "az_AZ",
+      locale: { az: "az_AZ", en: "en_US", ru: "ru_RU" }[language],
       // Stated rather than inherited: a page that sets openGraph replaces the
       // parent's outright, so the front page was left with no canonical address.
       url: process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai",
@@ -34,10 +36,12 @@ export async function generateMetadata(): Promise<Metadata> {
   };
 }
 
-export default function IndexPage() {
+export default async function IndexPage() {
+  const language =
+    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
   return (
     <div className={manrope.variable}>
-      <HomePage />
+      <HomePage initialLanguage={language} />
     </div>
   );
 }

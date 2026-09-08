@@ -1,4 +1,8 @@
 import translations from "./translations.json";
+import { supportedLanguage } from "@/utils/languages";
 
-// Kept local to the homepage; the shared language selector and preference remain unchanged.
-export const homeCopy: Record<string, Record<string, string>> = translations;
+export type HomeCopy = typeof translations.az;
+export const homeCopy: Record<"az" | "en" | "ru", HomeCopy> = translations;
+export function getHomeCopy(language?: string | null): HomeCopy {
+  return homeCopy[supportedLanguage(language) || "az"];
+}

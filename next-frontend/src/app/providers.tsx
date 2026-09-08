@@ -14,10 +14,11 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation();
   const [ready, setReady] = useState(false);
   const pathname = usePathname();
-  // Keep public catalogue content in initial HTML for indexing.
+  // Keep the homepage and public catalogues in initial HTML for indexing.
   const doctorDirectory =
     pathname === "/hekimler" || pathname.startsWith("/hekimler/");
   const catalogue =
+    pathname === "/" ||
     pathname === "/dermanlar" ||
     pathname.startsWith("/dermanlar/") ||
     doctorDirectory;

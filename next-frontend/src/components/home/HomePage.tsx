@@ -1,407 +1,333 @@
 "use client";
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { useTranslation } from "react-i18next";
+import {
+  ArrowRight,
+  ArrowUpRight,
+  Check,
+  ChevronDown,
+  CalendarDays,
+  LockKeyhole,
+  MoveDown,
+  FileText,
+  Pill,
+} from "lucide-react";
 import { useAuth } from "@/context/AuthContext";
-import { useSiteContext } from "@/context/SiteContext";
-import { brandSlogan } from "@/components/brand/slogan";
+import { useHydrated } from "@/utils/useHydrated";
+import { supportedLanguage, type SiteLanguage } from "@/utils/languages";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import SiteFooter from "@/components/public/SiteFooter";
-import { homeCopy } from "./copy";
-import "./homepage.css";
-const members = ["Leyla", "Ayan", "Rauf"];
-export default function HomePage() {
+import { getHomeCopy } from "./copy";
+import JourneyExample, {
+  sampleTimes,
+  type JourneyStep,
+} from "./JourneyExample";
+import styles from "./homepage.module.css";
+
+export default function HomePage({
+  initialLanguage = "az",
+}: {
+  initialLanguage?: SiteLanguage;
+}) {
   const { i18n } = useTranslation();
+  const hydrated = useHydrated();
+  const language = hydrated
+    ? supportedLanguage(i18n.resolvedLanguage || i18n.language) ||
+      initialLanguage
+    : initialLanguage;
+  const c = getHomeCopy(language);
   const { isAuthenticated } = useAuth();
-  const { WEBSITE_NAME } = useSiteContext();
-  const brand =
-    WEBSITE_NAME === "Localhost" ? "azdoc" : WEBSITE_NAME.toLowerCase();
-  const requestedLanguage = i18n.language.split("-")[0];
-  const language = requestedLanguage in homeCopy ? requestedLanguage : "en";
-  const copy = (text: string) => homeCopy[language]?.[text] ?? text;
-  const [member, setMember] = useState("Leyla");
-  const [view, setView] = useState("Nəticələr");
-  const [answer, setAnswer] = useState(false);
+  const signedIn = hydrated && isAuthenticated;
+  const [step, setStep] = useState<JourneyStep>(0);
+  const [time, setTime] = useState(sampleTimes[0]);
+  const [share, setShare] = useState(false);
+  const [family, setFamily] = useState<"self" | "child" | "parent">("parent");
+  function selectStep(value: JourneyStep) {
+    setStep(value);
+    if (window.matchMedia?.("(max-width: 800px)").matches) {
+      document.getElementById("journey-panel")?.scrollIntoView({
+        block: "nearest",
+        behavior: window.matchMedia("(prefers-reduced-motion: reduce)").matches
+          ? "instant"
+          : "smooth",
+      });
+    }
+  }
+  function selectTime(value: string) {
+    setTime(value);
+    setShare(false);
+  }
   return (
-    <div
-      className="azdoc-home"
-      lang={language}
-      dir={language === "ar" ? "rtl" : "ltr"}
-    >
-      <a className="skip-link" href="#main">
-        {copy("Əsas məzmuna keç")}
+    <div className={styles.home} lang={language}>
+      <a className={styles.skip} href="#main">
+        {c.skip}
       </a>
       <SiteHeader />
       <main id="main">
-        <section className="hero wrap">
-          <div className="hero-copy">
-            <div className="eyebrow">
-              <span className="live-dot" />{" "}
-              {/*
-                The same line the footer carries, so the promise is worded once.
-                Uppercased for the locale, not with toUpperCase: Azerbaijani
-                maps i to I-with-dot, and the plain form would render the
-                dotless I, which is a different letter.
-              */}
-              {brandSlogan(i18n.language)
-                .replace(/\.$/, "")
-                .toLocaleUpperCase(language)}
-            </div>
-            <h1>
-              {copy("Hər nəticə.")}
-              <br />
-              {copy("Hər sual.")}
-              <br />
-              <span>{copy("Bir yerdə.")}</span>
-            </h1>
-            <p>
-              {copy(
-                "Sağlamlıq suallarınızı Azərbaycan dilində verin. Söhbətinizə sənəd əlavə edin və məlumatları anlamaq üçün ilk addımı atın.",
-              )}
+        {signedIn && (
+          <nav
+            className={`${styles.wrap} ${styles.returning}`}
+            aria-label={c.welcome}
+          >
+            <span>{c.welcome}</span>
+            <Link href="/chat">{c.continueChat}</Link>
+            <Link href="/health-record">{c.recordsAction}</Link>
+            <Link href="/randevularim">{c.appointmentsAction}</Link>
+          </nav>
+        )}
+        <section className={`${styles.wrap} ${styles.hero}`}>
+          <div className={styles.heroCopy}>
+            <p className={styles.eyebrow}>
+              <span className={styles.dot} />
+              {c.eyebrow}
             </p>
-            <div className="hero-actions">
-              <Link className="button blue" href="/chat">
-                {copy("Söhbətə başla")}
-                <span>^</span>
+            <h1>
+              {c.heroLine1}
+              <br />
+              {c.heroLine2}
+              <br />
+              <span>{c.heroLine3}</span>
+            </h1>
+            <p className={styles.heroBody}>{c.heroBody}</p>
+            <div className={styles.actions}>
+              <Link className={styles.primary} href="/chat">
+                {c.ask}
+                <ArrowUpRight size={19} aria-hidden="true" />
               </Link>
-              <a className="text-link" href="#how">
-                {copy("azdoc ilə tanış ol")}
-                <span>↓</span>
-              </a>
+              <Link className={styles.textLink} href="#how">
+                {c.seeHow}
+                <MoveDown size={16} aria-hidden="true" />
+              </Link>
             </div>
-            <div className="hero-foot">
-              <span className="mini-mark">↳</span>
-              <span>
-                {copy("Bir sualdan başlayır.")}
-                <br />
-                <strong>{copy("Daha aydın bir söhbətə çevrilir.")}</strong>
-              </span>
-            </div>
+            <p className={styles.guestNote}>{c.guestNote}</p>
           </div>
-          <div className="hero-stage" id="demo">
-            <div className="stage-top">
-              <span>{copy("GƏLƏCƏK MƏHSULDAN BİR DEMO")}</span>
-              <span aria-hidden="true">^</span>
+          <figure className={styles.heroVisual}>
+            <div className={styles.heroImage}>
+              <Image
+                src="/images/home/time-together.jpg"
+                alt={c.heroAlt}
+                fill
+                priority
+                sizes="(max-width: 800px) 100vw, 50vw"
+                quality={85}
+              />
             </div>
-            <div className="orbit orbit-one" />
-            <div className="orbit orbit-two" />
-            <div className="record-window">
-              <div className="window-top">
-                <span className="small-logo">
-                  {brand}
-                  <span>-</span>
+            <Link
+              className={styles.visitNote}
+              href="#how"
+              onClick={() => setStep(2)}
+            >
+              <div className={styles.noteTop}>
+                <span className={styles.noteIcon}>
+                  <Check size={16} aria-hidden="true" />
                 </span>
-                <span className="demo-label">{copy("DEMO")}</span>
-                <span className="profile">{member[0]}</span>
+                <span>azdoc</span>
+                <span className={styles.sample}>{c.sample}</span>
               </div>
-              <div className="record-body">
-                <div className="record-heading">
-                  <div>
-                    <span className="muted tiny">
-                      {copy("AİLƏNİZİN SAĞLAMLIĞI")}
+              <strong>{c.appointmentConfirmed}</strong>
+              <p>
+                {c.appointmentDate}, {time}
+              </p>
+              <span className={styles.noteLink}>
+                {c.seeJourney}
+                <ArrowRight size={15} aria-hidden="true" />
+              </span>
+            </Link>
+            <figcaption>
+              {c.photoLabel} /{" "}
+              <a
+                href="https://www.pexels.com/photo/happy-mother-and-daughter-walking-in-the-park-17066530/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Danik Prihodko
+              </a>
+            </figcaption>
+          </figure>
+        </section>
+        <section className={`${styles.wrap} ${styles.recognition}`}>
+          <div>
+            <p className={styles.eyebrow}>{c.recognitionLabel}</p>
+            <h2>{c.recognitionTitle}</h2>
+          </div>
+          <div>
+            <p>{c.recognitionBody}</p>
+            <Link href="#how">
+              {c.recognitionResolution}
+              <ArrowRight size={18} aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+        <section className={styles.journeyBand} id="how">
+          <div className={`${styles.wrap} ${styles.journey}`}>
+            <div className={styles.journeyIntro}>
+              <p className={styles.eyebrow}>{c.journeyLabel}</p>
+              <h2>{c.journeyTitle}</h2>
+              <p className={styles.sectionBody}>{c.journeyBody}</p>
+              <div
+                className={styles.steps}
+                role="group"
+                aria-label={c.journeyGroup}
+              >
+                {([0, 1, 2] as const).map((value) => (
+                  <button
+                    key={value}
+                    id={`journey-step-${value}`}
+                    type="button"
+                    aria-pressed={step === value}
+                    aria-controls="journey-panel"
+                    onClick={() => selectStep(value)}
+                  >
+                    <span className={styles.stepNumber}>0{value + 1}</span>
+                    <span>
+                      <strong>{c[`step${value}Title`]}</strong>
+                      <span>{c[`step${value}Body`]}</span>
                     </span>
-                    <h2>
-                      {copy("Salam,")} {member}.
-                    </h2>
-                  </div>
-                  <span className="sun">✳</span>
-                </div>
-                <div className="member-tabs" aria-label={copy("Ailə üzvü")}>
-                  {members.map((m, i) => (
-                    <button
-                      key={m}
-                      aria-pressed={member === m}
-                      className={member === m ? "selected" : ""}
-                      onClick={() => {
-                        setMember(m);
-                        setAnswer(false);
-                      }}
-                    >
-                      <span className={"avatar a" + i}>{m[0]}</span>
-                      {m}
-                    </button>
-                  ))}
-                </div>
-                <div className="record-nav">
-                  {["Nəticələr", "Sənədlər", "Tarixçə"].map((v) => (
-                    <button
-                      key={v}
-                      onClick={() => setView(v)}
-                      className={view === v ? "active" : ""}
-                      aria-pressed={view === v}
-                    >
-                      {copy(v)}
-                    </button>
-                  ))}
-                </div>
-                {view === "Nəticələr" ? (
-                  <>
-                    <div className="result-title">
-                      <div>
-                        <span className="file-icon">▤</span>
-                        <strong>{copy("Ümumi qan analizi")}</strong>
-                      </div>
-                      <span>{copy("04 sent.")}</span>
-                    </div>
-                    <div className="result-line">
-                      <div>
-                        <span>{copy("Hemoqlobin")}</span>
-                        <small>
-                          {copy("Son nəticə ·")} {member}
-                        </small>
-                      </div>
-                      <strong>
-                        13.2 <small>{copy("g/dL")}</small>
-                      </strong>
-                    </div>
-                    <div
-                      className="mini-chart"
-                      role="img"
-                      aria-label={copy(
-                        "Nümunə hemoqlobin nəticələri, may 12.8, iyun 13.0, iyul 12.9, avqust 13.1, sentyabr 13.2 g/dL",
-                      )}
-                    >
-                      <div className="chart-axis">
-                        <span>14</span>
-                        <span>13</span>
-                        <span>12</span>
-                      </div>
-                      <div className="bars">
-                        {[12.8, 13.0, 12.9, 13.1, 13.2].map((value, i) => (
-                          <div key={i}>
-                            <span
-                              style={{ height: ((value - 12) / 2) * 76 + "px" }}
-                            />
-                            <small>
-                              {copy(["May", "İyn", "İyl", "Avq", "Sen"][i])}
-                            </small>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                    <div className="source-line">
-                      <span className="source-dot" />{" "}
-                      {copy("Mənbə: analiz-nəticəsi.pdf")}
-                    </div>
-                  </>
-                ) : view === "Sənədlər" ? (
-                  <div className="alternate">
-                    <span className="file-icon">▤</span>
-                    <h3>
-                      {member} {copy("üçün sənədlər")}
-                    </h3>
-                    <p>{copy("Ümumi qan analizi")}</p>
-                    <small>{copy("04 sentyabr 2026 · PDF · Nümunə")}</small>
-                    <button onClick={() => setView("Nəticələr")}>
-                      {copy("Nəticələrə bax ->")}
-                    </button>
-                  </div>
-                ) : (
-                  <div className="alternate timeline">
-                    <h3>
-                      {member} {copy("üçün tarixçə")}
-                    </h3>
-                    <p>
-                      <b>{copy("04 sentyabr")}</b>{" "}
-                      {copy("Analiz nəticəsi əlavə edilib")}
-                    </p>
-                    <p>
-                      <b>{copy("12 avqust")}</b> {copy("Yeni ölçü qeyd edilib")}
-                    </p>
-                    <p>
-                      <b>{copy("20 iyul")}</b> {copy("Sənəd əlavə edilib")}
-                    </p>
-                    <small>{copy("Nümunə fəaliyyət tarixçəsi")}</small>
-                  </div>
-                )}
+                    <ArrowRight size={18} aria-hidden="true" />
+                  </button>
+                ))}
+              </div>
+            </div>
+            <JourneyExample
+              copy={c}
+              step={step}
+              onStep={setStep}
+              time={time}
+              onTime={selectTime}
+              share={share}
+              onShare={setShare}
+            />
+          </div>
+        </section>
+        <section className={`${styles.wrap} ${styles.family}`} id="family">
+          <figure className={styles.familyVisual}>
+            <div className={styles.familyImage}>
+              <Image
+                src="/images/home/family-afternoon.jpg"
+                alt={c.familyAlt}
+                fill
+                sizes="(max-width: 800px) 100vw, 45vw"
+                quality={85}
+              />
+            </div>
+            <figcaption>
+              {c.photoLabel} /{" "}
+              <a
+                href="https://www.pexels.com/photo/smiling-mother-playing-with-daughter-at-park-20806575/"
+                target="_blank"
+                rel="noreferrer"
+              >
+                Anastasia Nagibina
+              </a>
+            </figcaption>
+          </figure>
+          <div className={styles.familyCopy}>
+            <p className={styles.eyebrow}>{c.familyLabel}</p>
+            <h2>{c.familyTitle}</h2>
+            <p className={styles.sectionBody}>{c.familyBody}</p>
+            <div
+              className={styles.familyChoices}
+              role="group"
+              aria-label={c.familyGroup}
+            >
+              {(["self", "child", "parent"] as const).map((value) => (
                 <button
-                  className="ask"
-                  onClick={() => setAnswer(!answer)}
-                  aria-expanded={answer}
+                  key={value}
+                  id={`family-${value}`}
+                  type="button"
+                  aria-pressed={family === value}
+                  aria-controls="family-story"
+                  onClick={() => setFamily(value)}
                 >
-                  <span>✳</span> {copy("Bu nəticəni anlamağa kömək et")}
-                  <span>^</span>
+                  {c[value]}
                 </button>
-                {answer && (
-                  <div className="demo-answer">
-                    {copy(
-                      "Bu, dizayn nümunəsidir. Hazır məhsulda izah seçilmiş üzvün təsdiqlənmiş məlumatlarına əsaslanacaq və mənbəyə keçid göstərəcək.",
+              ))}
+            </div>
+            <div
+              id="family-story"
+              className={styles.familyStory}
+              role="region"
+              aria-labelledby={`family-${family}`}
+              aria-live="polite"
+            >
+              <h3>{c[`${family}Title`]}</h3>
+              <p>{c[`${family}Body`]}</p>
+            </div>
+            <Link
+              className={styles.textLink}
+              href={signedIn ? "/health-record" : "/register"}
+            >
+              {signedIn ? c.recordsAction : c.familyAction}
+              <ArrowRight size={17} aria-hidden="true" />
+            </Link>
+          </div>
+        </section>
+        <section className={styles.followBand}>
+          <div className={`${styles.wrap} ${styles.follow}`}>
+            <div>
+              <p className={styles.eyebrow}>{c.ongoingLabel}</p>
+              <h2>{c.ongoingTitle}</h2>
+              <p className={styles.sectionBody}>{c.ongoingBody}</p>
+              <Link className={styles.textLink} href="/health-record">
+                {c.recordsAction}
+                <ArrowRight size={17} aria-hidden="true" />
+              </Link>
+            </div>
+            <div className={styles.followSteps}>
+              {([FileText, CalendarDays, Pill] as const).map((Icon, index) => (
+                <article key={index}>
+                  <span className={styles.followIcon}>
+                    <Icon size={21} aria-hidden="true" />
+                  </span>
+                  <div>
+                    <h3>{c[`follow${index as 0 | 1 | 2}Title`]}</h3>
+                    <p>{c[`follow${index as 0 | 1 | 2}Body`]}</p>
+                    {index === 2 && (
+                      <Link href="/dermanlar">
+                        {c.compareMedicines}
+                        <ArrowRight size={15} aria-hidden="true" />
+                      </Link>
                     )}
                   </div>
-                )}
-              </div>
-            </div>
-            <div className="floating-note">
-              <span className="note-icon">✓</span>
-              <div>
-                <strong>{copy("Sənəddən tarixçəyə.")}</strong>
-                <span>{copy("Mənbəsi ilə birlikdə, bir yerdə.")}</span>
-              </div>
-            </div>
-            <p className="preview-caption">
-              {copy(
-                "Ailə tarixçəsi və nəticə qrafikləri hazırlanır. Burada göstərilənlər nümunədir.",
-              )}
-            </p>
-            <div className="stage-bottom">
-              <span>{copy("ÖZÜNÜZÜ DAHA YAXŞI TANIYIN.")}</span>
-              <span className="stage-arrow">^</span>
+                </article>
+              ))}
             </div>
           </div>
         </section>
-        <section className="statement wrap">
-          <span className="section-number">
-            {copy("01 - DAHA AZ QARIŞIQLIQ")}
-          </span>
-          <p>
-            {copy("Ayrı-ayrı fayllar arasında itən məlumatlar.")}
-            <br />
-            <strong>
-              {copy("Daha aydın məlumat üçün bir yerdən başlayın.")}
-            </strong>
-          </p>
-        </section>
-        <section className="how wrap" id="how">
-          <div className="section-heading">
-            <div className="eyebrow">{copy("SADƏ BİR BAŞLANĞIC")}</div>
-            <h2>
-              {copy("Sualınızdan")}
-              <br />
-              {copy("başlayaq.")}
-            </h2>
-            <p>
-              {copy("Sual verin, sənəd əlavə edin və söhbəti davam etdirin.")}
-            </p>
-          </div>
-          <div className="steps">
-            <article>
-              <span className="step-number">01</span>
-              <div>
-                <h3>{copy("Sualınızı yazın.")}</h3>
-                <p>
-                  {copy(
-                    "Nəyi anlamaq istədiyinizi öz sözlərinizlə izah edin. Haradan başlayacağınızı bilməsəniz də yaza bilərsiniz.",
-                  )}
-                </p>
-              </div>
-              <span className="step-symbol">^</span>
-            </article>
-            <article>
-              <span className="step-number">02</span>
-              <div>
-                <h3>{copy("Sənəd əlavə edin.")}</h3>
-                <p>
-                  {copy(
-                    "Lazım olduqda analiz PDF-i və ya sənəd şəklini söhbətə əlavə edin.",
-                  )}
-                </p>
-              </div>
-              <span className="step-symbol">✓</span>
-            </article>
-            <article>
-              <span className="step-number">03</span>
-              <div>
-                <h3>{copy("Söhbəti davam etdirin.")}</h3>
-                <p>
-                  {copy(
-                    "Aydın olmayan hissələr haqqında yenidən soruşun. Tibbi qərarları həkiminizlə müzakirə edin.",
-                  )}
-                </p>
-              </div>
-              <span className="step-symbol">✳</span>
-            </article>
-          </div>
-        </section>
-        <section className="family-section" id="family">
-          <div className="family-inner wrap">
-            <div className="family-art">
-              <div className="family-circle c1">
-                {copy("L")}
-                <span>{copy("Leyla · Mən")}</span>
-              </div>
-              <div className="family-circle c2">
-                {copy("A")}
-                <span>{copy("Ayan · Övladım")}</span>
-              </div>
-              <div className="family-circle c3">
-                {copy("R")}
-                <span>{copy("Rauf · Atam")}</span>
-              </div>
-              <span className="family-caption">
-                {copy("FƏRQLİ İNSANLAR. AYRI TARİXÇƏLƏR.")}
-              </span>
-            </div>
-            <div className="family-copy">
-              <div className="eyebrow">
-                {copy("NÖVBƏTİ ADDIM · HAZIRLANIR")}
-              </div>
-              <h2>
-                {copy("Sizin üçün.")}
-                <br />
-                {copy("Sevdikləriniz üçün.")}
-              </h2>
-              <p>
-                {copy(
-                  "Ailə üzvləri üçün ayrıca tarixçələr, sənədlər və ölçülər üzərində işləyirik. Hər kəsin məlumatını öz yerində saxlamaq üçün.",
-                )}
-              </p>
-              <a className="text-link" href="#demo">
-                {copy("Ailə nümunəsini araşdır")}
-                <span>^</span>
-              </a>
-            </div>
-          </div>
-        </section>
-        <section className="faq wrap" id="questions">
+        <section className={`${styles.wrap} ${styles.privacy}`} id="questions">
           <div>
-            <div className="eyebrow">{copy("BİLMƏK İSTƏDİKLƏRİNİZ")}</div>
-            <h2>{copy("Aydın cavablar.")}</h2>
-            <p>{copy("Başlamazdan əvvəl bir neçə vacib məqam.")}</p>
+            <LockKeyhole className={styles.lock} size={27} aria-hidden="true" />
+            <h2>{c.privacyTitle}</h2>
+            <p className={styles.sectionBody}>{c.privacyBody}</p>
+            <Link className={styles.textLink} href="/privacy-policy">
+              {c.privacyAction}
+              <ArrowRight size={17} aria-hidden="true" />
+            </Link>
           </div>
-          <div className="faq-items">
-            <details>
-              <summary>{copy("Hazırda azdoc ilə nə edə bilərəm?")}</summary>
-              <p>
-                {copy(
-                  "Sağlamlıq haqqında suallar verə, söhbətə sənədlər əlavə edə və hesab yarada bilərsiniz. Ailə tarixçəsi və nəticə qrafikləri gələcək məhsulun nümunəsidir.",
-                )}
-              </p>
-            </details>
-            <details>
-              <summary>{copy("azdoc həkimi əvəz edirmi?")}</summary>
-              <p>
-                {copy(
-                  "Xeyr. azdoc məlumatları anlamağa kömək edən AI köməkçisidir. Diaqnoz və müalicə qərarları üçün həkimə müraciət edin.",
-                )}
-              </p>
-            </details>
-            <details>
-              <summary>{copy("Ailə tarixçəsi artıq mövcuddur?")}</summary>
-              <p>
-                {copy(
-                  "Hələ yox. Yuxarıdakı ailə tarixçəsi interaktiv nümunədir. Bu imkanlar hazır olduqda ayrıca təqdim ediləcək.",
-                )}
-              </p>
-            </details>
+          <div className={styles.faq}>
+            <h3>{c.faqTitle}</h3>
+            {([1, 2, 3, 4] as const).map((index) => (
+              <details key={index}>
+                <summary>
+                  {c[`faq${index}q`]}
+                  <ChevronDown size={17} aria-hidden="true" />
+                </summary>
+                <p>{c[`faq${index}a`]}</p>
+              </details>
+            ))}
           </div>
         </section>
-        <section className="closing wrap">
+        <section className={`${styles.wrap} ${styles.closing}`}>
           <div>
-            <div className="eyebrow">{copy(isAuthenticated ? "SUALLARINIZI AZDOC-A VERİN" : "DAHA AYDIN BİR BAŞLANĞIC")}</div>
-            <h2>
-              {copy(isAuthenticated ? "Söhbətə" : "Sağlamlığınıza")}
-              <br />
-              {copy(isAuthenticated ? "davam edin." : "bütöv baxın.")}
-            </h2>
+            <h2>{c.closingTitle}</h2>
+            <p>{c.closingBody}</p>
           </div>
-          <Link
-            className="button lime"
-            href={isAuthenticated ? "/chat" : "/register"}
-          >
-            {copy(isAuthenticated ? "Söhbətə davam et" : "Hesab yarat")}{" "}
-            <span>^</span>
+          <Link className={styles.primary} href="/chat">
+            {c.ask}
+            <ArrowUpRight size={19} aria-hidden="true" />
           </Link>
-          <span className="closing-star">✳</span>
         </section>
       </main>
       <SiteFooter />
