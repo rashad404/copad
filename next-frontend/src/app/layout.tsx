@@ -36,20 +36,16 @@ export const metadata: Metadata = {
     siteName: AGENT_NAME,
     title: DEFAULT_BRAND_TITLE,
     description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
-    images: [
-      {
-        url: '/images/og-image.jpg',  // Replace with your actual OpenGraph image
-        width: 1200,
-        height: 630,
-        alt: AGENT_NAME
-      }
-    ]
+    // No image until there is one to point at: /images/og-image.jpg has never
+    // existed and returned 404, so every shared link advertised a preview that
+    // could not load. A real 1200x630 image belongs here.
+    images: []
   },
   twitter: {
     card: 'summary_large_image',
     title: DEFAULT_BRAND_TITLE,
     description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
-    images: ['/images/og-image.jpg']  // Replace with your actual Twitter card image
+    images: []
   },
   robots: {
     index: true,

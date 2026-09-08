@@ -17,6 +17,9 @@ export const metadata: Metadata = {
     title: DEFAULT_BRAND_TITLE,
     description: SLOGANS.az,
     locale: "az_AZ",
+    // Stated rather than inherited: a page that sets openGraph replaces the
+    // parent's outright, so the front page was left with no canonical address.
+    url: process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai",
     images: [],
   },
   twitter: {
