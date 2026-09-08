@@ -39,6 +39,12 @@ Module._load = function (r, p, ...a) {
       __esModule: true,
       default: new Proxy({}, { get: (_, key) => key }),
     };
+  if (r === "next/image")
+    return {
+      __esModule: true,
+      default: ({ fill, priority, quality, ...props }) =>
+        React.createElement("img", props),
+    };
   if (r === "next/link")
     return {
       __esModule: true,
@@ -100,111 +106,70 @@ afterEach(async () => {
   authenticated = false;
   hydrated = true;
 });
-test("changing a member updates the answer, records, chart, PDF and appointment without retaining sharing consent", async () => {
+test("one example carries the selected appointment time through to the visit and clears sharing when it changes", async () => {
   await mount();
-  await click(button("#demo .demoSteps button", "Record"));
-  assert.match(document.querySelector("#demo .labValue").textContent, /13.2/);
-  await click(button("#care .timeChoices button", "11:30"));
-  await click(document.querySelector("#care input[type=checkbox]"));
-  assert.equal(document.querySelector("#care input").checked, true);
-  await click(button("#demo .members button", "Ayan"));
-  assert.match(document.querySelector("#demo .labValue").textContent, /12.4/);
-  assert.match(
-    document.querySelector("#demo .recordFacts").textContent,
-    /Pollen/,
-  );
-  assert.doesNotMatch(
-    document.querySelector("#demo .recordFacts").textContent,
-    /Penicillin/,
-  );
-  assert.match(
-    document.querySelector("#family .familyIdentity").textContent,
-    /Ayan/,
-  );
-  assert.match(
-    document.querySelector("#family svg[role=img]").getAttribute("aria-label"),
-    /12, 12.1, 12.5, 12.4/,
-  );
-  assert.match(
-    document.querySelector("#care .summarySheet").textContent,
-    /Ayan/,
-  );
-  assert.match(
-    document.querySelector("#care .summarySheet").textContent,
-    /12.4/,
-  );
-  assert.match(
-    document.querySelector("#care .visitPerson").textContent,
-    /Ayan/,
-  );
-  assert.equal(document.querySelector("#care input").checked, false);
+  await click(document.querySelector(".demoAction"));
   assert.equal(
-    document.querySelector("#care .timeChoices [aria-pressed=true]")
-      .textContent,
-    "10:00",
+    document.querySelector("#journey-step-1").getAttribute("aria-pressed"),
+    "true",
   );
-  await click(button("#demo .demoSteps button", "Answer"));
-  assert.match(
-    document.querySelector("#demo .answer").textContent,
-    /Ayan's blood test/,
-  );
-  await click(button("#family .members button", "Rauf"));
-  assert.match(
-    document.querySelector("#demo .answer").textContent,
-    /Rauf's blood test/,
-  );
-  assert.match(
-    document.querySelector("#family .familyFacts").textContent,
-    /Hypertension/,
-  );
-  await click(button("#demo .demoSteps button", "Visit"));
-  assert.match(
-    document.querySelector("#demo .summarySheet").textContent,
-    /Rauf/,
-  );
-  assert.match(
-    document.querySelector("#demo .summarySheet").textContent,
-    /14.1/,
+  await click(button(".times button", "11:30"));
+  assert.match(document.querySelector(".timeStatus").textContent, /11:30/);
+  await click(document.querySelector(".demoAction"));
+  assert.match(document.querySelector(".confirmation").textContent, /11:30/);
+  await click(document.querySelector(".share input"));
+  assert.equal(document.querySelector(".share input").checked, true);
+  await click(document.querySelector("#journey-step-1"));
+  await click(button(".times button", "14:00"));
+  await click(document.querySelector(".demoAction"));
+  assert.equal(document.querySelector(".share input").checked, false);
+  assert.match(document.querySelector(".confirmation").textContent, /14:00/);
+  assert.match(document.querySelector(".visitNote").textContent, /14:00/);
+  assert.equal(
+    document.querySelector(".demoAction").getAttribute("href"),
+    "/hekimler",
   );
 });
-test("sample controls stay local while the real calls to action and medicine search use product routes", async () => {
-  const originalFetch = global.fetch;
+test("family stories are local examples and main actions reach real product routes", async () => {
+  const previousFetch = global.fetch;
   let requests = 0;
   global.fetch = () => {
     requests++;
-    throw new Error("Example must not send requests");
+    throw new Error("Example cannot issue requests");
   };
   try {
     await mount();
-    await click(button("#demo .demoSteps button", "Visit"));
-    await click(button("#care .timeChoices button", "14:00"));
-    await click(document.querySelector("#care input"));
+    await click(document.querySelector("#family-child"));
+    assert.equal(
+      document.querySelector("#family-child").getAttribute("aria-pressed"),
+      "true",
+    );
+    assert.match(
+      document.querySelector("#family-story").textContent,
+      /child's/,
+    );
+    await click(document.querySelector("#journey-step-2"));
+    await click(document.querySelector(".share input"));
     assert.equal(requests, 0);
     assert.match(
-      document.querySelector("#demo").textContent,
-      /do not change your records or create an appointment/,
+      document.querySelector(".demoCaption").textContent,
+      /fictional/,
     );
     assert.equal(
       document.querySelector(".hero .primary").getAttribute("href"),
       "/chat",
     );
     assert.equal(
-      document.querySelector(".hero .textLink").getAttribute("href"),
+      document.querySelector(".familyCopy > a").getAttribute("href"),
       "/register",
     );
-    assert.equal(
-      document.querySelector(".careIntro .primary").getAttribute("href"),
-      "/hekimler",
-    );
-    const form = document.querySelector(".medicineSearch");
-    assert.equal(form.getAttribute("method"), "get");
-    assert.equal(form.getAttribute("action"), "/dermanlar");
-    assert.equal(form.querySelector("input").name, "q");
+    assert.ok(document.querySelector('a[href="/dermanlar"]'));
+    assert.ok(document.querySelector('a[href="/health-record"]'));
   } finally {
-    global.fetch = originalFetch;
+    global.fetch = previousFetch;
   }
 });
-test("signed-in visitors get account shortcuts while examples contain no real patient data", async () => {
+test("signed-in shortcuts open the account while public examples contain no actual patient details", async () => {
   authenticated = true;
   await mount();
   assert.deepEqual(
@@ -214,11 +179,7 @@ test("signed-in visitors get account shortcuts while examples contain no real pa
     ["/chat", "/health-record", "/randevularim"],
   );
   assert.equal(
-    document.querySelector(".hero .textLink").getAttribute("href"),
-    "/health-record",
-  );
-  assert.equal(
-    document.querySelector(".closing a").getAttribute("href"),
+    document.querySelector(".familyCopy > a").getAttribute("href"),
     "/health-record",
   );
   assert.doesNotMatch(
@@ -226,7 +187,7 @@ test("signed-in visitors get account shortcuts while examples contain no real pa
     /PRIVATE PATIENT/,
   );
 });
-test("initial HTML follows the server locale before hydration and all three languages cover the same text", () => {
+test("the initial page uses its server locale and every language includes copy and descriptive photo text", () => {
   hydrated = false;
   language = "az";
   for (const locale of ["az", "en", "ru"]) {
@@ -246,12 +207,11 @@ test("initial HTML follows the server locale before hydration and all three lang
     const document = new JSDOM(html).window.document;
     assert.equal(
       document.querySelector("h1").textContent,
-      copy[locale].heroLine1 + copy[locale].heroLine2,
+      copy[locale].heroLine1 + copy[locale].heroLine2 + copy[locale].heroLine3,
     );
     assert.equal(document.querySelector(".home").lang, locale);
-    assert.match(
-      document.querySelector(".priceRow strong").textContent,
-      locale === "en" ? /6\.00/ : /6,00/,
-    );
+    assert.equal(document.querySelectorAll("main img").length, 2);
+    for (const image of document.querySelectorAll("main img"))
+      assert.ok(image.alt);
   }
 });
