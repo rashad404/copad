@@ -1,3 +1,4 @@
+import { shortDate } from "@/utils/dates";
 import { isAxiosError } from "axios";
 import type {
   FamilyRole,
@@ -339,12 +340,7 @@ export function formPayload(
 }
 export function dateLabel(value: string | null | undefined, locale: string) {
   if (!value) return "-";
-  const date = new Date(value.length === 10 ? value + "T12:00:00" : value);
-  return Number.isNaN(date.getTime())
-    ? value
-    : date.toLocaleDateString(locale, {
-        year: "numeric",
-        month: "short",
-        day: "numeric",
-      });
+  // Went through toLocaleDateString, which has no Azerbaijani month names in
+  // the browser and printed "2026 M09 8".
+  return shortDate(value, locale);
 }

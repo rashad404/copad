@@ -1,4 +1,5 @@
 "use client";
+import { shortDate } from "@/utils/dates";
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowUpRight, BookOpen } from "lucide-react";
@@ -40,11 +41,7 @@ export default function BlogPostCard({
           {!image && <BookOpen size={18} />}
           {date && !Number.isNaN(date.getTime()) && (
             <time dateTime={date.toISOString()}>
-              {date.toLocaleDateString(i18n.resolvedLanguage || "en", {
-                month: "short",
-                day: "numeric",
-                year: "numeric",
-              })}
+              {shortDate(date, i18n.resolvedLanguage)}
             </time>
           )}
           {!!post.readingTimeMinutes && (

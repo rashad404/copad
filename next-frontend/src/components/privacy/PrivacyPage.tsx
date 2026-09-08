@@ -1,4 +1,5 @@
 "use client";
+import { dateAndTime } from "@/utils/dates";
 import { Fragment, useEffect, useRef, useState } from "react";
 import Link from "next/link";
 import ProtectedRoute from "@/components/ProtectedRoute";
@@ -132,10 +133,7 @@ function PrivacyContent({
     const parsed = new Date(value);
     return Number.isNaN(parsed.valueOf())
       ? value
-      : parsed.toLocaleString(language, {
-          dateStyle: "medium",
-          timeStyle: "short",
-        });
+      : dateAndTime(parsed, language);
   }
   function label(type: ConsentType) {
     return type === "CROSS_BORDER_AI"
