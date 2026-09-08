@@ -206,4 +206,34 @@ public class DoctorSelfController {
             return row;
         }).toList();
     }
+
+    @Data
+    public static class DecisionRequest {
+        /** Only shown to the person who asked, so they know why. */
+        private String reason;
+    }
+
+    /**
+     * Accepts an appointment request.
+     *
+     * Until this existed a booking could be asked for but never answered, so
+     * every appointment sat in REQUESTED and nobody could tell whether they
+     * were expected.
+     */
+    @PostMapping("/me/bookings/{id}/confirm")
+    public Map<String, Object> confirmBooking(@PathVariable Long id,
+                                              @AuthenticationPrincipal User user) {
+        Booking saved = self.decide(user.getId(), id, true, null);
+        return Map.of("id", saved.getId(), "status", saved.getStatus());
+    }
+
+    /** Declines it, which cancels the appointment and frees the time. */
+    @PostMapping("/me/bookings/{id}/decline")
+    public Map<String, Object> declineBooking(@PathVariable Long id,
+                                              @RequestBody(required = false) DecisionRequest body,
+                                              @AuthenticationPrincipal User user) {
+        Booking saved = self.decide(user.getId(), id, false,
+                body == null ? null : body.getReason());
+        return Map.of("id", saved.getId(), "status", saved.getStatus());
+    }
 }

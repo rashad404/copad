@@ -189,6 +189,43 @@ public class DoctorSelfService {
                 java.time.LocalDateTime.now().plusDays(120));
     }
 
+    /**
+     * Answers a request for an appointment.
+     *
+     * Bookings arrive as REQUESTED and stayed that way, because nothing could
+     * move them: a person could ask for a time and never be told whether they
+     * had it. A doctor may confirm one, or decline it - declining cancels, so
+     * the slot goes back and the schema's unique key releases it.
+     *
+     * Only the doctor the booking is with may decide, and only while it is
+     * still open: a cancelled appointment does not get confirmed later.
+     */
+    @Transactional
+    public Booking decide(Long userId, Long bookingId, boolean accept, String reason) {
+        Doctor doctor = require(userId);
+        Booking booking = bookings.findById(bookingId)
+                .filter(b -> b.getDoctor() != null
+                        && b.getDoctor().getId().equals(doctor.getId()))
+                .orElseThrow(() -> new AccessDeniedException("Not your appointment"));
+
+        if (booking.getStatus() != BookingStatus.REQUESTED
+                && booking.getStatus() != BookingStatus.CONFIRMED) {
+            throw new IllegalStateException("This appointment is already closed");
+        }
+        if (accept) {
+            booking.setStatus(BookingStatus.CONFIRMED);
+        } else {
+            booking.setStatus(BookingStatus.CANCELLED);
+            booking.setCancelledAt(java.time.LocalDateTime.now());
+            booking.setCancellationReason(reason);
+        }
+        // No reason text is logged: it is the patient's account of why they
+        // wanted to be seen.
+        log.info("Doctor {} {} booking {}", doctor.getId(),
+                accept ? "confirmed" : "declined", bookingId);
+        return bookings.save(booking);
+    }
+
     private Doctor require(Long userId) {
         Doctor doctor = doctors.findByUserIdAndDeletedAtIsNull(userId).orElse(null);
         if (doctor == null) {

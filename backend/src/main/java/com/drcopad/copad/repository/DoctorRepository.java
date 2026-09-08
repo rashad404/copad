@@ -44,7 +44,7 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
      * being honest about it - the listing carries its own status.
      */
     @Query("SELECT DISTINCT d FROM Doctor d LEFT JOIN d.clinics c "
-            + "WHERE d.deletedAt IS NULL AND d.active = true "
+            + "WHERE d.deletedAt IS NULL AND d.active = true AND d.unlisted = false "
             + "AND d.verification <> 'REJECTED' "
             + "AND (:specialty IS NULL OR d.specialtyCode = :specialty) "
             + "AND (:city IS NULL OR LOWER(c.city) = LOWER(:city)) "
@@ -67,14 +67,14 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
      * so the assistant is never told about a doctor a person could not find.
      */
     @Query("SELECT COUNT(d) FROM Doctor d "
-            + "WHERE d.deletedAt IS NULL AND d.active = true "
+            + "WHERE d.deletedAt IS NULL AND d.active = true AND d.unlisted = false "
             + "AND d.verification <> 'REJECTED' "
             + "AND d.specialtyCode IN :codes")
     long countPublicBySpecialtyCodes(@Param("codes") java.util.List<String> codes);
 
     /** Slugs for the sitemap, oldest first so paging stays stable across a crawl. */
     @Query("SELECT d FROM Doctor d WHERE d.deletedAt IS NULL AND d.active = true "
-            + "AND d.verification <> 'REJECTED' ORDER BY d.id")
+            + "AND d.unlisted = false AND d.verification <> 'REJECTED' ORDER BY d.id")
     Page<Doctor> publicSlugs(Pageable pageable);
 
     long countByDeletedAtIsNullAndActiveTrue();

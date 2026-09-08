@@ -23,6 +23,7 @@ import {
   spokenLanguages,
   formatFee,
 } from "@/components/doctors/DoctorParts";
+import BookingPanel from "@/components/booking/BookingPanel";
 import styles from "@/components/doctors/directory.module.css";
 type Props = { params: Promise<{ slug: string }> };
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -69,16 +70,6 @@ export default async function DoctorProfile({ params }: Props) {
     doctor.acceptsBookings && doctor.id != null
       ? await getSlots(doctor.id, window.from, window.to).catch(() => null)
       : null;
-  const locale =
-    language === "az" ? "az-AZ" : language === "ru" ? "ru-RU" : "en-GB";
-  const time = (value: string) =>
-    new Intl.DateTimeFormat(locale, {
-      dateStyle: "medium",
-      timeStyle: "short",
-      timeZone: "Asia/Baku",
-    }).format(
-      new Date(/[Zz]|[+-]\d\d:\d\d$/.test(value) ? value : `${value}+04:00`),
-    );
   return (
     <ProductLayout>
       <div className={styles.page} lang={language}>
@@ -149,31 +140,20 @@ export default async function DoctorProfile({ params }: Props) {
           </div>
           <aside className={styles.sidebar}>
             <h2>{doctor.acceptsBookings ? c.slots : c.contact}</h2>
-            {doctor.acceptsBookings && (
+            {doctor.acceptsBookings && doctor.id != null && (
               <>
                 <p className={styles.muted}>{c.slotsNote}</p>
                 {slots === null ? (
                   <p role="status">{c.slotsFailed}</p>
-                ) : slots.length === 0 ? (
-                  <p>{c.noSlots}</p>
                 ) : (
-                  <ul className={styles.slots}>
-                    {slots.map((slot, index) => (
-                      <li key={`${slot.startsAt}-${slot.clinicId}-${index}`}>
-                        <time
-                          dateTime={`${slot.startsAt}${/[Zz]|[+-]\d\d:\d\d$/.test(slot.startsAt) ? "" : "+04:00"}`}
-                        >
-                          {time(slot.startsAt)}
-                        </time>
-                        <div className={styles.muted}>
-                          {doctor.clinics.find(
-                            (clinic) =>
-                              clinic.id != null && clinic.id === slot.clinicId,
-                          )?.name || c.slotClinic}
-                        </div>
-                      </li>
-                    ))}
-                  </ul>
+                  <BookingPanel
+                    doctorId={doctor.id}
+                    doctorName={doctor.fullName}
+                    language={language}
+                    initialSlots={slots}
+                    initialFrom={window.from}
+                    initialTo={window.to}
+                  />
                 )}
               </>
             )}

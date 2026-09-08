@@ -1,0 +1,213 @@
+/*
+ * The booking panel.
+ *
+ * Colours follow the directory: ink #172a35, accent #214be2, rule #dce1da,
+ * ground #fafaf6. Kept as literals to match the sheet it sits beside rather
+ * than introducing a token layer for one component.
+ */
+.panel {
+  border: 1px solid #dce1da;
+  border-radius: 14px;
+  padding: 18px;
+  background: #fff;
+  max-width: 460px;
+}
+.monthBar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 14px;
+}
+.monthBar strong {
+  font-size: 16px;
+  font-weight: 700;
+  text-transform: capitalize;
+}
+.monthBar button {
+  width: 36px;
+  height: 36px;
+  border: 1px solid #dce1da;
+  border-radius: 9px;
+  background: #fff;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  color: #172a35;
+}
+.monthBar button:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+.weekdays,
+.grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+}
+.weekdays {
+  margin-bottom: 6px;
+}
+.weekdays span {
+  text-align: center;
+  font-size: 11px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: #6b7a84;
+}
+.day {
+  aspect-ratio: 1;
+  border: 1px solid transparent;
+  border-radius: 9px;
+  background: transparent;
+  font-size: 14px;
+  color: #b3bcc2;
+  cursor: default;
+}
+/* A day is only offered when it actually has a free time behind it. */
+.free {
+  background: #edf0e5;
+  border-color: #dce1da;
+  color: #172a35;
+  font-weight: 650;
+  cursor: pointer;
+}
+.free:hover {
+  border-color: #214be2;
+}
+.selected {
+  background: #214be2;
+  border-color: #214be2;
+  color: #fff;
+}
+.times {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #dce1da;
+}
+.times h4 {
+  margin: 0 0 10px;
+  font-size: 14px;
+  font-weight: 700;
+}
+.timeGrid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(74px, 1fr));
+  gap: 8px;
+}
+.time {
+  padding: 9px 6px;
+  border: 1px solid #dce1da;
+  border-radius: 9px;
+  background: #fff;
+  font-size: 14px;
+  font-variant-numeric: tabular-nums;
+  color: #172a35;
+  cursor: pointer;
+}
+.time:hover {
+  border-color: #214be2;
+}
+.form {
+  margin-top: 18px;
+  padding-top: 16px;
+  border-top: 1px solid #dce1da;
+  display: grid;
+  gap: 14px;
+}
+.chosen {
+  display: grid;
+  gap: 2px;
+  margin: 0;
+  padding: 12px;
+  border-radius: 10px;
+  background: #fafaf6;
+  font-size: 14px;
+}
+.field {
+  display: grid;
+  gap: 6px;
+  font-size: 14px;
+}
+.field > span {
+  font-weight: 650;
+}
+.field em {
+  font-style: normal;
+  font-weight: 400;
+  color: #6b7a84;
+}
+.field select,
+.field textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #dce1da;
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  font-size: 14px;
+  color: #172a35;
+}
+.field textarea {
+  resize: vertical;
+}
+.check {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 10px;
+  align-items: start;
+  font-size: 14px;
+}
+.check input {
+  margin-top: 3px;
+  width: 17px;
+  height: 17px;
+  accent-color: #214be2;
+}
+.check em {
+  display: block;
+  font-style: normal;
+  font-size: 13px;
+  color: #6b7a84;
+}
+.primary {
+  display: inline-block;
+  padding: 12px 18px;
+  border: 0;
+  border-radius: 10px;
+  background: #214be2;
+  color: #fff;
+  font: inherit;
+  font-weight: 650;
+  text-align: center;
+  text-decoration: none;
+  cursor: pointer;
+}
+.primary:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.link {
+  border: 0;
+  background: none;
+  padding: 0;
+  font: inherit;
+  color: #214be2;
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  cursor: pointer;
+}
+.muted {
+  color: #6b7a84;
+  font-size: 14px;
+}
+.error {
+  color: #a8232b;
+  font-size: 14px;
+}
+.success {
+  font-size: 17px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}

@@ -46,6 +46,7 @@ export default function SiteHeader() {
   ];
   const accountLinks = [
     ["/health-record", "Sağlamlıq qeydləri"],
+    ["/randevularim", "Randevularım"],
     ["/dashboard", "Hesabım"],
     ["/profile", "Profilim"],
     ["/profile/privacy", "Məxfilik və razılıqlar"],

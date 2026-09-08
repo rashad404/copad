@@ -1,0 +1,145 @@
+.page {
+  max-width: 780px;
+  margin: auto;
+  padding: 48px 28px 80px;
+  color: #172a35;
+  line-height: 1.65;
+}
+.page h1 {
+  font-size: clamp(32px, 4vw, 46px);
+  font-weight: 750;
+  letter-spacing: -0.035em;
+  line-height: 1.18;
+  margin: 0 0 24px;
+}
+.page h2 {
+  font-size: 20px;
+  font-weight: 700;
+  letter-spacing: -0.02em;
+  margin: 32px 0 12px;
+}
+.page a:focus-visible,
+.page button:focus-visible {
+  outline: 3px solid #214be2;
+  outline-offset: 4px;
+}
+.list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+.card {
+  border: 1px solid #dce1da;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fff;
+}
+.when {
+  font-size: 15px;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+}
+.who {
+  font-size: 15px;
+  margin-top: 2px;
+}
+.who a {
+  color: #214be2;
+  text-underline-offset: 4px;
+}
+.meta {
+  display: grid;
+  gap: 4px;
+  margin: 12px 0 0;
+  font-size: 14px;
+}
+.meta div {
+  display: flex;
+  gap: 8px;
+}
+.meta dt {
+  color: #6b7a84;
+  min-width: 92px;
+}
+.meta dd {
+  margin: 0;
+}
+.reason {
+  margin: 10px 0 0;
+  font-size: 14px;
+  color: #3d4d57;
+}
+.footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+  border-top: 1px solid #eef1ea;
+}
+.status {
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: #edf0e5;
+  font-size: 12px;
+  font-weight: 700;
+}
+.CONFIRMED {
+  background: #dff0e2;
+  color: #1c5b2c;
+}
+.CANCELLED {
+  background: #f6e3e4;
+  color: #a8232b;
+}
+.NO_SHOW {
+  background: #f6e3e4;
+  color: #a8232b;
+}
+.shared {
+  font-size: 12px;
+  color: #6b7a84;
+}
+.cancel {
+  margin-left: auto;
+  padding: 8px 14px;
+  border: 1px solid #dce1da;
+  border-radius: 9px;
+  background: #fff;
+  font: inherit;
+  font-size: 13px;
+  color: #a8232b;
+  cursor: pointer;
+}
+.cancel:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+.primary {
+  display: inline-block;
+  margin-top: 8px;
+  padding: 12px 18px;
+  border-radius: 10px;
+  background: #214be2;
+  color: #fff;
+  font-weight: 650;
+  text-decoration: none;
+}
+.link {
+  color: #214be2;
+  text-underline-offset: 4px;
+}
+.emptyTitle {
+  font-size: 18px;
+  font-weight: 700;
+  margin: 0 0 4px;
+}
+.muted {
+  color: #6b7a84;
+}
+.error {
+  color: #a8232b;
+}

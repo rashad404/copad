@@ -86,6 +86,17 @@ public class Doctor {
     @Column(nullable = false)
     private boolean active = true;
 
+    /**
+     * Whether to keep this listing out of the places people browse.
+     *
+     * Separate from active, which is whether the listing works at all. An
+     * unlisted doctor still has a profile at its own link and still takes
+     * bookings; it simply is not advertised, which is what an internal test
+     * listing needs and what active could not express.
+     */
+    @Column(nullable = false)
+    private boolean unlisted = false;
+
     @ManyToMany(fetch = FetchType.LAZY)
     @JoinTable(name = "doctor_clinic",
             joinColumns = @JoinColumn(name = "doctor_id"),
