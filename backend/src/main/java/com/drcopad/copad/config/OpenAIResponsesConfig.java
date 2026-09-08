@@ -8,6 +8,10 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 @Data
+// Registered once, by component scan. It was also listed in
+// @EnableConfigurationProperties on CopadApplication, which registered a second
+// bean of the same type under a different name and made every injection of it
+// ambiguous - which is what stopped the test context from starting.
 @Component
 @ConfigurationProperties(prefix = "app.chatgpt.openai.responses")
 public class OpenAIResponsesConfig {

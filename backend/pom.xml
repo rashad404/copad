@@ -46,6 +46,17 @@
 			<groupId>com.mysql</groupId>
 			<artifactId>mysql-connector-j</artifactId>
 		</dependency>
+		<!--
+			application-test.yml has always pointed at jdbc:h2:mem:testdb, but the
+			driver was never on the path, so every test that loads a full context
+			failed before it ran. Test scope only: production is MySQL locally and
+			MariaDB on the server.
+		-->
+		<dependency>
+			<groupId>com.h2database</groupId>
+			<artifactId>h2</artifactId>
+			<scope>test</scope>
+		</dependency>
 		<dependency>
 			<groupId>io.jsonwebtoken</groupId>
 			<artifactId>jjwt-api</artifactId>

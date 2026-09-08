@@ -6,16 +6,16 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Profile;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.reactive.function.client.WebClient;
 
 @Configuration
 @Profile("test")
 public class TestConfig {
     
-    @Bean
-    public WebClient webClient() {
-        return WebClient.builder().build();
-    }
+    // No webClient bean here on purpose. WebClientConfig already defines one
+    // under that name, and Spring Boot refuses the duplicate rather than
+    // silently picking a winner - which is why every test in this context
+    // failed to start. The real client builds without touching the network, so
+    // there was nothing to replace.
 
     @Bean
     public ObjectMapper objectMapper() {

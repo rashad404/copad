@@ -75,14 +75,22 @@ export function phoneHref(phone?: string | null) {
   const number = phone?.replace(/[^+\d]/g, "");
   return number && /^\+?\d{5,20}$/.test(number) ? `tel:${number}` : null;
 }
+export const siteOrigin = () =>
+  (process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai").replace(/\/$/, "");
+// Portraits are ours and are served from our own origin. An absolute URL here
+// would be a link to somebody else's site: it puts their CDN on the critical
+// path of our directory, tells them who is browsing it, and rots the moment
+// they reorganise. Anything that is not a same-origin path is refused, and the
+// card falls back to initials.
 export function photoSrc(photo?: string | null) {
   if (!photo) return null;
-  try {
-    const url = new URL(photo);
-    return url.protocol === "https:" ? url.href : null;
-  } catch {
-    return null;
-  }
+  return /^\/[^/\\]/.test(photo) ? photo : null;
+}
+// schema.org wants an absolute URL, so the same-origin path is expanded here
+// rather than stored that way.
+export function photoAbsoluteUrl(photo?: string | null) {
+  const path = photoSrc(photo);
+  return path ? `${siteOrigin()}${path}` : null;
 }
 // Explicit allowlist: never spread a backend DTO into public structured data.
 export function doctorSchema(doctor: PublicDoctor, specialty: string) {
@@ -93,7 +101,7 @@ export function doctorSchema(doctor: PublicDoctor, specialty: string) {
     name: doctor.fullName,
     url: profileUrl(doctor.slug),
     jobTitle: specialty,
-    ...(photoSrc(doctor.photoUrl) ? { image: photoSrc(doctor.photoUrl) } : {}),
+    ...(photoAbsoluteUrl(doctor.photoUrl) ? { image: photoAbsoluteUrl(doctor.photoUrl) } : {}),
     worksFor: doctor.clinics.map((clinic) => ({
       "@type": "MedicalClinic",
       name: clinic.name,

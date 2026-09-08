@@ -171,10 +171,19 @@ public class DoctorController {
                         .toList());
     }
 
+    /**
+     * The languages a doctor works in, never empty.
+     *
+     * Where it is unrecorded the answer is Azerbaijani: every clinic in this
+     * directory is in Azerbaijan and works in it. An empty list read as "speaks
+     * nothing", which dropped the doctor from every language filter and left
+     * the profile with a blank where the answer is obvious.
+     */
     private static List<String> splitLanguages(String value) {
-        if (value == null || value.isBlank()) return List.of();
-        return Arrays.stream(value.split(",")).map(String::trim)
+        if (value == null || value.isBlank()) return List.of("az");
+        List<String> parsed = Arrays.stream(value.split(",")).map(String::trim)
                 .filter(v -> !v.isEmpty()).toList();
+        return parsed.isEmpty() ? List.of("az") : parsed;
     }
 
     private String blank(String value) {

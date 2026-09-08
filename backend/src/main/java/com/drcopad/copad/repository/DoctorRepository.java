@@ -48,7 +48,10 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             + "AND d.verification <> 'REJECTED' "
             + "AND (:specialty IS NULL OR d.specialtyCode = :specialty) "
             + "AND (:city IS NULL OR LOWER(c.city) = LOWER(:city)) "
-            + "AND (:language IS NULL OR LOWER(d.languages) LIKE LOWER(CONCAT('%', :language, '%'))) "
+            // An unrecorded language means Azerbaijani, not "speaks nothing", so
+            // a doctor with a blank field still answers the az filter.
+            + "AND (:language IS NULL OR LOWER(COALESCE(NULLIF(d.languages, ''), 'az')) "
+            + "LIKE LOWER(CONCAT('%', :language, '%'))) "
             + "AND (:q IS NULL OR LOWER(d.fullName) LIKE LOWER(CONCAT('%', :q, '%'))) "
             + "ORDER BY CASE WHEN d.verification = 'VERIFIED' THEN 0 ELSE 1 END, d.fullName ASC")
     Page<Doctor> publicSearch(@Param("specialty") String specialty,
