@@ -1,94 +1,13 @@
-# Environment Setup Guide
+# Mobile environments
 
-This guide explains how to configure the mobile app to work with different backend environments.
+Development uses the existing backend at `http://100.89.150.50:8002/api`. The mobile preview is always on port 3003. Port 3002 belongs to the main website preview.
 
-## Quick Start
+Native development requests go directly to port 8002. In the browser, Metro's `/dev-api` middleware forwards to that backend because the backend's CORS allowlist does not include port 3003. The bridge preserves auth, upload bodies and emergency/download response headers. It has a fixed upstream and does not log health data. It is development-only.
 
-### For Local Development (Default)
-The app is configured to use your local backend by default. No changes needed unless your IP address is different.
+Set `EXPO_PUBLIC_API_URL` in `.env.local` to override the API base. Include `/api`, without a trailing slash. Values prefixed `EXPO_PUBLIC_` are included in the bundle, so never put secrets there. Restart Expo after changing environment configuration.
 
-### To Switch to Production
-1. Open `src/config/environment.ts`
-2. Change line 7:
-   ```typescript
-   const CURRENT_ENV: Environment = 'production';
-   ```
-3. Restart the app
+`eas.json` defines a preview environment using port 8002 and production using `https://azdoc.ai/api`. Release builds also default to the production HTTPS API when no override is provided. The browser bridge is not used in release exports.
 
-## Configuration File Location
-All environment configuration is in: `src/config/environment.ts`
+For a physical device, connect it to the same Tailscale network. If a native OS blocks the development HTTP endpoint, use an HTTPS preview backend or an approved development-client transport exception. Do not weaken production transport security.
 
-## Key Features
-
-### 1. Easy Environment Switching
-- Single variable to change: `CURRENT_ENV`
-- No need to update multiple files
-- Clear separation between local and production settings
-
-### 2. Automatic URL Conversion
-When using local development:
-- API calls go to your local backend
-- File URLs sent to OpenAI are automatically converted to production URLs
-- This prevents "localhost not accessible" errors from external services
-
-### 3. Environment-Specific Settings
-```typescript
-local: {
-  apiBaseUrl: 'http://192.168.1.105:8080',    // Your local backend
-  publicApiUrl: 'https://api.azdoc.app',      // Public URL for external services
-}
-```
-
-## Common Scenarios
-
-### Scenario 1: Testing with Local Backend
-- Keep `CURRENT_ENV = 'local'`
-- Upload files normally
-- Files will be uploaded to local backend
-- URLs sent to OpenAI will use production domain
-
-### Scenario 2: Testing with Production Backend
-- Change to `CURRENT_ENV = 'production'`
-- All API calls go to production
-- Use carefully to avoid affecting real data
-
-### Scenario 3: Different Local IP
-If your machine has a different IP:
-1. Find your IP: `ipconfig` (Windows) or `ifconfig` (Mac/Linux)
-2. Update in `environment.ts`:
-   ```typescript
-   apiBaseUrl: 'http://YOUR_IP:8080',
-   ```
-
-## Troubleshooting
-
-### "Network Error" when uploading files
-- Check your local IP is correct
-- Ensure backend is running on port 8080
-- Verify CORS is configured for your IP
-
-### "OpenAI cannot access localhost" errors
-- This should not happen with the new configuration
-- If it does, check that `replaceLocalhostUrl` is being called in `fileService.ts`
-
-### Files not displaying after upload
-- Check the console for URL replacement logs
-- Verify production URL is accessible
-- Ensure file permissions are correct on backend
-
-## Benefits of This Approach
-
-1. **No Backend Changes Needed**: Backend can return localhost URLs; mobile app handles conversion
-2. **Easy Testing**: Switch between environments without code changes
-3. **Production Safety**: Clear separation prevents accidental production changes
-4. **External Service Compatibility**: Files work with OpenAI regardless of environment
-
-## Example Usage
-
-```typescript
-// The configuration automatically handles URL conversion
-// Original URL from backend: http://localhost:8080/uploads/image.jpg
-// Converted URL for OpenAI: https://api.azdoc.app/uploads/image.jpg
-```
-
-This ensures that OpenAI can always access uploaded files, even during local development.
+`npm run dev` starts a detached preview and records its output in `.expo/preview.log`. It only stops a port-3003 process whose working directory is this mobile checkout. To switch from another Codex branch, first verify and stop that branch's preview. Do not allocate another port or stop the main agent's server.
