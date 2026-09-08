@@ -15,7 +15,11 @@
     "Həkim paneli": "Həkim paneli",
     "Dərmanlar": "Dərmanlar",
     "Məxfilik və razılıqlar": "Məxfilik və razılıqlar",
-    "Həkimlər": "Həkimlər"
+    "Həkimlər": "Həkimlər",
+    "Söhbət": "Söhbət",
+    "Dil": "Dil",
+    "Qeydiyyat": "Qeydiyyat",
+    "Menyunu bağla": "Menyunu bağla"
   },
   "en": {
     "Necə işləyir": "How it works",
@@ -33,7 +37,11 @@
     "Həkim paneli": "Doctor panel",
     "Dərmanlar": "Medicines",
     "Məxfilik və razılıqlar": "Privacy and consent",
-    "Həkimlər": "Doctors"
+    "Həkimlər": "Doctors",
+    "Söhbət": "Chat",
+    "Dil": "Language",
+    "Qeydiyyat": "Create account",
+    "Menyunu bağla": "Close menu"
   },
   "ru": {
     "Necə işləyir": "Как это работает",
@@ -51,6 +59,10 @@
     "Həkim paneli": "Панель врача",
     "Dərmanlar": "Лекарства",
     "Məxfilik və razılıqlar": "Данные и согласия",
-    "Həkimlər": "Врачи"
+    "Həkimlər": "Врачи",
+    "Söhbət": "Чат",
+    "Dil": "Язык",
+    "Qeydiyyat": "Регистрация",
+    "Menyunu bağla": "Закрыть меню"
   }
 }

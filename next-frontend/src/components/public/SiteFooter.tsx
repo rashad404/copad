@@ -31,7 +31,7 @@ export default function SiteFooter() {
       </div>
       <nav aria-label={c("Footer", "Alt naviqasiya")}>
         {[
-          ["/blog", c("Blog", "Bloq")],
+          ["/blog", c("Blog", "Bloq", "Блог")],
           ["/contact", c("Contact", "Əlaqə")],
           ["/security", c("Security", "Təhlükəsizlik")],
           ["/privacy-policy", c("Privacy", "Məxfilik")],
@@ -42,9 +42,20 @@ export default function SiteFooter() {
           </Link>
         ))}
         {hydrated && isAuthenticated && (
-          <button onClick={() => void logout()}>
-            {c("Sign out", "Çıxış")}
-          </button>
+          <>
+            <Link href="/#how">
+              {c("How it works", "Necə işləyir", "Как это работает")}
+            </Link>
+            <Link href="/#family">
+              {c("For your family", "Ailəniz üçün", "Для семьи")}
+            </Link>
+            <Link href="/#questions">
+              {c("Questions", "Suallar", "Вопросы")}
+            </Link>
+            <button onClick={() => void logout()}>
+              {c("Sign out", "Çıxış")}
+            </button>
+          </>
         )}
       </nav>
     </footer>
