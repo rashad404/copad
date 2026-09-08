@@ -1,5 +1,6 @@
 .header {
-  position: relative;
+  position: sticky;
+  top: 0;
   z-index: 60;
   flex-shrink: 0;
   width: 100%;
@@ -236,5 +237,15 @@
 @media (prefers-reduced-motion: reduce) {
   .header * {
     transition: none !important;
+  }
+}
+
+/* Keep anchor destinations and focused controls below the sticky header. */
+:global(html):has(.header) {
+  scroll-padding-top: 100px;
+}
+@media (max-width: 1000px) {
+  :global(html):has(.header) {
+    scroll-padding-top: 80px;
   }
 }
