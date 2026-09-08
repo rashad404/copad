@@ -70,6 +70,35 @@ public class LabController {
                 .orElse(ResponseEntity.notFound().build());
     }
 
+    /**
+     * One test, priced at every laboratory that offers it.
+     *
+     * The reason the catalogue exists. Cheapest first, and a laboratory that
+     * does not publish a price for it comes last rather than looking free.
+     */
+    @GetMapping("/compare/{analyteKey}")
+    public List<Map<String, Object>> compare(@PathVariable String analyteKey,
+                                             @RequestParam(defaultValue = "az") String lang) {
+        String language = language(lang);
+        return tests.byAnalyte(analyteKey).stream().map(t -> {
+            Map<String, Object> row = new LinkedHashMap<>();
+            row.put("labSlug", t.getLab().getSlug());
+            row.put("labName", t.getLab().getName());
+            row.put("labCity", t.getLab().getCity());
+            row.put("homeCollection", t.getLab().isHomeCollection());
+            row.put("name", t.nameIn(language));
+            row.put("price", t.getPrice());
+            row.put("turnaroundHours", t.getTurnaroundHours());
+            return row;
+        }).toList();
+    }
+
+    /** Which tests can be compared at all, so nothing offers a comparison of one. */
+    @GetMapping("/comparable")
+    public List<String> comparable() {
+        return tests.comparableAnalytes();
+    }
+
     private Map<String, Object> summary(Lab lab) {
         Map<String, Object> row = new LinkedHashMap<>();
         row.put("id", lab.getId());
