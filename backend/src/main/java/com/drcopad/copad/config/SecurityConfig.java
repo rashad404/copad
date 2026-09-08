@@ -87,7 +87,8 @@ public class SecurityConfig {
                         .authenticationEntryPoint((request, response, authException) -> {
                             String requestedUrl = request.getRequestURL().toString();
                             if (requestedUrl.contains("/api/auth/success")) {
-                                response.sendRedirect("https://virtualhekim.az/api/oauth2/authorization/google");
+                                response.sendRedirect(SiteOrigin.of(request)
+                                        + "/api/oauth2/authorization/google");
                             } else {
                                 response.sendError(HttpStatus.UNAUTHORIZED.value(), "Unauthorized");
                             }

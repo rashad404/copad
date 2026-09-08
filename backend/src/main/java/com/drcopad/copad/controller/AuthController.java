@@ -1,5 +1,6 @@
 package com.drcopad.copad.controller;
 
+import com.drcopad.copad.config.SiteOrigin;
 import com.drcopad.copad.dto.UserRegisterDTO;
 import com.drcopad.copad.dto.UserLoginDTO;
 import com.drcopad.copad.entity.User;
@@ -132,48 +133,15 @@ public class AuthController {
         response.sendRedirect(redirectUrl);
     }
     
+    /**
+     * The site to hand the browser back to after signing in.
+     *
+     * Resolved from the request. The old version looked at Origin and Referer,
+     * but on the callback the referer is Google's own domain, so it always
+     * chose the hardcoded default and moved people between our two domains
+     * mid-login.
+     */
     private String determineFrontendUrl(HttpServletRequest request) {
-        String referer = request.getHeader("Referer");
-        String origin = request.getHeader("Origin");
-        String forwardedProto = request.getHeader("X-Forwarded-Proto");
-        String forwardedHost = request.getHeader("X-Forwarded-Host");
-        
-        // Use forwarded headers if available
-        if (forwardedProto != null && forwardedHost != null) {
-            return forwardedProto + "://" + forwardedHost;
-        }
-        
-        // Try to determine from origin header
-        if (origin != null && !origin.isEmpty()) {
-            if (origin.contains("virtualhekim.az")) {
-                return "https://virtualhekim.az";
-            } else if (origin.contains("azdoc.ai")) {
-                return "https://azdoc.ai";
-            } else if (origin.contains("logman.az")) {
-                return "https://logman.az";
-            }
-        }
-        
-        // Try to determine from referer
-        if (referer != null && !referer.isEmpty()) {
-            if (referer.contains("virtualhekim.az")) {
-                return "https://virtualhekim.az";
-            } else if (referer.contains("azdoc.ai")) {
-                return "https://azdoc.ai";
-            } else if (referer.contains("logman.az")) {
-                return "https://logman.az";
-            }
-        }
-        
-        // Check for localhost development
-        String serverName = request.getServerName();
-        if ("localhost".equals(serverName) || "127.0.0.1".equals(serverName) || 
-            serverName.startsWith("192.168.")) {
-            // For local development, use port 3000 (Next.js default)
-            return "http://localhost:3000";
-        }
-        
-        // Default to virtualhekim.az for production
-        return "https://virtualhekim.az";
+        return SiteOrigin.frontendOf(request);
     }
 }
