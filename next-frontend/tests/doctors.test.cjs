@@ -47,6 +47,14 @@ Module._load = function (r, p, ...args) {
         throw new Error("NOT_FOUND");
       },
     };
+  // The profile now renders the booking panel, which is a client component and
+  // asks the auth context who is signed in. Nobody is, in a server render of a
+  // public page.
+  if (r === "@/context/AuthContext")
+    return {
+      __esModule: true,
+      useAuth: () => ({ isAuthenticated: false, user: null, logout: () => {} }),
+    };
   if (r === "@/components/public/ProductLayout")
     return {
       __esModule: true,
@@ -60,6 +68,10 @@ Module._load = function (r, p, ...args) {
       }),
       getDoctor: async () => selected,
       getSpecialties: async () => [{ code: "general", name: "General" }],
+      // The profile page resolves one specialty name through the directory
+      // rather than the local table, so the stub has to offer it too.
+      getSpecialtyName: async (code) =>
+        code === "general" ? "General" : code,
       getSlots: async (...args) => {
         slotCalls.push(args);
         return slots;
@@ -95,6 +107,7 @@ for (const ext of [".ts", ".tsx"])
     );
 const model = require("../src/components/doctors/model.ts");
 const { doctorCopy } = require("../src/components/doctors/copy.ts");
+const { bookingCopy } = require("../src/components/booking/copy.ts");
 const directory = require("../src/app/hekimler/page.tsx");
 const profile = require("../src/app/hekimler/[slug]/page.tsx");
 const { Verification } = require("../src/components/doctors/DoctorParts.tsx");
@@ -237,9 +250,19 @@ test("bookable profile fetches real slots by ID, renders Baku time and does not 
   ];
   const doc = await renderProfile();
   assert.equal(slotCalls[0][0], 12);
-  assert.match(doc.querySelector("time").textContent, /09:00/);
-  assert.match(doc.querySelector("time").dateTime, /\+04:00$/);
+  // The times are no longer printed as a list: the panel opens on a calendar,
+  // and a day is only offered when a free time sits behind it.
+  const offered = [...doc.querySelectorAll("button")].filter(
+    (b) => !b.disabled && b.className.includes("free"),
+  );
+  assert.ok(offered.length > 0, "the day with a free slot must be selectable");
+  assert.ok(
+    [...doc.querySelectorAll("button")].some((b) => b.disabled),
+    "days without a free time must not be selectable",
+  );
   assert.ok(doc.body.textContent.includes(doctorCopy("az").slotsNote));
+  // Nothing on a first render may read as an appointment already made.
+  assert.ok(!doc.body.textContent.includes(bookingCopy("az").booked));
 });
 test("profile metadata, canonical and schema use public fields only", async () => {
   selected = {

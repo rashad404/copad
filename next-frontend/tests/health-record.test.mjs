@@ -23,9 +23,15 @@ function dataModule(source) {
 const axiosUrl = pathToFileURL(
   require.resolve("axios").replace("/dist/node/axios.cjs", "/index.js"),
 ).href;
+// Dates come from their own module now, so it is compiled and inlined the same
+// way axios is - the model is loaded as a data URL, which can resolve neither
+// a relative path nor the @/ alias.
+const datesUrl = dataModule(compile("../src/utils/dates.ts"));
 const model = await import(
   dataModule(
-    compile("../src/components/health/model.ts").replace(
+    compile("../src/components/health/model.ts")
+      .replace(/from ['"][^'"]*utils\/dates['"]/g, `from '${datesUrl}'`)
+      .replace(
       /from ['"]axios['"]/g,
       `from '${axiosUrl}'`,
     ),

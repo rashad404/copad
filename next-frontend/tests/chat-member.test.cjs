@@ -213,7 +213,7 @@ test("AZ notice and no selected member omit memberId", async () => {
   assert.ok(!("memberId" in requests[0].params));
   assert.equal(
     document.querySelector(".public-composer-note").textContent,
-    "azdoc tibbi məsləhət vermir. Təcili hallarda 103.",
+    "Yalnız məlumat üçündür. Həkimi əvəz etmir - vacib məsələləri həkiminizlə dəqiqləşdirin. Təcili hallarda 103.",
   );
 });
 test("signed-out and loading-auth callers cannot attach a member even through context", async () => {

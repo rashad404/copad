@@ -444,7 +444,9 @@ test("timeline preserves clinical order, notable styling and both medication lif
   const rows = [...document.querySelectorAll(".timelineList>li")];
   assert.equal(rows.length, 3);
   assert.match(rows[0].textContent, /Medication stopped/);
-  assert.match(rows[0].textContent, /Mar 1, 2024/);
+  // Day first, in English too: the site is read in Azerbaijan, where every
+  // other language it offers writes the day before the month.
+  assert.match(rows[0].textContent, /1 Mar 2024/);
   assert.match(rows[2].textContent, /Medication started/);
   assert.match(rows[2].textContent, /500 mg/);
   assert.ok(rows[1].classList.contains("notableEvent"));
