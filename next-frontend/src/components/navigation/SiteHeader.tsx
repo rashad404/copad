@@ -47,6 +47,10 @@ export default function SiteHeader() {
   const accountLinks = [
     ["/health-record", "Sağlamlıq qeydləri"],
     ["/randevularim", "Randevularım"],
+    // Shown to everyone rather than gated on a lookup: a patient who opens it
+    // is told plainly that the account has no doctor profile, which costs less
+    // than a request on every page load to hide one link.
+    ["/hekim-panel", "Həkim paneli"],
     ["/dashboard", "Hesabım"],
     ["/profile", "Profilim"],
     ["/profile/privacy", "Məxfilik və razılıqlar"],
