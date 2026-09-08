@@ -367,9 +367,17 @@ const GuestChat: React.FC<GuestChatProps> = ({
         />
         <div className="public-chat-thread">
           <p className="public-composer-note">
+            {/*
+              The Azerbaijani used to read "azdoc does not give medical advice",
+              which is not true - it gives specific advice, that is the product.
+              Saying otherwise is both false and weaker than an accurate caveat:
+              this is for information, it does not replace being seen, and an
+              emergency goes to 103.
+            */}
             {c(
-              "azdoc doesn't replace a doctor. Emergency: 103.",
-              "azdoc tibbi məsləhət vermir. Təcili hallarda 103.",
+              "For information only. It does not replace a doctor - check anything that matters with yours. Emergency: 103.",
+              "Yalnız məlumat üçündür. Həkimi əvəz etmir - vacib məsələləri həkiminizlə dəqiqləşdirin. Təcili hallarda 103.",
+              "Только для информации. Не заменяет врача - важное уточняйте у своего врача. Экстренный случай: 103.",
             )}
           </p>
           {/* Chat messages */}

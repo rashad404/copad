@@ -15,7 +15,7 @@ import {
 } from "@/api/booking";
 import { supportedLanguage } from "@/utils/languages";
 import type { DirectoryLanguage } from "@/components/doctors/copy";
-import { bookingCopy, localeFor } from "@/components/booking/copy";
+import { bookingCopy, fullDate } from "@/components/booking/copy";
 import styles from "@/components/booking/appointments.module.css";
 
 /** An appointment with the person it belongs to, which the API does not repeat. */
@@ -26,7 +26,6 @@ export default function MyAppointments() {
   const language = (supportedLanguage(i18n.language) ||
     "az") as DirectoryLanguage;
   const c = bookingCopy(language);
-  const locale = localeFor(language);
   const { isAuthenticated } = useAuth();
 
   const [rows, setRows] = useState<Row[] | null>(null);
@@ -81,9 +80,7 @@ export default function MyAppointments() {
   }
 
   const when = (value: string) =>
-    `${new Intl.DateTimeFormat(locale, { dateStyle: "full" }).format(
-      new Date(`${dayOf(value)}T12:00:00Z`),
-    )}, ${timeOf(value)}`;
+    `${fullDate(dayOf(value), language)}, ${timeOf(value)}`;
 
   const card = (row: Row, canCancel: boolean) => (
     <li key={row.id} className={styles.card}>

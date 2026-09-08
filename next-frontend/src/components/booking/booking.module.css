@@ -76,7 +76,13 @@
 .free:hover {
   border-color: #214be2;
 }
-.selected {
+/*
+ * Written as two-class selectors on purpose. As a bare .selected it lost to
+ * .time, which is declared later at the same specificity, so a chosen time
+ * kept its white background and nothing looked selected.
+ */
+.day.selected,
+.time.selected {
   background: #214be2;
   border-color: #214be2;
   color: #fff;

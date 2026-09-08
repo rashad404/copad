@@ -20,7 +20,7 @@ import {
 import { dayOf, timeOf } from "@/api/booking";
 import { supportedLanguage } from "@/utils/languages";
 import type { DirectoryLanguage } from "@/components/doctors/copy";
-import { localeFor } from "@/components/booking/copy";
+import { shortDate, weekdayNames } from "@/components/booking/copy";
 import { portalCopy } from "@/components/booking/portalCopy";
 import styles from "@/components/booking/portal.module.css";
 
@@ -31,7 +31,6 @@ export default function DoctorPortal() {
   const language = (supportedLanguage(i18n.language) ||
     "az") as DirectoryLanguage;
   const c = portalCopy(language);
-  const locale = localeFor(language);
   const { isAuthenticated } = useAuth();
 
   const [listing, setListing] = useState<MyListing | null | undefined>(
@@ -70,13 +69,7 @@ export default function DoctorPortal() {
     return () => controller.abort();
   }, [isAuthenticated, loadSchedule]);
 
-  const dayNames = useMemo(() => {
-    const format = new Intl.DateTimeFormat(locale, { weekday: "long" });
-    // 2024-01-07 was a Sunday, so index 0 lands on Sunday as the API numbers it.
-    return Array.from({ length: 7 }, (_, i) =>
-      format.format(new Date(Date.UTC(2024, 0, 7 + i))),
-    );
-  }, [locale]);
+  const dayNames = useMemo(() => weekdayNames(language), [language]);
 
   async function add() {
     if (form.startTime >= form.endTime) {
@@ -130,9 +123,7 @@ export default function DoctorPortal() {
   }
 
   const when = (value: string) =>
-    `${new Intl.DateTimeFormat(locale, { dateStyle: "medium" }).format(
-      new Date(`${dayOf(value)}T12:00:00Z`),
-    )}, ${timeOf(value)}`;
+    `${shortDate(dayOf(value), language)}, ${timeOf(value)}`;
 
   if (!isAuthenticated) {
     return (

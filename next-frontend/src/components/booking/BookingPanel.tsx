@@ -13,7 +13,12 @@ import {
 } from "@/api/booking";
 import type { Slot } from "@/components/doctors/model";
 import type { DirectoryLanguage } from "@/components/doctors/copy";
-import { bookingCopy, localeFor } from "./copy";
+import {
+  bookingCopy,
+  monthTitle,
+  weekdayHeadings,
+  fullDate,
+} from "./copy";
 import styles from "./booking.module.css";
 
 /** How far ahead the backend will generate slots. Mirrors MAX_DAYS_AHEAD. */
@@ -72,7 +77,6 @@ export default function BookingPanel({
   initialTo,
 }: Props) {
   const c = bookingCopy(language);
-  const locale = localeFor(language);
   const { isAuthenticated } = useAuth();
   const today = useMemo(bakuToday, []);
   const lastBookable = useMemo(
@@ -157,18 +161,8 @@ export default function BookingPanel({
     return map;
   }, [slots]);
 
-  const monthLabel = new Intl.DateTimeFormat(locale, {
-    month: "long",
-    year: "numeric",
-  }).format(new Date(Date.UTC(month.y, month.m, 1)));
-
-  const weekdays = useMemo(() => {
-    const format = new Intl.DateTimeFormat(locale, { weekday: "short" });
-    // 2024-01-01 was a Monday, so this walks Monday to Sunday.
-    return Array.from({ length: 7 }, (_, i) =>
-      format.format(new Date(Date.UTC(2024, 0, 1 + i))),
-    );
-  }, [locale]);
+  const monthLabel = monthTitle(month.y, month.m, language);
+  const weekdays = useMemo(() => weekdayHeadings(language), [language]);
 
   const canGoBack = month.y > today.y || (month.y === today.y && month.m > today.m);
   const lastMonth = new Date(`${lastBookable}T12:00:00Z`);
@@ -335,9 +329,7 @@ export default function BookingPanel({
           <p className={styles.chosen}>
             <strong>{doctorName}</strong>
             <span>
-              {new Intl.DateTimeFormat(locale, {
-                dateStyle: "full",
-              }).format(new Date(`${dayOf(slot.startsAt)}T12:00:00Z`))}
+              {fullDate(dayOf(slot.startsAt), language)}
               {", "}
               {timeOf(slot.startsAt)}
             </span>
