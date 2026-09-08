@@ -5,6 +5,7 @@ import { useTranslation } from "react-i18next";
 import { useAuth } from "@/context/AuthContext";
 import { useSiteContext } from "@/context/SiteContext";
 import BrandLogo from "@/components/brand/BrandLogo";
+import { brandSlogan } from "@/components/brand/slogan";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import { homeCopy } from "./copy";
 import "./homepage.css";
@@ -397,7 +398,7 @@ export default function HomePage() {
       </main>
       <footer className="wrap">
         <BrandLogo />
-        <span>{copy("Sağlamlığınızın bütöv hekayəsi.")}</span>
+        <span>{brandSlogan(language)}</span>
         <div className="footer-links">
           <Link href="/blog">{copy("Bloq")}</Link>
           <Link href="/contact">{copy("Əlaqə")}</Link>

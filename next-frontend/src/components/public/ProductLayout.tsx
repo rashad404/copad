@@ -6,6 +6,7 @@ import { Manrope } from "next/font/google";
 import { useTranslation } from "react-i18next";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import { useAuth } from "@/context/AuthContext";
+import { SLOGANS } from "@/components/brand/slogan";
 import BrandLogo from "@/components/brand/BrandLogo";
 import "./public.css";
 import russian from "@/translations/public.ru.json";
@@ -54,10 +55,7 @@ export default function ProductLayout({
           <div>
             <BrandLogo />
             <p>
-              {c(
-                "A little clarity. A better next step.",
-                "Sağlamlıq sualları və ailə qeydləri.",
-              )}
+              {c(SLOGANS.en, SLOGANS.az, SLOGANS.ru)}
             </p>
           </div>
           <nav aria-label={c("Footer", "Alt naviqasiya")}>

@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND_TITLE, SLOGANS } from "@/components/brand/slogan";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import HomePage from "@/components/home/HomePage";
@@ -9,18 +10,18 @@ const manrope = Manrope({
 });
 
 export const metadata: Metadata = {
-  title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
+  title: { absolute: DEFAULT_BRAND_TITLE },
   description:
     "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
   openGraph: {
-    title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
-    description: "Sağlamlıq sualları və ailə qeydləri.",
+    title: DEFAULT_BRAND_TITLE,
+    description: SLOGANS.az,
     locale: "az_AZ",
     images: [],
   },
   twitter: {
     card: "summary",
-    title: "azdoc - Sağlamlıq sualları və ailə qeydləri",
+    title: DEFAULT_BRAND_TITLE,
     images: [],
   },
 };

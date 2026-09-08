@@ -1,3 +1,4 @@
+import { DEFAULT_BRAND_TITLE } from "@/components/brand/slogan";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -14,9 +15,9 @@ const AGENT_NAME = siteInfo.AGENT_NAME;
 export const metadata: Metadata = {
   title: {
     template: `%s | ${AGENT_NAME}`,
-    default: `${AGENT_NAME} - AI-Powered Healthcare Assistant`
+    default: DEFAULT_BRAND_TITLE
   },
-  description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
+  description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
   keywords: ['healthcare', 'medical', 'doctor', 'telemedicine', 'AI', 'health assistant'],
   authors: [{ name: `${AGENT_NAME} Team` }],
   creator: AGENT_NAME,
@@ -26,8 +27,8 @@ export const metadata: Metadata = {
     locale: 'en_US',
     url: process.env.NEXT_PUBLIC_APP_URL || 'https://example.com',
     siteName: AGENT_NAME,
-    title: `${AGENT_NAME} - AI-Powered Healthcare Assistant`,
-    description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
+    title: DEFAULT_BRAND_TITLE,
+    description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
     images: [
       {
         url: '/images/og-image.jpg',  // Replace with your actual OpenGraph image
@@ -39,8 +40,8 @@ export const metadata: Metadata = {
   },
   twitter: {
     card: 'summary_large_image',
-    title: `${AGENT_NAME} - AI-Powered Healthcare Assistant`,
-    description: `${AGENT_NAME} is your AI-powered healthcare assistant, providing medical consultations, appointment scheduling, and health information.`,
+    title: DEFAULT_BRAND_TITLE,
+    description: "Analizlər, dərmanlar və sağlamlığınız haqqında suallarınıza Azərbaycan dilində cavab alın. Ailənizin sağlamlıq qeydlərini saxlayın.",
     images: ['/images/og-image.jpg']  // Replace with your actual Twitter card image
   },
   robots: {
