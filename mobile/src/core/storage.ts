@@ -1,6 +1,7 @@
 import * as SecureStore from "expo-secure-store";
 import { Platform } from "react-native";
-const KEY = "auth_token";
+import { environmentKey } from "./environment";
+const KEY = environmentKey("auth_token");
 // Web preview keeps the token in this tab only. Native uses the OS keychain.
 export const tokenStore = {
   get: async (): Promise<string | null> =>
@@ -22,7 +23,7 @@ export interface PendingConsentChoices {
   storage: boolean;
   ai: boolean;
 }
-const CONSENT_KEY = "pending_registration_consents";
+const CONSENT_KEY = environmentKey("pending_registration_consents");
 export const pendingConsentStore = {
   get: async (): Promise<PendingConsentChoices | null> => {
     const raw =

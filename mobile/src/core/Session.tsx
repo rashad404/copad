@@ -8,6 +8,8 @@ import React, {
 import { isAxiosError } from "axios";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import api from "./api";
+import { environmentKey } from "./environment";
+import { nativeGoogleSignIn } from "./nativeGoogle";
 import {
   tokenStore,
   pendingConsentStore,
@@ -36,6 +38,9 @@ type Context = {
     ai?: boolean,
   ) => Promise<void>;
   retryConsents: (storage: boolean, ai: boolean) => Promise<void>;
+  authenticateGoogle: (
+    signal: AbortSignal,
+  ) => Promise<"success" | "cancelled" | "retry">;
   refresh: () => Promise<void>;
   logout: () => Promise<void>;
 };
@@ -103,6 +108,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
     storage = false,
     ai = false,
   ) {
+    generation.current++;
     const response = await api.post(
       name === undefined ? "/auth/login" : "/auth/register",
       name === undefined ? { email, password } : { email, password, name },
@@ -120,6 +126,43 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
       setPending(true);
       await retryConsents(storage, ai);
     } else await refresh();
+  }
+  async function authenticateGoogle(signal: AbortSignal) {
+    const stamp = ++generation.current;
+    const current = () => stamp === generation.current && !signal.aborted;
+    const result = await nativeGoogleSignIn(signal);
+    if (!current()) return "cancelled" as const;
+    if (result.status !== "success") return result.status;
+    const token = result.credentials.token;
+    try {
+      // Resolve the account ID before mounting any member-scoped screens.
+      const { data } = await api.get<User>("/user/me", {
+        headers: { Authorization: `Bearer ${token}` },
+        signal,
+      });
+      if (!data.id || typeof data.email !== "string") return "retry" as const;
+      if (!current()) return "cancelled" as const;
+      const pending = await pendingConsentStore.get();
+      if (!current()) return "cancelled" as const;
+      await tokenStore.set(token);
+      if (!current()) {
+        if ((await tokenStore.get()) === token) await tokenStore.clear();
+        return "cancelled" as const;
+      }
+      // Google sign-in is not consent to storage or overseas AI processing.
+      // Existing account consents remain under the account privacy screen.
+      const matching =
+        pending?.email.toLowerCase() === data.email.toLowerCase()
+          ? pending
+          : null;
+      setChoices(matching);
+      setPending(!!matching);
+      setError(false);
+      setUser(data);
+      return "success" as const;
+    } catch {
+      return signal.aborted ? ("cancelled" as const) : ("retry" as const);
+    }
   }
   async function logout() {
     generation.current++;
@@ -141,6 +184,7 @@ export function SessionProvider({ children }: { children: React.ReactNode }) {
         consentPending,
         pendingChoices,
         authenticate,
+        authenticateGoogle,
         retryConsents,
         refresh,
         logout,
@@ -189,7 +233,7 @@ function FamilyScope({
     setError(false);
     Promise.all([
       healthApi.families(controller.signal),
-      AsyncStorage.getItem(`azdoc.member.${account}`),
+      AsyncStorage.getItem(environmentKey(`azdoc.member.${account}`)),
     ])
       .then(([rows, saved]) => {
         if (!active) return;
@@ -222,7 +266,7 @@ function FamilyScope({
     setSelected(id);
     if (account)
       void AsyncStorage.setItem(
-        `azdoc.member.${account}`,
+        environmentKey(`azdoc.member.${account}`),
         id === null ? "" : String(id),
       );
   }

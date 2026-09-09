@@ -6,6 +6,7 @@ import ChatAttachments, {
   chatFile,
 } from "./ChatAttachments";
 import { API_URL } from "../core/api";
+import { environmentKey } from "../core/environment";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
@@ -112,7 +113,9 @@ function ChatScope({
 }) {
   const { c, language } = useCopy();
   const family = useFamily();
-  const scope = `chat-${account || "guest"}-${memberId || "none"}`;
+  const scope = environmentKey(
+    `chat-${account || "guest"}-${memberId || "none"}`,
+  );
   const [sid, setSid] = useState(""),
     [chat, setChat] = useState(""),
     [messages, setMessages] = useState<Message[]>([]),

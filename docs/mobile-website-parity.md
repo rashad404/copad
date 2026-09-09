@@ -25,16 +25,16 @@ The patient website is the reference for content, actions and states. The app us
 | `/blog`, `/blog/search`, `/blog/tag/[slug]`, `/blog/[slug]` | Account / Articles | Native list, language-aware search, tags, pagination, article content, author/date/reading time, related articles and sharing. Internal article links navigate within the app. |
 | `/about`, `/contact`, `/faq` | Account information links | Native website content, FAQ disclosures, support email and chat links. |
 | `/security`, `/privacy-policy`, `/terms-of-service` | Account information links | Native document layouts, table of contents, all website sections and privacy actions in AZ, EN and RU. |
-| `/login`, `/register` | Sign in / Create account | Native email/password forms, website copy, password visibility, minimum registration length, terms acceptance, separate optional consents and recovery after interrupted consent saving. Google exception below. |
+| `/login`, `/register` | Sign in / Create account | Native email/password forms, website copy, password visibility, minimum registration length, terms acceptance, separate optional consents and recovery after interrupted consent saving. Native Google sign-in is added by codex/mobile-google-sign-in; see below. |
 | `/logout` | Account / Sign out | Existing native sign-out and private-state cleanup. |
 
 Device-only connected sources and record-access history remain available. Admin remains outside this patient-app conversion, consistent with the earlier scope.
 
-## Remaining functional dependency
+## Native Google sign-in
 
-**Google sign-in needs a native callback/token handoff.** The backend currently redirects successful OAuth to the website's `/login/callback`. There is no native callback contract. The app cannot obtain a secure native session by opening that website link, so no misleading Google button was added. This prevents calling the app completely 1:1 in authentication. Email/password registration and sign-in work.
+The backend now supplies a native PKCE callback and token exchange. Branch `codex/mobile-google-sign-in` adds the system auth session for preview and release, with AZ/EN/RU retry wording. See [Native Google sign-in](mobile-google-sign-in.md) for build commands and device acceptance checks.
 
-No backend endpoint or protected frontend file was changed to work around this.
+This closes the former missing native handoff. A complete Google account round trip still needs device acceptance. Email/password remains available. No backend endpoint or protected frontend file was changed.
 
 ## Keeping copy aligned
 
@@ -58,7 +58,7 @@ Real-device acceptance still includes PDF zoom/rendering, native upload pickers,
 
 ## Preview
 
-- Native preview API: `http://100.89.150.50:8002/api`.
+- Default dev preview API: `http://100.89.150.50:8002/api`. Google testing builds explicitly use `https://azdoc.ai/api` for the whole session.
 - Browser preview: `http://100.89.150.50:3003`.
 - Main agent's port 3002 is unchanged.
 - iOS app: `mobile/native-builds/derived/Build/Products/Release-iphoneos/azdocPreview.app`.

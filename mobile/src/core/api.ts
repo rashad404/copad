@@ -1,13 +1,8 @@
 import axios from "axios";
 import { Platform } from "react-native";
 import { tokenStore } from "./storage";
-export const API_URL =
-  __DEV__ && Platform.OS === "web"
-    ? "/dev-api"
-    : (
-        process.env.EXPO_PUBLIC_API_URL ||
-        (__DEV__ ? "http://100.89.150.50:8002/api" : "https://azdoc.ai/api")
-      ).replace(/\/$/, "");
+import { API_URL } from "./environment";
+export { API_URL } from "./environment";
 export const SITE_URL = "https://azdoc.ai";
 const api = axios.create({ baseURL: API_URL, timeout: 45000 });
 api.interceptors.request.use(async (config) => {

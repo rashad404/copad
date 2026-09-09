@@ -11,6 +11,10 @@ module.exports = ({ config }) => {
       ru: "./locales/ru.json",
     },
     scheme: preview ? "azdoc-preview" : "azdoc",
+    extra: {
+      ...config.extra,
+      nativeAuthVariant: preview ? "preview" : "release",
+    },
     ios: {
       ...config.ios,
       bundleIdentifier: preview ? "ai.azdoc.app.preview" : "ai.azdoc.app",
@@ -39,6 +43,7 @@ module.exports = ({ config }) => {
     },
     plugins: [
       ...(config.plugins || []),
+      "expo-web-browser",
       "./plugins/with-fmt-compat",
       [
         "@kingstinct/react-native-healthkit",

@@ -9,6 +9,7 @@ import { AppState } from "react-native";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { useSession, useFamily } from "../core/Session";
 import { tokenStore } from "../core/storage";
+import { environmentKey } from "../core/environment";
 import { healthApi } from "../api/healthRecord";
 import { canWrite } from "../api/recordModel";
 import { healthSyncApi } from "../api/healthSync";
@@ -63,8 +64,8 @@ export function HealthSyncProvider({
     alive = useRef(true),
     lastAttempt = useRef(0);
   const account = session.user?.id;
-  const bindingKey = `azdoc.health.binding.${account}`,
-    reportKey = `azdoc.health.report.${account}`;
+  const bindingKey = environmentKey(`azdoc.health.binding.${account}`),
+    reportKey = environmentKey(`azdoc.health.report.${account}`);
   useEffect(() => {
     alive.current = true;
     return () => {
