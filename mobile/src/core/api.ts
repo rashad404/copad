@@ -12,7 +12,8 @@ export const SITE_URL = "https://azdoc.ai";
 const api = axios.create({ baseURL: API_URL, timeout: 45000 });
 api.interceptors.request.use(async (config) => {
   const token = await tokenStore.get();
-  if (token) config.headers.Authorization = `Bearer ${token}`;
+  if (token && !config.headers.Authorization)
+    config.headers.Authorization = `Bearer ${token}`;
   if (config.data instanceof FormData) {
     if (Platform.OS === "web") config.headers.delete("Content-Type");
     else config.headers.setContentType("multipart/form-data");

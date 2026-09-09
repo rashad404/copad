@@ -1,10 +1,10 @@
 import React, { useEffect, useState } from "react";
 import { View } from "react-native";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused, useNavigation } from "@react-navigation/native";
 import { useCopy } from "../core/copy";
 import { useFamily } from "../core/Session";
 import { useResource } from "../core/useResource";
-import { fileBody, openPrivateFile, pickFile } from "../core/files";
+import { fileBody, pickFile } from "../core/files";
 import {
   documentsApi,
   type DocumentType,
@@ -155,6 +155,7 @@ function useManualForm(reload: () => void) {
   return { form, open: () => setManual(true) };
 }
 function DocumentList() {
+  const openPrivateFile = useDocumentViewer();
   const { c, language } = useCopy(),
     f = useFamily(),
     focused = useIsFocused();
@@ -347,11 +348,7 @@ function DocumentList() {
             )}
             <Button
               secondary
-              label={c(
-                "Open / share file",
-                "Faylı aç / paylaş",
-                "Открыть / поделиться",
-              )}
+              label={c("View document", "Sənədə bax", "Открыть документ")}
               onPress={() =>
                 openPrivateFile(
                   `/members/${f.member!.id}/documents/${doc.id}/content`,
@@ -403,6 +400,7 @@ function DocumentList() {
   );
 }
 function LabResults() {
+  const openPrivateFile = useDocumentViewer();
   const { c, language } = useCopy(),
     f = useFamily();
   const rows = useResource(`labs:${f.member!.id}`, (s) =>
@@ -668,6 +666,7 @@ function LabResults() {
   );
 }
 function Prescriptions() {
+  const openPrivateFile = useDocumentViewer();
   const { c } = useCopy(),
     f = useFamily();
   const r = useResource(`pendingmeds:${f.member!.id}`, (s) =>
@@ -808,4 +807,17 @@ function Prescriptions() {
       )}
     </>
   );
+}
+
+function useDocumentViewer() {
+  const nav = useNavigation<any>();
+  return (path: string, name: string) => {
+    const match = path.match(/^\/members\/(\d+)\/documents\/(\d+)\/content$/);
+    if (match)
+      nav.navigate("DocumentViewer", {
+        memberId: Number(match[1]),
+        documentId: Number(match[2]),
+        name,
+      });
+  };
 }

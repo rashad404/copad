@@ -1,8 +1,9 @@
 import React, { useState } from "react";
 import { View } from "react-native";
-import { useNavigation } from "@react-navigation/native";
+import { useNavigation, useRoute } from "@react-navigation/native";
 import { useSession } from "../core/Session";
 import { useCopy } from "../core/copy";
+import { authCopy } from "../copy/website/auth";
 import privacy from "../copy/privacy.json";
 import {
   Page,
@@ -13,13 +14,19 @@ import {
   Toggle,
   Notice,
   styles,
+  LinkRow,
+  Heading,
 } from "../ui/kit";
 export default function Auth() {
   const { c, language } = useCopy(),
     nav = useNavigation<any>(),
     session = useSession(),
-    p = privacy[language];
-  const [register, setRegister] = useState(false),
+    p = privacy[language],
+    words = authCopy[language];
+  const route = useRoute<any>();
+  const [register, setRegister] = useState(!!route.params?.register),
+    [acceptedTerms, setAcceptedTerms] = useState(false),
+    [visible, setVisible] = useState(false),
     [email, setEmail] = useState(""),
     [password, setPassword] = useState(""),
     [name, setName] = useState(""),
@@ -27,11 +34,9 @@ export default function Auth() {
     [ai, setAi] = useState(session.pendingChoices?.ai ?? false);
   return (
     <Page>
-      <Title>
-        {register
-          ? c("Create an account", "Hesab yarat", "Создать аккаунт")
-          : c("Welcome back", "Hesabınıza daxil olun", "Войдите в аккаунт")}
-      </Title>
+      <Body small>{register ? words.registerEyebrow : words.loginEyebrow}</Body>
+      <Title>{register ? words.registerTitle : words.loginTitle}</Title>
+      <Body>{register ? words.registerSubtitle : words.loginSubtitle}</Body>
       <View style={styles.card}>
         {!session.consentPending && (
           <>
@@ -55,9 +60,15 @@ export default function Auth() {
               label={c("Password", "Şifrə", "Пароль")}
               value={password}
               onChangeText={setPassword}
-              secureTextEntry
+              secureTextEntry={!visible}
               autoComplete={register ? "new-password" : "current-password"}
             />
+            <Button
+              secondary
+              label={visible ? words.hidePassword : words.showPassword}
+              onPress={() => setVisible(!visible)}
+            />
+            {register && <Body small>{words.passwordHelp}</Body>}
           </>
         )}
         {(register || session.consentPending) && (
@@ -72,11 +83,37 @@ export default function Auth() {
             {!ai && <Body small>{p.noAi}</Body>}
           </>
         )}
+        {register && !session.consentPending && (
+          <Toggle
+            label={c(
+              "I agree to the Terms of service",
+              "İstifadə şərtlərini qəbul edirəm",
+              "Я принимаю Условия использования",
+            )}
+            value={acceptedTerms}
+            onChange={setAcceptedTerms}
+          />
+        )}
+        <LinkRow
+          title={words.terms}
+          onPress={() =>
+            nav.navigate("Information", { page: "terms-of-service" })
+          }
+        />
+        <LinkRow
+          title={p.policy}
+          onPress={() =>
+            nav.navigate("Information", { page: "privacy-policy" })
+          }
+        />
         {session.consentPending && <Notice danger>{p.saveFailed}</Notice>}
         <Button
           disabled={
             !session.consentPending &&
-            (!email.trim() || !password || (register && !name.trim()))
+            (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email.trim()) ||
+              !password ||
+              (register &&
+                (!name.trim() || password.length < 8 || !acceptedTerms)))
           }
           label={
             session.consentPending
@@ -115,6 +152,22 @@ export default function Auth() {
           />
         )}
       </View>
+      <Heading>
+        {words.lineOne} {words.lineTwo} {words.lineThree}
+      </Heading>
+      <Body>{words.story}</Body>
+      <View style={styles.card}>
+        <Body small>{words.sample}</Body>
+        <Heading>{words.sampleQuestion}</Heading>
+        <Body>{words.sampleAnswer}</Body>
+      </View>
+      <Heading>{words.note}</Heading>
+      <Body>{words.noteDetail}</Body>
+      <Body small>{words.smallPrint}</Body>
+      <LinkRow
+        title={words.contact}
+        onPress={() => nav.navigate("Information", { page: "contact" })}
+      />
     </Page>
   );
 }

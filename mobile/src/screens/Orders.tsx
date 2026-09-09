@@ -1,13 +1,18 @@
 import React, { useState } from "react";
 import { View, Linking } from "react-native";
-import { useRoute } from "@react-navigation/native";
+import { useRoute, useNavigation } from "@react-navigation/native";
 import { useCopy } from "../core/copy";
 import { useResource } from "../core/useResource";
-import { useSession } from "../core/Session";
+import { useSession, useFamily } from "../core/Session";
 import { healthApi, type Member, type FamilyRole } from "../api/healthRecord";
 import { canWrite } from "../api/recordModel";
 import { labApi } from "../api/labs";
-import { listBookings, cancelBooking, type Booking } from "../api/booking";
+import {
+  listBookings,
+  cancelBooking,
+  withOffset,
+  type Booking,
+} from "../api/booking";
 import { money, terminal, cancellable, type LabOrder } from "../api/labModel";
 import { shortDate } from "../utils/dates";
 import words from "../copy/labs.json";
@@ -22,6 +27,7 @@ import {
   Notice,
   LoadState,
   styles,
+  LinkRow,
 } from "../ui/kit";
 type Row = { member: Member; role: FamilyRole; order: Booking | LabOrder };
 export default function Orders() {
@@ -38,6 +44,8 @@ function OrderList({ kind }: { kind: "bookings" | "labs" }) {
   const { c, language } = useCopy(),
     { user } = useSession(),
     w = words[language];
+  const nav = useNavigation<any>(),
+    family = useFamily();
   const [cancel, setCancel] = useState<Row | null>(null);
   const r = useResource(`orders:${user!.id}:${kind}`, async (signal) => {
     const families = await healthApi.families(signal);
@@ -99,15 +107,50 @@ function OrderList({ kind }: { kind: "bookings" | "labs" }) {
               )}
         </Body>
       )}
+      {r.data && !r.data.rows.length && (
+        <LinkRow
+          title={
+            kind === "labs"
+              ? c(
+                  "Browse laboratories",
+                  "Laboratoriyalara baxın",
+                  "Посмотреть лаборатории",
+                )
+              : c("Find a doctor", "Həkim tapın", "Найти врача")
+          }
+          onPress={() =>
+            nav.navigate("Directory", {
+              kind: kind === "labs" ? "labs" : "doctors",
+            })
+          }
+        />
+      )}
       {[false, true].map((past) => {
         const rows =
-          r.data?.rows.filter((row) =>
-            kind === "labs"
-              ? terminal((row.order as LabOrder).status) === past
-              : ["CANCELLED", "COMPLETED", "NO_SHOW"].includes(
-                  row.order.status,
-                ) === past,
-          ) || [];
+          r.data?.rows
+            .filter((row) => {
+              const isPast =
+                kind === "labs"
+                  ? terminal((row.order as LabOrder).status)
+                  : ["CANCELLED", "COMPLETED", "NO_SHOW"].includes(
+                      row.order.status,
+                    ) ||
+                    new Date(
+                      withOffset((row.order as Booking).startsAt),
+                    ).getTime() < Date.now();
+              return isPast === past;
+            })
+            .sort((a, b) => {
+              const at =
+                kind === "labs"
+                  ? (a.order as LabOrder).preferredAt || ""
+                  : (a.order as Booking).startsAt;
+              const bt =
+                kind === "labs"
+                  ? (b.order as LabOrder).preferredAt || ""
+                  : (b.order as Booking).startsAt;
+              return past ? bt.localeCompare(at) : at.localeCompare(bt);
+            }) || [];
         return (
           rows.length > 0 && (
             <View key={String(past)} style={{ gap: 16 }}>
@@ -184,18 +227,60 @@ function OrderList({ kind }: { kind: "bookings" | "labs" }) {
                             .filter(Boolean)
                             .join(", ")}
                         </Body>
-                        {booking.sharedRecord && (
-                          <Notice>
-                            {c(
-                              "Record shared for this appointment",
-                              "Bu randevu üçün qeydlər paylaşılıb",
-                              "Записи предоставлены для этого приема",
+                        {booking.reason && <Body>{booking.reason}</Body>}
+                        {booking.doctorSlug && (
+                          <LinkRow
+                            title={c(
+                              "Doctor profile",
+                              "Həkimin profili",
+                              "Профиль врача",
                             )}
-                          </Notice>
+                            onPress={() =>
+                              nav.navigate("Doctor", {
+                                slug: booking.doctorSlug,
+                              })
+                            }
+                          />
                         )}
+                        {booking.clinicPhone && (
+                          <Button
+                            secondary
+                            label={booking.clinicPhone}
+                            onPress={() =>
+                              Linking.openURL(
+                                `tel:${booking.clinicPhone!.replace(/[^+\d]/g, "")}`,
+                              )
+                            }
+                          />
+                        )}
+                        {booking.cancellationReason && (
+                          <Body>{booking.cancellationReason}</Body>
+                        )}
+                        <LinkRow
+                          title={c(
+                            "Who has seen this record",
+                            "Qeydlərə kim baxıb",
+                            "Кто просматривал записи",
+                          )}
+                          onPress={() => {
+                            family.select(row.member.id);
+                            nav.navigate("RecordAccess");
+                          }}
+                        />
+                        {booking.sharedRecord &&
+                          booking.status !== "CANCELLED" && (
+                            <Notice>
+                              {c(
+                                "Record shared for this appointment",
+                                "Bu randevu üçün qeydlər paylaşılıb",
+                                "Записи предоставлены для этого приема",
+                              )}
+                            </Notice>
+                          )}
                       </>
                     )}
-                    {canWrite(row.role) &&
+                    {!past &&
+                      canWrite(row.role) &&
                       (lab
                         ? cancellable(lab.status)
                         : ["REQUESTED", "CONFIRMED"].includes(

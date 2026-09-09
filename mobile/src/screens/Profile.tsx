@@ -77,7 +77,7 @@ function ProfileScope() {
           "Ailə və sağlamlıq məlumatları",
           "Семья и медицинские данные",
         )}
-        onPress={() => nav.navigate("Main", { screen: "Records" })}
+        onPress={() => nav.navigate("Records")}
       />
       {edit && r.data && (
         <Form

@@ -106,3 +106,51 @@ export async function openPrivateFile(path: string, name: string) {
     else cleanup();
   }
 }
+
+/** Temporary local copy for the in-app viewer. It never survives its screen. */
+export async function downloadForPreview(path: string, name: string) {
+  if (!/^\/members\/\d+\/documents\/\d+\/content$/.test(path))
+    throw Error("Invalid document path");
+  const token = await tokenStore.get();
+  if (!token) throw Error("Sign in to view the document");
+  if (Platform.OS === "web") {
+    const response = await api.get<Blob>(path, {
+      responseType: "blob",
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (token !== (await tokenStore.get())) throw Error("Account changed");
+    const uri = URL.createObjectURL(response.data);
+    return {
+      uri,
+      contentType: response.data.type,
+      dispose: () => URL.revokeObjectURL(uri),
+    };
+  }
+  const uri = `${FileSystem.cacheDirectory}azdoc-preview-${Date.now()}-${Math.random().toString(36).slice(2)}-${name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+  const dispose = () => {
+    void FileSystem.deleteAsync(uri, { idempotent: true }).catch(() => {});
+  };
+  try {
+    const r = await FileSystem.downloadAsync(`${API_URL}${path}`, uri, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    if (r.status < 200 || r.status >= 300) {
+      let message = "Could not open the document";
+      try {
+        message =
+          JSON.parse(await FileSystem.readAsStringAsync(uri))?.message ||
+          message;
+      } catch {}
+      throw Error(message);
+    }
+    if (token !== (await tokenStore.get())) throw Error("Account changed");
+    const contentType =
+      Object.entries(r.headers).find(
+        ([k]) => k.toLowerCase() === "content-type",
+      )?.[1] || "application/octet-stream";
+    return { uri, contentType, dispose };
+  } catch (e) {
+    dispose();
+    throw e;
+  }
+}

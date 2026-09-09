@@ -370,6 +370,36 @@ exports.installFixtures = async (page, options = {}) => {
       } else if (path.endsWith("/lab-orders/60/cancel")) {
         orders = [{ ...orders[0], status: "CANCELLED" }];
         data = orders[0];
+      } else if (path.endsWith("/bookings/record-access")) {
+        data = path.includes("/12/")
+          ? []
+          : [
+              {
+                id: 1,
+                doctorName: "Earlier Doctor",
+                doctorSlug: null,
+                bookingId: 8,
+                accessedAt: "2026-09-01T09:00:00",
+              },
+              {
+                id: 2,
+                doctorName: "Recent Doctor",
+                doctorSlug: "fixture-doctor",
+                bookingId: 9,
+                accessedAt: "2026-09-08T09:00:00",
+              },
+            ];
+      } else if (path.endsWith("/health-sync")) {
+        data = [
+          {
+            id: 1,
+            provider: "APPLE_HEALTH",
+            deviceLabel: "Test phone",
+            enabled: true,
+            syncedThrough: null,
+            lastSyncAt: null,
+          },
+        ];
       } else if (path.endsWith("/bookings")) {
         if (method === "POST") {
           data = {

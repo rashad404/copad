@@ -1,0 +1,5 @@
+{
+  "ios": {
+    "NSHealthShareUsageDescription": "azdoc reads the health measurements you allow and adds them to your own health record. It does not change data in Apple Health."
+  }
+}

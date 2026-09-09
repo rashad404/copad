@@ -75,3 +75,17 @@ export const dayOf = (value: string) => value.slice(0, 10);
 
 /** The time of day a slot starts, as the clinic would name it. */
 export const timeOf = (value: string) => value.slice(11, 16);
+
+export interface RecordAccessEvent {
+  id: number;
+  doctorName: string | null;
+  doctorSlug: string | null;
+  bookingId: number | null;
+  accessedAt: string;
+}
+export const recordAccess = (memberId: number, signal?: AbortSignal) =>
+  api
+    .get<RecordAccessEvent[]>(`/members/${memberId}/bookings/record-access`, {
+      signal,
+    })
+    .then((r) => r.data);

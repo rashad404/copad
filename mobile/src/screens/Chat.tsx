@@ -1,7 +1,17 @@
+import MarkdownIt from "markdown-it";
+import { RichText } from "./Blog";
+import ChatAttachments, {
+  type ChatFile,
+  type StoredChatFile,
+  chatFile,
+} from "./ChatAttachments";
+import { API_URL } from "../core/api";
 import React, { useEffect, useRef, useState } from "react";
 import {
   ActivityIndicator,
   Linking,
+  Image,
+  Pressable,
   Platform,
   ScrollView,
   Text,
@@ -12,7 +22,6 @@ import * as SecureStore from "expo-secure-store";
 import { useCopy } from "../core/copy";
 import { useFamily, useSession } from "../core/Session";
 import api from "../core/api";
-import { fileBody, pickFile } from "../core/files";
 import { postChatMessage } from "../api/chatMessage";
 import {
   urgencyFromHeaders,
@@ -42,11 +51,20 @@ const secret = {
     else await SecureStore.setItemAsync(key, value);
   },
 };
-type Message = { role: "user" | "assistant"; content: string };
+const markdown = new MarkdownIt({ html: false, linkify: true, breaks: true });
+type Message = {
+  role: "user" | "assistant";
+  content: string;
+  attachments?: ChatFile[];
+};
 type ChatRow = {
   id: string;
   title?: string;
-  messages?: { sender: string; message: string }[];
+  messages?: {
+    sender: string;
+    message: string;
+    attachments?: StoredChatFile[];
+  }[];
 };
 export default function Chat() {
   const { user, loading: authLoading, consentPending } = useSession(),
@@ -93,6 +111,7 @@ function ChatScope({
   memberId?: number;
 }) {
   const { c, language } = useCopy();
+  const family = useFamily();
   const scope = `chat-${account || "guest"}-${memberId || "none"}`;
   const [sid, setSid] = useState(""),
     [chat, setChat] = useState(""),
@@ -103,7 +122,9 @@ function ChatScope({
     [attempt, setAttempt] = useState(0),
     [busy, setBusy] = useState(false),
     [inputHeight, setInputHeight] = useState(48),
-    [files, setFiles] = useState<{ id: string; name: string }[]>([]),
+    [files, setFiles] = useState<ChatFile[]>([]),
+    [uploadOpen, setUploadOpen] = useState(false),
+    [previewImage, setPreviewImage] = useState<ChatFile | null>(null),
     [urgency, setUrgency] = useState<ChatUrgency | null>(null),
     [history, setHistory] = useState<ChatRow[] | null>(null);
   const active = useRef(true),
@@ -150,6 +171,7 @@ function ChatScope({
           (recent.messages || []).map((m) => ({
             role: m.sender === "USER" ? "user" : "assistant",
             content: m.message,
+            attachments: m.attachments?.map(chatFile),
           })),
         );
         const saved = await secret.get(`${scope}-urgent-${recent.id}`);
@@ -192,6 +214,15 @@ function ChatScope({
     <>
       <View style={[styles.footer, { borderTopWidth: 0 }]}>
         <MemberPicker />
+        {memberId && (
+          <Body small>
+            {c(
+              `About ${family.member?.fullName}`,
+              `${family.member?.fullName} haqqında`,
+              `О ${family.member?.fullName}`,
+            )}
+          </Body>
+        )}
         <View style={styles.spread}>
           <Heading>
             {c("Ask azdoc", "azdoc-a sual ver", "Спросить azdoc")}
@@ -271,16 +302,28 @@ function ChatScope({
                 "О чем хотите спросить?",
               )}
             </Heading>
+            <Body>
+              {c(
+                "Tell me how you feel, ask a question, or share a medical document.",
+                "Əlamətlər, analiz nəticələri və dərmanlar haqqında soruşa bilərsiniz.",
+                "Расскажите о самочувствии, задайте вопрос или прикрепите медицинский документ.",
+              )}
+            </Body>
             {[
               c(
-                "What does ferritin measure?",
-                "Qan analizində ferritin nəyi göstərir?",
-                "Что показывает ферритин в анализе крови?",
+                "Help me understand a lab result",
+                "Analiz nəticəmi izah edə bilərsən?",
+                "Помогите разобраться в результатах анализов",
               ),
               c(
-                "What are the side effects of ibuprofen?",
-                "İbuprofenin hansı yan təsirləri var?",
-                "Какие побочные эффекты у ибупрофена?",
+                "I have a health question",
+                "Sağlamlıqla bağlı sualım var",
+                "У меня вопрос о здоровье",
+              ),
+              c(
+                "Help me prepare for a doctor's visit",
+                "Həkim qəbuluna nə aparmalıyam?",
+                "Что взять с собой на прием к врачу?",
               ),
             ].map((q) => (
               <LinkRow
@@ -308,7 +351,18 @@ function ChatScope({
               <Body small>
                 {m.role === "user" ? c("You", "Siz", "Вы") : "azdoc"}
               </Body>
-              <Body>{m.content}</Body>
+              {m.role === "assistant" ? (
+                <RichText html={markdown.render(m.content)} />
+              ) : (
+                <Body>{m.content}</Body>
+              )}
+              {m.attachments?.map((file) => (
+                <Attachment
+                  key={file.id}
+                  file={file}
+                  onImage={setPreviewImage}
+                />
+              ))}
             </View>
           ))
         )}
@@ -349,19 +403,16 @@ function ChatScope({
             secondary
             disabled={loading || busy || !sid}
             label={c("Attach file", "Fayl əlavə et", "Прикрепить файл")}
-            onPress={async () => {
-              const file = await pickFile();
-              if (!file) return;
-              const r = await api.post(
-                `/guest/upload/${encodeURIComponent(sid)}`,
-                fileBody(file),
-              );
-              if (active.current)
-                setFiles((f) => [...f, { id: r.data.fileId, name: file.name }]);
-            }}
+            onPress={() => setUploadOpen(true)}
           />
           <Button
-            disabled={loading || busy || failed || !chat || !text.trim()}
+            disabled={
+              loading ||
+              busy ||
+              failed ||
+              !chat ||
+              (!text.trim() && !files.length)
+            }
             label={c("Send", "Göndər", "Отправить")}
             onPress={async () => {
               if (lock.current) return;
@@ -399,7 +450,11 @@ function ChatScope({
                 if (active.current) {
                   setMessages((m) => [
                     ...m,
-                    { role: "user", content: question },
+                    {
+                      role: "user",
+                      content: question,
+                      attachments: [...files],
+                    },
                     { role: "assistant", content: answer },
                   ]);
                   setText("");
@@ -420,6 +475,31 @@ function ChatScope({
           )}
         </Body>
       </View>
+      {uploadOpen && (
+        <ChatAttachments
+          sessionId={sid}
+          chatId={chat}
+          onFiles={(newFiles) =>
+            setFiles((previous) => [
+              ...previous,
+              ...newFiles.filter((f) => !previous.some((p) => p.id === f.id)),
+            ])
+          }
+          onClose={() => setUploadOpen(false)}
+        />
+      )}
+      {previewImage && (
+        <Sheet title={previewImage.name} onClose={() => setPreviewImage(null)}>
+          <ScrollView maximumZoomScale={5}>
+            <Image
+              source={{ uri: attachmentUri(previewImage.url) }}
+              resizeMode="contain"
+              style={{ width: "100%", height: 500 }}
+              accessibilityLabel={previewImage.name}
+            />
+          </ScrollView>
+        </Sheet>
+      )}
       {history && (
         <Sheet
           title={c("Conversations", "Söhbətlər", "Беседы")}
@@ -436,6 +516,7 @@ function ChatScope({
                   (row.messages || []).map((m) => ({
                     role: m.sender === "USER" ? "user" : "assistant",
                     content: m.message,
+                    attachments: m.attachments?.map(chatFile),
                   })),
                 );
                 setFiles([]);
@@ -459,5 +540,44 @@ function ChatScope({
         </Sheet>
       )}
     </>
+  );
+}
+
+function attachmentUri(value?: string) {
+  if (!value) return undefined;
+  // Session-bound attachments stay on the configured API origin.
+  if (value.startsWith("/api/attachments/")) return API_URL + value.slice(4);
+  return /^https?:\/\//.test(value) ? value : undefined;
+}
+function Attachment({
+  file,
+  onImage,
+}: {
+  file: ChatFile;
+  onImage: (file: ChatFile) => void;
+}) {
+  const image = file.fileType?.startsWith("image/") && attachmentUri(file.url);
+  return (
+    <View style={styles.line}>
+      {image && (
+        <Pressable
+          accessibilityRole="button"
+          accessibilityLabel={file.name}
+          onPress={() => onImage(file)}
+        >
+          <Image
+            source={{ uri: image }}
+            style={{ width: 230, height: 160, borderRadius: 12 }}
+            resizeMode="cover"
+          />
+        </Pressable>
+      )}
+      <Body small>
+        {file.name}
+        {file.fileSize
+          ? ` - ${file.fileSize < 1024 ? file.fileSize + " B" : file.fileSize < 1048576 ? Math.round(file.fileSize / 1024) + " KB" : (file.fileSize / 1048576).toFixed(1) + " MB"}`
+          : ""}
+      </Body>
+    </View>
   );
 }
