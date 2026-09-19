@@ -15,6 +15,7 @@ from __future__ import annotations
 
 import json
 import sys
+import time
 import urllib.request
 from concurrent.futures import ThreadPoolExecutor
 from subprocess import run
@@ -33,14 +34,25 @@ def prod_sql(statement: str) -> list[str]:
 
 
 def status(url: str) -> tuple[str, int, str]:
+    """Fetch one URL, retrying a network failure before believing it.
+
+    Eight at a time was enough to make this host time out its own TLS
+    handshakes, and the run then reported four perfectly good portraits as
+    broken. A verifier that cries wolf is worse than none, so a connection
+    that fails is tried again, twice, before it counts.
+    """
     request = urllib.request.Request(url, headers={"User-Agent": "azdoc-verify"})
-    try:
-        with urllib.request.urlopen(request, timeout=30) as response:
-            return url, response.status, response.headers.get("Content-Type", "")
-    except urllib.error.HTTPError as error:
-        return url, error.code, ""
-    except Exception as error:
-        return url, 0, str(error)[:60]
+    for attempt in range(3):
+        try:
+            with urllib.request.urlopen(request, timeout=30) as response:
+                return url, response.status, response.headers.get("Content-Type", "")
+        except urllib.error.HTTPError as error:
+            return url, error.code, ""          # a real answer, not a fault
+        except Exception as error:
+            if attempt == 2:
+                return url, 0, str(error)[:60]
+            time.sleep(2 * (attempt + 1))
+    return url, 0, "unreachable"
 
 
 def main() -> None:
@@ -84,7 +96,7 @@ def main() -> None:
     urls += [f"{SITE}{r[1]}" for r in listings if r[1]]
 
     print(f"\nfetching {len(urls)} URLs")
-    with ThreadPoolExecutor(max_workers=8) as pool:
+    with ThreadPoolExecutor(max_workers=4) as pool:
         results = list(pool.map(status, urls))
 
     broken = [(u, c, n) for u, c, n in results if c != 200]

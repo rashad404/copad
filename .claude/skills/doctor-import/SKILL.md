@@ -42,8 +42,17 @@ the schema comments. Do not reopen them per source.
 - **Nothing is invented.** No specialty guessed from a photograph, no
   experience inferred from a face, no biography written by us. A field the
   source does not publish is NULL.
+- **Not everything published belongs here.** Political party membership is the
+  clear case: sites list it, and repeating it beside ESMO on a health directory
+  is a statement we have no business making. Bibliographies are the other:
+  fifteen journal citations are a researcher's CV, not something a patient
+  choosing a doctor can use. Leave them out, keep every professional and
+  scientific detail, and write down in the migration what was dropped and why.
+  Omitting is not inventing; quietly omitting is.
 - **Plain ASCII punctuation** in the SQL, the comments and the commit message.
-  Azerbaijani letters are content and stay exactly as published.
+  Azerbaijani letters are content and stay exactly as published - but the
+  typography around them is normalised like everything else, so curly quotes
+  in a source biography become straight ones.
 - **Never edit production.** Local, commit, push, `./deploy.sh`.
 
 ## Step 1 - scope the source before reading anything in detail
@@ -70,6 +79,25 @@ Write down the number the hospital itself states, and keep it. Everything
 after this is checked against it. If the site gives no total, count the profile
 links after paginating to the end, and say in the migration comment how the
 count was established.
+
+Most of these sites state no total at all. Two things establish one anyway, and
+agreeing with each other is what makes it trustworthy:
+
+- **Probe the id sequence.** Profile URLs are usually `/doctor/<id>`. If the
+  ids run 2 to 15 and the list shows twelve, fetch the three missing ids before
+  concluding anything. Beware that many of these sites answer 200 for a page
+  that does not exist, so compare the body against a profile you know is real
+  rather than trusting the status code.
+- **Sum the site's own filters.** A page with a department or specialty
+  dropdown will answer each one separately. If every department added together
+  returns the same set as the unfiltered list, the list is complete. If it
+  returns more, the unfiltered view was lying.
+
+Watch for a second kind of list. A hospital often has both profile pages and
+plain department staff rosters, and the rosters carry people the profiles do
+not - along with head nurses, laboratory assistants and coordinators, who do
+not belong in a doctor directory. Do not silently merge the two. Import the
+one that was asked for, and say plainly what the other holds.
 
 Azerbaijani pages only, when a site has several languages. The directory's own
 copy is Azerbaijani, and the AZ profile is the one the hospital keeps current.
@@ -124,8 +152,33 @@ a bias towards the top so heads are not cut, writes webp, and refuses to
 overwrite a portrait that already exists. Output goes to
 `next-frontend/public/doctor-photos/<slug>.webp`, about 16 KB each.
 
-Look at a few of the results before continuing. A portrait cropped through the
-chin is worse than no portrait.
+**Look at every result before continuing, as an image, not as a file size.** A
+portrait cropped through the chin is worse than no portrait, and nothing in the
+pipeline can tell the difference. Build a contact sheet and read it:
+
+```python
+from PIL import Image; import pathlib
+d = pathlib.Path('next-frontend/public/doctor-photos')
+slugs = [...]                      # the ones just written
+sheet = Image.new('RGB', (187*5, 250*((len(slugs)+4)//5)), (255,255,255))
+for n, s in enumerate(slugs):
+    with Image.open(d/f'{s}.webp') as im:
+        sheet.paste(im.resize((187,250), Image.LANCZOS), ((n%5)*187, (n//5)*250))
+sheet.save('/tmp/sheet.png')
+```
+
+Expect trouble. These sites publish landscape photographs of a doctor at a
+desk, and scaled to fill a portrait frame most of the width is thrown away. If
+the doctor is not in the middle, the centre crop keeps the desk and loses them.
+Find the person's position in the source as a fraction across, and re-run just
+those:
+
+```bash
+# {"dr-nigar-mehdiyeva": {"url": "...", "focus_x": 0.74}}
+python3 .claude/skills/doctor-import/scripts/photos.py /tmp/recrop.json --overwrite
+```
+
+Then look again. Of nine portraits in the first AMU import, two needed this.
 
 ## Step 5 - write the migration
 
@@ -235,6 +288,14 @@ which is where Flyway applies the migration - rebuilds and restarts the
 frontend, purges the nginx cache, and verifies that pages load with their
 chunks. A failed verification exits non-zero; do not call a deploy done
 without reading its last line.
+
+**The listings go live minutes before their portraits, and that is not a
+fault.** Flyway runs during the backend restart, so every new doctor is in the
+database and on the site while the frontend is still being rebuilt - and the
+portraits are frontend files. A profile opened in that window renders with a
+broken image, and the nginx purge is the last step of all. Do not check the
+site, or let anybody else check it, until the script prints its final line.
+If a portrait 404s after that, it is real; before that, it means nothing.
 
 ## Step 9 - verify the listings are really there
 
