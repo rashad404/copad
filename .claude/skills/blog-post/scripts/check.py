@@ -343,7 +343,8 @@ def check_facts(post: dict) -> None:
     fetched and every price in the text must be found in one of them.
     """
     text = strip_tags(post["content"])
-    prices = sorted(set(re.findall(r"\b(\d+,\d{1,2})\s*(?:manat|AZN)", text)))
+    # Whole manats as well as decimals: laboratory prices are written "22 manat".
+    prices = sorted(set(re.findall(r"\b(\d+(?:,\d{1,2})?)\s*(?:manat|AZN)", text)))
     if not prices:
         warn("no prices in the post; our own data is the reason to read it")
         return
