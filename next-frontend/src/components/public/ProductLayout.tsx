@@ -3,6 +3,7 @@
 import { useHydrated } from "@/utils/useHydrated";
 import { Manrope } from "next/font/google";
 import { useTranslation } from "react-i18next";
+import { useInitialLanguage } from "@/context/InitialLanguage";
 import SiteHeader from "@/components/navigation/SiteHeader";
 import SiteFooter from "./SiteFooter";
 import "./public.css";
@@ -15,8 +16,15 @@ const manrope = Manrope({
 export function usePublicCopy() {
   const { i18n } = useTranslation();
   const hydrated = useHydrated();
+  // Before hydration, the language the server read from the cookie - not
+  // English. This hook renders the header, footer and page chrome, so "en"
+  // here meant every first visitor, and every crawler, got English text that
+  // switched to Azerbaijani a moment later.
+  const initialLanguage = useInitialLanguage();
   const language = (
-    hydrated ? i18n.resolvedLanguage || i18n.language || "en" : "en"
+    hydrated
+      ? i18n.resolvedLanguage || i18n.language || initialLanguage
+      : initialLanguage
   ).split("-")[0];
   return (en: string, azerbaijani: string, ru?: string) =>
     language === "az"

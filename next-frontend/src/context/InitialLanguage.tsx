@@ -1,7 +1,11 @@
 "use client";
 
 import { createContext, useContext, type ReactNode } from "react";
-import { supportedLanguage, DEFAULT_SITE_LANGUAGE } from "@/utils/languages";
+import {
+  supportedLanguage,
+  DEFAULT_SITE_LANGUAGE,
+  type SiteLanguage,
+} from "@/utils/languages";
 
 /**
  * The language the server already knew about, from the request cookie.
@@ -16,7 +20,7 @@ import { supportedLanguage, DEFAULT_SITE_LANGUAGE } from "@/utils/languages";
  * Kept in its own module, free of i18n: importing it from the providers pulled
  * the whole i18next setup into anything that needed only this one string.
  */
-const InitialLanguage = createContext<string>(DEFAULT_SITE_LANGUAGE);
+const InitialLanguage = createContext<SiteLanguage>(DEFAULT_SITE_LANGUAGE);
 
 export const useInitialLanguage = () => useContext(InitialLanguage);
 
