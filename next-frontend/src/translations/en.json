@@ -515,7 +515,7 @@
       },
       "usage": {
         "title": "Why we use it",
-        "description": "We use information to provide account access, store and display family records, read documents, present lab results and generate replies to your questions. The selected member's health records may inform a reply. Technical information helps investigate faults, limit unauthorized access and abuse, and measure service usage and costs."
+        "description": "We use information to provide account access, store and display family records, read documents, present lab results and generate replies to your questions. The selected member's health records may inform a reply. Technical information helps investigate faults, limit unauthorized access and abuse, and measure service usage and costs. Your IP address is used to work out your country only to choose which language the site opens in, using data from DB-IP (db-ip.com); the country is not stored."
       },
       "transfer": {
         "title": "Content sent to the United States",

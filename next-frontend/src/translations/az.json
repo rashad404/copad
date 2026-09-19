@@ -513,7 +513,7 @@
       },
       "usage": {
         "title": "Məlumatlar nə üçün istifadə olunur",
-        "description": "Məlumatlar hesabınıza girişi təmin etmək, ailə üzvlərinin qeydlərini saxlamaq və göstərmək, sənədləri oxumaq, analiz nəticələrini təqdim etmək və suallarınıza cavab hazırlamaq üçün istifadə olunur. Seçilmiş şəxsin sağlamlıq qeydləri cavabın hazırlanmasında nəzərə alına bilər. Texniki məlumatlar nasazlıqları araşdırmaq, icazəsiz girişi və sui-istifadəni məhdudlaşdırmaq, xidmətin istifadəsini və xərclərini ölçmək üçün istifadə olunur."
+        "description": "Məlumatlar hesabınıza girişi təmin etmək, ailə üzvlərinin qeydlərini saxlamaq və göstərmək, sənədləri oxumaq, analiz nəticələrini təqdim etmək və suallarınıza cavab hazırlamaq üçün istifadə olunur. Seçilmiş şəxsin sağlamlıq qeydləri cavabın hazırlanmasında nəzərə alına bilər. Texniki məlumatlar nasazlıqları araşdırmaq, icazəsiz girişi və sui-istifadəni məhdudlaşdırmaq, xidmətin istifadəsini və xərclərini ölçmək üçün istifadə olunur. IP ünvanınızdan yalnız saytın hansı dildə açılacağını seçmək üçün ölkə müəyyən edilir; bunun üçün DB-IP (db-ip.com) məlumatlarından istifadə olunur və ölkə saxlanmır."
       },
       "transfer": {
         "title": "Məlumatların ABŞ-a göndərilməsi",

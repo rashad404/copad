@@ -1,8 +1,7 @@
 import "server-only";
+import { siteLanguage } from "@/utils/geo/visitorLanguage";
 import { cache } from "react";
-import { cookies } from "next/headers";
 import { resolveApiBaseUrl } from "./apiBase";
-import { supportedLanguage } from "@/utils/languages";
 import {
   doctorCopy,
   defaultSpecialties,
@@ -74,7 +73,7 @@ export async function getSlots(id: number, from: string, to: string) {
 }
 export async function directoryCopy() {
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   return { language, c: doctorCopy(language) };
 }
 

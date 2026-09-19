@@ -1,6 +1,5 @@
 import { brandTitle } from "@/components/brand/slogan";
-import { cookies } from "next/headers";
-import { supportedLanguage } from "@/utils/languages";
+import { siteLanguage } from "@/utils/geo/visitorLanguage";
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
@@ -21,7 +20,7 @@ const SITE_URL = process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai";
 export async function generateMetadata(): Promise<Metadata> {
   // The language is only knowable per request, so the title is built here
   // rather than held as a constant.
-  const language = (await cookies()).get("i18nextLng")?.value;
+  const language = await siteLanguage();
   const TITLE = brandTitle(language);
   return {
     // Without this, Next resolves image paths against localhost, so every shared
@@ -99,7 +98,7 @@ export default async function RootLayout({
   // Declared honestly: the document said lang="en" whatever it actually held,
   // which misleads screen readers and translation tools alike.
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   return (
     <html lang={language} suppressHydrationWarning>
       <body className={inter.className}>

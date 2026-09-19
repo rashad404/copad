@@ -1,8 +1,8 @@
 import "server-only";
+import { siteLanguage } from "@/utils/geo/visitorLanguage";
 import { cache } from "react";
-import { cookies } from "next/headers";
 import { resolveApiBaseUrl } from "./apiBase";
-import { supportedLanguage, type SiteLanguage } from "@/utils/languages";
+import { type SiteLanguage } from "@/utils/languages";
 import { labCopy } from "@/components/labs/copy";
 import {
   filterQuery,
@@ -30,7 +30,7 @@ export async function getLabs(filters: LabFilters) {
 }
 export async function laboratoryCopy() {
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   return { language, c: labCopy(language) };
 }
 

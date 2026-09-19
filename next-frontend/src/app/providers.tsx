@@ -8,11 +8,15 @@ import { usePathname } from "next/navigation";
 import { AuthProvider } from "@/context/AuthContext";
 import { ThemeProvider } from "next-themes";
 import { SiteContextProvider } from "@/context/SiteContext";
-import { InitialLanguageProvider } from "@/context/InitialLanguage";
+import {
+  InitialLanguageProvider,
+  useInitialLanguage,
+} from "@/context/InitialLanguage";
 import { useTranslation } from "react-i18next";
 
 function LanguageSyncProvider({ children }: { children: ReactNode }) {
   const { i18n } = useTranslation();
+  const initialLanguage = useInitialLanguage();
   const [ready, setReady] = useState(false);
   const pathname = usePathname();
   // Keep the homepage and public catalogues in initial HTML for indexing.
@@ -38,13 +42,11 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
     // Only these two count as the visitor actually picking a language.
     const chosenLang =
       supportedLanguage(storedLang) || supportedLanguage(cookieLang);
-    const lang =
-      chosenLang ||
-      (!doctorDirectory &&
-        !laboratoryDirectory &&
-        typeof navigator !== "undefined" &&
-        supportedLanguage(navigator.language)) ||
-      DEFAULT_SITE_LANGUAGE;
+    // Not the phone's language: somebody in Baku with an English phone still
+    // expects Azerbaijani. The server has already decided from where the
+    // visitor is, and the page was rendered in that; agreeing with it is what
+    // keeps the first HTML and the live page the same.
+    const lang = chosenLang || initialLanguage;
     // Retired choices must not keep driving a different server-side locale.
     if (
       (storedLang && !supportedLanguage(storedLang)) ||
@@ -70,7 +72,7 @@ function LanguageSyncProvider({ children }: { children: ReactNode }) {
     } else {
       setReady(true);
     }
-  }, [i18n, doctorDirectory, laboratoryDirectory]);
+  }, [i18n, initialLanguage]);
 
   useEffect(() => {
     document.documentElement.lang =
@@ -89,9 +91,18 @@ export function Providers({
   children: ReactNode;
   initialLanguage?: string;
 }) {
+  // One instance per render tree, already in the server's language. The shared
+  // module instance starts in Azerbaijani, and on the server it is shared by
+  // every request at once, so switching it per visitor would race; a clone
+  // shares the loaded translations and keeps its own language.
+  const [instance] = useState(() =>
+    i18n.cloneInstance({
+      lng: supportedLanguage(initialLanguage) || DEFAULT_SITE_LANGUAGE,
+    }),
+  );
   return (
     <InitialLanguageProvider value={initialLanguage}>
-    <I18nextProvider i18n={i18n}>
+    <I18nextProvider i18n={instance}>
       <LanguageSyncProvider>
         <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
           <SiteContextProvider>

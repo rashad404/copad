@@ -1,8 +1,7 @@
-import { cookies } from "next/headers";
-import { supportedLanguage } from "@/utils/languages";
+import { siteLanguage } from "@/utils/geo/visitorLanguage";
 import { medicineCopy } from "./copy";
 export async function medicineServerCopy() {
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   return { language, copy: medicineCopy(language) };
 }

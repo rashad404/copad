@@ -1,7 +1,6 @@
 import { getHomeCopy } from "@/components/home/copy";
-import { supportedLanguage } from "@/utils/languages";
+import { siteLanguage } from "@/utils/geo/visitorLanguage";
 import { brandTitle, brandSlogan } from "@/components/brand/slogan";
-import { cookies } from "next/headers";
 import type { Metadata } from "next";
 import { Manrope } from "next/font/google";
 import HomePage from "@/components/home/HomePage";
@@ -14,7 +13,7 @@ const manrope = Manrope({
 
 export async function generateMetadata(): Promise<Metadata> {
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   const TITLE = brandTitle(language);
   return {
     title: { absolute: TITLE },
@@ -38,7 +37,7 @@ export async function generateMetadata(): Promise<Metadata> {
 
 export default async function IndexPage() {
   const language =
-    supportedLanguage((await cookies()).get("i18nextLng")?.value) || "az";
+    await siteLanguage();
   return (
     <div className={manrope.variable}>
       <HomePage initialLanguage={language} />
