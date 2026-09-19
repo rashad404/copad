@@ -25,6 +25,7 @@ import json
 import re
 import subprocess
 import sys
+import time
 import urllib.request
 from pathlib import Path
 
@@ -38,12 +39,20 @@ def quote(value: str) -> str:
 
 
 def sql(statements: str) -> str:
-    """Runs SQL on production and returns stdout."""
-    command = (
-        "mysql --default-character-set=utf8mb4 -uroot copad_db -N -B -e "
-        + json.dumps(statements)
+    """Runs SQL on production and returns stdout.
+
+    The statements go in on stdin, never inside the command line. Quoting them
+    into a shell argument turned every Azerbaijani letter into its escape
+    sequence - the first post published this way read "du0259rman" - because
+    the escaping survived the shell and the backslash did not survive MySQL.
+    """
+    done = subprocess.run(
+        SSH + ["mysql --default-character-set=utf8mb4 -uroot copad_db -N -B"],
+        input=statements if statements.rstrip().endswith(";") else statements + ";",
+        capture_output=True,
+        text=True,
+        encoding="utf-8",
     )
-    done = subprocess.run(SSH + [command], capture_output=True, text=True)
     if done.returncode != 0:
         raise SystemExit(f"SQL failed: {done.stderr.strip()[:400]}")
     return done.stdout.strip()
@@ -109,10 +118,17 @@ def main() -> None:
             f"SELECT {post_id}, id FROM tag WHERE slug = {quote(tag_slug)}"
         )
 
+    # The page is rendered per request but sits behind a cache, so the first
+    # fetch after an insert can still be the old miss. Give it a few tries
+    # before calling it a failure.
     url = f"{SITE}/blog/{post['slug']}"
-    with urllib.request.urlopen(url, timeout=30) as response:
-        body = response.read().decode("utf-8", "replace")
-    if post["title"][:30] not in body:
+    for attempt in range(6):
+        with urllib.request.urlopen(url, timeout=30) as response:
+            body = response.read().decode("utf-8", "replace")
+        if post["title"][:30] in body:
+            break
+        time.sleep(5)
+    else:
         raise SystemExit(f"{url} answered but does not show the title; check the page")
     print(f"published: {url}")
     print(f"{words} words, {minutes} min, {len(post.get('tags', []))} tags")
