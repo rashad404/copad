@@ -115,3 +115,45 @@ where a real one exists, does more for credibility than any amount of polish.
 Do not invent personal anecdotes, patients, or a clinic visit that never
 happened. This is a health site under a real person's name. Texture comes from
 real specifics, not invented ones.
+
+---
+
+## Failures caught on the first real post
+
+These were spotted by an Azerbaijani reader in the first article this skill
+produced. Every one of them is the kind of thing that reads as machine-written
+even when the grammar is correct.
+
+**Do not open with a scene.** The draft began "Basiniz agriyir, apteke
+girirsiniz, bir agrikesici verin deyirsiniz". Walking the reader through an
+imagined moment is a blog-template habit, and no Azerbaijani professional
+writes that way. Open with the fact: Nurofen is 2,32 manat, the same ibuprofen
+is 0,35.
+
+**No headings about the article itself.** "Qiymetler haqqinda durust qeyd" -
+a section announcing its own honesty. Nobody writes a heading like that. Name
+the subject: "Aptekdeki qiymet bundan ferqlene biler".
+
+**No sentences that narrate your own writing.** "Bu hissəni yazmasam, məqalə
+yarımçıq qalar", "Bir şeyi də açıq deyim". Just write the thing.
+
+**Do not repeat a word for rhythm.** "Eyni rəfdə, eyni təsiredici maddə ilə,
+eyni 200 milliqramlıq tablet" - three parallel clauses reads as a child's
+story, and the rule-of-three is the most recognisable machine pattern there
+is. One clause carries it.
+
+**Do not over-explain what an adult already knows.** The reader has bought
+medicine before. Say what they do not know, in one sentence.
+
+**The title must state the claim, not pose a riddle.** "alti defe ferqli
+qiymet" makes a reader stop and work out what is meant. "alti defe baha" says
+it. If a number is in the title, say what the number does.
+
+**Verbs have to be the right ones.** "Fərq haradan çıxır" is not how this is
+said; "Fərq niyə yaranır" is. Weak, generic verbs are where translation shows.
+
+**Include something that does not fit the argument.** The rewrite kept one
+case where the brand and the generic cost the same: Panadol 1,61 against
+Parasetamol Sofarma 1,60. Real research turns up cases that work against the
+headline, and including one is the strongest proof that the numbers were
+actually looked at.

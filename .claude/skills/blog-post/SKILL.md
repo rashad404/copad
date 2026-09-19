@@ -63,13 +63,18 @@ say once that pharmacies charge differently.
 
 **Shape**
 
-- 1200-1800 words.
+- 900-1500 words. Dense beats long: the sections that survive are the ones
+  carrying a number or an instruction. Padding to hit a word count is exactly
+  what the scaled-content rules are aimed at.
 - Starts at `<h2>`. The page renders the title itself, so the content has no
   `<h1>`.
 - HTML: `<h2>`, `<h3>`, `<p>`, `<ul>`, `<li>`, `<strong>`, `<a>`. Nothing else.
 - Headings in sentence case, and not all the same grammatical shape.
 - Answer the question the title asks in the first two sentences. Do not open
-  with background.
+  with background, and never with an imagined scene ("you wake up with a
+  headache, you walk into a pharmacy"). State the fact.
+- The title says the claim outright. A number in a title has to be attached to
+  a word that says what it means: "alti defe baha", not "alti defe ferqli".
 
 **Language** - `references/azerbaijani.md`. The short version: no `olaraq`,
 no `hansı ki`, no Turkish medical vocabulary, no `sizin` where the suffix
