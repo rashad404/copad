@@ -11,9 +11,19 @@ The bar is not "an article about the topic". It is: **an Azerbaijani reader
 finds a real number they could not get anywhere else, and never wonders who or
 what wrote it.**
 
-Read `references/azerbaijani.md` before writing a word, and
-`references/human-texture.md` before deciding the shape. They are the substance
-of this skill; everything here is the procedure around them.
+Three references carry the craft. Read them before writing, not after:
+
+- `references/examples.md` - before and after pairs from real drafts. Start
+  here; it teaches faster than any list of rules.
+- `references/azerbaijani.md` - Turkish leaking in, Russian sentence shapes,
+  English translated in order, and the mechanics.
+- `references/human-texture.md` - what makes text read as machine-written, and
+  what makes it read as somebody who knows the subject.
+
+`scripts/check.py` enforces the part of this a machine can decide. It is a
+safety net, not a teacher: passing it means no known failure is present, not
+that the post is good. The judgment that matters - is this worth reading, is
+this true, would an Azerbaijani say it this way - is yours.
 
 ## What azdoc has that no other Azerbaijani health site has
 
@@ -84,6 +94,21 @@ already says it, `İ` and `ı` correct everywhere.
 length hard, one very short paragraph, no rule of three everywhere, no
 summarising conclusion, at least one honest uncertainty.
 
+**How to actually write a section.** Lead with the fact or the instruction.
+Explain the mechanism in one longer sentence, because that is where a reader
+learns something. Land it in a short one. Move on: do not close the section
+with a sentence summarising what it just said.
+
+**Run the checker while drafting, not at the end.**
+
+```bash
+python3 .claude/skills/blog-post/scripts/check.py /tmp/post.json
+```
+
+The rhythm reading is the one to watch. Sentence-length spread under 5 fails;
+write until it is above 6.5. It is the closest thing to a measurement of the
+thing Rashad means by "this reads like AI".
+
 **Internal links**, 2-4 of them, where they genuinely help:
 `/dermanlar/<slug>`, `/laboratoriyalar/muqayise`, `/hekimler`, `/chat`.
 
@@ -96,6 +121,31 @@ summarising conclusion, at least one honest uncertainty.
   and it must read as a sentence rather than a keyword list. Hard limit 500
   characters in the database.
 - Slug: short, Azerbaijani words, transliterated ASCII, no stop words.
+
+## Step 3.5 - read it as somebody who did not write it
+
+Before the image, before publishing. This is the pass the checker cannot do.
+
+1. **Read the first three sentences aloud.** A person, or a form? If the
+   opening sets a scene instead of stating a fact, rewrite it.
+2. **Read only the headings.** Do they tell somebody scanning what is here? Is
+   any of them about the article rather than the subject?
+3. **Find the sentence that would make a doctor wince.** Anything overclaimed,
+   anything that reads as diagnosis, anything a reader could take as a dose.
+4. **Find one paragraph that could be deleted with nothing lost.** Delete it.
+5. **Ask whether a competitor could have written this.** If yes, the post is
+   missing our data.
+
+If a check is genuinely wrong for this post - a Turkish word quoted on
+purpose, a leaflet dose for an over-the-counter medicine - waive it in the
+draft with the reason:
+
+```json
+"waive": { "turkish:doktor": "the article is about what the Turkish box says" }
+```
+
+A waiver is a sentence of justification, not a switch. Every rule has an id,
+printed in the failure.
 
 ## Step 4 - medical safety, non-negotiable
 
@@ -138,9 +188,10 @@ with a different scene.
 python3 .claude/skills/blog-post/scripts/publish.py /tmp/post.json
 ```
 
-It refuses a duplicate slug, a summary over 500 characters, an `<h1>`, a
-missing image file, and any long dash, ellipsis character or curly quote. Then
-it writes the post live and fetches the URL to prove it renders.
+It runs `check.py` first and refuses to publish a draft that fails. It also
+refuses a duplicate slug, a summary over 500 characters, a missing image file,
+and any long dash, ellipsis character or curly quote. Then it writes the post
+live and fetches the URL to prove it renders.
 
 Commit the image afterwards, and deploy so it is served:
 

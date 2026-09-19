@@ -29,10 +29,24 @@ SSH = ["ssh", "-p", "21098", "root@203.161.35.63"]
 
 fails: list[str] = []
 warns: list[str] = []
+waived: list[str] = []
+
+# Rules a draft has chosen to override, as {"rule": "why"}. Every rule below
+# has an id, and a draft can waive one by giving a reason.
+#
+# This exists because a list of forbidden words is wrong the day a word is
+# right: a post about Turkish medicine names has to write them, and a leaflet
+# quote for an over-the-counter drug is allowed to carry a dose. A rule that
+# cannot be argued with gets worked around silently, which is worse than a
+# rule that asks for a sentence of justification.
+overrides: dict = {}
 
 
-def fail(message: str) -> None:
-    fails.append(message)
+def fail(rule: str, message: str) -> None:
+    if rule in overrides:
+        waived.append(f"{rule}: {message}  [waived: {overrides[rule]}]")
+    else:
+        fails.append(f"[{rule}] {message}")
 
 
 def warn(message: str) -> None:
@@ -87,18 +101,18 @@ def check_characters(post: dict) -> None:
     whole = " ".join(str(post.get(k, "")) for k in ("title", "summary", "content"))
     for character, name in BANNED_CHARS.items():
         if character in whole:
-            fail(f"{name} in the text; this project uses plain ASCII punctuation")
+            fail("punctuation", f"{name} in the text; this project uses plain ASCII punctuation")
     # The encoding accident that published "du0259rman" once.
     if re.search(r"u0[0-9a-f]{3}", whole):
-        fail("escaped unicode in the text (u0259 and friends): an encoding bug, not content")
+        fail("encoding", "escaped unicode in the text (u0259 and friends): an encoding bug, not content")
     if "  " in strip_tags(post.get("content", "")):
         warn("double spaces in the body")
     # Azerbaijani letters are the content. A text with none is not Azerbaijani.
     if post.get("language", "az") == "az" and not re.search(r"[əşçğıöüİ]", whole):
-        fail("no Azerbaijani letters anywhere; is this actually Azerbaijani?")
+        fail("language", "no Azerbaijani letters anywhere; is this actually Azerbaijani?")
     # Dotted and undotted i, the error nobody notices while writing.
     for bad in re.findall(r"\bIl[a-zəçğıöüş]+|\bIs[a-zəçğıöüş]+", whole):
-        fail(f"{bad!r} starts with undotted I; Azerbaijani capital of i is İ")
+        fail("dotted-i", f"{bad!r} starts with undotted I; Azerbaijani capital of i is İ")
 
 
 # --------------------------------------------------------------------------
@@ -112,15 +126,15 @@ def check_structure(post: dict) -> None:
     html = post["content"]
     for tag in set(re.findall(r"<\s*([a-zA-Z0-9]+)", html)):
         if tag.lower() not in ALLOWED_TAGS:
-            fail(f"<{tag}> is not allowed in post content")
+            fail("tags", f"<{tag}> is not allowed in post content")
     if re.search(r"<h1", html, re.I):
-        fail("content has an h1; the page renders the title itself")
+        fail("h1", "content has an h1; the page renders the title itself")
     if not headings(html):
-        fail("no h2 headings")
+        fail("headings", "no h2 headings")
 
     words = len(strip_tags(html).split())
     if words < 700:
-        fail(f"{words} words; under 700 is too thin to rank or to be worth reading")
+        fail("length", f"{words} words; under 700 is too thin to rank or to be worth reading")
     elif words < 900:
         warn(f"{words} words; the target is 900-1500")
     elif words > 1700:
@@ -128,18 +142,18 @@ def check_structure(post: dict) -> None:
 
     body = paragraphs(html)
     if not body:
-        fail("no paragraphs")
+        fail("structure", "no paragraphs")
         return
     long_paragraphs = [p for p in body if len(sentences(p)) > 5]
     if long_paragraphs:
         warn(f"{len(long_paragraphs)} paragraph(s) longer than 5 sentences")
     if not any(len(sentences(p)) == 1 for p in body):
-        fail("no single-sentence paragraph; every paragraph the same weight reads as machine-written")
+        fail("paragraph-variety", "no single-sentence paragraph; every paragraph the same weight reads as machine-written")
 
     links = re.findall(r'<a\s+href="([^"]+)"', html)
     internal = [l for l in links if l.startswith("/")]
     if len(internal) < 2:
-        fail(f"{len(internal)} internal links; 2-4 are expected")
+        fail("links", f"{len(internal)} internal links; 2-4 are expected")
     if len(internal) > 6:
         warn(f"{len(internal)} internal links; that is a lot")
     if any(not l.startswith("/") for l in links):
@@ -164,11 +178,11 @@ def check_rhythm(post: dict) -> None:
     average = statistics.mean(lengths)
 
     if spread < 5:
-        fail(f"sentence-length spread {spread:.1f}; under 5 is the flat rhythm detectors look for")
+        fail("rhythm", f"sentence-length spread {spread:.1f}; under 5 is the flat rhythm detectors look for")
     elif spread < 6.5:
         warn(f"sentence-length spread {spread:.1f}; aim above 6.5")
     if short < 0.12:
-        fail(f"only {short:.0%} of sentences are under 8 words; at least 12 percent should be")
+        fail("short-sentences", f"only {short:.0%} of sentences are under 8 words; at least 12 percent should be")
     if average > 20:
         warn(f"average sentence {average:.1f} words; long and even is the machine default")
 
@@ -186,7 +200,7 @@ def check_rhythm(post: dict) -> None:
             openings = [first_word(c) for c in clauses]
             for word in set(openings):
                 if word and openings.count(word) >= 3:
-                    fail(f"{word!r} opens three clauses in one sentence: {sentence[:70]}...")
+                    fail("rule-of-three", f"{word!r} opens three clauses in one sentence: {sentence[:70]}...")
 
     if len(headings(post["content"])) >= 3:
         shapes = [h.strip().endswith("?") for h in headings(post["content"])]
@@ -194,7 +208,7 @@ def check_rhythm(post: dict) -> None:
             warn("every heading is a question")
         first_words = [first_word(h) for h in headings(post["content"])]
         if len(set(first_words)) == 1:
-            fail("every heading starts with the same word")
+            fail("headings", "every heading starts with the same word")
 
 
 # --------------------------------------------------------------------------
@@ -243,28 +257,28 @@ def check_azerbaijani(post: dict) -> None:
 
     for wrong, right in TURKISH.items():
         if re.search(rf"\b{wrong}\w*\b", lowered):
-            fail(f"Turkish {wrong!r}; Azerbaijani is {right!r}")
+            fail(f"turkish:{wrong}", f"Turkish {wrong!r}; Azerbaijani is {right!r}")
     # ates means fire here. Fever is qizdirma.
     if re.search(r"\bateş(i|in|dən|lə)?\b", lowered) and "qızdırma" not in lowered:
-        fail("'ateş' means fire in Azerbaijani; fever is 'qızdırma'")
+        fail("turkish:ates", "'ateş' means fire in Azerbaijani; fever is 'qızdırma'")
 
     for phrase, why in CALQUES.items():
         count = lowered.count(phrase)
         if count and phrase == "ümumiyyətlə" and count == 1:
             continue
         if count:
-            fail(f"{phrase!r} x{count}: {why}")
+            fail(f"calque:{phrase.split()[0]}", f"{phrase!r} x{count}: {why}")
 
     if lowered.count("əlbəttə") > 1:
         warn("'əlbəttə' more than once")
 
     for phrase in META:
         if phrase in lowered:
-            fail(f"{phrase!r}: writing about the article instead of writing the article")
+            fail("meta-writing", f"{phrase!r}: writing about the article instead of writing the article")
 
     # sizin/bizim where the possessive suffix already carries it.
     for match in re.finditer(r"\b(sizin|bizim)\s+(\w+?(ınız|iniz|unuz|ünüz|ımız|imiz|umuz|ümüz))\b", lowered):
-        fail(f"{match.group(0)!r}: the suffix already says it, drop {match.group(1)!r}")
+        fail("redundant-pronoun", f"{match.group(0)!r}: the suffix already says it, drop {match.group(1)!r}")
 
     # Numbered chains as a frame.
     if "birincisi" in lowered and "ikincisi" in lowered:
@@ -272,16 +286,16 @@ def check_azerbaijani(post: dict) -> None:
 
     # Decimal points instead of commas, in a language that uses commas.
     for match in re.findall(r"\b\d+\.\d+\b", text):
-        fail(f"{match}: Azerbaijani uses a comma as the decimal mark")
+        fail("decimal", f"{match}: Azerbaijani uses a comma as the decimal mark")
 
     # A number joined to a suffix needs a hyphen: 2026-cı, 19-cu.
     for match in re.findall(r"\b\d+(?:ci|cı|cu|cü|də|da|dən|dan|lik|lıq)\b", lowered):
-        fail(f"{match!r}: a suffix on a number needs a hyphen")
+        fail("number-suffix", f"{match!r}: a suffix on a number needs a hyphen")
 
     opening = " ".join(sentences(strip_tags(post["content"]))[:2]).lower()
     for phrase in SCENE_OPENERS:
         if phrase in opening:
-            fail(f"opens with an imagined scene ({phrase!r}); open with the fact")
+            fail("scene-opening", f"opens with an imagined scene ({phrase!r}); open with the fact")
     if not re.search(r"\d", opening):
         warn("no number in the first two sentences; the opening should carry the fact")
 
@@ -289,7 +303,7 @@ def check_azerbaijani(post: dict) -> None:
     title = post["title"].lower()
     if re.search(r"\d+\s*(dəfə|faiz)", title) and not re.search(
             r"(baha|ucuz|çox|az|artıq|aşağı|yüksək)", title):
-        fail("a number in the title without a word saying what it means")
+        fail("title-number", "a number in the title without a word saying what it means")
 
 
 # --------------------------------------------------------------------------
@@ -302,7 +316,7 @@ DOSE = re.compile(r"\d+\s*(mq|mg|ml|qram|gram)\b[^.]{0,40}\b(gündə|saatda|dəf
 def check_safety(post: dict) -> None:
     text = strip_tags(post["content"])
     for match in DOSE.finditer(text):
-        fail(f"reads as a dosing instruction: {match.group(0)!r}. "
+        fail("dosing", f"reads as a dosing instruction: {match.group(0)!r}. "
              "No doses for prescription medicines; over the counter only as the leaflet states.")
     lowered = text.lower()
     if "diaqnoz qoy" in lowered and "qoymur" not in lowered:
@@ -344,7 +358,7 @@ def check_facts(post: dict) -> None:
             warn(f"{len(prices)} price(s) here cannot be traced from the published row; "
                  "the draft's `sources` are what verify them")
         else:
-            fail(f"{len(prices)} price(s) in the text and no `sources` listed to verify them against")
+            fail("sources", f"{len(prices)} price(s) in the text and no `sources` listed to verify them against")
         return
 
     corpus = ""
@@ -353,7 +367,7 @@ def check_facts(post: dict) -> None:
         try:
             corpus += fetch(url)
         except Exception as error:
-            fail(f"source {url} could not be read: {error}")
+            fail("sources", f"source {url} could not be read: {error}")
 
     allowed = set(post.get("unverified", []))
     for price in prices:
@@ -365,7 +379,7 @@ def check_facts(post: dict) -> None:
         if price in allowed:
             warn(f"{price} manat is not in the sources, allowed by hand")
         else:
-            fail(f"{price} manat does not appear in any listed source; "
+            fail("price-unverified", f"{price} manat does not appear in any listed source; "
                  "quote figures from the API, never from memory")
 
 
@@ -376,7 +390,7 @@ def check_links(post: dict) -> None:
                 SITE + href, headers={"User-Agent": "azdoc-blog-check"}, method="HEAD")
             urllib.request.urlopen(request, timeout=20)
         except Exception:
-            fail(f"internal link {href} does not resolve")
+            fail("dead-link", f"internal link {href} does not resolve")
 
 
 # --------------------------------------------------------------------------
@@ -410,6 +424,8 @@ def main() -> None:
         if not post.get(name):
             raise SystemExit(f"{name} is missing")
     post["content"] = unicodedata.normalize("NFC", post["content"])
+    # {"waive": {"turkish:doktor": "the article is about the Turkish name"}}
+    overrides.update(post.get("waive", {}))
 
     check_characters(post)
     check_structure(post)
@@ -419,12 +435,15 @@ def main() -> None:
     check_links(post)
     check_facts(post)
 
+    for message in waived:
+        print(f"WAIVED {message}")
     for message in warns:
         print(f"WARN  {message}")
     for message in fails:
         print(f"FAIL  {message}")
     words = len(strip_tags(post["content"]).split())
-    print(f"\n{words} words, {len(fails)} failures, {len(warns)} warnings")
+    print(f"\n{words} words, {len(fails)} failures, {len(warns)} warnings, "
+          f"{len(waived)} waived")
     sys.exit(1 if fails else 0)
 
 
