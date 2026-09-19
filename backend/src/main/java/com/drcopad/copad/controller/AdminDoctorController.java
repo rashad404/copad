@@ -53,6 +53,11 @@ public class AdminDoctorController {
         private LocalDateTime verifiedAt;
         /** Whether a person has taken ownership of this listing. */
         private boolean claimed;
+        /** Who claimed it and what they sent. Admin only; never public. */
+        private String claimedByName;
+        private String claimedByEmail;
+        private LocalDateTime claimedAt;
+        private String claimEvidence;
 
         static DoctorDTO from(Doctor d) {
             return DoctorDTO.builder()
@@ -66,6 +71,10 @@ public class AdminDoctorController {
                     .source(d.getSource())
                     .verification(d.getVerification()).verifiedAt(d.getVerifiedAt())
                     .claimed(d.getUser() != null)
+                    .claimedByName(d.getUser() == null ? null : d.getUser().getName())
+                    .claimedByEmail(d.getUser() == null ? null : d.getUser().getEmail())
+                    .claimedAt(d.getClaimedAt())
+                    .claimEvidence(d.getClaimEvidence())
                     .build();
         }
 
@@ -141,8 +150,10 @@ public class AdminDoctorController {
     public Page<DoctorDTO> doctors(@RequestParam(defaultValue = "0") int page,
                                    @RequestParam(defaultValue = "25") int size,
                                    @RequestParam(required = false) String specialty,
-                                   @RequestParam(required = false) VerificationStatus verification) {
-        return directory.list(specialty, verification,
+                                   @RequestParam(required = false) VerificationStatus verification,
+                                   @RequestParam(required = false) Boolean claimed,
+                                   @RequestParam(required = false) String q) {
+        return directory.list(specialty, verification, claimed, q,
                         PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100)))
                 .map(DoctorDTO::from);
     }

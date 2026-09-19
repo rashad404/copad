@@ -108,9 +108,13 @@ public class DoctorSelfService {
         doctor.setVerification(VerificationStatus.PENDING);
         // Still no appointments. A claim is not a credential.
         doctor.setAcceptsBookings(false);
-        if (evidence != null && !evidence.isBlank()) {
-            doctor.setBio(doctor.getBio() == null ? evidence : doctor.getBio());
-        }
+        // Kept for the reviewer, never shown. It used to be copied into the
+        // bio when the listing had none, which published whatever the doctor
+        // sent to prove who they are - a licence number, a phone - to anyone
+        // who opened the profile, while the reviewer never saw it at all.
+        doctor.setClaimEvidence(evidence == null || evidence.isBlank()
+                ? null : evidence.trim());
+        doctor.setClaimedAt(java.time.LocalDateTime.now());
 
         Doctor saved = doctors.save(doctor);
         log.info("Doctor listing {} claimed by user {}, pending review", doctorId, userId);

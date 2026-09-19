@@ -37,12 +37,18 @@ interface Decision {
 export default function DoctorsPage() {
   const options = useResource(lookups);
   const [specialty, setSpecialty] = useState(""),
-    [verification, setVerification] = useState("");
+    [verification, setVerification] = useState(""),
+    [claimed, setClaimed] = useState("");
+  // Typing filters as you go would send a request a keystroke; the search
+  // applies when it is submitted.
+  const [searchInput, setSearchInput] = useState(""),
+    [search, setSearch] = useState("");
   const [revision, setRevision] = useState(0),
     [review, setReview] = useState<Doctor | null>(null);
   const list = useCallback(
-    (page: number) => doctorsApi.list(page, specialty, verification),
-    [specialty, verification],
+    (page: number) =>
+      doctorsApi.list(page, specialty, verification, claimed, search),
+    [specialty, verification, claimed, search],
   );
   const config = doctorConfig(
     options.data?.specialties ?? [],
@@ -138,7 +144,67 @@ export default function DoctorsPage() {
             ))}
           </select>
         </label>
+        <label>
+          Claimed
+          <select
+            className="ml-2 rounded border bg-white p-2 dark:bg-gray-800"
+            value={claimed}
+            onChange={(e) => setClaimed(e.target.value)}
+          >
+            <option value="">Claimed and not</option>
+            <option value="yes">Claimed</option>
+            <option value="no">Not claimed</option>
+          </select>
+        </label>
+        <form
+          onSubmit={(e) => {
+            e.preventDefault();
+            setSearch(searchInput);
+          }}
+        >
+          <label>
+            Search
+            <input
+              className="ml-2 rounded border bg-white p-2 dark:bg-gray-800"
+              value={searchInput}
+              placeholder="Name, slug or claimant email"
+              onChange={(e) => setSearchInput(e.target.value)}
+            />
+          </label>
+          <button className="ml-2 rounded border px-3 py-2" type="submit">
+            Search
+          </button>
+          {(search || claimed || verification || specialty) && (
+            <button
+              type="button"
+              className="ml-2 underline"
+              onClick={() => {
+                setSearchInput("");
+                setSearch("");
+                setClaimed("");
+                setVerification("");
+                setSpecialty("");
+              }}
+            >
+              Clear
+            </button>
+          )}
+        </form>
       </div>
+      {/* The one list a reviewer opens this page for. */}
+      <button
+        type="button"
+        className="mb-5 rounded border px-3 py-2 text-sm"
+        onClick={() => {
+          setVerification("PENDING");
+          setClaimed("yes");
+          setSpecialty("");
+          setSearch("");
+          setSearchInput("");
+        }}
+      >
+        Show claims waiting for review
+      </button>
       {options.loading && (
         <p role="status" className="mb-4 text-gray-600 dark:text-gray-300">
           Loading specialty and clinic options...
@@ -153,7 +219,7 @@ export default function DoctorsPage() {
         </p>
       )}
       <DirectoryResource
-        key={`${specialty}:${verification}:${revision}`}
+        key={`${specialty}:${verification}:${claimed}:${search}:${revision}`}
         config={config}
         defaults={doctorDefaults}
         list={list}

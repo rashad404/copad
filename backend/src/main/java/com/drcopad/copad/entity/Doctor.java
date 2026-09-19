@@ -67,6 +67,18 @@ public class Doctor {
     @Column(name = "verified_at")
     private LocalDateTime verifiedAt;
 
+    /**
+     * What the doctor sent to show the listing is theirs. For the reviewer
+     * only: it can hold a licence number or a phone, so nothing public reads
+     * it, and it is never copied into the bio.
+     */
+    @Column(name = "claim_evidence", columnDefinition = "TEXT")
+    private String claimEvidence;
+
+    /** When the claim was made, so a reviewer can work oldest first. */
+    @Column(name = "claimed_at")
+    private LocalDateTime claimedAt;
+
     /** Where the listing came from, so a seeded entry stays recognisable. */
     private String source;
 

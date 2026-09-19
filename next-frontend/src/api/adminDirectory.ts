@@ -31,6 +31,13 @@ export interface Doctor {
   source: string | null;
   verification: Verification;
   verifiedAt: string | null;
+  /** Whether an account has taken this listing. */
+  claimed: boolean;
+  /** Who claimed it and what they sent to show it is theirs. Admin only. */
+  claimedByName: string | null;
+  claimedByEmail: string | null;
+  claimedAt: string | null;
+  claimEvidence: string | null;
 }
 export interface DirectoryPage<T> {
   content: T[];
@@ -40,7 +47,19 @@ export interface DirectoryPage<T> {
   size: number;
 }
 export type ClinicInput = Omit<Clinic, "id" | "slug">;
-export type DoctorInput = Omit<Doctor, "id" | "verification" | "verifiedAt">;
+// The claim fields are the reviewer's view of a request somebody else made,
+// so they are never part of what an edit sends back.
+export type DoctorInput = Omit<
+  Doctor,
+  | "id"
+  | "verification"
+  | "verifiedAt"
+  | "claimed"
+  | "claimedByName"
+  | "claimedByEmail"
+  | "claimedAt"
+  | "claimEvidence"
+>;
 export const clinicsApi = {
   list: (page = 0) =>
     api
@@ -55,7 +74,7 @@ export const clinicsApi = {
   remove: (id: number) => api.delete(`/admin/clinics/${id}`),
 };
 export const doctorsApi = {
-  list: (page = 0, specialty = "", verification = "") =>
+  list: (page = 0, specialty = "", verification = "", claimed = "", q = "") =>
     api
       .get<DirectoryPage<Doctor>>("/admin/doctors", {
         params: {
@@ -63,6 +82,8 @@ export const doctorsApi = {
           size: 25,
           ...(specialty ? { specialty } : {}),
           ...(verification ? { verification } : {}),
+          ...(claimed ? { claimed: claimed === "yes" } : {}),
+          ...(q.trim() ? { q: q.trim() } : {}),
         },
       })
       .then((r) => r.data),

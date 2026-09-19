@@ -33,7 +33,18 @@ public class DoctorDirectoryService {
 
     @Transactional(readOnly = true)
     public Page<Doctor> list(String specialty, VerificationStatus verification, Pageable pageable) {
-        return doctors.search(blankToNull(specialty), verification, pageable);
+        return list(specialty, verification, null, null, pageable);
+    }
+
+    /**
+     * The admin view. Name search covers the slug and the claimant's email as
+     * well, because "who is rashad.mirza claiming?" is a question a reviewer
+     * actually has.
+     */
+    public Page<Doctor> list(String specialty, VerificationStatus verification,
+                             Boolean claimed, String q, Pageable pageable) {
+        return doctors.search(blankToNull(specialty), verification, claimed,
+                blankToNull(q == null ? null : q.trim()), pageable);
     }
 
     @Transactional

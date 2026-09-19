@@ -155,6 +155,47 @@ export function doctorConfig(
           "Change this separately using Review verification. Creating or editing a listing does not verify credentials.",
       },
       {
+        // Whether anybody has taken this listing. The directory was seeded
+        // from what hospitals publish, so most entries belong to a doctor who
+        // has never had an account here, and the few that do not are the ones
+        // a reviewer is looking for.
+        key: "claimed",
+        label: "Claimed",
+        type: "badge",
+        readOnly: true,
+        render: (value) => (value ? "Claimed" : "Not claimed"),
+      },
+      {
+        key: "claimedByEmail",
+        label: "Claimed by",
+        type: "text",
+        readOnly: true,
+        render: (value) => String(value || "Nobody"),
+      },
+      {
+        key: "claimedAt",
+        label: "Claimed at",
+        type: "date",
+        readOnly: true,
+        inTable: false,
+        render: (value) =>
+          value
+            ? new Date(String(value)).toLocaleString("en-GB")
+            : "Not claimed",
+      },
+      {
+        // What the doctor sent to show the listing is theirs. Shown only
+        // here: it can hold a licence number or a personal phone.
+        key: "claimEvidence",
+        label: "Evidence sent with the claim",
+        type: "textarea",
+        readOnly: true,
+        inTable: false,
+        render: (value) => String(value || "Nothing was sent"),
+        helpText:
+          "Written by the person claiming the listing. Check it against the hospital before verifying, and never paste it into the public profile.",
+      },
+      {
         key: "verifiedAt",
         label: "Verified at",
         type: "date",

@@ -26,12 +26,19 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
      * Includes every verification state, because curating the unverified ones is
      * the point of the screen.
      */
-    @Query("SELECT d FROM Doctor d WHERE d.deletedAt IS NULL "
+    @Query("SELECT d FROM Doctor d LEFT JOIN d.user u WHERE d.deletedAt IS NULL "
             + "AND (:specialty IS NULL OR d.specialtyCode = :specialty) "
             + "AND (:verification IS NULL OR d.verification = :verification) "
+            + "AND (:claimed IS NULL OR (:claimed = true AND d.user IS NOT NULL) "
+            + "     OR (:claimed = false AND d.user IS NULL)) "
+            + "AND (:q IS NULL OR LOWER(d.fullName) LIKE LOWER(CONCAT('%', :q, '%')) "
+            + "     OR LOWER(d.slug) LIKE LOWER(CONCAT('%', :q, '%')) "
+            + "     OR LOWER(u.email) LIKE LOWER(CONCAT('%', :q, '%'))) "
             + "ORDER BY d.fullName ASC")
     Page<Doctor> search(@Param("specialty") String specialty,
                         @Param("verification") VerificationStatus verification,
+                        @Param("claimed") Boolean claimed,
+                        @Param("q") String q,
                         Pageable pageable);
 
     /**
