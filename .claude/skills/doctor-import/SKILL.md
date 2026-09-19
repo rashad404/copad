@@ -182,6 +182,10 @@ Static checks plus read-only queries against production. It refuses:
 - a slug that collides with one already in production, or with another row in
   the same file
 - a `specialty_code` that neither exists nor is added by this file
+- a `@clinic_id` that reads a clinic which does not exist and is not created
+  here. The attach step carries `AND @clinic_id IS NOT NULL`, so this does not
+  fail the migration - it silently attaches nobody, and every profile ships
+  with no clinic, address or phone number
 
 And warns about qualifications that carry a year while `years_experience` is
 NULL, which is how two of the Liv rows ended up blank when the data was there.
@@ -241,7 +245,10 @@ python3 .claude/skills/doctor-import/scripts/verify_live.py <domain> <expected c
 ```
 
 It counts what production holds for that source, opens every profile URL,
-fetches every portrait, and reports anything that does not answer 200. Then
+fetches every portrait, and reports anything that does not answer 200. A
+listing that is no longer UNCLAIMED because its own doctor claimed it is
+reported and not treated as a fault; one that is not UNCLAIMED with nobody
+attached to it is a fault, because a seed asserts nothing. Then
 search the directory by hand for one doctor whose name you read on the source
 site, the way a patient would:
 
