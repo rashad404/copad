@@ -89,8 +89,17 @@ def check(post: dict) -> None:
 def main() -> None:
     if len(sys.argv) != 2:
         raise SystemExit(__doc__)
-    post = json.loads(Path(sys.argv[1]).read_text(encoding="utf-8"))
+    draft = Path(sys.argv[1])
+    post = json.loads(draft.read_text(encoding="utf-8"))
     check(post)
+
+    # The rules are enforced here, not left to whoever wrote the draft. A
+    # failing draft does not reach the site.
+    checker = subprocess.run(
+        [sys.executable, str(Path(__file__).with_name("check.py")), str(draft)],
+        text=True)
+    if checker.returncode != 0:
+        raise SystemExit("check.py failed; fix the findings above before publishing")
 
     words = len(re.sub(r"<[^>]+>", " ", post["content"]).split())
     minutes = max(1, round(words / 200))

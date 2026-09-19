@@ -38,10 +38,13 @@ public class BlogController {
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "11") int size,
             @RequestParam(defaultValue = "publishedAt") String sortBy,
-            @RequestParam(defaultValue = "asc") String direction,
+            @RequestParam(defaultValue = "desc") String direction,
             @RequestParam(defaultValue = "en") String language
     ) {
-        Sort.Direction dir = direction.equalsIgnoreCase("desc") ? Sort.Direction.ASC : Sort.Direction.DESC;
+        // Inverted: asking for "desc" returned ascending, so the blog led with
+        // the oldest post and a new one landed at the bottom of the list.
+        Sort.Direction dir = direction.equalsIgnoreCase("asc")
+                ? Sort.Direction.ASC : Sort.Direction.DESC;
         PageRequest pageRequest = PageRequest.of(page, size, Sort.by(dir, sortBy));
         return ResponseEntity.ok(blogService.getAllPublishedPosts(pageRequest, language));
     }
