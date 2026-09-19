@@ -31,14 +31,17 @@ SSH = ["ssh", "-p", "21098", "-o", "BatchMode=yes", "root@203.161.35.63"]
 PHOTO_SIZE = (561, 750)
 
 BANNED = {
-    "—": "long dash",
-    "–": "en dash",
-    "…": "ellipsis character",
-    "“": "curly quote",
-    "”": "curly quote",
-    "‘": "curly apostrophe",
-    "’": "curly apostrophe",
-    " ": "non-breaking space",
+    # Escaped rather than written literally: this file is subject to the same
+    # rule it enforces, and a checker that contains what it forbids cannot be
+    # grepped for.
+    "\u2014": "long dash",
+    "\u2013": "en dash",
+    "\u2026": "ellipsis character",
+    "\u201c": "curly quote",
+    "\u201d": "curly quote",
+    "\u2018": "curly apostrophe",
+    "\u2019": "curly apostrophe",
+    "\u00a0": "non-breaking space",
 }
 
 errors: list[str] = []

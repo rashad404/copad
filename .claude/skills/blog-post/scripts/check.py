@@ -336,7 +336,15 @@ def check_facts(post: dict) -> None:
 
     sources = post.get("sources", [])
     if not sources:
-        fail(f"{len(prices)} price(s) in the text and no `sources` listed to verify them against")
+        # A published post carries no sources: the draft held them. Checking a
+        # live post can confirm everything else, but not where a figure came
+        # from, and pretending otherwise would make this a failure nobody can
+        # act on.
+        if post.get("_published"):
+            warn(f"{len(prices)} price(s) here cannot be traced from the published row; "
+                 "the draft's `sources` are what verify them")
+        else:
+            fail(f"{len(prices)} price(s) in the text and no `sources` listed to verify them against")
         return
 
     corpus = ""
@@ -385,7 +393,9 @@ def load_published(slug: str) -> dict:
         input=query, capture_output=True, text=True, encoding="utf-8")
     if done.returncode != 0 or not done.stdout.strip():
         raise SystemExit(f"could not read post {slug}: {done.stderr.strip()[:300]}")
-    return json.loads(done.stdout.strip())
+    post = json.loads(done.stdout.strip())
+    post["_published"] = True
+    return post
 
 
 def main() -> None:
