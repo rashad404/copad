@@ -132,6 +132,52 @@ def split_values(text: str, start: int) -> tuple[list[list[str]], int]:
     return rows, index
 
 
+def strip_comments(text: str) -> str:
+    """The SQL with its comments blanked out, for the structural checks.
+
+    These files explain themselves at length, and the explanations quote the
+    very things being looked for - "INSERT IGNORE, not ON DUPLICATE KEY" is in
+    the template. Scanning raw text fails a migration for its own comment.
+    Quotes are tracked so that a doubled hyphen inside an Azerbaijani biography
+    is not mistaken for the start of one.
+    """
+    out = []
+    index = 0
+    in_string = False
+    while index < len(text):
+        character = text[index]
+        if in_string:
+            if character == "'":
+                if text[index:index + 2] == "''":
+                    out.append("''")
+                    index += 2
+                    continue
+                in_string = False
+            out.append(character)
+            index += 1
+            continue
+        if character == "'":
+            in_string = True
+            out.append(character)
+            index += 1
+            continue
+        if text[index:index + 2] == "--":
+            end = text.find("\n", index)
+            end = len(text) if end < 0 else end
+            out.append(" " * (end - index))
+            index = end
+            continue
+        if text[index:index + 2] == "/*":
+            end = text.find("*/", index)
+            end = len(text) if end < 0 else end + 2
+            out.append(" " * (end - index))
+            index = end
+            continue
+        out.append(character)
+        index += 1
+    return "".join(out)
+
+
 def unquote(value: str):
     if value.upper() == "NULL":
         return None
@@ -159,10 +205,16 @@ def rows_of(text: str, table: str) -> list[dict]:
 
 
 def check_text(text: str, path: Path) -> None:
+    # Punctuation is checked on the whole file, comments included: a long dash
+    # in an explanation is as much a breach of the house rule as one in data.
     for character, name in BANNED.items():
         if character in text:
             line = text[: text.index(character)].count("\n") + 1
             fail(f"{name} on line {line}; use plain ASCII punctuation")
+
+    # Everything below is about what the file does, so it reads the statements
+    # rather than the prose around them.
+    text = strip_comments(text)
 
     if re.search(r"ON\s+DUPLICATE\s+KEY", text, re.IGNORECASE):
         fail("ON DUPLICATE KEY: production MariaDB rejects the row-alias form, "
@@ -368,13 +420,14 @@ def main() -> None:
                              "Fix the connection, or pass --offline and run "
                              "this again before deploying.")
 
-    doctors = rows_of(text, "doctor")
-    specialties = rows_of(text, "specialty")
+    statements = strip_comments(text)
+    doctors = rows_of(statements, "doctor")
+    specialties = rows_of(statements, "specialty")
     added = {row.get("code") for row in specialties if row.get("code")}
 
     check_text(text, path)
     check_version(path, applied)
-    clinic = check_clinic(text, live_clinics)
+    clinic = check_clinic(statements, live_clinics)
     check_doctors(doctors, added, live_slugs, live_specialties)
 
     print(f"{path.name}")

@@ -16,6 +16,15 @@ map.json is slug to image URL, matching the slugs in the migration:
     "dr-vefa-nesifova": "https://example.az/upload/nesifova.png"
   }
 
+A source that is landscape, or one where the doctor is not in the middle of
+the frame, needs to say where they are, or the centre crop takes a desk and
+half a face. Give that one an object instead, with the doctor's position in
+the source as a fraction across and down:
+
+  {
+    "dr-nigar-mehdiyeva": {"url": "https://example.az/x.jpg", "focus_x": 0.72}
+  }
+
 Writes next-frontend/public/doctor-photos/<slug>.webp at 561x750, which is what
 the existing 112 are. An existing file is left alone unless --overwrite is
 passed, so re-running after a partial download costs nothing and cannot clobber
@@ -55,8 +64,14 @@ def fetch(url: str) -> bytes:
     return body
 
 
-def convert(raw: bytes) -> tuple[Image.Image, tuple[int, int]]:
-    """Flatten onto white, then crop to fill 561x750 without distorting."""
+def convert(raw: bytes, focus_x: float = 0.5, focus_y: float | None = None):
+    """Flatten onto white, then crop to fill 561x750 without distorting.
+
+    focus_x and focus_y say where the doctor is in the source, as a fraction.
+    They matter most for a landscape photograph: scaled to fill a portrait
+    frame, most of the width is thrown away, and if the person is not in the
+    middle the crop keeps the desk and loses them.
+    """
     source = Image.open(__import__("io").BytesIO(raw))
     original = source.size
 
@@ -76,8 +91,12 @@ def convert(raw: bytes) -> tuple[Image.Image, tuple[int, int]]:
         Image.LANCZOS,
     )
 
-    left = (resized.width - WIDTH) // 2
-    top = round((resized.height - HEIGHT) * TOP_BIAS)
+    def window(length: int, span: int, fraction: float) -> int:
+        return max(0, min(length - span, round(length * fraction - span / 2)))
+
+    left = window(resized.width, WIDTH, focus_x)
+    top = (window(resized.height, HEIGHT, focus_y) if focus_y is not None
+           else round((resized.height - HEIGHT) * TOP_BIAS))
     return resized.crop((left, top, left + WIDTH, top + HEIGHT)), original
 
 
@@ -94,9 +113,20 @@ def main() -> None:
     OUT_DIR.mkdir(parents=True, exist_ok=True)
     written = skipped = failed = 0
 
-    for slug, url in photos.items():
+    for slug, entry in photos.items():
         if not re.fullmatch(r"[a-z0-9-]+", slug):
             print(f"  {slug}: not a valid slug, skipped")
+            failed += 1
+            continue
+
+        if isinstance(entry, dict):
+            url = entry.get("url")
+            focus_x = float(entry.get("focus_x", 0.5))
+            focus_y = None if entry.get("focus_y") is None else float(entry["focus_y"])
+        else:
+            url, focus_x, focus_y = entry, 0.5, None
+        if not url:
+            print(f"  {slug}: no url")
             failed += 1
             continue
 
@@ -107,7 +137,7 @@ def main() -> None:
             continue
 
         try:
-            image, original = convert(fetch(url))
+            image, original = convert(fetch(url), focus_x, focus_y)
         except Exception as error:  # a dead URL is ordinary here, not a crash
             print(f"  {slug}: {error}")
             failed += 1
