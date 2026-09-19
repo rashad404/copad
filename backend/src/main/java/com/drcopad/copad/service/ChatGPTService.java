@@ -123,7 +123,15 @@ public class ChatGPTService {
             Azerbaijan). Be concrete, not alarming.
             """ +
             (recordContext != null && !recordContext.isBlank() ? recordContext : "") +
-            (fullLanguageName != null ? String.format("%nAnswer in %s.", fullLanguageName) : "");
+            // The site's language is a setting somebody may never have
+            // touched; the language they typed in is what they chose. A person
+            // who wrote "Kalsemin Silver var sizdə" on a page left in Russian
+            // was answered in Russian. So the message decides, and the setting
+            // only breaks a tie.
+            String.format("%nReply in the language of the person's latest message. "
+                    + "Azerbaijani typed without its own letters (\"basim agriyir\") "
+                    + "is still Azerbaijani. Only if you genuinely cannot tell, use %s.",
+                    fullLanguageName != null ? fullLanguageName : "Azerbaijani");
 
         // The system prompt and the history were both commented out, so every
         // request reached the model as a bare standalone question: specialty
