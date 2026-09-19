@@ -55,6 +55,9 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             + "AND d.verification <> 'REJECTED' "
             + "AND (:specialty IS NULL OR d.specialtyCode = :specialty) "
             + "AND (:city IS NULL OR LOWER(c.city) = LOWER(:city)) "
+            // Which hospital somebody works at is the question a person asks
+            // when they have been told where to go rather than who to see.
+            + "AND (:clinic IS NULL OR LOWER(c.slug) = LOWER(:clinic)) "
             // An unrecorded language means Azerbaijani, not "speaks nothing", so
             // a doctor with a blank field still answers the az filter.
             + "AND (:language IS NULL OR LOWER(COALESCE(NULLIF(d.languages, ''), 'az')) "
@@ -63,9 +66,26 @@ public interface DoctorRepository extends JpaRepository<Doctor, Long> {
             + "ORDER BY CASE WHEN d.verification = 'VERIFIED' THEN 0 ELSE 1 END, d.fullName ASC")
     Page<Doctor> publicSearch(@Param("specialty") String specialty,
                               @Param("city") String city,
+                              @Param("clinic") String clinic,
                               @Param("language") String language,
                               @Param("q") String q,
                               Pageable pageable);
+
+    /**
+     * The clinics worth offering as a filter, with how many doctors each has.
+     *
+     * Counted through the same visibility rules as publicSearch rather than
+     * off the clinic table, so the list can never offer a hospital that turns
+     * out to have nobody findable in it. A clinic with no public listings -
+     * the internal test clinic, one whose doctors are all unlisted - simply
+     * does not appear.
+     */
+    @Query("SELECT c.slug, c.name, c.city, COUNT(DISTINCT d.id) FROM Doctor d JOIN d.clinics c "
+            + "WHERE d.deletedAt IS NULL AND d.active = true AND d.unlisted = false "
+            + "AND d.verification <> 'REJECTED' AND c.active = true AND c.deletedAt IS NULL "
+            + "GROUP BY c.slug, c.name, c.city "
+            + "ORDER BY COUNT(DISTINCT d.id) DESC, c.name ASC")
+    java.util.List<Object[]> publicClinics();
 
     /**
      * How many listings the directory can actually offer for a set of specialty codes.

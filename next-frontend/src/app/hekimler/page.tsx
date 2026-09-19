@@ -1,7 +1,12 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import ProductLayout from "@/components/public/ProductLayout";
-import { directoryCopy, getDoctors, getSpecialties } from "@/api/doctorServer";
+import {
+  directoryCopy,
+  getClinics,
+  getDoctors,
+  getSpecialties,
+} from "@/api/doctorServer";
 import {
   directoryUrl,
   filterQuery,
@@ -36,9 +41,10 @@ export async function generateMetadata({
 export default async function Doctors({ searchParams }: Props) {
   const { language, c } = await directoryCopy();
   const filters = parseFilters(await searchParams);
-  const [result, specialties] = await Promise.all([
+  const [result, specialties, clinics] = await Promise.all([
     getDoctors(filters).catch(() => null),
     getSpecialties(language).catch(() => []),
+    getClinics().catch(() => []),
   ]);
   // An empty directory and an empty filtered search are different states.
   const globallyEmpty =
@@ -48,6 +54,7 @@ export default async function Doctors({ searchParams }: Props) {
             q: "",
             specialty: "",
             city: "",
+            clinic: "",
             language: "",
             page: 0,
           }).catch(() => null)
@@ -59,6 +66,14 @@ export default async function Doctors({ searchParams }: Props) {
       label: specialtyName(item.code, language, item.name),
     }))
     .sort((a, b) => a.label.localeCompare(b.label, language));
+  // A clinic filtered on but missing from the list - renamed, deactivated, or
+  // the API being unreachable - must stay in the control, or submitting the
+  // form silently drops the filter the person is looking at.
+  const clinicOptions = clinics.some((item) => item.slug === filters.clinic)
+    ? clinics
+    : filters.clinic
+      ? [...clinics, { slug: filters.clinic, name: filters.clinic, doctors: 0 }]
+      : clinics;
   if (
     filters.specialty &&
     !options.some((item) => item.code === filters.specialty)
@@ -99,6 +114,20 @@ export default async function Doctors({ searchParams }: Props) {
             {c.city}
             <input name="city" defaultValue={filters.city} maxLength={120} />
           </label>
+          {(clinics.length > 0 || filters.clinic) && (
+            <label>
+              {c.clinic}
+              <select name="clinic" defaultValue={filters.clinic}>
+                <option value="">{c.all}</option>
+                {clinicOptions.map((item) => (
+                  <option key={item.slug} value={item.slug}>
+                    {item.name}
+                    {item.doctors ? ` (${item.doctors})` : ""}
+                  </option>
+                ))}
+              </select>
+            </label>
+          )}
           <label>
             {c.language}
             <select name="language" defaultValue={filters.language}>

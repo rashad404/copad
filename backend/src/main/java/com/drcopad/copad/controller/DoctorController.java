@@ -109,12 +109,13 @@ public class DoctorController {
     public Page<PublicDoctorDTO> search(
             @RequestParam(required = false) String specialty,
             @RequestParam(required = false) String city,
+            @RequestParam(required = false) String clinic,
             @RequestParam(required = false) String language,
             @RequestParam(required = false) String q,
             @RequestParam(defaultValue = "0") int page,
             @RequestParam(defaultValue = "20") int size) {
 
-        return doctors.publicSearch(blank(specialty), blank(city), blank(language), blank(q),
+        return doctors.publicSearch(blank(specialty), blank(city), blank(clinic), blank(language), blank(q),
                         PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 50)))
                 .map(PublicDoctorDTO::from);
     }
@@ -185,6 +186,29 @@ public class DoctorController {
                             default -> sp.getNameAz();
                         },
                         "patientFacing", sp.isPatientFacing()))
+                .toList();
+    }
+
+    /**
+     * The hospitals in the directory, for the filter on the listing page.
+     *
+     * A person is usually told where to go before they are told who to see -
+     * "go to the oncology clinic at the medical university" - so the hospital
+     * is the filter that matches how the referral actually arrives.
+     *
+     * Each entry carries its number of doctors, counted through the same rules
+     * that decide what the directory shows, so the control cannot offer a
+     * hospital and then return nothing. Names are the clinics' own and are not
+     * translated.
+     */
+    @GetMapping("/clinics")
+    public List<Map<String, Object>> clinics() {
+        return doctors.publicClinics().stream()
+                .map(row -> Map.<String, Object>of(
+                        "slug", row[0],
+                        "name", row[1],
+                        "city", row[2] == null ? "" : row[2],
+                        "doctors", row[3]))
                 .toList();
     }
 

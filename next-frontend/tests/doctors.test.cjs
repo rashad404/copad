@@ -11,6 +11,7 @@ const originalLoad = Module._load,
   originalResolve = Module._resolveFilename;
 let language = "az",
   rows = [],
+  clinics = [],
   fail = false,
   slots = [],
   slotCalls = [],
@@ -68,6 +69,7 @@ Module._load = function (r, p, ...args) {
       }),
       getDoctor: async () => selected,
       getSpecialties: async () => [{ code: "general", name: "General" }],
+      getClinics: async () => clinics,
       // The profile page resolves one specialty name through the directory
       // rather than the local table, so the stub has to offer it too.
       getSpecialtyName: async (code) =>
@@ -146,6 +148,7 @@ const renderProfile = async () =>
 beforeEach(() => {
   language = "az";
   rows = [];
+  clinics = [];
   fail = false;
   selected = { ...doctor };
   slots = [];
@@ -215,6 +218,7 @@ test("only VERIFIED renders an approval mark, in all supported languages", () =>
             state,
             language,
             expanded: true,
+            slug: doctor.slug,
           }),
         ),
       );
@@ -223,8 +227,10 @@ test("only VERIFIED renders an approval mark, in all supported languages", () =>
         Boolean(doc.querySelector(".checked")),
         state === "VERIFIED",
       );
+      // 86a6acd replaced the mailto with the claim panel, carrying the slug
+      // so the doctor lands on their own listing instead of searching for it.
       assert.equal(
-        Boolean(doc.querySelector('a[href^="mailto:"]')),
+        Boolean(doc.querySelector('a[href^="/hekim-panel?claim="]')),
         state === "UNCLAIMED",
       );
       if (state !== "VERIFIED")
@@ -309,4 +315,56 @@ test("Baku date windows cross UTC day boundaries and use fourteen calendar dates
     from: "2026-09-08",
     to: "2026-09-21",
   });
+});
+
+test("the clinic filter offers only hospitals that have findable doctors", async () => {
+  rows = [doctor];
+  clinics = [
+    { slug: "liv-bona-dea-hospital", name: "Liv Bona Dea Hospital", doctors: 112 },
+    { slug: "atu-onkoloji-klinika", name: "ATU Onkoloji Klinikası", doctors: 12 },
+  ];
+  const doc = await renderDirectory();
+  const options = [...doc.querySelectorAll('select[name="clinic"] option')];
+  // "All", then the two hospitals, each with its count. The API decides which
+  // clinics are listed at all, so a hospital with nobody findable in it cannot
+  // reach this control.
+  assert.deepEqual(
+    options.map((o) => o.value),
+    ["", "liv-bona-dea-hospital", "atu-onkoloji-klinika"],
+  );
+  assert.ok(options[2].textContent.includes("ATU Onkoloji Klinikası"));
+  assert.ok(options[2].textContent.includes("12"));
+});
+test("no clinic filter is rendered when there are no clinics to offer", async () => {
+  rows = [doctor];
+  clinics = [];
+  assert.equal(
+    (await renderDirectory()).querySelector('select[name="clinic"]'),
+    null,
+  );
+});
+test("a clinic being filtered on stays selectable when the list omits it", async () => {
+  // The list can go missing - the API is unreachable, the clinic was renamed.
+  // Dropping it from the control would silently clear the filter the person is
+  // looking at the results of.
+  rows = [doctor];
+  clinics = [];
+  const doc = await renderDirectory({ clinic: "atu-onkoloji-klinika" });
+  const selectedOption = doc.querySelector(
+    'select[name="clinic"] option[value="atu-onkoloji-klinika"]',
+  );
+  assert.ok(selectedOption);
+  assert.equal(filtersSeen.at(-1).clinic, "atu-onkoloji-klinika");
+});
+test("the clinic filter survives pagination and is cleared with the rest", () => {
+  const filters = model.parseFilters({
+    clinic: "atu-onkoloji-klinika",
+    page: "2",
+  });
+  assert.equal(filters.clinic, "atu-onkoloji-klinika");
+  assert.ok(model.isFiltered(filters));
+  const query = new URLSearchParams(model.filterQuery(filters, 3));
+  assert.equal(query.get("clinic"), "atu-onkoloji-klinika");
+  assert.equal(query.get("page"), "3");
+  assert.equal(model.isFiltered(model.parseFilters({})), false);
 });

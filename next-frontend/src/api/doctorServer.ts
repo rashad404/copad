@@ -39,6 +39,25 @@ export async function getDoctors(filters: Filters) {
     throw new Error("Directory API unavailable");
   return result;
 }
+export type DirectoryClinic = {
+  slug: string;
+  name: string;
+  city?: string | null;
+  doctors: number;
+};
+/**
+ * The hospitals worth offering as a filter.
+ *
+ * Counted by the API through the same rules that decide what the directory
+ * shows, so the control cannot offer a hospital and then return nothing. An
+ * empty list simply means no filter is rendered.
+ */
+export async function getClinics() {
+  const list = await get<DirectoryClinic[]>(`/doctors/clinics`).catch(
+    () => null,
+  );
+  return Array.isArray(list) ? list : [];
+}
 export async function getSpecialties(language: DirectoryLanguage = "az") {
   // /specialties is the assistant's own six chat personas and needs a token.
   // The directory's list is the one under /doctors, named in the language

@@ -37,6 +37,7 @@ export type Filters = {
   q: string;
   specialty: string;
   city: string;
+  clinic: string;
   language: string;
   page: number;
 };
@@ -50,6 +51,7 @@ export function parseFilters(
     q: field("q"),
     specialty: field("specialty"),
     city: field("city"),
+    clinic: field("clinic"),
     language: ["az", "ru", "en"].includes(field("language"))
       ? field("language")
       : "",
@@ -58,13 +60,19 @@ export function parseFilters(
 }
 export function filterQuery(filters: Filters, page = filters.page) {
   const query = new URLSearchParams();
-  for (const key of ["q", "specialty", "city", "language"] as const)
+  for (const key of ["q", "specialty", "city", "clinic", "language"] as const)
     if (filters[key]) query.set(key, filters[key]);
   if (page > 0) query.set("page", String(page));
   return query.toString();
 }
 export const isFiltered = (filters: Filters) =>
-  Boolean(filters.q || filters.specialty || filters.city || filters.language);
+  Boolean(
+    filters.q ||
+      filters.specialty ||
+      filters.city ||
+      filters.clinic ||
+      filters.language,
+  );
 export const directoryUrl = (path = "") =>
   `${(process.env.NEXT_PUBLIC_APP_URL || "https://azdoc.ai").replace(/\/$/, "")}/hekimler${path}`;
 export const profileUrl = (slug: string) =>
