@@ -1,6 +1,5 @@
 import { Metadata, ResolvingMetadata } from 'next';
 import type { BlogPostListItem } from '@/api/blog';
-import { headers } from 'next/headers';
 import { resolveBlogLanguage } from '@/utils/blogLanguage';
 import { notFound } from 'next/navigation';
 import TagPageClient from './client';
@@ -183,8 +182,7 @@ export default async function TagPage({
 }) {
   const { slug } = await params;
   const { lang: langParam } = await searchParams;
-  const headersList = await headers();
-  const lang = resolveBlogLanguage(langParam, headersList.get('cookie') || '');
+  const lang = await resolveBlogLanguage(langParam);
   
   // Fetch tag data
   const { tag, posts, relatedTags, error } = await fetchTagData(slug);

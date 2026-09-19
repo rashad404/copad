@@ -1,5 +1,4 @@
 import { Metadata } from 'next';
-import { headers } from 'next/headers';
 import BlogClient from './client';
 import { getBlogPosts, getTopTags } from '@/api/serverFetch';
 import { siteConfig } from '@/context/siteConfig';
@@ -140,11 +139,8 @@ function generateJsonLd(posts: BlogPostListItem[]) {
 // The main page component
 export default async function BlogPage({ searchParams }: { searchParams: Promise<{ page?: string; lang?: string }> }) {
   const { page: pageParam, lang: langParam } = await searchParams;
-  const headersList = await headers();
   
-  // Priority: 1. URL param, 2. the i18nextLng cookie, 3. the site default
-  const cookieHeader = headersList.get('cookie') || '';
-  const lang = resolveBlogLanguage(langParam, cookieHeader);
+  const lang = await resolveBlogLanguage(langParam);
   
   // Get the current page from query params, default to 0
   const currentPage = pageParam ? parseInt(pageParam) - 1 : 0;

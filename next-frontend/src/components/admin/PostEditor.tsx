@@ -164,11 +164,13 @@ export default function PostEditor({ id }: { id?: number }) {
         type: "select",
         required: true,
         options: [
+          // The three the site itself serves. Turkish was offered here and is
+          // not one of them, so a Turkish post could never be shown.
           { label: "Azerbaijani", value: "az" },
           { label: "English", value: "en" },
-          { label: "Turkish", value: "tr" },
+          { label: "Russian", value: "ru" },
           ...(resource.data?.initial.language &&
-          !["az", "en", "tr"].includes(resource.data.initial.language)
+          !["az", "en", "ru"].includes(resource.data.initial.language)
             ? [
                 {
                   label: resource.data.initial.language,

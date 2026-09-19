@@ -1,5 +1,4 @@
 import { Metadata, ResolvingMetadata } from 'next';
-import { headers } from 'next/headers';
 import BlogPostClient from './client';
 import { getBlogPostBySlug, getBlogPosts } from '@/api/serverFetch'; 
 import { BlogPost, BlogPostListItem } from '@/api/blog';
@@ -220,11 +219,8 @@ export default async function BlogPostPage({
 }) {
   const { slug } = await params;
   const { lang: langParam } = await searchParams;
-  const headersList = await headers();
   
-  // Priority: 1. URL param, 2. the i18nextLng cookie, 3. the site default
-  const cookieHeader = headersList.get('cookie') || '';
-  const lang = resolveBlogLanguage(langParam, cookieHeader);
+  const lang = await resolveBlogLanguage(langParam);
   
   // Fetch data on the server
   const { post, relatedPosts, error } = await fetchBlogPost(slug);

@@ -1,5 +1,4 @@
 import { Metadata } from "next";
-import { headers } from "next/headers";
 import { BlogPostListItem } from "@/api/blog";
 import { resolveBlogLanguage } from "@/utils/blogLanguage";
 import { searchBlogPosts } from "@/api/serverFetch";
@@ -39,8 +38,7 @@ export default async function SearchPage({
 }) {
   const { q, lang: langParam } = await searchParams;
   const query = q || "";
-  const headersList = await headers();
-  const lang = resolveBlogLanguage(langParam, headersList.get("cookie") || "");
+  const lang = await resolveBlogLanguage(langParam);
 
   // Fetch initial search results if we have a query
   let posts: BlogPostListItem[] = [];
