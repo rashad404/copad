@@ -14,6 +14,21 @@ Module._resolveFilename = function (r, p, ...a) {
     ...a,
   );
 };
+// "server-only" is Next's marker that a module must never reach the browser.
+// It has no runtime behaviour and does not resolve outside a Next build, so a
+// module that imports it cannot be required here without this.
+const load = Module._load;
+Module._load = function (r, ...a) {
+  // "server-only" is Next's marker that a module must never reach the browser.
+  // It has no runtime behaviour and does not resolve outside a Next build.
+  if (r === "server-only") return {};
+  // siteLanguage reads the request's cookies, which only exist inside a Next
+  // request. The visitor's resolved language is the input to the behaviour
+  // under test here, not part of it, so it is supplied rather than simulated.
+  if (r.endsWith("geo/visitorLanguage"))
+    return { siteLanguage: async () => "az" };
+  return load.call(this, r, ...a);
+};
 for (const ext of [".ts", ".tsx"])
   require.extensions[ext] = (m, f) =>
     m._compile(
@@ -120,7 +135,7 @@ test("Russian resolves registered patient text instead of English fallback; a vi
       .includes("{{"),
   );
 });
-test("only AZ, EN and RU can be persisted as site languages", () => {
+test("only AZ, EN and RU can be persisted as site languages", async () => {
   const {
     SUPPORTED_LANGUAGES,
     supportedLanguage,
@@ -134,10 +149,17 @@ test("only AZ, EN and RU can be persisted as site languages", () => {
     assert.equal(supportedLanguage(lang), undefined);
   assert.equal(supportedLanguage("ru-RU"), "ru");
   assert.equal(supportedLanguage("AZ-az"), "az");
-  const { resolveBlogLanguage } = require("../src/utils/blogLanguage.ts");
-  assert.equal(resolveBlogLanguage(undefined, "i18nextLng=ru"), "ru");
-  assert.equal(resolveBlogLanguage(undefined, "i18nextLng=tr"), "az");
-  assert.equal(resolveBlogLanguage(undefined, ""), "az");
+  // The blog no longer reads the cookie itself: it takes an explicit ?lang=
+  // override, and otherwise whatever the rest of the site resolved for this
+  // visitor, who is Azerbaijani-speaking above.
+  const {
+    resolveBlogLanguage,
+    DEFAULT_BLOG_LANGUAGE,
+  } = require("../src/utils/blogLanguage.ts");
+  assert.equal(DEFAULT_BLOG_LANGUAGE, "az");
+  assert.equal(await resolveBlogLanguage("ru"), "ru");
+  assert.equal(await resolveBlogLanguage("tr"), "az");
+  assert.equal(await resolveBlogLanguage(undefined), "az");
 });
 test("catalogue translations preserve unknown prices and advisory medical wording", () => {
   const { medicineCopy } = require("../src/components/medicines/copy.ts");

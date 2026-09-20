@@ -193,8 +193,11 @@ async function change(el, value) {
 }
 async function submit() {
   await React.act(async () => {
+    // The screens grew a server-side filter form above the table, so the first
+    // form on the page is no longer the one being tested. The resource form is
+    // the one that reports whether it is busy.
     document
-      .querySelector("form")
+      .querySelector("form[aria-busy]")
       .dispatchEvent(new Event("submit", { bubbles: true, cancelable: true }));
     await flush();
   });
@@ -299,7 +302,7 @@ test("unclaimed state is neutral and verification requires an explicit review th
   assert.ok(!requests.some((r) => r.method === "post"));
   assert.match(
     document.body.textContent,
-    /Confirm that this decision is supported/,
+    /I confirm this decision is supported by the review/,
   );
   await click(document.querySelector("#field-acknowledged"));
   await input("#field-note", "License checked against register");
