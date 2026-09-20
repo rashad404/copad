@@ -120,6 +120,68 @@ curl -s "https://saglamaile.az/sitemap.xml"       # 53, one of them dead
   asset ids. A contact sheet catches them; so does noticing that two doctors
   share a photograph filename.
 
+## referansclc.com - Referans (V46, 319 doctors)
+
+The largest and the most tangled. A Bitrix site, 23 centres, and the source
+that forced one doctor to hold several locations.
+
+```bash
+curl -sL "https://referansclc.com/company/staff/"               # centre index, 301 without the slash
+curl -sL "https://referansclc.com/company/staff/<centre>/"      # one centre, all its doctors
+curl -sL "https://referansclc.com/company/staff/<centre>/<doctor>/"
+curl -sL "https://referansclc.com/az/contacts/"                 # every branch address
+```
+
+- **The index is a preview, not the list.** It shows a handful of doctors per
+  centre - 67 in total. Each centre page carries its full roster; walking all
+  23 gives 367. Never count from the index.
+- Second count: the 59 `?SPECIALIZATION=` filters union to 354. The 13-doctor
+  difference is doctors with no specialty set, who appear under no filter, and
+  every filtered doctor is also on a centre page. That reconciles; do not stop
+  at the mismatch.
+- **363 pages are 319 people.** A doctor who works at several centres has a
+  page at each, with the same photograph re-uploaded under a different asset
+  id. Group by name, and split a name only when the photograph *and* the
+  specialty both disagree - two women named Leyla Eliyeva work at the same
+  laboratory and are not the same person.
+- Profiles: `staff-detail__ex-property-label` / `-value` pairs give `İxtisas`,
+  `Fəaliyyət istiqaməti`, `Təhsil`, `Konfranslar`. The portrait is the
+  `og:image` meta tag; the markup around it has no usable img tag.
+- Eight doctors state their specialty only in `staff-detail__post` (Vəzifə).
+- The sitemap is useless: it points at referans.io and was last built in 2023.
+- The Tashkent branch was excluded by decision, not by accident.
+
+## mediclub.az - MediClub (V48, 95 doctors)
+
+The easiest count of any source, and the least data behind it.
+
+```bash
+curl -sL "https://www.mediclub.az/az/doctors"                   # all 95, one page
+curl -sL "https://www.mediclub.az/az/clinics/mediclub-hospital" # one clinic's roster
+curl -sL "https://www.mediclub.az/az/doctors/<slug>"            # one profile
+```
+
+- **The listing page is the whole dataset.** Every card carries
+  `class="doctors__item spec-NN clinic-N"`, so specialty and clinic come from
+  the class without fetching anything. Filtering is client-side.
+- Second count, free: the four clinic pages list 53, 26, 12 and 9, matching the
+  class tallies exactly. Five doctors carry two clinic classes.
+- **MediClub Ganja is in the filter with no doctors at all**, on any page. Its
+  own clinic page lists none. That is their state, not a gap.
+- The profile adds only two facts: `Ümumi iş stajı` (years, stated plainly for
+  every doctor) and `MediClub-da fəaliyyətə başladığı il`. There is no
+  education, no biography, no certificates - the page title says so.
+- `?clinic=clinic-5` is not a filter; the site answers it with a COVID-19 page.
+- `/az/sitemap` is an HTML page, not XML, and lists no doctors.
+- **Portraits:** the card links `/storage/<id>/conversions/<name>-list.jpg` at
+  224x322. Dropping `conversions/` and the `-list` suffix gives 269x382, the
+  largest stored. Five of those 404 as `.jpg` and exist as `.png` - and those
+  five are the site's red silhouette placeholder, which downloads like a real
+  photograph. Detect them by the flat dominant colour, not by the fetch
+  failing.
+- Three doctors carry `spec-17`, which the site's own dropdown does not define.
+  All are at MediClub Dental and their profile reads Hekim-stomatoloq.
+
 ---
 
 ## What to check on any new source
