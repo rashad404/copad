@@ -228,10 +228,6 @@ def check_text(text: str, path: Path) -> None:
         fail("nothing attaches these doctors to a clinic; the profiles will "
              "show no clinic and no phone number")
 
-    if "@clinic_id" not in text:
-        warn("no @clinic_id is set; check the doctors are attached to the "
-             "right clinic")
-
 
 def check_clinic(text: str, live_clinics: set[str] | None) -> str | None:
     """The clinic the doctors are attached to, however it is written.
@@ -243,6 +239,34 @@ def check_clinic(text: str, live_clinics: set[str] | None) -> str | None:
     attaches nobody, and every profile ships without a clinic or a phone number.
     """
     creates = re.search(r"INSERT\s+INTO\s+clinic\b", text, re.IGNORECASE)
+
+    # Clinic slugs this file creates, however it writes them: the seeds use
+    # INSERT ... SELECT ... AS slug rather than VALUES.
+    made = set(re.findall(r"'([a-z0-9-]+)'\s+AS\s+slug", text, re.IGNORECASE))
+
+    # A doctor can work at several clinics, and the later sources place each
+    # one by name through a table of (doctor_slug, clinic_slug) pairs instead
+    # of a single @clinic_id. The join is on the clinic slug, so a typo there
+    # does not fail - it silently places nobody at that clinic.
+    placements = re.search(
+        r"INSERT\s+INTO\s+\w*placement\w*|INSERT\s+INTO\s+\w*branch\w*", text, re.IGNORECASE)
+    if placements:
+        pairs = re.findall(r"\(\s*'([a-z0-9-]+)'\s*,\s*'([a-z0-9-]+)'\s*\)", text)
+        wanted = {c for _, c in pairs}
+        if not wanted:
+            fail("a placement table is filled but no (doctor, clinic) pairs "
+                 "could be read from it")
+        unknown = {c for c in wanted
+                   if c not in made and (live_clinics is not None and c not in live_clinics)}
+        if unknown:
+            fail("placed at clinics that neither exist nor are created here, so "
+                 "those doctors would be attached to nothing: "
+                 + ", ".join(sorted(unknown)[:6]))
+        doctors_placed = {d for d, _ in pairs}
+        print(f"  {len(doctors_placed)} doctors placed at {len(wanted)} clinics "
+              f"({len(pairs)} placements)")
+        return ", ".join(sorted(wanted)[:3]) + ("..." if len(wanted) > 3 else "")
+
     reference = re.search(
         r"@clinic_id\s*=\s*\(\s*SELECT\s+id\s+FROM\s+clinic\s+WHERE\s+slug\s*=\s*'([^']+)'",
         text, re.IGNORECASE)
@@ -425,8 +449,38 @@ def main() -> None:
     specialties = rows_of(statements, "specialty")
     added = {row.get("code") for row in specialties if row.get("code")}
 
-    check_text(text, path)
+    # Not every migration in this area is a seed. A correction - renaming a
+    # clinic, fixing a city, retiring a listing - inserts nothing, and holding
+    # it to a seed's rules would fail it for what it deliberately does not do.
+    seeding = bool(doctors) or bool(
+        re.search(r"INSERT\s+(?:IGNORE\s+)?INTO\s+(doctor|clinic)\b", statements, re.IGNORECASE))
+
+    for character, name in BANNED.items():
+        if character in text:
+            line = text[: text.index(character)].count("\n") + 1
+            fail(f"{name} on line {line}; use plain ASCII punctuation")
+    if re.search(r"ON\s+DUPLICATE\s+KEY", statements, re.IGNORECASE):
+        fail("ON DUPLICATE KEY: production MariaDB rejects the row-alias form, "
+             "use INSERT IGNORE")
     check_version(path, applied)
+
+    if not seeding:
+        print(f"{path.name}")
+        print("  not a seed: no doctor or clinic rows are inserted, so only the "
+              "checks that apply to any migration were run")
+        if warnings:
+            print(f"\n{len(warnings)} warning(s):")
+            for message in warnings:
+                print(f"  - {message}")
+        if errors:
+            print(f"\n{len(errors)} error(s):")
+            for message in errors:
+                print(f"  - {message}")
+            raise SystemExit(1)
+        print("\nchecks passed.")
+        return
+
+    check_text(text, path)
     clinic = check_clinic(statements, live_clinics)
     check_doctors(doctors, added, live_slugs, live_specialties)
 
