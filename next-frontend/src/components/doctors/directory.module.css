@@ -1,6 +1,7 @@
 .page {
   max-width: 1180px;
   margin: auto;
+  overflow-x: clip;
   padding: 48px 28px 80px;
   color: #172a35;
   line-height: 1.65;
@@ -776,22 +777,39 @@
  * The page opens with a promise and a box, the way a booking site does,
  * instead of a title and a paragraph about what the directory contains.
  */
+/*
+ * The band is painted, not laid out.
+ *
+ * Stretching the header itself with negative margins fights the page column
+ * it sits in: the element ended up 870px wide inside a 1180px parent, so the
+ * gradient stopped a third of the way across and the centred text looked
+ * left-aligned. A pseudo-element can be the width of the window without the
+ * header having to be.
+ */
 .hero {
+  position: relative;
   text-align: center;
-  padding: 48px 20px 10px;
-  /* Full bleed: the band reaches both edges of the window, not the edges of
-     the content column it happens to sit in. */
-  margin-left: calc(50% - 50vw);
-  margin-right: calc(50% - 50vw);
-  padding-left: max(20px, calc(50vw - 50%));
-  padding-right: max(20px, calc(50vw - 50%));
-  background: linear-gradient(180deg, #fdf8e3 0%, #fefdf6 60%, transparent 100%);
+  padding: 44px 20px 14px;
+}
+.hero::before {
+  content: "";
+  position: absolute;
+  /* Up over the page's own 48px of top padding, so the band starts at the
+     header rather than after a white gap. */
+  top: -48px;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100vw;
+  background: linear-gradient(180deg, #fdf8e3 0%, #fefdf6 62%, transparent 100%);
+  z-index: -1;
 }
 .hero h1 {
-  font-size: clamp(30px, 4.2vw, 46px);
-  line-height: 1.12;
+  font-size: clamp(28px, 3.6vw, 44px);
+  line-height: 1.14;
   margin: 0 auto 10px;
-  max-width: 16ch;
+  /* Wide enough for the line to stay whole; it only wraps on a phone. */
+  max-width: 40ch;
 }
 .hero > p {
   color: #4a5a52;
