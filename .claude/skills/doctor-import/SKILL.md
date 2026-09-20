@@ -13,7 +13,11 @@ The bar is not "the doctors are in the database". It is: **a patient who has
 been told to see a particular doctor finds that doctor on azdoc, and nothing on
 the page claims more than the hospital itself published.**
 
-Read `references/specialties.md` before mapping a single department name.
+Read `references/specialties.md` before mapping a single department name,
+and `references/sources.md` first of all - it has a section per source
+already imported, with how that site's list is enumerated, where its data
+and photographs really live, and what went wrong last time. If the source
+in hand is in there, start from that section. When it is done, add one.
 
 ## The rules that do not bend
 
@@ -327,3 +331,8 @@ If the source needed a judgment that is not obvious from the SQL - a department
 that mapped to an imperfect code, a doctor deliberately left out, a count that
 does not match the hospital's own - it goes in the migration comment too. The
 migration outlives the working notes.
+
+Then add the source to `references/sources.md`: how its list is enumerated and
+how the total was established, where the profile fields and the photographs
+actually live, and every trick it took. The next person to read that site will
+be you, a year from now, with none of this in mind.
