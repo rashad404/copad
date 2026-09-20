@@ -66,6 +66,9 @@ type Props = {
   /** The window initialSlots covers, so the first month need not be refetched. */
   initialFrom: string;
   initialTo: string;
+  /** The listing cannot take appointments: show the month, offer nothing. */
+  closed?: boolean;
+  closedNotice?: React.ReactNode;
 };
 
 export default function BookingPanel({
@@ -75,6 +78,8 @@ export default function BookingPanel({
   initialSlots,
   initialFrom,
   initialTo,
+  closed = false,
+  closedNotice,
 }: Props) {
   const c = bookingCopy(language);
   const { isAuthenticated } = useAuth();
@@ -130,14 +135,14 @@ export default function BookingPanel({
   );
 
   useEffect(() => {
-    if (!need) return;
+    if (closed || !need) return;
     // The server already fetched the opening window; do not repeat it.
     if (need.from >= covered.from && need.to <= covered.to) return;
     void load(need);
-  }, [need, covered.from, covered.to, load]);
+  }, [closed, need, covered.from, covered.to, load]);
 
   useEffect(() => {
-    if (!isAuthenticated || members) return;
+    if (closed || !isAuthenticated || members) return;
     const controller = new AbortController();
     healthApi
       .families(controller.signal)
@@ -278,6 +283,14 @@ export default function BookingPanel({
           );
         })}
       </div>
+
+      {/*
+        A listing nobody has claimed shows the same calendar with nothing free
+        in it, and says so underneath. Showing the month is the point: a
+        patient sees what booking here will look like, and a doctor reading
+        their own page sees what they are being offered.
+      */}
+      {closed && closedNotice}
 
       {loading && <p className={styles.muted}>{c.loading}</p>}
       {loadError && (

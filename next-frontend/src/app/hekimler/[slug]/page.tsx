@@ -147,30 +147,37 @@ export default async function DoctorProfile({ params }: Props) {
           */}
           <aside className={styles.sidebar} id="randevu">
             <h2>{doctor.acceptsBookings ? c.slots : c.book}</h2>
-            {doctor.acceptsBookings && doctor.id != null ? (
+            {doctor.id != null && (
               <>
-                <p className={styles.muted}>{c.slotsNote}</p>
-                {slots === null ? (
+                {doctor.acceptsBookings && (
+                  <p className={styles.muted}>{c.slotsNote}</p>
+                )}
+                {doctor.acceptsBookings && slots === null ? (
                   <p role="status">{c.slotsFailed}</p>
                 ) : (
                   <BookingPanel
                     doctorId={doctor.id}
                     doctorName={doctor.fullName}
                     language={language}
-                    initialSlots={slots}
+                    initialSlots={slots ?? []}
                     initialFrom={window.from}
                     initialTo={window.to}
+                    closed={!doctor.acceptsBookings}
+                    closedNotice={
+                      <div className={styles.closed}>
+                        <p className={styles.closedTitle}>{c.noSlotsTitle}</p>
+                        <p className={styles.muted}>{c.noSlotsBody}</p>
+                        <a
+                          className={styles.closedClaim}
+                          href={`/hekim-panel?claim=${encodeURIComponent(doctor.slug)}`}
+                        >
+                          {c.noSlotsMine}
+                        </a>
+                      </div>
+                    }
                   />
                 )}
               </>
-            ) : (
-              <div className={styles.closed}>
-                <p className={styles.closedTitle}>{c.noSlotsTitle}</p>
-                <p className={styles.muted}>{c.noSlotsBody}</p>
-                <a className={styles.closedClaim} href={`/hekim-panel?claim=${encodeURIComponent(doctor.slug)}`}>
-                  {c.noSlotsMine}
-                </a>
-              </div>
             )}
             {doctor.clinics
               .filter((clinic) => phoneHref(clinic.phone))
