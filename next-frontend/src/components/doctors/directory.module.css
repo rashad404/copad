@@ -769,3 +769,140 @@
   color: #214be2;
   text-decoration: underline;
 }
+
+/* ---- Hero and the two search modes ------------------------------------ */
+
+/*
+ * The page opens with a promise and a box, the way a booking site does,
+ * instead of a title and a paragraph about what the directory contains.
+ */
+.hero {
+  text-align: center;
+  padding: 48px 20px 10px;
+  /* Full bleed: the band reaches both edges of the window, not the edges of
+     the content column it happens to sit in. */
+  margin-left: calc(50% - 50vw);
+  margin-right: calc(50% - 50vw);
+  padding-left: max(20px, calc(50vw - 50%));
+  padding-right: max(20px, calc(50vw - 50%));
+  background: linear-gradient(180deg, #fdf8e3 0%, #fefdf6 60%, transparent 100%);
+}
+.hero h1 {
+  font-size: clamp(30px, 4.2vw, 46px);
+  line-height: 1.12;
+  margin: 0 auto 10px;
+  max-width: 16ch;
+}
+.hero > p {
+  color: #4a5a52;
+  font-size: 17px;
+  margin: 0;
+}
+.searchArea {
+  display: grid;
+  justify-items: center;
+  gap: 14px;
+  margin-bottom: 10px;
+}
+.modes {
+  display: inline-flex;
+  background: #eceee8;
+  border-radius: 999px;
+  padding: 4px;
+  gap: 2px;
+}
+.mode,
+.modeOn {
+  display: inline-flex;
+  align-items: center;
+  gap: 7px;
+  border: 0;
+  border-radius: 999px;
+  padding: 9px 18px;
+  font-size: 15px;
+  font-family: inherit;
+  cursor: pointer;
+  background: transparent;
+  color: #3d4a44;
+}
+.modeOn {
+  background: #fff;
+  font-weight: 650;
+  box-shadow: 0 2px 8px -4px rgba(16, 40, 30, 0.4);
+}
+.searchArea .searchBar {
+  width: 100%;
+  margin: 0;
+}
+/* The assistant takes one long sentence, so its field owns the row. */
+.fieldWide {
+  grid-column: 1 / 4;
+}
+.searchGo:disabled {
+  opacity: 0.7;
+  cursor: progress;
+}
+
+/* What the assistant decided, each removable. */
+.applied {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+  margin: 4px 0 18px;
+}
+.appliedLabel {
+  font-size: 14px;
+  color: #53616a;
+}
+.appliedChip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: 1px solid #dfe4de;
+  border-radius: 999px;
+  padding: 6px 12px;
+  font-size: 14px;
+  color: #26312c;
+  text-decoration: none;
+}
+.appliedChip:hover {
+  border-color: #b9c6bc;
+  background: #f7f9f6;
+}
+
+/* Reached only when the red-flag rules fire on what somebody typed. */
+.urgent {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 16px;
+  background: #fdecea;
+  border: 1px solid #f3b7b0;
+  border-radius: 14px;
+  padding: 16px 18px;
+  margin: 18px 0 0;
+}
+.urgent strong {
+  font-size: 16px;
+}
+.urgent p {
+  margin: 0;
+  flex: 1 1 320px;
+  font-size: 14.5px;
+}
+.urgent a {
+  background: #c0392b;
+  color: #fff;
+  border-radius: 10px;
+  padding: 10px 22px;
+  font-weight: 700;
+  text-decoration: none;
+}
+
+@media (max-width: 860px) {
+  .fieldWide {
+    grid-column: 1;
+  }
+}

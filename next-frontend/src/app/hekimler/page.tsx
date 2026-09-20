@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin, Search, Star } from "lucide-react";
+import { MapPin, Star, X } from "lucide-react";
 import ProductLayout from "@/components/public/ProductLayout";
+import DoctorSearch from "@/components/doctors/DoctorSearch";
 import {
   directoryCopy,
   getClinics,
@@ -13,7 +14,6 @@ import {
   filterQuery,
   isFiltered,
   parseFilters,
-  phoneHref,
 } from "@/components/doctors/model";
 import {
   specialtyName,
@@ -47,6 +47,7 @@ export async function generateMetadata({
 export default async function Doctors({ searchParams }: Props) {
   const { language, c } = await directoryCopy();
   const filters = parseFilters(await searchParams);
+  const urgent = (await searchParams).urgent === "1";
   const [result, specialties, clinics] = await Promise.all([
     getDoctors(filters).catch(() => null),
     getSpecialties(language).catch(() => []),
@@ -91,79 +92,72 @@ export default async function Doctors({ searchParams }: Props) {
   return (
     <ProductLayout>
       <div className={styles.page} lang={language}>
-        <header className={styles.hero}>
-          <h1>{c.title}</h1>
-          <p>{c.description}</p>
-        </header>
         {/*
-          One bar, the way every booking site does it: the three things people
-          actually search by, side by side, with the action at the end. The
-          five stacked labelled boxes this replaces read as a database form.
+          The red-flag check is the reason this feature is worth having. It
+          runs on the server over the same rules the assistant uses, and it is
+          never the model's decision.
         */}
-        <form action="/hekimler" method="get" className={styles.searchBar}>
-          <label className={styles.field}>
-            <span>{c.name}</span>
-            <input
-              name="q"
-              defaultValue={filters.q}
-              maxLength={120}
-              type="search"
-              placeholder={c.namePlaceholder}
-            />
-          </label>
-          <label className={styles.field}>
-            <span>{c.specialty}</span>
-            <select name="specialty" defaultValue={filters.specialty}>
-              <option value="">{c.all}</option>
-              {options.map((item) => (
-                <option key={item.code} value={item.code}>
-                  {item.label}
-                </option>
+        {urgent && (
+          <aside className={styles.urgent} role="alert">
+            <strong>{c.urgentTitle}</strong>
+            <p>{c.urgentBody}</p>
+            <a href="tel:103">103</a>
+          </aside>
+        )}
+        <header className={styles.hero}>
+          <h1>{c.heroTitle}</h1>
+          <p>{c.heroSub}</p>
+        </header>
+        <DoctorSearch
+          language={language}
+          specialties={options}
+          clinics={clinicOptions}
+          initial={{
+            q: filters.q,
+            specialty: filters.specialty,
+            city: filters.city,
+            clinic: filters.clinic,
+            language: filters.language,
+          }}
+        />
+        {/*
+          What the assistant decided, and a way out of it. A wrong guess has to
+          be one click from corrected; without this the only escape from a bad
+          interpretation is clearing everything.
+        */}
+        {(filters.specialty || filters.city || filters.q) && (
+          <div className={styles.applied}>
+            <span className={styles.appliedLabel}>{c.understood}</span>
+            {[
+              filters.specialty
+                ? {
+                    key: "specialty",
+                    label:
+                      options.find((item) => item.code === filters.specialty)
+                        ?.label || filters.specialty,
+                  }
+                : null,
+              filters.city ? { key: "city", label: filters.city } : null,
+              filters.q ? { key: "q", label: filters.q } : null,
+            ]
+              .filter((chip): chip is { key: string; label: string } => chip !== null)
+              .map((chip) => (
+                <Link
+                  key={chip.key}
+                  className={styles.appliedChip}
+                  href={`/hekimler?${filterQuery({
+                    ...filters,
+                    [chip.key]: "",
+                    page: 0,
+                  })}`}
+                  title={c.removeFilter}
+                >
+                  {chip.label}
+                  <X size={14} aria-hidden="true" />
+                </Link>
               ))}
-            </select>
-          </label>
-          <label className={styles.field}>
-            <span>{c.city}</span>
-            <input
-              name="city"
-              defaultValue={filters.city}
-              maxLength={120}
-              placeholder={c.cityPlaceholder}
-            />
-          </label>
-          <button className={styles.searchGo} type="submit">
-            <Search size={18} aria-hidden="true" />
-            {c.search}
-          </button>
-
-          {/* Kept in the form, below the bar: useful, but not what somebody
-              opens the page to type. */}
-          <div className={styles.refine}>
-            {(clinics.length > 0 || filters.clinic) && (
-              <label className={styles.pill}>
-                <select name="clinic" defaultValue={filters.clinic}>
-                  <option value="">{c.clinic}</option>
-                  {clinicOptions.map((item) => (
-                    <option key={item.slug} value={item.slug}>
-                      {item.name}
-                      {item.doctors ? ` (${item.doctors})` : ""}
-                    </option>
-                  ))}
-                </select>
-              </label>
-            )}
-            <label className={styles.pill}>
-              <select name="language" defaultValue={filters.language}>
-                <option value="">{c.language}</option>
-                {(["az", "ru", "en"] as const).map((value) => (
-                  <option key={value} value={value}>
-                    {c[value]}
-                  </option>
-                ))}
-              </select>
-            </label>
           </div>
-        </form>
+        )}
         {(isFiltered(filters) || filters.page > 0) && (
           <Link className={styles.clear} href="/hekimler">
             {c.clear}
@@ -286,17 +280,6 @@ export default async function Doctors({ searchParams }: Props) {
                     >
                       {c.book}
                     </Link>
-                    {doctor.clinics.map((clinic) =>
-                      phoneHref(clinic.phone) ? (
-                        <a
-                          key={clinic.slug}
-                          className={styles.phone}
-                          href={phoneHref(clinic.phone)!}
-                        >
-                          {clinic.phone}
-                        </a>
-                      ) : null,
-                    )}
                   </div>
                 </li>
               ))}
