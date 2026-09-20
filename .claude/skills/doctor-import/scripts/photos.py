@@ -82,11 +82,21 @@ UA = "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML,
 
 
 def fetch(url: str) -> bytes:
+    """The bytes, if they are a picture.
+
+    The content type is not the test. One hospital's API serves every portrait
+    as application/octet-stream and another sends them with no type at all,
+    and both are perfectly good JPEGs; refusing on the header threw away 23
+    photographs that opened without complaint. What is rejected is a body that
+    is plainly a web page, which is how these sites answer for a file that has
+    moved. Whether the rest is an image is PIL's business, and it raises if it
+    is not.
+    """
     request = urllib.request.Request(url, headers={"User-Agent": UA})
     with urllib.request.urlopen(request, timeout=60) as response:
         kind = response.headers.get("Content-Type", "")
         body = response.read()
-    if not kind.startswith("image/"):
+    if kind.startswith(("text/html", "application/json")) or body[:15].lstrip().lower().startswith(b"<!doctype"):
         raise ValueError(f"answered {kind or 'no content type'}, not an image")
     return body
 
