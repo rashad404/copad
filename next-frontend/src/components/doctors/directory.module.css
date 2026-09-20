@@ -39,14 +39,6 @@
   outline: 3px solid #214be2;
   outline-offset: 4px;
 }
-.hero {
-  max-width: 720px;
-  margin-bottom: 36px;
-}
-.hero > p {
-  font-size: 18px;
-  color: #53616a;
-}
 /*
  * The search bar. One white surface, the fields divided by hairlines, the
  * action attached to the end - a thing people already know how to use. What
