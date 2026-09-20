@@ -7,7 +7,11 @@ today. V24 moved the files here. This does that part of an import up front, so
 a listing never ships with a remote URL: photoSrc refuses anything that is not
 a same-origin path, and a hotlinked portrait renders as no portrait at all.
 
-  python3 photos.py <map.json> [--overwrite]
+  python3 photos.py <map.json> [--overwrite] [--resolve host:ip]
+
+--resolve pins a hostname to an address, like curl's flag of the same name.
+Some of these image hosts have a name the system resolver will not answer even
+though the record exists; without it every portrait fails as "not known".
 
 map.json is slug to image URL, matching the slugs in the migration:
 
@@ -34,11 +38,34 @@ from __future__ import annotations
 
 import json
 import re
+import socket
 import sys
 import urllib.request
 from pathlib import Path
 
 from PIL import Image
+
+# Hospitals keep their images on a host that answers A records and SERVFAILs
+# on AAAA - three of six sources so far. Python asks for both at once, so one
+# failing lookup takes the whole name down and every portrait "fails to
+# resolve" while curl fetches it happily. Asking only for IPv4 is what the
+# browsers effectively do here.
+_getaddrinfo = socket.getaddrinfo
+
+
+PINNED: dict[str, str] = {}      # filled by --resolve host:ip
+
+
+def _ipv4_only(host, port, family=0, *args, **kwargs):
+    if host in PINNED:
+        return [(socket.AF_INET, socket.SOCK_STREAM, 6, "", (PINNED[host], port))]
+    try:
+        return _getaddrinfo(host, port, family, *args, **kwargs)
+    except socket.gaierror:
+        return _getaddrinfo(host, port, socket.AF_INET, *args, **kwargs)
+
+
+socket.getaddrinfo = _ipv4_only
 
 ROOT = Path(__file__).resolve().parents[4]
 OUT_DIR = ROOT / "next-frontend" / "public" / "doctor-photos"
@@ -103,6 +130,11 @@ def convert(raw: bytes, focus_x: float = 0.5, focus_y: float | None = None):
 def main() -> None:
     arguments = [a for a in sys.argv[1:] if not a.startswith("--")]
     overwrite = "--overwrite" in sys.argv[1:]
+    for flag in sys.argv[1:]:
+        if flag.startswith("--resolve="):
+            host, _, address = flag[len("--resolve="):].partition(":")
+            PINNED[host] = address
+            print(f"  pinning {host} to {address}")
     if len(arguments) != 1:
         raise SystemExit(__doc__)
 
