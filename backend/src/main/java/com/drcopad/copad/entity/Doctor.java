@@ -68,6 +68,27 @@ public class Doctor {
     private LocalDateTime verifiedAt;
 
     /**
+     * How many times this profile has been opened.
+     *
+     * Incremented with a single UPDATE rather than by loading, changing and
+     * saving the row: a popular listing would otherwise lose counts whenever
+     * two people opened it at the same moment.
+     */
+    @Column(name = "view_count", nullable = false)
+    private long viewCount = 0;
+
+    /**
+     * The rating, kept here so the directory can show it without counting
+     * review rows for every one of eight hundred cards. Recomputed from the
+     * reviews themselves whenever one is published or withdrawn.
+     */
+    @Column(name = "review_count", nullable = false)
+    private int reviewCount = 0;
+
+    @Column(name = "rating_total", nullable = false)
+    private int ratingTotal = 0;
+
+    /**
      * What the doctor sent to show the listing is theirs. For the reviewer
      * only: it can hold a licence number or a phone, so nothing public reads
      * it, and it is never copied into the bio.

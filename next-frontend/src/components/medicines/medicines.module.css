@@ -440,3 +440,10 @@
   min-width: 0;
   overflow-wrap: anywhere;
 }
+
+/* How many times this page has been opened. Quiet: it is context, not a claim. */
+.views {
+  color: #6b7a74;
+  font-size: 13.5px;
+  margin: 8px 0 0;
+}

@@ -20,6 +20,11 @@ export type PublicDoctor = {
   consultationFee?: number | null;
   verification: string;
   acceptsBookings: boolean;
+  /** How many times this profile has been opened. */
+  viewCount?: number;
+  /** Null until somebody has actually left a review. */
+  rating?: number | null;
+  reviewCount?: number;
   clinics: PublicClinic[];
 };
 export type DoctorPage = {
@@ -134,3 +139,23 @@ export function slotWindow(now = new Date()) {
   end.setUTCDate(end.getUTCDate() + 13);
   return { from, to: end.toISOString().slice(0, 10) };
 }
+
+/** One published review, as a reader sees it. */
+export type Review = {
+  id: number;
+  rating: number;
+  comment: string | null;
+  authorName: string;
+  /** GUEST, REGISTERED or VERIFIED. Decided by the server. */
+  trust: "GUEST" | "REGISTERED" | "VERIFIED";
+  createdAt: string;
+};
+
+export type ReviewPage = {
+  total: number;
+  page: number;
+  totalPages: number;
+  average: number | null;
+  count: number;
+  reviews: Review[];
+};

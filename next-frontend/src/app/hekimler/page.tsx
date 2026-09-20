@@ -216,11 +216,18 @@ export default async function Doctors({ searchParams }: Props) {
                         nobody gave us, is the one thing on this card that
                         would be a lie.
                       */}
+                      {/*
+                        The real average once somebody has left one. Until
+                        then the card says five with nothing behind it, which
+                        the count beside it makes plain.
+                      */}
                       <p className={styles.rating}>
                         <Star size={15} fill="currentColor" aria-hidden="true" />
-                        <span>{formatRating(5, language)}</span>
+                        <span>
+                          {formatRating(doctor.rating ?? 5, language)}
+                        </span>
                         <span className={styles.ratingCount}>
-                          {c.reviewCount(0)}
+                          {c.reviewCount(doctor.reviewCount ?? 0)}
                         </span>
                       </p>
                     </div>

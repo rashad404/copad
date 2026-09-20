@@ -2,7 +2,11 @@ package com.drcopad.copad.controller;
 
 import com.drcopad.copad.entity.User;
 import com.drcopad.copad.service.MedicineService;
+import com.drcopad.copad.service.ViewCounterService;
+import com.drcopad.copad.util.ClientIpResolver;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.web.bind.annotation.*;
@@ -26,6 +30,7 @@ import java.util.Map;
 public class MedicineController {
 
     private final MedicineService medicines;
+    private final ViewCounterService views;
 
     @GetMapping
     public List<MedicineService.MedicineSummary> search(
@@ -37,6 +42,17 @@ public class MedicineController {
     @GetMapping("/{slug}")
     public Map<String, Object> detail(@PathVariable String slug) {
         return medicines.detail(slug);
+    }
+
+    /** Counted from the reader's browser; see the doctor endpoint for why. */
+    @PostMapping("/{slug}/view")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void recordView(@PathVariable String slug, HttpServletRequest request) {
+        Object id = medicines.detail(slug).get("id");
+        if (id instanceof Number number) {
+            views.medicineViewed(number.longValue(),
+                    request.getHeader("User-Agent"), ClientIpResolver.resolve(request));
+        }
     }
 
     @GetMapping("/{id}/alternatives")

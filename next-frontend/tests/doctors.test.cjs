@@ -12,6 +12,7 @@ const originalLoad = Module._load,
 let language = "az",
   rows = [],
   clinics = [],
+  reviews = null,
   fail = false,
   slots = [],
   slotCalls = [],
@@ -47,6 +48,17 @@ Module._load = function (r, p, ...args) {
       notFound: () => {
         throw new Error("NOT_FOUND");
       },
+      // The search bar is a client component that pushes the chosen filters
+      // into the URL. In a server render there is no router to push to.
+      useRouter: () => ({
+        push: () => {},
+        replace: () => {},
+        refresh: () => {},
+        back: () => {},
+        prefetch: () => {},
+      }),
+      useSearchParams: () => new URLSearchParams(),
+      usePathname: () => "/hekimler",
     };
   // The profile now renders the booking panel, which is a client component and
   // asks the auth context who is signed in. Nobody is, in a server render of a
@@ -55,6 +67,43 @@ Module._load = function (r, p, ...args) {
     return {
       __esModule: true,
       useAuth: () => ({ isAuthenticated: false, user: null, logout: () => {} }),
+    };
+  // The search bar is a client component that opens on its AI tab, so the
+  // ordinary filters are not in a server render. What the page owes it is the
+  // right options; how it chooses to show them is its own business and its own
+  // test. This stands in for it and lays the props out as plain controls.
+  if (r === "@/components/doctors/DoctorSearch")
+    return {
+      __esModule: true,
+      default: ({ specialties, clinics, initial }) =>
+        React.createElement(
+          "form",
+          { action: "/hekimler", method: "get" },
+          React.createElement("input", { name: "q", defaultValue: initial.q }),
+          React.createElement(
+            "select",
+            { name: "specialty", defaultValue: initial.specialty },
+            React.createElement("option", { value: "" }, "all"),
+            specialties.map((item) =>
+              React.createElement("option", { key: item.code, value: item.code }, item.label),
+            ),
+          ),
+          React.createElement("input", { name: "city", defaultValue: initial.city }),
+          clinics.length > 0 || initial.clinic
+            ? React.createElement(
+                "select",
+                { name: "clinic", defaultValue: initial.clinic },
+                React.createElement("option", { value: "" }, "all"),
+                clinics.map((item) =>
+                  React.createElement(
+                    "option",
+                    { key: item.slug, value: item.slug },
+                    `${item.name}${item.doctors ? ` (${item.doctors})` : ""}`,
+                  ),
+                ),
+              )
+            : null,
+        ),
     };
   if (r === "@/components/public/ProductLayout")
     return {
@@ -70,6 +119,9 @@ Module._load = function (r, p, ...args) {
       getDoctor: async () => selected,
       getSpecialties: async () => [{ code: "general", name: "General" }],
       getClinics: async () => clinics,
+      // Reviews arrived with the profile redesign. null is the honest empty
+      // state: the panel distinguishes "no reviews yet" from "could not load".
+      getReviews: async () => reviews,
       // The profile page resolves one specialty name through the directory
       // rather than the local table, so the stub has to offer it too.
       getSpecialtyName: async (code) =>
@@ -149,6 +201,7 @@ beforeEach(() => {
   language = "az";
   rows = [];
   clinics = [];
+  reviews = null;
   fail = false;
   selected = { ...doctor };
   slots = [];
@@ -239,11 +292,18 @@ test("only VERIFIED renders an approval mark, in all supported languages", () =>
         );
     }
 });
-test("closed booking shows clinic phone and does not fetch slots or render booking buttons", async () => {
+test("a listing that cannot be booked offers no slot and says so", async () => {
   const doc = await renderProfile();
+  // Nothing is asked of the availability API for a doctor who takes no
+  // bookings, and no appointment time is offered anywhere on the page.
   assert.equal(slotCalls.length, 0);
+  assert.equal(doc.querySelector(".time"), null);
+  assert.equal(doc.querySelector(".timeGrid"), null);
+  // What the patient is given instead: the reason, and the clinic's number.
+  assert.ok(doc.body.textContent.includes(doctorCopy("az").noSlotsTitle));
   assert.ok(doc.querySelector('a[href="tel:+994121234567"]'));
-  assert.equal(doc.querySelector("button"), null);
+  // The empty month is deliberate - see BookingPanel - so its day buttons are
+  // expected. What must never appear is a bookable time.
 });
 test("bookable profile fetches real slots by ID, renders Baku time and does not imply reservation", async () => {
   selected.acceptsBookings = true;
@@ -301,7 +361,8 @@ test("all three locales render localized heading, filters and profile status", a
   for (language of ["az", "en", "ru"]) {
     assert.equal(
       (await renderDirectory()).querySelector("h1").textContent,
-      doctorCopy(language).title,
+      // The heading is the hero line, not the page title, since the redesign.
+      doctorCopy(language).heroTitle,
     );
     assert.ok(
       (await renderProfile()).body.textContent.includes(

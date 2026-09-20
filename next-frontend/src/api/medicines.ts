@@ -28,6 +28,8 @@ export interface MedicineDetail {
   description_az: string | null;
   prices: PriceOption[];
   alternatives: MedicineSummary[];
+  /** Comes straight off the row, so it is snake case like the rest. */
+  view_count?: number;
 }
 export interface AllergyWarning {
   medicineName: string;

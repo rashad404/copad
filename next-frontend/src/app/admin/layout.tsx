@@ -90,6 +90,9 @@ export default function AdminLayout({ children }: AdminLayoutProps) {
     },
     { name: "Clinics", href: "/admin/clinics", icon: ClinicIcon },
     { name: "Doctors", href: "/admin/doctors", icon: StethoscopeIcon },
+    // Guest reviews wait here to be read before they appear under a named
+    // doctor's photograph.
+    { name: "Reviews", href: "/admin/reviews", icon: StethoscopeIcon },
     {
       name: "Cost and usage",
       href: "/admin/usage",

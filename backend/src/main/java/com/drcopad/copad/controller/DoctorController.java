@@ -5,9 +5,13 @@ import com.drcopad.copad.entity.Doctor;
 import com.drcopad.copad.entity.VerificationStatus;
 import com.drcopad.copad.repository.DoctorRepository;
 import com.drcopad.copad.repository.SpecialtyRepository;
+import com.drcopad.copad.util.ClientIpResolver;
 import com.drcopad.copad.service.AvailabilityService;
+import com.drcopad.copad.service.ViewCounterService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.*;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.HttpStatus;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.web.bind.annotation.*;
@@ -40,6 +44,7 @@ public class DoctorController {
     private final DoctorRepository doctors;
     private final AvailabilityService availability;
     private final SpecialtyRepository specialties;
+    private final ViewCounterService views;
 
     @Data
     @NoArgsConstructor
@@ -83,6 +88,11 @@ public class DoctorController {
          */
         private VerificationStatus verification;
         private boolean acceptsBookings;
+        /** How many times this profile has been opened. */
+        private long viewCount;
+        /** Null until somebody has actually left a review. */
+        private Double rating;
+        private int reviewCount;
         private List<PublicClinicDTO> clinics;
 
         static PublicDoctorDTO from(Doctor d) {
@@ -97,6 +107,12 @@ public class DoctorController {
                     .verification(d.getVerification())
                     // Whether a booking made here would be real.
                     .acceptsBookings(d.isBookable())
+                    .viewCount(d.getViewCount())
+                    // An average nobody gave us is not a rating, so a doctor
+                    // with no reviews has none rather than a default five.
+                    .rating(d.getReviewCount() == 0 ? null
+                            : Math.round(d.getRatingTotal() * 10.0 / d.getReviewCount()) / 10.0)
+                    .reviewCount(d.getReviewCount())
                     .clinics(d.getClinics().stream()
                             .filter(Clinic::isActive)
                             .map(PublicClinicDTO::from).toList())
@@ -129,6 +145,24 @@ public class DoctorController {
                 .filter(d -> d.getVerification() != VerificationStatus.REJECTED)
                 .orElseThrow(() -> new IllegalArgumentException("Doctor not found"));
         return PublicDoctorDTO.from(doctor);
+    }
+
+    /**
+     * "Somebody opened this profile."
+     *
+     * Its own call, made by the reader's browser, because the profile itself
+     * is served from a cache: counting inside that request would count one
+     * visit per five minutes however many people arrived. Coming from the
+     * browser also means the address and the user agent are the reader's own,
+     * which is what the crawler and repeat checks need.
+     */
+    @PostMapping("/{slug}/view")
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void recordView(@PathVariable String slug, HttpServletRequest request) {
+        doctors.findBySlugAndDeletedAtIsNull(slug)
+                .filter(Doctor::isActive)
+                .ifPresent(doctor -> views.doctorViewed(doctor.getId(),
+                        request.getHeader("User-Agent"), ClientIpResolver.resolve(request)));
     }
 
     /**

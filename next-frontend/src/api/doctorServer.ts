@@ -14,6 +14,7 @@ import {
   type PublicDoctor,
   type DoctorPage,
   type Slot,
+  type ReviewPage,
 } from "@/components/doctors/model";
 async function get<T>(path: string, live = false): Promise<T | null> {
   const response = await fetch(`${resolveApiBaseUrl()}${path}`, {
@@ -30,6 +31,16 @@ async function get<T>(path: string, live = false): Promise<T | null> {
 }
 export const getDoctor = cache((slug: string) =>
   get<PublicDoctor>(`/doctors/${encodeURIComponent(slug)}`),
+);
+/**
+ * Published reviews only; the endpoint decides what that means.
+ *
+ * Read live rather than from the five minute cache: somebody who has just
+ * written a review comes straight back to the profile, and a page that still
+ * says nobody has reviewed this doctor reads as the review having been lost.
+ */
+export const getReviews = cache((slug: string) =>
+  get<ReviewPage>(`/doctors/${encodeURIComponent(slug)}/reviews?size=10`, true),
 );
 export async function getDoctors(filters: Filters) {
   const result = await get<DoctorPage>(

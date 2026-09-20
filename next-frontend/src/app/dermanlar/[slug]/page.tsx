@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductLayout from "@/components/public/ProductLayout";
+import RecordView from "@/components/public/RecordView";
 import AllergyCheck from "@/components/medicines/AllergyCheck";
 import { getMedicine } from "@/api/medicineServer";
 import {
@@ -64,6 +65,7 @@ export default async function MedicinePage({ params }: Props) {
   const difference = best ? saving(min, best.lowestPrice) : null;
   return (
     <ProductLayout>
+      <RecordView kind="medicines" slug={d.slug} />
       <article lang={language} className={styles.page}>
         <script
           type="application/ld+json"
@@ -84,6 +86,11 @@ export default async function MedicinePage({ params }: Props) {
             <span className={styles.status}>
               {prescriptionLabel(d.prescription_status, mc)}
             </span>
+            {d.view_count != null && d.view_count > 0 && (
+              <p className={styles.views}>
+                {d.view_count} {mc("baxış")}
+              </p>
+            )}
           </div>
           <aside className={styles.priceStage}>
             <p> {mc("Ən ucuz qablaşdırma")} </p>
