@@ -119,7 +119,7 @@ Collect per doctor:
 | `specialty_code` | the department, mapped via `references/specialties.md` | NULL, and say so in the comment |
 | `qualifications` | education, joined with ` \| ` | NULL |
 | `years_experience` | 2026 minus the year the first medical degree ended | NULL |
-| `bio` | areas of work and work history, prefixed `Fəaliyyət sahələri:` and `İş təcrübəsi:` | NULL, and that is normal |
+| `bio` | areas of work and work history, as headed sections | NULL, and that is normal |
 | `photo_url` | the portrait, hosted by us in step 4 | NULL, the card falls back cleanly |
 | `languages` | stated languages, else `az` | never empty |
 
@@ -127,6 +127,34 @@ Collect per doctor:
 how all 112 existing rows were computed: a doctor who finished in 2006 has 20.
 Not since specialisation, not since the current job. If the source publishes no
 year at all, NULL.
+
+**A biography is structured text, not a paragraph.** Head each section and put
+every entry on its own line, with a blank line between sections:
+
+```
+Şöbə: Fizioterapiya və Tibbi Reabilitasiya
+
+İş təcrübəsi:
+1998-2001 Dövlət tibb müəssisələrində fizioterapevt
+2015- indiyədək Mərkəzi Gömrük Hospitalı
+
+Lisenziya və sertifikatlar:
+2010 Tibbi sığorta üzrə təlim
+```
+
+**Escape the text with `scripts/sqltext.py`, never by hand.** Eight imports each
+wrote their own escaping and every one of them collapsed the newlines, because
+`re.sub(r"\s+", " ", text)` treats a line break like a double space. Every
+career became one run of semicolons, and V53 had to rewrite 851 biographies to
+put the breaks back. The display was never at fault: `.prose` has rendered bio
+with `white-space: pre-line` since the directory was built.
+
+```python
+import sys; sys.path.insert(0, ".claude/skills/doctor-import/scripts")
+from sqltext import biography, section, sql
+bio = biography("Şöbə: " + dept, section("İş təcrübəsi", experience_lines))
+row = f"({sql(name)}, '{slug}', '{code}', {sql(education, 512)}, {years}, {sql(bio)}, ...)"
+```
 
 Keep a working file per source under `/tmp` while you read. It is intermediate
 data, not a deliverable, and does not belong in the repo.
