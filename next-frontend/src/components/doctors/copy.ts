@@ -26,7 +26,9 @@ const az = {
   page: "Səhifə",
   view: "Profilə bax",
   book: "Onlayn randevu",
-  noReviews: "Hələ rəy yoxdur",
+  reviewCount: (n: number) => `${n} rəy`,
+  namePlaceholder: "Ad, soyad",
+  cityPlaceholder: "Bakı, Gəncə...",
   bookableNote: "Boş vaxtları görün və randevu alın",
   notBookable: "Onlayn randevu hələ aktiv deyil",
   noSlotsTitle: "Bu həkim hələ onlayn randevu qəbul etmir",
@@ -98,7 +100,9 @@ const en: Copy = {
   page: "Page",
   view: "View profile",
   book: "Book online",
-  noReviews: "No reviews yet",
+  reviewCount: (n: number) => (n === 1 ? "1 review" : `${n} reviews`),
+  namePlaceholder: "Name or surname",
+  cityPlaceholder: "Baku, Ganja...",
   bookableNote: "See free times and book",
   notBookable: "Online booking is not active yet",
   noSlotsTitle: "This doctor does not take online appointments yet",
@@ -169,7 +173,9 @@ const ru: Copy = {
   page: "Страница",
   view: "Открыть профиль",
   book: "Запись онлайн",
-  noReviews: "Отзывов пока нет",
+  reviewCount: (n: number) => `${n} отзыв${n === 1 ? "" : n < 5 ? "а" : "ов"}`,
+  namePlaceholder: "Имя или фамилия",
+  cityPlaceholder: "Баку, Гянджа...",
   bookableNote: "Посмотрите свободное время и запишитесь",
   notBookable: "Онлайн-запись пока не активна",
   noSlotsTitle: "Этот врач пока не принимает записи онлайн",
@@ -252,3 +258,7 @@ export function experienceYears(value: number, language: DirectoryLanguage) {
   const category = new Intl.PluralRules("ru").select(value);
   return `${value} ${category === "one" ? "год" : category === "few" ? "года" : "лет"}`;
 }
+
+/** One decimal, with the separator the language actually uses. */
+export const formatRating = (value: number, language: DirectoryLanguage) =>
+  value.toFixed(1).replace(".", language === "en" ? "." : ",");

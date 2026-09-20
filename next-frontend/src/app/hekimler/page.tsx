@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { MapPin } from "lucide-react";
+import { MapPin, Search, Star } from "lucide-react";
 import ProductLayout from "@/components/public/ProductLayout";
 import {
   directoryCopy,
@@ -15,7 +15,11 @@ import {
   parseFilters,
   phoneHref,
 } from "@/components/doctors/model";
-import { specialtyName, experienceYears } from "@/components/doctors/copy";
+import {
+  specialtyName,
+  experienceYears,
+  formatRating,
+} from "@/components/doctors/copy";
 import {
   Portrait,
   Verification,
@@ -91,18 +95,24 @@ export default async function Doctors({ searchParams }: Props) {
           <h1>{c.title}</h1>
           <p>{c.description}</p>
         </header>
-        <form action="/hekimler" method="get" className={styles.filters}>
-          <label>
-            {c.name}
+        {/*
+          One bar, the way every booking site does it: the three things people
+          actually search by, side by side, with the action at the end. The
+          five stacked labelled boxes this replaces read as a database form.
+        */}
+        <form action="/hekimler" method="get" className={styles.searchBar}>
+          <label className={styles.field}>
+            <span>{c.name}</span>
             <input
               name="q"
               defaultValue={filters.q}
               maxLength={120}
               type="search"
+              placeholder={c.namePlaceholder}
             />
           </label>
-          <label>
-            {c.specialty}
+          <label className={styles.field}>
+            <span>{c.specialty}</span>
             <select name="specialty" defaultValue={filters.specialty}>
               <option value="">{c.all}</option>
               {options.map((item) => (
@@ -112,38 +122,47 @@ export default async function Doctors({ searchParams }: Props) {
               ))}
             </select>
           </label>
-          <label>
-            {c.city}
-            <input name="city" defaultValue={filters.city} maxLength={120} />
+          <label className={styles.field}>
+            <span>{c.city}</span>
+            <input
+              name="city"
+              defaultValue={filters.city}
+              maxLength={120}
+              placeholder={c.cityPlaceholder}
+            />
           </label>
-          {(clinics.length > 0 || filters.clinic) && (
-            <label>
-              {c.clinic}
-              <select name="clinic" defaultValue={filters.clinic}>
-                <option value="">{c.all}</option>
-                {clinicOptions.map((item) => (
-                  <option key={item.slug} value={item.slug}>
-                    {item.name}
-                    {item.doctors ? ` (${item.doctors})` : ""}
+          <button className={styles.searchGo} type="submit">
+            <Search size={18} aria-hidden="true" />
+            {c.search}
+          </button>
+
+          {/* Kept in the form, below the bar: useful, but not what somebody
+              opens the page to type. */}
+          <div className={styles.refine}>
+            {(clinics.length > 0 || filters.clinic) && (
+              <label className={styles.pill}>
+                <select name="clinic" defaultValue={filters.clinic}>
+                  <option value="">{c.clinic}</option>
+                  {clinicOptions.map((item) => (
+                    <option key={item.slug} value={item.slug}>
+                      {item.name}
+                      {item.doctors ? ` (${item.doctors})` : ""}
+                    </option>
+                  ))}
+                </select>
+              </label>
+            )}
+            <label className={styles.pill}>
+              <select name="language" defaultValue={filters.language}>
+                <option value="">{c.language}</option>
+                {(["az", "ru", "en"] as const).map((value) => (
+                  <option key={value} value={value}>
+                    {c[value]}
                   </option>
                 ))}
               </select>
             </label>
-          )}
-          <label>
-            {c.language}
-            <select name="language" defaultValue={filters.language}>
-              <option value="">{c.all}</option>
-              {(["az", "ru", "en"] as const).map((value) => (
-                <option key={value} value={value}>
-                  {c[value]}
-                </option>
-              ))}
-            </select>
-          </label>
-          <button className={styles.button} type="submit">
-            {c.search}
-          </button>
+          </div>
         </form>
         {(isFiltered(filters) || filters.page > 0) && (
           <Link className={styles.clear} href="/hekimler">
@@ -203,7 +222,13 @@ export default async function Doctors({ searchParams }: Props) {
                         nobody gave us, is the one thing on this card that
                         would be a lie.
                       */}
-                      <p className={styles.noRating}>{c.noReviews}</p>
+                      <p className={styles.rating}>
+                        <Star size={15} fill="currentColor" aria-hidden="true" />
+                        <span>{formatRating(5, language)}</span>
+                        <span className={styles.ratingCount}>
+                          {c.reviewCount(0)}
+                        </span>
+                      </p>
                     </div>
                   </div>
 
