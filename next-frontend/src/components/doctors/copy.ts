@@ -26,6 +26,9 @@ const az = {
   page: "Səhifə",
   view: "Profilə bax",
   book: "Onlayn randevu",
+  noReviews: "Hələ rəy yoxdur",
+  bookableNote: "Boş vaxtları görün və randevu alın",
+  notBookable: "Onlayn randevu hələ aktiv deyil",
   noSlotsTitle: "Bu həkim hələ onlayn randevu qəbul etmir",
   noSlotsBody:
     "Həkim azdoc-da öz profilini təsdiqləyəndə boş vaxtları burada görünəcək və randevunu birbaşa saytdan ala biləcəksiniz. Hələlik klinikaya zəng edin.",
@@ -95,6 +98,9 @@ const en: Copy = {
   page: "Page",
   view: "View profile",
   book: "Book online",
+  noReviews: "No reviews yet",
+  bookableNote: "See free times and book",
+  notBookable: "Online booking is not active yet",
   noSlotsTitle: "This doctor does not take online appointments yet",
   noSlotsBody:
     "Once the doctor claims this listing on azdoc, their free times appear here and you can book straight from the site. For now, call the clinic.",
@@ -163,6 +169,9 @@ const ru: Copy = {
   page: "Страница",
   view: "Открыть профиль",
   book: "Запись онлайн",
+  noReviews: "Отзывов пока нет",
+  bookableNote: "Посмотрите свободное время и запишитесь",
+  notBookable: "Онлайн-запись пока не активна",
   noSlotsTitle: "Этот врач пока не принимает записи онлайн",
   noSlotsBody:
     "Когда врач подтвердит профиль на azdoc, свободное время появится здесь и записаться можно будет прямо на сайте. Пока позвоните в клинику.",

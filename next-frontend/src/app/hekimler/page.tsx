@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { MapPin } from "lucide-react";
 import ProductLayout from "@/components/public/ProductLayout";
 import {
   directoryCopy,
@@ -177,59 +178,65 @@ export default async function Doctors({ searchParams }: Props) {
             <ul className={styles.list}>
               {result.content.map((doctor) => (
                 <li key={doctor.slug} className={styles.row}>
-                  <Portrait doctor={doctor} />
-                  <div>
-                    <h2>
-                      <Link
-                        href={`/hekimler/${encodeURIComponent(doctor.slug)}`}
-                      >
-                        {doctor.fullName}
-                      </Link>
-                    </h2>
-                    <p className={styles.specialty}>
-                      {specialtyName(
-                        doctor.specialtyCode,
-                        language,
-                        specialties.find(
-                          (item) => item.code === doctor.specialtyCode,
-                        )?.name,
-                      )}
-                    </p>
-                    {doctor.clinics.map((clinic) => (
-                      <p key={clinic.slug} className={styles.muted}>
-                        {[clinic.name, clinic.city].filter(Boolean).join(", ")}
+                  <div className={styles.identity}>
+                    <Portrait doctor={doctor} />
+                    <div>
+                      <h2>
+                        <Link
+                          href={`/hekimler/${encodeURIComponent(doctor.slug)}`}
+                        >
+                          {doctor.fullName}
+                        </Link>
+                      </h2>
+                      <p className={styles.specialty}>
+                        {specialtyName(
+                          doctor.specialtyCode,
+                          language,
+                          specialties.find(
+                            (item) => item.code === doctor.specialtyCode,
+                          )?.name,
+                        )}
                       </p>
-                    ))}
-                    {/*
-                      Experience, languages and the check as chips rather than
-                      lines: at three hundred listings the eye skips what it
-                      does not need, and lines cannot be skipped.
-                    */}
-                    <ul className={styles.chips}>
-                      {doctor.yearsExperience != null && (
-                        <li className={styles.chip}>
-                          {experienceYears(doctor.yearsExperience, language)}
-                        </li>
-                      )}
-                      {doctor.languages.length > 0 && (
-                        <li className={styles.chip}>
-                          {spokenLanguages(doctor.languages, language)}
-                        </li>
-                      )}
                       {/*
-                        Last, and quiet. It has to be on the card, because the
-                        listing must not read as an endorsement, but leading
-                        every one of three hundred cards with "not verified"
-                        says more about us than about the doctor.
+                        Where the rating goes. Nothing is shown until a real
+                        patient has left one: an empty star row, or a number
+                        nobody gave us, is the one thing on this card that
+                        would be a lie.
                       */}
-                      <li className={styles.chip}>
-                        <Verification
-                          state={doctor.verification}
-                          language={language}
-                        />
-                      </li>
-                    </ul>
+                      <p className={styles.noRating}>{c.noReviews}</p>
+                    </div>
                   </div>
+
+                  {doctor.clinics.slice(0, 1).map((clinic) => (
+                    <p key={clinic.slug} className={styles.place}>
+                      <MapPin size={15} aria-hidden="true" />
+                      <span>
+                        {[clinic.name, clinic.city].filter(Boolean).join(", ")}
+                      </span>
+                    </p>
+                  ))}
+
+                  <p className={styles.attributes}>
+                    {[
+                      doctor.yearsExperience != null
+                        ? experienceYears(doctor.yearsExperience, language)
+                        : null,
+                      doctor.languages.length > 0
+                        ? spokenLanguages(doctor.languages, language)
+                        : null,
+                    ]
+                      .filter(Boolean)
+                      .join(" \u00b7 ")}
+                    {doctor.yearsExperience != null ||
+                    doctor.languages.length > 0
+                      ? " \u00b7 "
+                      : ""}
+                    <Verification
+                      state={doctor.verification}
+                      language={language}
+                    />
+                  </p>
+
                   <div className={styles.fee}>
                     {doctor.consultationFee != null && (
                       <span className={styles.feeAmount}>
@@ -240,25 +247,20 @@ export default async function Doctors({ searchParams }: Props) {
                       </span>
                     )}
                     {/*
-                      The booking action is on every card, including the
-                      listings that cannot take an appointment yet. The profile
-                      says plainly which of those it is; hiding the button
-                      instead means nobody learns the product does this.
+                      What Zocdoc puts here is the next free time. Ours says
+                      which of the two states the listing is in, because most
+                      of the directory has no times yet and pretending
+                      otherwise is worse than saying so.
                     */}
+                    <p className={styles.availability}>
+                      {doctor.acceptsBookings ? c.bookableNote : c.notBookable}
+                    </p>
                     <Link
                       className={styles.book}
                       href={`/hekimler/${encodeURIComponent(doctor.slug)}#randevu`}
                     >
                       {c.book}
                     </Link>
-                    <Link
-                      className={styles.secondary}
-                      href={`/hekimler/${encodeURIComponent(doctor.slug)}`}
-                    >
-                      {c.view}
-                    </Link>
-                    {/* Until a doctor opens online booking, this is the thing
-                        that actually gets somebody an appointment. */}
                     {doctor.clinics.map((clinic) =>
                       phoneHref(clinic.phone) ? (
                         <a
