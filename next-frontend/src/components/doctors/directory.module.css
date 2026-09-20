@@ -108,24 +108,41 @@
   list-style: none;
   margin: 0;
   padding: 0;
-}
-.row {
-  padding: 28px 0;
-  border-bottom: 1px solid #d9dfd9;
   display: grid;
-  grid-template-columns: 80px 1fr auto;
-  gap: 24px;
+  gap: 16px;
+}
+
+/*
+ * One doctor, as a card rather than a row in a list.
+ *
+ * The directory is past three hundred listings and heading for seven, so
+ * scanning it is the whole experience. A card gives the name, the portrait and
+ * the action a fixed place, which is what makes a long list readable at speed.
+ */
+.row {
+  background: #fff;
+  border: 1px solid #e2e7e2;
+  border-radius: 16px;
+  padding: 18px 20px;
+  display: grid;
+  grid-template-columns: 84px minmax(0, 1fr) 190px;
+  gap: 22px;
   align-items: start;
+  transition: box-shadow 160ms ease, border-color 160ms ease;
+}
+.row:hover {
+  border-color: #c7d3c9;
+  box-shadow: 0 10px 28px -20px rgba(16, 40, 30, 0.45);
 }
 .portrait {
-  width: 80px;
-  height: 80px;
+  width: 84px;
+  height: 84px;
   border-radius: 14px;
   background: #e9ece7;
   color: #53616a;
   display: grid;
   place-items: center;
-  font-size: 24px;
+  font-size: 26px;
   font-weight: 700;
   overflow: hidden;
 }
@@ -152,24 +169,110 @@
   margin: 4px 0;
 }
 .row h2 {
-  font-size: 25px;
-  margin: 0 0 5px;
+  font-size: 21px;
+  line-height: 1.25;
+  margin: 0 0 6px;
 }
 .row h2 a:hover {
   text-decoration: underline;
 }
+
+/* The specialty, directly under the name, is what people scan for. */
+.specialty {
+  color: #214be2;
+  font-weight: 650;
+  margin: 0 0 4px;
+}
+
+/* Short facts, as chips, so the eye can skip the ones it does not need. */
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f4f6f3;
+  border-radius: 999px;
+  padding: 4px 10px;
+  font-size: 12.5px;
+  color: #53616a;
+}
+.chips {
+  margin-top: 8px;
+}
+
+/* The action column: what the card is for. */
 .fee {
-  text-align: right;
+  display: grid;
+  gap: 10px;
+  justify-items: stretch;
+  text-align: left;
 }
-.fee strong {
+.feeAmount {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+}
+.feeAmount strong {
+  font-size: 20px;
+}
+.book {
   display: block;
-  font-size: 22px;
+  text-align: center;
+  /* The site's own blue. A second accent colour on the busiest page would
+     read as a different product. */
+  background: #214be2;
+  color: #fff;
+  border-radius: 10px;
+  padding: 11px 16px;
+  font-weight: 650;
+  text-decoration: none;
 }
-.fee a {
-  display: inline-block;
-  margin-top: 15px;
-  text-decoration: underline;
+.book:hover {
+  background: #193cbd;
 }
+.secondary {
+  display: block;
+  text-align: center;
+  border: 1px solid #d9dfd9;
+  border-radius: 12px;
+  padding: 11px 16px;
+  color: #26312c;
+  text-decoration: none;
+}
+.secondary:hover {
+  border-color: #b9c6bc;
+}
+
+@media (max-width: 760px) {
+  .row {
+    grid-template-columns: 72px minmax(0, 1fr);
+    gap: 16px;
+    padding: 18px;
+  }
+  .portrait {
+    width: 72px;
+    height: 72px;
+    font-size: 22px;
+  }
+  .row h2 {
+    font-size: 20px;
+  }
+  /* The action column drops under the whole card, full width. */
+  .fee {
+    grid-column: 1 / -1;
+  }
+  .feeAmount {
+    justify-content: flex-start;
+  }
+}
+
 .pagination {
   display: flex;
   justify-content: space-between;
@@ -325,4 +428,50 @@
   .empty {
     padding: 26px;
   }
+}
+
+/*
+ * The booking column when a listing cannot take appointments yet.
+ *
+ * Most of the directory is in this state, so it has to read as a stage the
+ * listing is in, not as something broken. A calendar with nothing in it would
+ * be worse than a sentence.
+ */
+.closed {
+  display: grid;
+  gap: 8px;
+  padding: 16px;
+  background: #f4f7f3;
+  border: 1px dashed #c7d3c9;
+  border-radius: 14px;
+}
+.closed p {
+  margin: 0;
+  font-size: 14px;
+  line-height: 1.55;
+}
+.closedTitle {
+  font-weight: 650;
+  font-size: 15px;
+  margin: 0;
+}
+.closedClaim {
+  font-size: 13px;
+  color: #53616a;
+  text-decoration: underline;
+}
+
+/* The clinic number, under the actions. Small, but it is the only way to
+   reach most of these doctors until they claim their listing. */
+.phone {
+  display: block;
+  text-align: center;
+  font-size: 14px;
+  color: #53616a;
+  text-decoration: none;
+  padding: 2px 0;
+}
+.phone:hover {
+  color: #214be2;
+  text-decoration: underline;
 }

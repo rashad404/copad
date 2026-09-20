@@ -12,6 +12,7 @@ import {
   filterQuery,
   isFiltered,
   parseFilters,
+  phoneHref,
 } from "@/components/doctors/model";
 import { specialtyName, experienceYears } from "@/components/doctors/copy";
 import {
@@ -185,7 +186,7 @@ export default async function Doctors({ searchParams }: Props) {
                         {doctor.fullName}
                       </Link>
                     </h2>
-                    <p>
+                    <p className={styles.specialty}>
                       {specialtyName(
                         doctor.specialtyCode,
                         language,
@@ -194,40 +195,81 @@ export default async function Doctors({ searchParams }: Props) {
                         )?.name,
                       )}
                     </p>
-                    <Verification
-                      state={doctor.verification}
-                      language={language}
-                    />
-                    {doctor.yearsExperience != null && (
-                      <p className={styles.muted}>
-                        {c.years}:{" "}
-                        {experienceYears(doctor.yearsExperience, language)}
-                      </p>
-                    )}
                     {doctor.clinics.map((clinic) => (
-                      <p key={clinic.slug}>
+                      <p key={clinic.slug} className={styles.muted}>
                         {[clinic.name, clinic.city].filter(Boolean).join(", ")}
                       </p>
                     ))}
-                    {doctor.languages.length > 0 && (
-                      <p className={styles.muted}>
-                        {c.languages}:{" "}
-                        {spokenLanguages(doctor.languages, language)}
-                      </p>
-                    )}
+                    {/*
+                      Experience, languages and the check as chips rather than
+                      lines: at three hundred listings the eye skips what it
+                      does not need, and lines cannot be skipped.
+                    */}
+                    <ul className={styles.chips}>
+                      {doctor.yearsExperience != null && (
+                        <li className={styles.chip}>
+                          {experienceYears(doctor.yearsExperience, language)}
+                        </li>
+                      )}
+                      {doctor.languages.length > 0 && (
+                        <li className={styles.chip}>
+                          {spokenLanguages(doctor.languages, language)}
+                        </li>
+                      )}
+                      {/*
+                        Last, and quiet. It has to be on the card, because the
+                        listing must not read as an endorsement, but leading
+                        every one of three hundred cards with "not verified"
+                        says more about us than about the doctor.
+                      */}
+                      <li className={styles.chip}>
+                        <Verification
+                          state={doctor.verification}
+                          language={language}
+                        />
+                      </li>
+                    </ul>
                   </div>
                   <div className={styles.fee}>
                     {doctor.consultationFee != null && (
-                      <>
+                      <span className={styles.feeAmount}>
                         <span className={styles.muted}>{c.fee}</span>
                         <strong>
                           {formatFee(doctor.consultationFee, language)}
                         </strong>
-                      </>
+                      </span>
                     )}
-                    <Link href={`/hekimler/${encodeURIComponent(doctor.slug)}`}>
+                    {/*
+                      The booking action is on every card, including the
+                      listings that cannot take an appointment yet. The profile
+                      says plainly which of those it is; hiding the button
+                      instead means nobody learns the product does this.
+                    */}
+                    <Link
+                      className={styles.book}
+                      href={`/hekimler/${encodeURIComponent(doctor.slug)}#randevu`}
+                    >
+                      {c.book}
+                    </Link>
+                    <Link
+                      className={styles.secondary}
+                      href={`/hekimler/${encodeURIComponent(doctor.slug)}`}
+                    >
                       {c.view}
                     </Link>
+                    {/* Until a doctor opens online booking, this is the thing
+                        that actually gets somebody an appointment. */}
+                    {doctor.clinics.map((clinic) =>
+                      phoneHref(clinic.phone) ? (
+                        <a
+                          key={clinic.slug}
+                          className={styles.phone}
+                          href={phoneHref(clinic.phone)!}
+                        >
+                          {clinic.phone}
+                        </a>
+                      ) : null,
+                    )}
                   </div>
                 </li>
               ))}

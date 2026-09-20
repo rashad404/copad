@@ -138,9 +138,16 @@ export default async function DoctorProfile({ params }: Props) {
               </section>
             )}
           </div>
-          <aside className={styles.sidebar}>
-            <h2>{doctor.acceptsBookings ? c.slots : c.contact}</h2>
-            {doctor.acceptsBookings && doctor.id != null && (
+          {/*
+            The booking column, on every profile. A listing that cannot take an
+            appointment says so here in its own words rather than quietly
+            dropping the section, because a visitor arriving from a search
+            engine has no other way to learn that the site books appointments
+            at all.
+          */}
+          <aside className={styles.sidebar} id="randevu">
+            <h2>{doctor.acceptsBookings ? c.slots : c.book}</h2>
+            {doctor.acceptsBookings && doctor.id != null ? (
               <>
                 <p className={styles.muted}>{c.slotsNote}</p>
                 {slots === null ? (
@@ -156,6 +163,14 @@ export default async function DoctorProfile({ params }: Props) {
                   />
                 )}
               </>
+            ) : (
+              <div className={styles.closed}>
+                <p className={styles.closedTitle}>{c.noSlotsTitle}</p>
+                <p className={styles.muted}>{c.noSlotsBody}</p>
+                <a className={styles.closedClaim} href={`/hekim-panel?claim=${encodeURIComponent(doctor.slug)}`}>
+                  {c.noSlotsMine}
+                </a>
+              </div>
             )}
             {doctor.clinics
               .filter((clinic) => phoneHref(clinic.phone))
