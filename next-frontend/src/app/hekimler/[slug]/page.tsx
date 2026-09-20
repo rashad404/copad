@@ -2,9 +2,13 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import ProductLayout from "@/components/public/ProductLayout";
+import RecordView from "@/components/public/RecordView";
+import { Star } from "lucide-react";
+import { shortDate } from "@/utils/dates";
 import {
   directoryCopy,
   getDoctor,
+  getReviews,
   getSlots,
   getSpecialtyName,
 } from "@/api/doctorServer";
@@ -15,10 +19,11 @@ import {
   slotWindow,
   phoneHref,
 } from "@/components/doctors/model";
-import { experienceYears } from "@/components/doctors/copy";
+import { experienceYears, formatRating } from "@/components/doctors/copy";
 import {
   ClinicContact,
   Portrait,
+  Prose,
   Verification,
   spokenLanguages,
   formatFee,
@@ -64,6 +69,7 @@ export default async function DoctorProfile({ params }: Props) {
   const { language, c } = await directoryCopy();
   const doctor = await getDoctor((await params).slug);
   if (!doctor) notFound();
+  const reviews = await getReviews(doctor.slug).catch(() => null);
   const specialty = await getSpecialtyName(doctor.specialtyCode, language);
   const window = slotWindow();
   const slots =
@@ -72,6 +78,7 @@ export default async function DoctorProfile({ params }: Props) {
       : null;
   return (
     <ProductLayout>
+      <RecordView kind="doctors" slug={doctor.slug} />
       <div className={styles.page} lang={language}>
         <script
           type="application/ld+json"
@@ -111,6 +118,9 @@ export default async function DoctorProfile({ params }: Props) {
                 </div>
               )}
             </dl>
+            {doctor.viewCount != null && doctor.viewCount > 0 && (
+              <p className={styles.views}>{c.views(doctor.viewCount)}</p>
+            )}
             <Verification
               state={doctor.verification}
               language={language}
@@ -120,15 +130,96 @@ export default async function DoctorProfile({ params }: Props) {
             {doctor.bio && (
               <section className={styles.section}>
                 <h2>{c.about}</h2>
-                <p className={styles.prose}>{doctor.bio}</p>
+                <Prose text={doctor.bio} />
               </section>
             )}
             {doctor.qualifications && (
               <section className={styles.section}>
                 <h2>{c.qualifications}</h2>
-                <p className={styles.prose}>{doctor.qualifications}</p>
+                {/*
+                  Education arrives as one line with entries divided by pipes,
+                  which is a list wearing a paragraph's clothes.
+                */}
+                <ul className={styles.proseList}>
+                  {doctor.qualifications
+                    .split("|")
+                    .map((entry) => entry.trim())
+                    .filter(Boolean)
+                    .map((entry, index) => (
+                      <li key={index}>{entry}</li>
+                    ))}
+                </ul>
               </section>
             )}
+            {/*
+              What patients said. The badge on each one is the point: a reader
+              can tell an account that attended an appointment from somebody
+              who typed a name into a box.
+            */}
+            <section className={styles.section} aria-labelledby="reviews">
+              <h2 id="reviews">{c.reviewsTitle}</h2>
+              {reviews && reviews.count > 0 && (
+                <p className={styles.reviewSummary}>
+                  <Star size={18} fill="currentColor" aria-hidden="true" />
+                  <strong>{formatRating(reviews.average ?? 0, language)}</strong>
+                  <span className={styles.muted}>
+                    {c.reviewCount(reviews.count)}
+                  </span>
+                </p>
+              )}
+              {!reviews || reviews.reviews.length === 0 ? (
+                <p className={styles.muted}>{c.noReviewsYet}</p>
+              ) : (
+                <ul className={styles.reviewList}>
+                  {reviews.reviews.map((review) => (
+                    <li key={review.id} className={styles.review}>
+                      <div className={styles.reviewHead}>
+                        <span className={styles.reviewStars} aria-label={`${review.rating}`}>
+                          {[1, 2, 3, 4, 5].map((n) => (
+                            <Star
+                              key={n}
+                              size={15}
+                              fill={n <= review.rating ? "currentColor" : "none"}
+                              className={n <= review.rating ? styles.starOn : styles.starOff}
+                              aria-hidden="true"
+                            />
+                          ))}
+                        </span>
+                        <strong>{review.authorName}</strong>
+                        <span
+                          className={
+                            review.trust === "VERIFIED"
+                              ? styles.trustVerified
+                              : styles.trustPlain
+                          }
+                          title={
+                            review.trust === "VERIFIED"
+                              ? c.trustNoteVerified
+                              : undefined
+                          }
+                        >
+                          {review.trust === "VERIFIED"
+                            ? c.trustVERIFIED
+                            : review.trust === "REGISTERED"
+                              ? c.trustREGISTERED
+                              : c.trustGUEST}
+                        </span>
+                      </div>
+                      {review.comment && <p>{review.comment}</p>}
+                      <p className={styles.muted}>
+                        {shortDate(review.createdAt.slice(0, 10), language)}
+                      </p>
+                    </li>
+                  ))}
+                </ul>
+              )}
+              <Link
+                className={styles.secondary}
+                href={`/hekimler/${encodeURIComponent(doctor.slug)}/rey`}
+              >
+                {reviews && reviews.count > 0 ? c.writeReview : c.beFirst}
+              </Link>
+            </section>
             {doctor.clinics.length > 0 && (
               <section className={styles.section}>
                 <h2>{c.clinics}</h2>

@@ -519,6 +519,51 @@
   white-space: pre-line;
   overflow-wrap: anywhere;
 }
+/*
+ * A headed section of a biography. The imports store a career as sections -
+ * what they treat, where they have worked, which courses they hold - and a
+ * reader needs to see where one ends and the next begins.
+ */
+.proseBlock {
+  margin: 0 0 22px;
+}
+.proseBlock:last-child {
+  margin-bottom: 0;
+}
+.proseHeading {
+  font-size: 15px;
+  font-weight: 700;
+  letter-spacing: 0.01em;
+  text-transform: none;
+  color: #26312c;
+  margin: 0 0 8px;
+}
+.proseList {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: grid;
+  gap: 6px;
+}
+.proseList li {
+  position: relative;
+  padding-left: 18px;
+  color: #3d4a44;
+  font-size: 15px;
+  line-height: 1.6;
+  overflow-wrap: anywhere;
+}
+/* A quiet marker: these are lists of facts, not a bulleted argument. */
+.proseList li::before {
+  content: "";
+  position: absolute;
+  left: 2px;
+  top: 0.72em;
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: #b7c2bb;
+}
 .slots {
   list-style: none;
   margin: 20px 0 0;
@@ -915,4 +960,140 @@
   .fieldWide {
     grid-column: 1;
   }
+}
+
+/* Same, on a doctor profile. */
+.views {
+  color: #6b7a74;
+  font-size: 13.5px;
+  margin: 0 0 14px;
+}
+
+/* ---- Reviews ----------------------------------------------------------- */
+
+.reviewSummary {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin: 0 0 14px;
+}
+.reviewSummary svg {
+  color: #f2b705;
+}
+.reviewSummary strong {
+  font-size: 20px;
+}
+.reviewList {
+  list-style: none;
+  margin: 0 0 18px;
+  padding: 0;
+  display: grid;
+  gap: 14px;
+}
+.review {
+  border: 1px solid #e6e9e4;
+  border-radius: 14px;
+  padding: 16px 18px;
+  background: #fff;
+}
+.reviewHead {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 8px;
+}
+.reviewStars {
+  display: inline-flex;
+  gap: 2px;
+}
+.starOn {
+  color: #f2b705;
+}
+.starOff {
+  color: #d6dbd7;
+}
+
+/*
+ * The badge is the whole point of the section. Verified is the only one that
+ * gets a colour: it is the only one backed by an appointment somebody
+ * actually attended.
+ */
+.trustVerified {
+  background: #e7f3ec;
+  color: #1d5b3c;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12.5px;
+  font-weight: 650;
+}
+.trustPlain {
+  background: #f2f4f1;
+  color: #5d6b70;
+  border-radius: 999px;
+  padding: 3px 10px;
+  font-size: 12.5px;
+}
+
+/* ---- Writing one ------------------------------------------------------- */
+
+.reviewPage {
+  max-width: 560px;
+  margin: 24px auto 40px;
+}
+.reviewForm {
+  display: grid;
+  gap: 16px;
+  margin-top: 18px;
+}
+.stars {
+  border: 0;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: 6px;
+}
+.stars legend {
+  font-size: 14px;
+  color: #53616a;
+  padding: 0;
+}
+.starButton {
+  background: none;
+  border: 0;
+  padding: 2px;
+  cursor: pointer;
+  color: #f2b705;
+  line-height: 0;
+}
+.reviewField {
+  display: grid;
+  gap: 6px;
+}
+.reviewField span {
+  font-size: 14px;
+  color: #53616a;
+}
+.reviewField input,
+.reviewField textarea {
+  border: 1px solid #dfe4de;
+  border-radius: 10px;
+  padding: 11px 13px;
+  font-size: 15px;
+  font-family: inherit;
+  width: 100%;
+}
+.reviewError {
+  color: #b03a2e;
+  font-size: 14px;
+  margin: 0;
+}
+.reviewDone {
+  display: grid;
+  gap: 14px;
+  justify-items: start;
+  padding: 20px;
+  background: #f4f7f3;
+  border-radius: 14px;
+  margin-top: 18px;
 }

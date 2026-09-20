@@ -75,6 +75,50 @@ export function Verification({
     </aside>
   );
 }
+/**
+ * A biography, rendered as the structured thing it is.
+ *
+ * The imports store a career as headed sections with one entry per line -
+ * "Fəaliyyət sahələri:" followed by twenty conditions, "Konfranslar:" followed
+ * by a dozen courses. Printed as one paragraph, even with the line breaks
+ * kept, a reader cannot tell a heading from an entry or find where a section
+ * ends. So a line ending in a colon with lines beneath it becomes a heading
+ * and a list.
+ *
+ * Anything that is not that shape - the older listings are a single unbroken
+ * statement - is rendered as a paragraph, unchanged.
+ */
+export function Prose({ text }: { text: string }) {
+  const blocks = text.split(/\n{2,}/).filter((block) => block.trim());
+  return (
+    <>
+      {blocks.map((block, index) => {
+        const lines = block.split("\n").filter((line) => line.trim());
+        const [first, ...rest] = lines;
+        if (rest.length > 0 && first.trim().endsWith(":")) {
+          return (
+            <div key={index} className={styles.proseBlock}>
+              <h3 className={styles.proseHeading}>
+                {first.trim().replace(/:$/, "")}
+              </h3>
+              <ul className={styles.proseList}>
+                {rest.map((line, item) => (
+                  <li key={item}>{line}</li>
+                ))}
+              </ul>
+            </div>
+          );
+        }
+        return (
+          <p key={index} className={styles.prose}>
+            {block}
+          </p>
+        );
+      })}
+    </>
+  );
+}
+
 export function ClinicContact({ clinic }: { clinic: PublicClinic }) {
   const href = phoneHref(clinic.phone);
   return (
